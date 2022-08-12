@@ -12,11 +12,13 @@ import time
 import base64
 from odoo.exceptions import UserError, ValidationError
 from odoo.addons.product.models.product import ProductProduct
+
 _logger = logging.getLogger("BigCommerce")
+
 
 class ProductProduct(models.Model):
     _inherit = "product.product"
-    
+
     bigcommerce_product_variant_id = fields.Char(string='Bigcommerce Product Variant ID')
     bc_sale_price = fields.Float(string='BC Sale Price')
 
@@ -27,7 +29,7 @@ class ProductTemplate(models.Model):
     bigcommerce_product_image_ids = fields.One2many('bigcommerce.product.image', 'product_template_id',
                                                     string="Bigcommerce Product Image Ids")
     bigcommerce_product_id = fields.Char(string='Bigcommerce Product', copy=False)
-    bigcommerce_store_id = fields.Many2one('bigcommerce.store.configuration',string="Bigcommerce Store", copy=False)
+    bigcommerce_store_id = fields.Many2one('bigcommerce.store.configuration', string="Bigcommerce Store", copy=False)
     is_exported_to_bigcommerce = fields.Boolean(string="Is Exported to Big Commerce ?", copy=False)
     inventory_tracking = fields.Selection([
         ('none', 'Inventory Level will not be tracked'),
@@ -41,33 +43,45 @@ class ProductTemplate(models.Model):
     x_studio_manufacturer = fields.Many2one('bc.product.brand', string='Manufacturer')
     bc_product_image_id = fields.Char(string='BC Product Image', copy=False)
 
-    def create_bigcommerce_operation(self,operation,operation_type,bigcommerce_store_id,log_message,warehouse_id):
-        vals = {
-                    'bigcommerce_operation': operation,
-                   'bigcommerce_operation_type': operation_type,
-                   'bigcommerce_store': bigcommerce_store_id and bigcommerce_store_id.id,
-                   'bigcommerce_message': log_message,
-                   'warehouse_id': warehouse_id and warehouse_id.id or False
-                   }
-        operation_id = self.env['bigcommerce.operation'].create(vals)
-        return  operation_id
+    def unlink(self):
+        """
+        delete bigcommerce product listing on product template delete.
+        """
+        for record in self:
+            listing = self.env['bc.store.listing'].search([('product_tmpl_id', '=', record.id)])
+            res = super(ProductTemplate, self).unlink()
+            if res and listing:
+                listing.unlink()
+        return res
 
-    def create_bigcommerce_operation_detail(self,operation,operation_type,req_data,response_data,operation_id,warehouse_id=False,fault_operation=False,process_message=False):
+    def create_bigcommerce_operation(self, operation, operation_type, bigcommerce_store_id, log_message, warehouse_id):
+        vals = {
+            'bigcommerce_operation': operation,
+            'bigcommerce_operation_type': operation_type,
+            'bigcommerce_store': bigcommerce_store_id and bigcommerce_store_id.id,
+            'bigcommerce_message': log_message,
+            'warehouse_id': warehouse_id and warehouse_id.id or False
+        }
+        operation_id = self.env['bigcommerce.operation'].create(vals)
+        return operation_id
+
+    def create_bigcommerce_operation_detail(self, operation, operation_type, req_data, response_data, operation_id,
+                                            warehouse_id=False, fault_operation=False, process_message=False):
         bigcommerce_operation_details_obj = self.env['bigcommerce.operation.details']
         vals = {
-                    'bigcommerce_operation': operation,
-                   'bigcommerce_operation_type': operation_type,
-                   'bigcommerce_request_message': '{}'.format(req_data),
-                   'bigcommerce_response_message': '{}'.format(response_data),
-                   'operation_id':operation_id.id,
-                   'warehouse_id': warehouse_id and warehouse_id.id or False,
-                   'fault_operation':fault_operation,
-                    'process_message':process_message
-                   }
+            'bigcommerce_operation': operation,
+            'bigcommerce_operation_type': operation_type,
+            'bigcommerce_request_message': '{}'.format(req_data),
+            'bigcommerce_response_message': '{}'.format(response_data),
+            'operation_id': operation_id.id,
+            'warehouse_id': warehouse_id and warehouse_id.id or False,
+            'fault_operation': fault_operation,
+            'process_message': process_message
+        }
         operation_detail_id = bigcommerce_operation_details_obj.create(vals)
         return operation_detail_id
 
-    def product_request_data(self, product_id,warehouse_id):
+    def product_request_data(self, product_id, warehouse_id):
         """
         Description : Prepare Product Request Data For Generate/Create Product in Bigcomeerce
         """
@@ -134,38 +148,42 @@ class ProductTemplate(models.Model):
                     attribute_line_ids_data = [0, False, {'attribute_id': attribute.id,
                                                           'value_ids': [[6, False, attribute_val_ids]]}]
                     attrib_line_vals.append(attribute_line_ids_data)
-        #category_id = self.env['product.category'].sudo().search([('bigcommerce_product_category_id','in',record.get('categories'))],limit=1)
+        # category_id = self.env['product.category'].sudo().search([('bigcommerce_product_category_id','in',record.get('categories'))],limit=1)
         category_id = self.env.ref('product.product_category_all')
         if not category_id:
             message = "Category not found!"
             _logger.info("Category not found: {}".format(category_id))
             return False, message
-        public_category_ids = self.env['product.public.category'].sudo().search([('bigcommerce_product_category_id', 'in', record.get('categories'))])
-        brand_id = self.env['bc.product.brand'].sudo().search([('bc_brand_id','=',record.get('brand_id'))],limit=1)
+        public_category_ids = self.env['product.public.category'].sudo().search(
+            [('bigcommerce_product_category_id', 'in', record.get('categories'))])
+        brand_id = self.env['bc.product.brand'].sudo().search([('bc_brand_id', '=', record.get('brand_id'))], limit=1)
         _logger.info("BRAND : {0}".format(brand_id))
-        inven_location_id = self.env['stock.location'].search([('name','=','Inventory adjustment'),('usage','=','inventory')],limit=1)
+        inven_location_id = self.env['stock.location'].search(
+            [('name', '=', 'Inventory adjustment'), ('usage', '=', 'inventory')], limit=1)
         vals = {
-                'name':template_title,
-                'type':'product',
-                'categ_id':category_id and category_id.id,
-                "weight":record.get("weight"),
-                "list_price":record.get("price"),
-                "is_visible":record.get("is_visible"),
-                "public_categ_ids": [(6, 0, public_category_ids.ids)],
-                "bigcommerce_product_id":record.get('id'),
-                "bigcommerce_store_id":store_id.id,
-                "default_code":record.get("sku"),
-                "is_imported_from_bigcommerce":True,
-                "x_studio_manufacturer":brand_id and brand_id.id,
-                "description_sale":"",
-                "description":record.get('description'),
-                "property_stock_inventory":inven_location_id.id
-                }
+            'name': template_title,
+            'type': 'product',
+            'categ_id': category_id and category_id.id,
+            "weight": record.get("weight"),
+            "list_price": record.get("price"),
+            "is_visible": record.get("is_visible"),
+            "public_categ_ids": [(6, 0, public_category_ids.ids)],
+            "bigcommerce_product_id": record.get('id'),
+            "bigcommerce_store_id": store_id.id,
+            "default_code": record.get("sku"),
+            "is_imported_from_bigcommerce": True,
+            "x_studio_manufacturer": brand_id and brand_id.id,
+            "description_sale": "",
+            "description": record.get('description'),
+            "property_stock_inventory": inven_location_id.id
+        }
         product_template = product_template_obj.with_user(1).create(vals)
         _logger.info("Product Created: {}".format(product_template))
         return True, product_template
 
-    def import_product_from_bigcommerce(self, warehouse_id=False, bigcommerce_store_ids=False, bigcommerce_product_id=False, add_single_product=False,source_page=1,destination_page=1):
+    def import_product_from_bigcommerce(self, warehouse_id=False, bigcommerce_store_ids=False,
+                                        bigcommerce_product_id=False, add_single_product=False, source_page=1,
+                                        destination_page=1):
         for bigcommerce_store_id in bigcommerce_store_ids:
             headers = {
                 'Accept': 'application/json',
@@ -176,30 +194,44 @@ class ProductTemplate(models.Model):
             req_data = False
             bigcommerce_store_id.bigcommerce_product_import_status = "Import Product Process Running..."
             product_process_message = "Process Completed Successfully!"
-            operation_id = self.with_user(1).create_bigcommerce_operation('product','import',bigcommerce_store_id,'Processing...',warehouse_id)
+            operation_id = self.with_user(1).create_bigcommerce_operation('product', 'import', bigcommerce_store_id,
+                                                                          'Processing...', warehouse_id)
             self._cr.commit()
-            product_response_pages=[]
+            product_response_pages = []
             inven_location_id = self.env['stock.location'].search(
                 [('name', '=', 'Inventory adjustment'), ('usage', '=', 'inventory')], limit=1)
             try:
+                total_pages = 0
                 if add_single_product:
                     api_operation = "/v3/catalog/products/{}".format(bigcommerce_product_id)
+                    response_data = bigcommerce_store_id.with_user(1).send_get_request_from_odoo_to_bigcommerce(
+                        api_operation)
                 else:
                     api_operation = "/v3/catalog/products"
-                response_data = bigcommerce_store_id.with_user(1).send_get_request_from_odoo_to_bigcommerce(api_operation)
-                #_logger.info("BigCommerce Get Product  Response : {0}".format(response_data))
+                    response_data = bigcommerce_store_id.with_user(1).send_get_request_from_odoo_to_bigcommerce(
+                        api_operation)
+
+                # _logger.info("BigCommerce Get Product  Response : {0}".format(response_data))
                 product_ids = self.with_user(1).search([('bigcommerce_product_id', '=', False)])
                 _logger.info("Response Status: {0}".format(response_data.status_code))
                 if response_data.status_code in [200, 201]:
                     response_data = response_data.json()
-                    #_logger.info("Product Response Data : {0}".format(response_data))
+                    total_pages = response_data.get('meta', {}).get('pagination', {}).get('total_pages', 0)
+                    # _logger.info("Product Response Data : {0}".format(response_data))
                     records = response_data.get('data')
                     location_id = bigcommerce_store_id.warehouse_id.lot_stock_id
                     if add_single_product:
                         total_pages = 0
                     else:
-                        from_page = source_page or bigcommerce_store_id.source_of_import_data
-                        total_pages = destination_page or bigcommerce_store_id.destination_of_import_data
+                        if total_pages > 0:
+                            bc_total_pages = total_pages + 1
+                            inp_from_page = source_page or bigcommerce_store_id.source_of_import_data
+                            inp_total_pages = destination_page or bigcommerce_store_id.destination_of_import_data
+                            from_page = bc_total_pages - inp_total_pages
+                            total_pages = bc_total_pages - inp_from_page
+                        else:
+                            from_page = source_page or bigcommerce_store_id.source_of_import_data
+                            total_pages = destination_page or bigcommerce_store_id.destination_of_import_data
 
                     if total_pages > 1:
                         while (total_pages >= from_page):
@@ -207,7 +239,7 @@ class ProductTemplate(models.Model):
                                 page_api = "/v3/catalog/products?page=%s" % (total_pages)
                                 page_response_data = bigcommerce_store_id.send_get_request_from_odoo_to_bigcommerce(
                                     page_api)
-                                #_logger.info("Response Status: {0}".format(page_response_data.status_code))
+                                # _logger.info("Response Status: {0}".format(page_response_data.status_code))
                                 if page_response_data.status_code in [200, 201]:
                                     page_response_data = page_response_data.json()
                                     _logger.info("Product Response Data : {0}".format(page_response_data))
@@ -217,9 +249,11 @@ class ProductTemplate(models.Model):
                                 product_process_message = "Page is not imported! %s" % (e)
                                 _logger.info("Getting an Error In Import Product Category Response {}".format(e))
                                 process_message = "Getting an Error In Import Product Category Response {}".format(e)
-                                self.with_user(1).create_bigcommerce_operation_detail('product', 'import', response_data,
-                                                                         process_message, operation_id,
-                                                                         warehouse_id, True, product_process_message)
+                                self.with_user(1).create_bigcommerce_operation_detail('product', 'import',
+                                                                                      response_data,
+                                                                                      process_message, operation_id,
+                                                                                      warehouse_id, True,
+                                                                                      product_process_message)
 
                             total_pages = total_pages - 1
                     else:
@@ -249,29 +283,36 @@ class ProductTemplate(models.Model):
                                     product_template_id = self.env['product.template'].sudo().search(
                                         [('name', '=', record.get('name'))], limit=1)
                                 if not product_template_id:
-                                    status, product_template_id = self.with_user(1).create_product_template(record,bigcommerce_store_id)
+                                    status, product_template_id = self.with_user(1).create_product_template(record,
+                                                                                                            bigcommerce_store_id)
                                     if not status:
                                         product_process_message = "%s : Product is not imported Yet! %s" % (
-                                        record.get('id'), product_template_id)
-                                        _logger.info("Getting an Error In Import Product Responase :{}".format(product_template_id))
+                                            record.get('id'), product_template_id)
+                                        _logger.info("Getting an Error In Import Product Responase :{}".format(
+                                            product_template_id))
                                         self.with_user(1).create_bigcommerce_operation_detail('product', 'import', "",
-                                                                                 "", operation_id,
-                                                                                 warehouse_id, True,
-                                                                                 product_process_message)
+                                                                                              "", operation_id,
+                                                                                              warehouse_id, True,
+                                                                                              product_process_message)
                                         continue
                                     process_message = "Product Created : {}".format(product_template_id.name)
                                     _logger.info("{0}".format(process_message))
                                     response_data = record
-                                    self.with_user(1).create_bigcommerce_operation_detail('product','import',req_data,response_data,operation_id,warehouse_id,False,process_message)
+                                    self.with_user(1).create_bigcommerce_operation_detail('product', 'import', req_data,
+                                                                                          response_data, operation_id,
+                                                                                          warehouse_id, False,
+                                                                                          process_message)
                                     self._cr.commit()
                                 else:
-                                    process_message = "{0} : Product Already Exist In Odoo!".format(product_template_id.name)
-                                    brand_id = self.env['bc.product.brand'].sudo().search([('bc_brand_id','=',record.get('brand_id'))],limit=1)
+                                    process_message = "{0} : Product Already Exist In Odoo!".format(
+                                        product_template_id.name)
+                                    brand_id = self.env['bc.product.brand'].sudo().search(
+                                        [('bc_brand_id', '=', record.get('brand_id'))], limit=1)
                                     _logger.info("BRAND : {0}".format(brand_id))
                                     product_template_id.write({
-                                       # "list_price": record.get("price"),
+                                        # "list_price": record.get("price"),
                                         "is_visible": record.get("is_visible"),
-                                        "inventory_tracking":record.get("inventory_tracking"),
+                                        "inventory_tracking": record.get("inventory_tracking"),
                                         "bigcommerce_product_id": record.get('id'),
                                         "bigcommerce_store_id": bigcommerce_store_id.id,
                                         "default_code": record.get("sku"),
@@ -279,26 +320,31 @@ class ProductTemplate(models.Model):
                                         "description_sale": "",
                                         "description": record.get('description'),
                                         "is_exported_to_bigcommerce": True,
-                                        "x_studio_manufacturer":brand_id and brand_id.id,
-                                        "name":record.get('name'),
+                                        "x_studio_manufacturer": brand_id and brand_id.id,
+                                        "name": record.get('name'),
                                         "property_stock_inventory": inven_location_id.id
                                     })
-                                    self.with_user(1).create_bigcommerce_operation_detail('product', 'import', req_data, response_data,operation_id, warehouse_id, False, process_message)
+                                    self.with_user(1).create_bigcommerce_operation_detail('product', 'import', req_data,
+                                                                                          response_data, operation_id,
+                                                                                          warehouse_id, False,
+                                                                                          process_message)
                                     _logger.info("{0}".format(process_message))
                                     self._cr.commit()
                                 self.env['product.attribute'].import_product_attribute_from_bigcommerce(warehouse_id,
                                                                                                         bigcommerce_store_id,
-                                                                                                        product_template_id,operation_id)
+                                                                                                        product_template_id,
+                                                                                                        operation_id)
 
                                 listing_id = self.env['bc.store.listing'].create_or_update_bc_store_listing(record,
-                                                                                                                product_template_id,
-                                                                                                                bigcommerce_store_id)
+                                                                                                            product_template_id,
+                                                                                                            bigcommerce_store_id)
                                 self.env['bigcommerce.product.image'].with_user(1).import_multiple_product_image(
                                     bigcommerce_store_id, product_template_id, listing_id)
                                 if product_template_id.product_variant_count > 1:
                                     api_operation_variant = "/v3/catalog/products/{}/variants".format(
                                         product_template_id.bigcommerce_product_id)
-                                    variant_response_data = bigcommerce_store_id.with_user(1).send_get_request_from_odoo_to_bigcommerce(api_operation_variant)
+                                    variant_response_data = bigcommerce_store_id.with_user(
+                                        1).send_get_request_from_odoo_to_bigcommerce(api_operation_variant)
                                     _logger.info(
                                         "BigCommerce Get Product Variant Response : {0}".format(variant_response_data))
                                     _logger.info(
@@ -313,9 +359,12 @@ class ProductTemplate(models.Model):
                                                 option_labales.append(option_value.get('label'))
                                             v_id = variant_data.get('id')
                                             product_sku = variant_data.get('sku')
-                                            _logger.info("Total Product Variant : {0} Option Label : {1}".format(product_template_id.product_variant_ids, option_labales))
+                                            _logger.info("Total Product Variant : {0} Option Label : {1}".format(
+                                                product_template_id.product_variant_ids, option_labales))
                                             for product_variant_id in product_template_id.product_variant_ids:
-                                                if product_variant_id.mapped(lambda pv: pv.with_user(1).product_template_attribute_value_ids.mapped('name') == option_labales)[0]:
+                                                if product_variant_id.mapped(lambda pv: pv.with_user(
+                                                        1).product_template_attribute_value_ids.mapped(
+                                                        'name') == option_labales)[0]:
                                                     _logger.info(
                                                         "Inside If Condition option Label =====> {0} Product Template "
                                                         "Attribute Value ====> {1} variant_id====>{2}".format(
@@ -326,7 +375,7 @@ class ProductTemplate(models.Model):
                                                         price = variant_data.get('price')
                                                     else:
                                                         price = variant_data.get('calculated_price')
-                                                    vals = {'default_code': product_sku,'bc_sale_price': price,
+                                                    vals = {'default_code': product_sku, 'bc_sale_price': price,
                                                             'bigcommerce_product_variant_id': v_id,
                                                             'standard_price': variant_data.get('cost_price', 0.0)}
                                                     variant_product_img_url = variant_data.get('image_url')
@@ -357,25 +406,56 @@ class ProductTemplate(models.Model):
 
                                 self._cr.commit()
                             except Exception as e:
-                                product_process_message = "%s : Product is not imported Yet! %s" % (record.get('id'),e)
+                                product_process_message = "%s : Product is not imported Yet! %s" % (record.get('id'), e)
                                 _logger.info("Getting an Error In Import Product Responase".format(e))
                                 self.with_user(1).create_bigcommerce_operation_detail('product', 'import', "",
-                                                                         "", operation_id,
-                                                                         warehouse_id, True, product_process_message)
+                                                                                      "", operation_id,
+                                                                                      warehouse_id, True,
+                                                                                      product_process_message)
                     operation_id and operation_id.with_user(1).write({'bigcommerce_message': product_process_message})
                     _logger.info("Import Product Process Completed ")
                 else:
-                    process_message="Getting an Error In Import Product Responase : {0}".format(response_data)
+                    process_message = "Getting an Error In Import Product Responase : {0}".format(response_data)
                     _logger.info("Getting an Error In Import Product Responase".format(response_data))
-                    self.with_user(1).create_bigcommerce_operation_detail('product','import',req_data,response_data,operation_id,warehouse_id,True,)
+                    self.with_user(1).create_bigcommerce_operation_detail('product', 'import', req_data, response_data,
+                                                                          operation_id, warehouse_id, True, )
             except Exception as e:
                 product_process_message = "Process Is Not Completed Yet! %s" % (e)
                 _logger.info("Getting an Error In Import Product Responase".format(e))
-                self.with_user(1).create_bigcommerce_operation_detail('product','import',"","",operation_id,warehouse_id,True,product_process_message)
+                self.with_user(1).create_bigcommerce_operation_detail('product', 'import', "", "", operation_id,
+                                                                      warehouse_id, True, product_process_message)
             bigcommerce_store_id.bigcommerce_product_import_status = "Import Product Process Completed."
-            #product_process_message = product_process_message + "From :" + from_page +"To :" + total_pages
+            # product_process_message = product_process_message + "From :" + from_page +"To :" + total_pages
             operation_id and operation_id.with_user(1).write({'bigcommerce_message': product_process_message})
             self._cr.commit()
+
+    def update_product_variant_data_odoo_to_bc(self, product_id, bc_listing_id, bigcommerce_store_id, operation_id):
+        if len(product_id.product_variant_ids) > 1:
+            for product_variant_id in product_id.product_variant_ids:
+                bc_listing_item_id = self.env['bc.store.listing.item'].search(
+                    [('product_id', '=', product_variant_id.id),
+                     ('bc_listing_id', '=', bc_listing_id.id),
+                     ('bigcommerce_store_id', '=', bigcommerce_store_id.id)])
+                if bc_listing_item_id:
+                    variant_data = {
+                        'sale_price': product_variant_id.lst_price,
+                        'sku': product_variant_id.default_code or ''
+                    }
+                    api_operation = "/v3/catalog/products/{}/variants/{}".format(bc_listing_id.bc_product_id, bc_listing_item_id.bc_product_id)
+                    _logger.info("Product Data : {}".format(variant_data))
+                    response_data = bigcommerce_store_id.update_request_from_odoo_to_bigcommerce(variant_data,
+                                                                                                 api_operation)
+                    if response_data.status_code in [200, 201]:
+                        bc_listing_item_id.update({'item_update_date': datetime.now(),
+                                                   'default_code': product_variant_id.default_code or '',
+                                                   'sale_price': product_variant_id.lst_price})
+                    else:
+                        _logger.info("Getting an Error Update Product Variant >>>>> {0} >>>>> Response: {1}".format(product_variant_id.display_name, response_data.json()))
+                        self.sudo().create_bigcommerce_operation_detail('product', 'update', variant_data,
+                                                                        response_data.json(),
+                                                                        operation_id, bigcommerce_store_id.warehouse_id,
+                                                                        True, "we couldn't update product variant - {}".format(product_variant_id.display_name))
+
 
     def request_export_update_product_data(self, product_id, bigcommerce_store_id, warehouse_id):
         categ_ids = []
@@ -383,7 +463,7 @@ class ProductTemplate(models.Model):
         data = {
             "type": "physical",
             "weight": product_id.weight or 1.0,
-            "is_visible":product_id.is_visible
+            "is_visible": product_id.is_visible
         }
         ecomm_categ = product_id.public_categ_ids.mapped('bigcommerce_product_category_id')
         for categ_id in ecomm_categ:
@@ -392,25 +472,31 @@ class ProductTemplate(models.Model):
             categ_ids.append(int(product_id.categ_id.bigcommerce_product_category_id))
         data.update({
             "name": product_id.name,
-            'price': str(product_id.lst_price),
+            'price': str(product_id.list_price),
             "categories": categ_ids,
             "inventory_tracking": 'product',
             "inventory_level": int(product_id.with_context(warehouse=warehouse_id.id).qty_available),
-            "sku": product_id.default_code or ''
+            "sku": product_id.default_code or '',
+            "description": product_id.description or '',
         })
-        if len(product_id.product_variant_ids) > 1:
+        if len(product_id.product_variant_ids) > 1 and not self._context.get('do_not_add_variant'):
             for product_variant_id in product_id.product_variant_ids:
                 option_values = []
-                self._cr.execute("select product_template_attribute_value_id from product_variant_combination where product_product_id={}".format(product_variant_id.id))
-                prt_attribute_value_ids = self.env['product.template.attribute.value'].browse([row[0] for row in self._cr.fetchall()])
-                template_attrib_value_ids = self.env['product.template.attribute.value'].search([('id','in',prt_attribute_value_ids.ids)])
+                self._cr.execute(
+                    "select product_template_attribute_value_id from product_variant_combination where product_product_id={}".format(
+                        product_variant_id.id))
+                prt_attribute_value_ids = self.env['product.template.attribute.value'].browse(
+                    [row[0] for row in self._cr.fetchall()])
+                template_attrib_value_ids = self.env['product.template.attribute.value'].search(
+                    [('id', 'in', prt_attribute_value_ids.ids)])
                 for tmpl in template_attrib_value_ids:
                     attribute_id = self.env['product.attribute'].search([('id', '=', tmpl.attribute_id.id)])
                     attribute_value_id = self.env['product.attribute.value'].search(
                         [('id', '=', tmpl.product_attribute_value_id.id)])
                     option_values.append({'option_display_name': attribute_id.name, 'label': attribute_value_id.name})
-                variants.append({'sku':product_variant_id.default_code or '','option_values':option_values,'price':product_variant_id.lst_price})
-            data.update({'variants':variants})
+                variants.append({'sku': product_variant_id.default_code or '', 'option_values': option_values,
+                                 'price': product_variant_id.lst_price})
+            data.update({'variants': variants})
         return data
 
     def export_product_in_bigcommerce_from_product(self, bigcommerce_store_id, product_ids):
@@ -421,27 +507,33 @@ class ProductTemplate(models.Model):
             try:
                 images = []
                 product_data = False
-                check_listing_bc_product_id = self.env['bc.store.listing'].search([('product_tmpl_id', '=', product.id), ('bigcommerce_store_id','=',bigcommerce_store_id.id)])
+                check_listing_bc_product_id = self.env['bc.store.listing'].search(
+                    [('product_tmpl_id', '=', product.id), ('bigcommerce_store_id', '=', bigcommerce_store_id.id)])
                 if check_listing_bc_product_id:
                     _logger.info("PRODUCT IS ALREADY LISTED IN STORE : {0}".format(bigcommerce_store_id.name))
                     continue
                 api_operation = "/v3/catalog/products"
-                product_data = self.request_export_update_product_data(product, bigcommerce_store_id,bigcommerce_store_id.warehouse_id)
+                product_data = self.request_export_update_product_data(product, bigcommerce_store_id,
+                                                                       bigcommerce_store_id.warehouse_id)
                 _logger.info("EXPORT PRODUCT DATA : {0}".format(product_data))
                 web_base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
                 if product.image_1920:
-                    product_standard_image_url = web_base_url + '/web/image/product.product/{}/image_1024/'.format(product.product_variant_id.id)
-                    product_tiny_image_url = web_base_url + '/web/image/product.product/{}/image_256/'.format(product.product_variant_id.id)
+                    product_standard_image_url = web_base_url + '/web/image/product.product/{}/image_1024/'.format(
+                        product.product_variant_id.id)
+                    product_tiny_image_url = web_base_url + '/web/image/product.product/{}/image_256/'.format(
+                        product.product_variant_id.id)
                     images.append({'image_url': product_standard_image_url, 'is_thumbnail': True,
-                                   'url_standard': product_standard_image_url, 'url_tiny': product_tiny_image_url,'description':'Main Image' + ":" + str(product.id)})
+                                   'url_standard': product_standard_image_url, 'url_tiny': product_tiny_image_url,
+                                   'description': 'Main Image' + ":" + str(product.id)})
                 for product_image_id in product.product_template_image_ids:
                     media_standard_image_url = web_base_url + '/web/image/product.image/{}/image_1024/'.format(
                         product_image_id.id)
                     media_tiny_image_url = web_base_url + '/web/image/product.image/{}/image_256/'.format(
                         product_image_id.id)
                     images.append({'image_url': media_standard_image_url, 'is_thumbnail': False,
-                                   'url_standard': media_standard_image_url, 'url_tiny': media_tiny_image_url,'description':product_image_id.name+ ":" + str(product_image_id.id)})
-                product_data.update({'images':images})
+                                   'url_standard': media_standard_image_url, 'url_tiny': media_tiny_image_url,
+                                   'description': product_image_id.name + ":" + str(product_image_id.id)})
+                product_data.update({'images': images})
                 response_data = bigcommerce_store_id.send_request_from_odoo_to_bigcommerce(product_data,
                                                                                            api_operation)
                 response = response_data.json()
@@ -449,16 +541,17 @@ class ProductTemplate(models.Model):
                 if response_data.status_code in [200, 201]:
                     bc_product_id = response.get('data') and response.get('data').get('id')
                     variants = response.get('data') and response.get('data').get('variants') or []
-                    product_data.update({'id':bc_product_id})
+                    product_data.update({'id': bc_product_id})
                     listing_id = self.env['bc.store.listing'].create_or_update_bc_store_listing(product_data,
-                                                                                                    product,
-                                                                                                    bigcommerce_store_id)
+                                                                                                product,
+                                                                                                bigcommerce_store_id)
                     all_images = response.get('data') and response.get('data').get('images')
                     for img in all_images:
                         bc_pro_img_obj = self.env['bigcommerce.product.image']
                         values = {
                             'bigcommerce_product_image_id': img.get('id'),
-                            'bigcommerce_product_image': base64.b64encode(requests.get(img.get('url_standard')).content),
+                            'bigcommerce_product_image': base64.b64encode(
+                                requests.get(img.get('url_standard')).content),
                             'bigcommerce_product_id': img.get('product_id'),
                             'bigcommerce_listing_id': listing_id.id,
                             'bigcommerce_store_id': bigcommerce_store_id.id,
@@ -473,11 +566,12 @@ class ProductTemplate(models.Model):
                         else:
                             bc_pro_img_obj.write(values)
                     for variant_dict in variants:
-                        product_id = self.env['product.product'].search([('default_code','=',variant_dict.get('sku'))])
+                        product_id = self.env['product.product'].search(
+                            [('default_code', '=', variant_dict.get('sku'))])
                         product_id.bigcommerce_product_variant_id = variant_dict.get('id')
                         self.env['bc.store.listing.item'].create_or_update_bc_store_listing_item(
-                                product_data, variant_dict, product,
-                                bigcommerce_store_id, listing_id, product_id)
+                            product_data, variant_dict, product,
+                            bigcommerce_store_id, listing_id, product_id)
                     images = response.get('data') and response.get('data').get('images')
                     for image in images:
                         product_image_desc = image.get('description')
@@ -486,10 +580,11 @@ class ProductTemplate(models.Model):
                             product.bc_product_image_id = image.get('id')
                             listing_id.bc_product_image_id = image.get('id')
                         else:
-                            ecom_product_image_id = self.env['product.image'].search([('id','=',product_image_desc[1])])
+                            ecom_product_image_id = self.env['product.image'].search(
+                                [('id', '=', product_image_desc[1])])
                             ecom_product_image_id.bc_product_image_id = image.get('id')
                     product.write({'bigcommerce_product_id': bc_product_id, 'is_exported_to_bigcommerce': True})
-                    process_message = "Product Exported Sucessfully : {0} BC Product ID : {1}".format(product.name,
+                    process_message = "Product Exported Successfully : {0} BC Product ID : {1}".format(product.name,
                                                                                                       bc_product_id)
                     self.sudo().create_bigcommerce_operation_detail('product', 'export', product_data, response,
                                                                     operation_id, bigcommerce_store_id.warehouse_id,
@@ -500,13 +595,17 @@ class ProductTemplate(models.Model):
                     self.sudo().create_bigcommerce_operation_detail('product', 'export', product_data, response,
                                                                     operation_id, bigcommerce_store_id.warehouse_id,
                                                                     True, error_message)
-                    _logger.info("Getting an Error Product >>>>> {0} >>>>> Response: {1}".format(product.name,response_data))
+                    _logger.info(
+                        "Getting an Error Product >>>>> {0} >>>>> Response: {1}".format(product.name, response_data))
+                operation_id.bigcommerce_message = 'process completed'
             except Exception as e:
-                    process_message = "Getting an Error In Export Product Responase:{0}".format(e)
-                    _logger.info("Getting an Error In Export Product Responase:{0}".format(e))
-                    self.sudo().create_bigcommerce_operation_detail('product', 'export', product_data, response, operation_id,
-                                                                    bigcommerce_store_id.warehouse_id, False,
-                                                                    process_message)
+                process_message = "Getting an Error In Export Product Response:{0}".format(e)
+                _logger.info("Getting an Error In Export Product Response:{0}".format(e))
+                self.sudo().create_bigcommerce_operation_detail('product', 'export', product_data, response,
+                                                                operation_id,
+                                                                bigcommerce_store_id.warehouse_id, False,
+                                                                process_message)
+                operation_id.bigcommerce_message = 'getting an error'
 
     def update_product_in_bigcommerce_from_product(self, bigcommerce_store_id, product_ids):
         try:
@@ -537,7 +636,7 @@ class ProductTemplate(models.Model):
                 bc_product_id = bc_listing_id.bc_product_id
                 bc_product_main_image_id = bc_listing_id.bc_product_image_id
                 if bc_product_main_image_id:
-                    image_dict.update({'id':int(bc_product_main_image_id)})
+                    image_dict.update({'id': int(bc_product_main_image_id)})
                 if image_dict:
                     images.append(image_dict)
                 for product_image_id in bc_listing_id.bigcommerce_product_listing_image_ids:
@@ -553,16 +652,21 @@ class ProductTemplate(models.Model):
                 if not bc_product_id:
                     raise UserError("Product Not Sync : {}".format(product.name))
                 api_operation = "/v3/catalog/products/{}".format(bc_product_id)
-                product_data = self.request_export_update_product_data(product, bigcommerce_store_id,
+                product_data = self.with_context(do_not_add_variant=True).request_export_update_product_data(product, bigcommerce_store_id,
                                                                        bigcommerce_store_id.warehouse_id)
-                product_data.update({'images':images})
+                product_data.update({'images': images})
                 _logger.info("Product Data : {}".format(product_data))
                 response_data = bigcommerce_store_id.update_request_from_odoo_to_bigcommerce(product_data,
                                                                                              api_operation)
                 if response_data.status_code in [200, 201]:
                     # _logger.info("Get Successfull Response {0}".format(count))
                     response = response_data.json()
-                    process_message = "Product Update Sucessfully : {0}".format(product.name)
+                    product_data.update({'id': bc_product_id})
+                    listing_id = self.env['bc.store.listing'].with_context(update_bc_listing=bc_listing_id).create_or_update_bc_store_listing(product_data,
+                                                                                                product,
+                                                                                                bigcommerce_store_id)
+                    self.update_product_variant_data_odoo_to_bc(product, bc_listing_id, bigcommerce_store_id, operation_id)
+                    process_message = "Product Update Successfully : {0}".format(product.name)
                     self.sudo().create_bigcommerce_operation_detail('product', 'update', product_data, response,
                                                                     operation_id, bigcommerce_store_id.warehouse_id,
                                                                     False, process_message)
@@ -571,8 +675,9 @@ class ProductTemplate(models.Model):
                 else:
                     _logger.info("Getting an Error Product >>>>> {0} >>>>> Response: {1}".format(product.name,
                                                                                                  response_data.json()))
-                    process_message = "Product Not Updated Sucessfully : {0}".format(product.name)
-                    self.sudo().create_bigcommerce_operation_detail('product', 'update', product_data, response_data.json(),
+                    process_message = "Product Not Updated Successfully : {0}".format(product.name)
+                    self.sudo().create_bigcommerce_operation_detail('product', 'update', product_data,
+                                                                    response_data.json(),
                                                                     operation_id, bigcommerce_store_id.warehouse_id,
                                                                     True, process_message)
                 if count == 6:
@@ -588,18 +693,20 @@ class ProductTemplate(models.Model):
     def request_update_product_inventory_data(self, product_id, warehouse_id):
         data = {
             "inventory_tracking": 'product',
-            "inventory_level": int(product_id.with_context(warehouse=warehouse_id.id).qty_available) - int(product_id.with_context(warehouse=warehouse_id.id).outgoing_qty),
+            "inventory_level": int(product_id.with_context(warehouse=warehouse_id.id).qty_available) - int(
+                product_id.with_context(warehouse=warehouse_id.id).outgoing_qty),
         }
         return data
 
-    def update_product_inventory_cron(self,product_tmpl_ids=False,bigcommerce_store_ids=False,using_cron=False):
+    def update_product_inventory_cron(self, product_tmpl_ids=False, bigcommerce_store_ids=False, using_cron=False):
         if using_cron and bigcommerce_store_ids and product_tmpl_ids:
             bigcommerce_store_ids = self.env['bigcommerce.store.configuration'].browse(bigcommerce_store_ids)
             product_tmpl_ids = self.env['product.template'].browse(product_tmpl_ids)
         if not bigcommerce_store_ids:
             bigcommerce_store_ids = self.env['bigcommerce.store.configuration'].search([])
         for bigcommerce_store_id in bigcommerce_store_ids:
-            operation_id = self.sudo().create_bigcommerce_operation('product', 'update', bigcommerce_store_id,'Processing...',bigcommerce_store_id.warehouse_id)
+            operation_id = self.sudo().create_bigcommerce_operation('product', 'update', bigcommerce_store_id,
+                                                                    'Processing...', bigcommerce_store_id.warehouse_id)
             try:
                 product_data = []
                 count = 1
@@ -609,9 +716,12 @@ class ProductTemplate(models.Model):
                         [('company_id', '=', bigcommerce_store_id.warehouse_id.company_id.id),
                          ('state', 'in', ['done', 'cancel']),
                          ('write_date', '>=', str(datetime.strftime(from_datetime, '%Y-%m-%d %H:%M:%S')))])
-                    product_ids = move_ids.mapped('product_id').filtered(lambda pp:pp.bigcommerce_product_id != False and pp.inventory_tracking != 'none')
-                    quant_product = self.env['stock.quant'].search([('write_date', '>',fields.Datetime.now() - timedelta(minutes=30))]).mapped('product_id')
-                    quant_product = quant_product.filtered(lambda pp:pp.bigcommerce_product_id != False and pp.inventory_tracking != 'none')
+                    product_ids = move_ids.mapped('product_id').filtered(
+                        lambda pp: pp.bigcommerce_product_id != False and pp.inventory_tracking != 'none')
+                    quant_product = self.env['stock.quant'].search(
+                        [('write_date', '>', fields.Datetime.now() - timedelta(minutes=30))]).mapped('product_id')
+                    quant_product = quant_product.filtered(
+                        lambda pp: pp.bigcommerce_product_id != False and pp.inventory_tracking != 'none')
                     prd_tmpl_ids = product_ids.mapped('product_tmpl_id')
                     quant_prd_tmpl_ids = quant_product.mapped('product_tmpl_id')
                     total_product_ids = list(set((prd_tmpl_ids.ids or []) + list(set(quant_prd_tmpl_ids.ids or []))))
@@ -630,7 +740,7 @@ class ProductTemplate(models.Model):
                         if response_data.status_code in [200, 201]:
                             response = response_data.json()
                             _logger.info("Get Successfull Response {0} : {1}".format(count, response))
-                            process_message = "Product Update Sucessfully : {0}".format(product.name)
+                            process_message = "Product Update Successfully : {0}".format(product.name)
                             self.sudo().create_bigcommerce_operation_detail('product', 'update', product_data, response,
                                                                             operation_id,
                                                                             bigcommerce_store_id.warehouse_id,
@@ -645,10 +755,14 @@ class ProductTemplate(models.Model):
                     elif product.inventory_tracking == 'variant':
                         _logger.info("Inventory Tracking BY Product Variants : {}".format(product.product_variant_ids))
                         for product_variant in product.product_variant_ids:
-                            api_operation = "/v3/catalog/products/{0}/variants/{1}".format(product.bigcommerce_product_id,product_variant.bigcommerce_product_variant_id)
+                            api_operation = "/v3/catalog/products/{0}/variants/{1}".format(
+                                product.bigcommerce_product_id, product_variant.bigcommerce_product_variant_id)
                             product_data = {
-                                #"inventory_tracking": 'variant',
-                                "inventory_level": int(product_variant.with_context(warehouse=bigcommerce_store_id.warehouse_id.id).qty_available) - int(product_variant.with_context(warehouse=bigcommerce_store_id.warehouse_id.id).outgoing_qty),
+                                # "inventory_tracking": 'variant',
+                                "inventory_level": int(product_variant.with_context(
+                                    warehouse=bigcommerce_store_id.warehouse_id.id).qty_available) - int(
+                                    product_variant.with_context(
+                                        warehouse=bigcommerce_store_id.warehouse_id.id).outgoing_qty),
                             }
 
                             count += 1
@@ -656,15 +770,18 @@ class ProductTemplate(models.Model):
                                                                                                          api_operation)
                             if response_data.status_code in [200, 201]:
                                 response = response_data.json()
-                                _logger.info("Get Successfull Response {0} : {1}".format(count,response))
-                                process_message = "Product Update Sucessfully : {0}".format(product.name)
-                                self.sudo().create_bigcommerce_operation_detail('product', 'update', product_data, response,
-                                                                                operation_id, bigcommerce_store_id.warehouse_id,
+                                _logger.info("Get Successfull Response {0} : {1}".format(count, response))
+                                process_message = "Product Update Successfully : {0}".format(product.name)
+                                self.sudo().create_bigcommerce_operation_detail('product', 'update', product_data,
+                                                                                response,
+                                                                                operation_id,
+                                                                                bigcommerce_store_id.warehouse_id,
                                                                                 False, process_message)
                                 self._cr.commit()
                             else:
-                                _logger.info("Getting an Error Product >>>>> {0} >>>>> Response: {1}".format(product.name,
-                                                                                                             response_data))
+                                _logger.info(
+                                    "Getting an Error Product >>>>> {0} >>>>> Response: {1}".format(product.name,
+                                                                                                    response_data))
                             if count == 10:
                                 count = 1
                                 time.sleep(4)
@@ -675,7 +792,8 @@ class ProductTemplate(models.Model):
                                                                 bigcommerce_store_id.warehouse_id, False,
                                                                 process_message)
 
-@api.depends('list_price', 'price_extra','bc_sale_price')
+
+@api.depends('list_price', 'price_extra', 'bc_sale_price')
 @api.depends_context('uom')
 def _compute_product_lst_price(self):
     to_uom = None
@@ -688,5 +806,6 @@ def _compute_product_lst_price(self):
         else:
             list_price = product.list_price
         product.lst_price = product.bc_sale_price
+
 
 ProductProduct._compute_product_lst_price = _compute_product_lst_price
