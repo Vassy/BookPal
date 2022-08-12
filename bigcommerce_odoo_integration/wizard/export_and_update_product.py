@@ -21,7 +21,7 @@ class ExportandUpdateProductinBC(models.TransientModel):
     def update_product_in_bigcommerce(self):
         product_templates = self.env['product.template'].browse(self._context.get('active_ids', []))
         for bc_store in self.bigcommerce_store_ids:
-            self.env['product.template'].update_product_in_bigcommerce_from_product(bc_store,product_templates)
+            self.env['product.template'].update_product_in_bigcommerce_from_product(bc_store, product_templates)
 
     def export_product_in_bigcommerce(self):
         product_templates = self.env['product.template'].browse(self._context.get('active_ids', []))

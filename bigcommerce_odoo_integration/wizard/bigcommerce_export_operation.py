@@ -17,7 +17,7 @@ class BigCommerceExportOperation(models.TransientModel):
     bc_store_instance_ids = fields.Many2many("bigcommerce.store.configuration", 'bc_export_opr_bc_store_conf',
                                              string="BigCommerce Store")
     export_operation_of_bc = fields.Selection(
-        [('export_product', 'Export Product')], string="Import")
+        [('export_product', 'Export Product')], string="Export")
     product_tmpl_ids = fields.Many2many('product.template')
 
     def do_export_operations(self):

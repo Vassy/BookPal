@@ -54,16 +54,24 @@ class BigcommerceStoreListing(models.Model):
         vals = {
             "name":product_data.get('name'),
             "default_code":product_data.get('sku',''),
-            "bigcommerce_store_id":bigcommerce_store_id.id,
             "bc_product_id":product_data.get('id'),
-            "product_tmpl_id":product_tmpl_id.id,
-            "listing_create_date":datetime.now(),
             "description":product_data.get('description'),
-            "is_listed":True,
-            "is_published":True,
             "product_category_id":category_id.id,
             "ecommerce_category_ids":[(6,0,public_category_ids.ids or [])]
         }
+
+        update_bc_listing = self._context.get('update_bc_listing', False)
+        if update_bc_listing:
+            update_bc_listing.write(vals)
+            return update_bc_listing
+
+        vals.update({
+            "bigcommerce_store_id": bigcommerce_store_id.id,
+            "product_tmpl_id": product_tmpl_id.id,
+            "listing_create_date": datetime.now(),
+            "is_listed": True,
+            "is_published": True
+        })
         listing_id = self.create(vals)
         return listing_id
 

@@ -424,7 +424,7 @@ class SaleOrderVts(models.Model):
                 _logger.info("Getting an Error In Import Order Response {}".format(e))
                 process_message="Getting an Error In Import Order Response {}".format(e)
                 self.create_bigcommerce_operation_detail('order','import','','',operation_id,warehouse_id,True,process_message)
-            operation_id and operation_id.write({'bigcommerce_message': 'Process Completed !'})
+            operation_id and operation_id.write({'bigcommerce_message': process_message})
             if len(operation_id.operation_ids) <= 0:
                 operation_id.sudo().unlink()
             bigcommerce_store_ids.bigcommerce_operation_message = " Import Sale Order Process Complete "
@@ -627,7 +627,7 @@ class SaleOrderVts(models.Model):
             process_message = "Getting an Error In Import Order Response {}".format(e)
             self.with_user(1).create_bigcommerce_operation_detail('order', 'import', '', '', operation_id, warehouse_id,
                                                                   True, process_message)
-        operation_id and operation_id.write({'bigcommerce_message': "Process Completed !"})
+        operation_id and operation_id.write({'bigcommerce_message': process_message})
 
     def prepare_sale_order_lines(self,order_id=False,product_details=False,operation_id=False,warehouse_id=False, order_data=False, bigcommerce_store_id=False):
         for order_line in product_details:
@@ -808,14 +808,19 @@ class SaleOrderVts(models.Model):
 
         url = "%s%s/v2/orders/%s/products" % (
         self.bigcommerce_store_id.bigcommerce_api_url, bigcommerce_store_hash, self.big_commerce_order_id)
+        _logger.info("2______________2 : {0}".format(url))
         try:
             response = request(method="GET", url=url, headers=headers)
+            _logger.info("1______________1 : {0}".format(response))
             if response.status_code in [200, 201]:
                 response = response.json()
                 _logger.info("BigCommerce Get Shipment  Response : {0}".format(response))
                 for response in response:
+                    _logger.info("1______________: {0}".format(response))
                     line_id = self.env['sale.order.line'].search([('order_id', '=', self.id), ('product_id.bigcommerce_product_id', '=', response.get('product_id'))])
                     line_id.order_product_id = response.get('id')
+                    _logger.info("2__________ : {0}".format(line_id.order_product_id))
+                    self._cr.commit()
             else:
                 self.with_user(1).message_post(
                     body="Getting an Error in Import Shipment Address : {0}".format(response.content))

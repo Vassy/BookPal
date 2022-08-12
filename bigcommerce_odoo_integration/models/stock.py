@@ -34,6 +34,7 @@ class StockPicking(models.Model):
         ls = []
         for line in self.move_lines.filtered(lambda mv:mv.quantity_done != 0.0):
             order_product_id = line.sale_line_id.order_product_id
+            _logger.info("3___________ {0}".format(order_product_id))
             line_data = {
                 "order_product_id": int(order_product_id),
                 # "product_id": int(line.sale_line_id.product_id.bigcommerce_product_id),
@@ -56,6 +57,7 @@ class StockPicking(models.Model):
         try:
             response = request(method="POST", url=api_url, data=json.dumps(request_data), headers=headers)
             _logger.info("Sending Post Request To {}".format(api_url))
+            _logger.info("Sending Post Request To {}".format(json.dumps(request_data)))
             if response.status_code in [200, 201]:
                 response_data = response.json()
                 self.message_post(body="Shipment Created in Bigcommerce : {}".format(response_data.get('id')))
