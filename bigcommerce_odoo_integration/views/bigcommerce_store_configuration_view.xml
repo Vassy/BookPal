@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    # kanban view
+    <record id="bigcommerce_store_kanban_view_kanban" model="ir.ui.view">
+        <field name="name">bigcommerce.store.Kanban.view</field>
+        <field name="model">bigcommerce.store.configuration</field>
+        <field name="arch" type="xml">
+            <kanban create="1" class="oe_background_grey o_kanban_dashboard o_account_kanban">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="color"/>
+                <field name="image"/>
+                <field name="total_order_count"/>
+                <field name="total_product_count"/>
+                <field name="total_customer_count"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="#{kanban_color(record.color.raw_value)}">
+                            <!--                            <t t-value="record.marketplace.raw_value" t-set="marketplace_type"/>-->
+                            <div t-attf-class="o_kanban_card_header">
+                                <div class="o_kanban_card_header_title">
+                                    <div class="o_primary">
+                                        <img alt="Marketplace Instance"
+                                             t-att-src="kanban_image('bigcommerce.store.configuration', 'image_medium', record.id.raw_value)"
+                                             class="oe_kanban_avatar img-fluid" width="55" height="55"/>
+                                        <a type="object" name="open_bigcommerce_store_form_view">
+                                            <field name="name"/>
+                                        </a>
+                                    </div>
+                                    <br/>
+                                </div>
+                                <div class="o_kanban_manage_button_section">
+                                    <a class="o_kanban_manage_toggle_button" href="#">
+                                        <i class="fa fa-ellipsis-v" aria-label="Selection" role="img"
+                                           title="Selection"/>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="container o_kanban_card_content">
+                                <div class="row">
+                                    <div class="col-7 o_kanban_primary_left">
+                                        <button type="object" name="bigcommerce_import_operation_wizard"
+                                                class="btn btn-primary"
+                                                style="display:unset !important;">
+                                            <span>
+                                                <i class="fa fa-arrow-down"/>
+                                                Import
+                                            </span>
+                                        </button>
+                                        <button type="object" name="bigcommerce_export_operation_wizard"
+                                                class="btn btn-primary"
+                                                style="display:unset !important;">
+                                            <span>
+                                                <i class="fa fa-arrow-up"/>
+                                                Export
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="col-1"/>
+                                </div>
+                                <div class="row mt16">
+                                    <div class="col-3 border-right">
+                                        <a name="action_redirect_to_customers"
+                                           type="object" class="d-flex flex-column align-items-center">
+                                            <span class="font-weight-bold">
+                                                <t t-esc="record.total_customer_count.value"/>
+                                            </span>
+                                            <span class="text-muted">Customers</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-3 border-right">
+                                        <a name="action_redirect_to_product"
+                                           type="object" class="d-flex flex-column align-items-center">
+                                            <span class="font-weight-bold">
+                                                <t t-esc="record.total_product_count.value"/>
+                                            </span>
+                                            <span class="text-muted">Products</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-3 border-right">
+                                        <a name="action_redirect_to_order"
+                                           type="object" class="d-flex flex-column align-items-center">
+                                            <span class="font-weight-bold">
+                                                <t t-esc="record.total_order_count.value"/>
+                                            </span>
+                                            <span class="text-muted">Orders</span>
+                                        </a>
+                                    </div>
+                                    <div class="col-2">
+                                        <a name="action_redirect_to_process"
+                                           type="object" class="d-flex flex-column align-items-center">
+                                            <span class="font-weight-bold">
+                                                <i class="fa fa-book"/>
+                                            </span>
+                                            <span class="text-muted">Logs</span>
+                                        </a>
+                                    </div>
+                                    <div class="container o_kanban_card_manage_pane dropdown-menu" role="menu">
+                                        <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
+                                            <div class="col-8" role="menuitem" aria-haspopup="true">
+                                                <ul role="menu" class="oe_kanban_colorpicker" data-field="color"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    # form view
+    <record id="bigcommerce_store_configuration_form_view" model="ir.ui.view">
+        <field name="name">Big commerce Store Configuration Form View</field>
+        <field name="model">bigcommerce.store.configuration</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="update_all_products_inventory" type="object" string="Update All Product Inventory"
+                            class="oe_highlight"/>
+                    <button name="import_product_from_bigcommerce_main" string="Import Products"
+                                                type="object"/>
+                    <!--<button name="import_product_categories_brand" type="object" string="Import Product Category/Brand" />
+                    <button name="import_customer_and_group" type="object" string="Import Customer/Group" />
+
+                    <button name="bigcommerce_to_odoo_import_orders_main" string="Import Orders"
+                                                type="object"/>-->
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                             <button name="action_redirect_to_customers" type="object" class="oe_stat_button"
+                                    icon="fa-users" string="Customers">
+                            </button>
+                            <button name="action_redirect_to_product" type="object" class="oe_stat_button"
+                                    icon="fa-bitbucket-square" string="Product">
+                            </button>
+                            <button name="action_redirect_to_order" type="object" class="oe_stat_button"
+                                    icon="fa-list-ul" string="Order">
+                            </button>
+                            <button name="action_redirect_to_process" type="object" class="oe_stat_button"
+                                    icon="fa-bug" string="Process">
+                            </button>
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                   options="{&quot;terminology&quot;: &quot;active&quot;}"/>
+                        </button>
+                    </div>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="e.g. Store Name.."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="warehouse_id" required="1"/>
+                        </group>
+                    </group>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-xs-12 col-md-6 o_setting_box" id="bigcommerce_product_import_status"
+                             name="bigcommerce_product_import_status">
+                            <div class="o_setting_right_pane">
+                                <label string="Bigcommerce Product Import Status" for="bigcommerce_product_import_status"/>
+                                <div class="text-muted">
+                                    Show Product Import Status
+                                </div>
+                                <div class="text-muted">
+                                    <b>
+                                        <field name="bigcommerce_product_import_status" readonly="1"/>
+                                    </b>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6 o_setting_box" id="bigcommerce_operation_message"
+                             name="bigcommerce_operation_message">
+                            <div class="o_setting_right_pane">
+                                <label string="Bigcommerce Import Operation Status" for="bigcommerce_operation_message"/>
+                                <div class="text-muted">
+                                    Show Import Operation Status
+                                </div>
+                                <div class="text-muted">
+                                    <b>
+                                        <field name="bigcommerce_operation_message" readonly="1"/>
+                                    </b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <notebook>
+                        <page string="Credential" name="credential">
+                            <div class="row mt16 o_settings_container">
+                                <div class="col-xs-12 col-md-6 o_setting_box" id="bigcommerce_api_url"
+                                     name="bigcommerce_api_url">
+                                    <div class="o_setting_right_pane">
+                                        <label string="API URL" for="bigcommerce_api_url"/>
+                                        <div class="text-muted">
+                                            ENTER Bigcommerce API URL.
+                                        </div>
+                                        <div class="text-muted">
+                                            <b>
+                                                <field name="bigcommerce_api_url" widget="url" required="1"/>
+                                            </b>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-12 col-md-6 o_setting_box" id="bigcommerce_store_hash"
+                                     name="bigcommerce_store_hash">
+                                    <div class="o_setting_right_pane">
+                                        <label string="Bigcommerce Store Hash" for="bigcommerce_store_hash"/>
+                                        <div class="text-muted">
+                                            ENTER Bigcommerce Store Hash
+                                        </div>
+                                        <div class="text-muted">
+                                            <b>
+                                                <field name="bigcommerce_store_hash" required="1"/>
+                                            </b>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-md-6 o_setting_box" id="bigcommerce_x_auth_client"
+                                     name="bigcommerce_x_auth_client">
+                                    <div class="o_setting_right_pane">
+                                        <label string="Bigcommerce Auth Client" for="bigcommerce_x_auth_client"/>
+                                        <div class="text-muted">
+                                            Enter Bigcommerce Auth Client
+                                        </div>
+                                        <div class="text-muted">
+                                            <b>
+                                                <field name="bigcommerce_x_auth_client" required="1"/>
+                                            </b>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-md-6 o_setting_box" id="bigcommerce_x_auth_token"
+                                     name="bigcommerce_x_auth_token">
+                                    <div class="o_setting_right_pane">
+                                        <label string="Bigcommerce Auth Token" for="bigcommerce_x_auth_token"/>
+                                        <div class="text-muted">
+                                            Enter Bigcommerce Auth Token
+                                        </div>
+                                        <div class="text-muted">
+                                            <b>
+                                                <field name="bigcommerce_x_auth_token" required="1"/>
+                                            </b>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<group>
+                                <group>
+                                    <field name="bigcommerce_api_url" widget="url" required="1"/>
+                                    <field name="bigcommerce_store_hash" required="1"/>
+                                    <field name="bigcommerce_x_auth_client" required="1"/>
+                                    <field name="bigcommerce_x_auth_token" required="1"/>
+                                </group>
+                            </group>-->
+                        </page>
+                        <page string="Configuration" name="configuration">
+                            <div class="row mt16 o_settings_container">
+                                <div class="col-xs-12 col-md-6 o_setting_box" id="pricelist_id"
+                                     name="pricelist_id">
+                                    <div class="o_setting_right_pane">
+                                        <label string="Pricelist" for="pricelist_id"/>
+                                        <div class="text-muted">
+                                            ENTER Default Pricelist For Import BC Order.
+                                        </div>
+                                        <div class="text-muted">
+                                            <b>
+                                                <field name="pricelist_id" required="1"/>
+                                            </b>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-xs-12 col-md-6 o_setting_box" id="auto_import_orders"
+                                     name="auto_import_orders">
+                                    <div class="o_setting_right_pane">
+                                        <label string="Auto Import Bigcommerce Order" for="auto_import_orders"/>
+                                        <div class="text-muted">
+                                            Checked If you want Import Order Automatically From BC
+                                        </div>
+                                        <div class="text-muted">
+                                            <b>
+                                                <field name="auto_import_orders" widget="boolean_toggle"/>
+                                            </b>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-md-6 o_setting_box" id="bigcommerce_product_skucode"
+                                     name="bigcommerce_product_skucode">
+                                    <div class="o_setting_right_pane">
+                                        <label string="Sync Product with" for="bigcommerce_product_skucode"/>
+                                        <div class="text-muted">
+                                            Checked If Sync Product with SKU CODE.
+                                        </div>
+                                        <div class="text-muted">
+                                            <b>
+                                                <field name="bigcommerce_product_skucode" widget="boolean_toggle"/>
+                                            </b>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-md-6 o_setting_box" id="auto_import_inventory_from_bigcommerce"
+                                     name="auto_import_inventory_from_bigcommerce">
+                                    <div class="o_setting_right_pane">
+                                        <label string="Import Inventory FROM BC" for="auto_import_inventory_from_bigcommerce"/>
+                                        <div class="text-muted">
+                                            Checked If you want to Update Qty in odoo.Import Inventory From BC While Import Product
+                                        </div>
+                                        <div class="text-muted">
+                                            <b>
+                                                <field name="auto_import_inventory_from_bigcommerce" widget="boolean_toggle"/>
+                                            </b>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-md-6 o_setting_box" id="bc_customer_prefix"
+                                     name="bc_customer_prefix">
+                                    <div class="o_setting_right_pane">
+                                        <label string="Customer Prefix" for="bc_customer_prefix"/>
+                                        <div class="text-muted">
+                                            Enter string if you want to add prefix before customer id. <br></br>Example. bigcommerce customer id = 44154, prefix string = MyStore So final customer id will be MyStore44154.
+                                        </div>
+                                        <div class="text-muted">
+                                            <b>
+                                                <field name="bc_customer_prefix" required="1" />
+                                            </b>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--<group>
+                                <group>
+                                    <field name="pricelist_id" required="1"/>
+                                    <field name="from_order_date" required="1"/>
+                                    <field name="last_modification_date" required="1"/>
+                                     <field name="source_of_import_data"/>
+                                     <field name="destination_of_import_data"/>
+                                </group>
+                                <group>
+                                    <field name="bigcommerce_order_status" required="1"/>
+                                    <field name="bigcommerce_operation_message" readonly="1"/>
+                                    <field name="auto_import_orders" widget="boolean_toggle"/>
+                                </group>
+                            </group>-->
+                        </page>
+                        <!--<page string="Products" name="product">
+                            <group>
+                                <group>
+                                     <field name="bigcommerce_product_skucode" widget="boolean_toggle"/>
+                                     <field name="auto_import_inventory_from_bigcommerce" widget="boolean_toggle"/>
+                                     <field name="bigcommerce_product_import_status" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="bigcommerce_product_id"/>
+                                    <button name="import_product_manually_from_bigcommerce" string="Import Single Product"
+                                    type="object" class="fa fa-arrow-right oe_link"/>
+                                </group>
+                            </group>
+                        </page>-->
+<!--                        <page string="Bigcommerce To Odoo Import"> -->
+<!--                            <table style="margin-top:35px">-->
+<!--                                <tr>-->
+<!--                                    <td style="padding-left:60px">-->
+<!--                                        <button name="bigcommerce_to_odoo_import_product_categories_main"-->
+<!--                                                string="1:Import Product Categories" type="object"-->
+<!--                                                class="oe_highlight"/>-->
+<!--                                    </td>-->
+<!--                                    <td style="padding-left:60px">-->
+<!--                                        <button name="import_product_from_bigcommerce_main" string="4 : Import Products"-->
+<!--                                                type="object" class="oe_highlight"/>-->
+<!--                                    </td>-->
+<!--                                </tr>-->
+<!--                                <br/>-->
+<!--                                <tr>-->
+<!--                                    <td style="padding-left:60px">-->
+<!--                                        <button name="bigcommerce_to_odoo_import_product_brands_main"-->
+<!--                                                string="2:Import Product Brand" type="object" class="oe_highlight"/>-->
+<!--                                    </td>-->
+<!--                                    <td style="padding-left:60px">-->
+<!--                                        <button name="bigcommerce_to_odoo_import_customers_main"-->
+<!--                                                string="5:Import Customers" type="object" class="oe_highlight"/>-->
+<!--                                    </td>-->
+<!--                                </tr>-->
+<!--                                <br/>-->
+<!--                                <tr>-->
+<!--                                    <td style="padding-left:60px">-->
+<!--                                        <button name="bigcommerce_to_odoo_import_customer_groups"-->
+<!--                                                string="3:Import Customer Group" type="object" class="oe_highlight"/>-->
+<!--                                    </td>-->
+<!--                                    <td style="padding-left:60px">-->
+<!--                                        <button name="bigcommerce_to_odoo_import_orders_main" string="6:Import Orders"-->
+<!--                                                type="object" class="oe_highlight"/>-->
+<!--                                    </td>-->
+
+<!--                                </tr>-->
+<!--                                <br/>-->
+<!--                            </table>-->
+<!--                        </page>-->
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="bigcommerce_store_configuraion_tree_view" model="ir.ui.view">
+        <field name="name">Bigcommerce Store Configuration</field>
+        <field name="model">bigcommerce.store.configuration</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name='name'/>
+                <field name="bigcommerce_store_hash"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="bigcommerce_store_configuration_action" model="ir.actions.act_window">
+        <field name="name">Bigcommerce Store Configuration</field>
+        <field name="res_model">bigcommerce.store.configuration</field>
+        <field name='view_mode'>kanban,tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Configure Store.
+            </p>
+        </field>
+    </record>
+</odoo>

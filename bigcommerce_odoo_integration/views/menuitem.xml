@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <menuitem id="bigcommerce_odoo_integration_menu" name="BigCommerce"
+                  sequence="5" web_icon="bigcommerce_odoo_integration,static/description/bc.jpg"/>
+        <menuitem action="bigcommerce_store_configuration_action" id="bigcommerce_odoo_integration_store_menuitem"
+                  name="BigCommerce Store" sequence="16"
+                  parent="bigcommerce_odoo_integration.bigcommerce_odoo_integration_menu"/>
+        <menuitem id="menu_bigcommerce_store_listing_main" name="Listing"
+                  parent="bigcommerce_odoo_integration.bigcommerce_odoo_integration_store_menuitem" sequence="30"/>
+
+        <menuitem id="menu_bc_store_listing_all" name="All Listing"
+                  parent="bigcommerce_odoo_integration.menu_bigcommerce_store_listing_main" sequence="5"
+                  action="action_bc_listing_all"/>
+        <menuitem id="menu_bc_listing_all_items" name="All Listing Items"
+                  parent="bigcommerce_odoo_integration.menu_bigcommerce_store_listing_main" sequence="10"
+                  action="action_bc_store_listing_items_all"/>
+
+        <menuitem name="Bigcommerce Configuration" id="bigcommerce_store_configuration"
+                  parent="bigcommerce_odoo_integration.bigcommerce_odoo_integration_menu" sequence="25"/>
+
+        <menuitem name="Bigcommerce Store Configuration" id="bigcommerce_store_configuration_menu"
+                  parent="bigcommerce_odoo_integration.bigcommerce_store_configuration"
+                  action="bigcommerce_store_configuration_action"
+                  sequence="2"/>
+
+        <menuitem id="menu_bigcommerce_operation_detail" name="Bigcommerce Process Details"
+                  parent="bigcommerce_odoo_integration.bigcommerce_store_configuration" sequence="4"
+                  action="action_bigcommerce_operation"/>
+
+        <menuitem id="menu_bigcommerce_operation_details" name="Fault Details"
+                  parent="bigcommerce_odoo_integration.bigcommerce_store_configuration" sequence="5"
+                  action="action_bigcommerce_operation_details"/>
+
+        <menuitem id="bigcommerce_store_product_category_menuitem" name="Product Category"
+                  sequence="8" parent="bigcommerce_odoo_integration.bigcommerce_odoo_integration_store_menuitem"
+                  action="bigcommerce_product_category_action_form"/>
+
+        <menuitem id="bigcommerce_store_product_menuitem" name="Product"
+                  sequence="9" parent="bigcommerce_odoo_integration.bigcommerce_odoo_integration_store_menuitem"
+                  action="bigcommerce_product_template_action_form"/>
+
+        <menuitem id="bigcommerce_store_customer_menuitem" name="Customer"
+                  sequence="9" parent="bigcommerce_odoo_integration.bigcommerce_odoo_integration_store_menuitem"
+                  action="bigcommerce_customer_action_form"/>
+
+        <menuitem id="bigcommerce_store_sale_order_menuitem" name="Sale Order"
+                  sequence="9" parent="bigcommerce_odoo_integration.bigcommerce_odoo_integration_store_menuitem"
+                  action="bigcommerce_sale_order_action_form"/>
+
+        <menuitem id="menu_bigcommerce_product_brand" name="Product Brand"
+                  parent="bigcommerce_odoo_integration_store_menuitem" sequence="10"
+                  action="action_bigcommerce_product_brand"/>
+
+    </data>
+</odoo>

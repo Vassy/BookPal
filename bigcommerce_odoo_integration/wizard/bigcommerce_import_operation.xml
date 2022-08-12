@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!--        form view of import operation-->
+    <record id="bigcommerce_operation_import_form_view" model="ir.ui.view">
+        <field name="name">bc operation import form view</field>
+        <field name="model">bigcommerce.import.operation</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="bc_store_instance_id" required="1" options='{"no_open": True, "no_create": True}'/>
+                </group>
+                <group>
+                    <group>
+                        <field name="import_operation_of_bc" widget="radio"/>
+                    </group>
+                    <group>
+                        <field name="import_product_bc_id_wise" widget="boolean_toggle" attrs="{'invisible':[('import_operation_of_bc','!=','import_products')]}" />
+                        <field name="source_of_import_data" attrs="{'invisible':['|',('import_operation_of_bc','!=','import_products'),('import_product_bc_id_wise','=',True)],'required':[('import_product_bc_id_wise','!=',True)]}"/>
+                        <field name="destination_of_import_data" attrs="{'invisible':['|',('import_operation_of_bc','!=','import_products'),('import_product_bc_id_wise','=',True)],'required':[('import_product_bc_id_wise','!=',True)]}" />
+                        <field name="bc_product_id"
+                               attrs="{'invisible':['|',('import_product_bc_id_wise','!=',True),('import_operation_of_bc','!=','import_products')],'required':[('import_product_bc_id_wise','=',True)]}"/>
+                        <field name="from_order_date" attrs="{'invisible':[('import_operation_of_bc','!=','import_order')],'required':[('import_operation_of_bc','=','import_order')]}"/>
+                        <field name="to_order_date" attrs="{'invisible':[('import_operation_of_bc','!=','import_order')],'required':[('import_operation_of_bc','=','import_order')]}"/>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Import" type="object" class="btn-primary" name="do_import_operations"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!--        action for form view of import operation-->
+    <record id="action_bc_import_operation" model="ir.actions.act_window">
+        <field name="name">BigCommerce Import Operation</field>
+        <field name="res_model">bigcommerce.import.operation</field>
+        <field name="view_mode">form</field>
+        <field name="context"></field>
+        <field name="view_id" ref="bigcommerce_operation_import_form_view"/>
+        <field name="target">new</field>
+    </record>
+</odoo>
