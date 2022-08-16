@@ -260,12 +260,12 @@ class BigCommerceStoreConfiguration(models.Model):
             t = Thread(target=self.bigcommerce_to_odoo_import_customers, args=())
             t.start()
 
-    def bigcommerce_to_odoo_import_customers(self):
+    def bigcommerce_to_odoo_import_customers(self,source_page=1,destination_page=1):
         with api.Environment.manage():
             new_cr = registry(self._cr.dbname).cursor()
             self = self.with_env(self.env(cr=new_cr))
             customer_obj = self.env['res.partner']
-            import_customer = customer_obj.bigcommerce_to_odoo_import_customers(self.warehouse_id, self)
+            import_customer = customer_obj.bigcommerce_to_odoo_import_customers(self.warehouse_id, self,source_page=source_page,destination_page=destination_page)
             return import_customer
 
     # def bigcommerce_to_odoo_import_inventory_main(self):

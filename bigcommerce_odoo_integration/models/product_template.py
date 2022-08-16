@@ -148,8 +148,9 @@ class ProductTemplate(models.Model):
                     attribute_line_ids_data = [0, False, {'attribute_id': attribute.id,
                                                           'value_ids': [[6, False, attribute_val_ids]]}]
                     attrib_line_vals.append(attribute_line_ids_data)
-        # category_id = self.env['product.category'].sudo().search([('bigcommerce_product_category_id','in',record.get('categories'))],limit=1)
-        category_id = self.env.ref('product.product_category_all')
+        category_id = self.env['product.category'].sudo().search([('bigcommerce_product_category_id','in',record.get('categories'))],limit=1)
+        if not category_id:
+            category_id = self.env.ref('product.product_category_all')
         if not category_id:
             message = "Category not found!"
             _logger.info("Category not found: {}".format(category_id))
