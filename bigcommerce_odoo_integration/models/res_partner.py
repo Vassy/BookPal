@@ -43,7 +43,7 @@ class ResPartner(models.Model):
         operation_detail_id = bigcommerce_operation_details_obj.create(vals)
         return operation_detail_id
 
-    def bigcommerce_to_odoo_import_customers(self, warehouse_id=False, bigcommerce_store_ids=False):
+    def bigcommerce_to_odoo_import_customers(self, warehouse_id=False, bigcommerce_store_ids=False,source_page=1,destination_page=1):
         for bigcommerce_store_id in bigcommerce_store_ids:
             req_data = False
             customer_response_pages = []
@@ -62,31 +62,37 @@ class ResPartner(models.Model):
                     records = response_data.get('data')
 
                     total_pages = response_data.get('meta').get('pagination').get('total_pages')
+                    if total_pages > 0:
+                        bc_total_pages = total_pages + 1
+                        inp_from_page = source_page or bigcommerce_store_id.source_of_import_data
+                        inp_total_pages = destination_page or bigcommerce_store_id.destination_of_import_data
+                        from_page = bc_total_pages - inp_total_pages
+                        total_pages = bc_total_pages - inp_from_page
+                    else:
+                        from_page = source_page or bigcommerce_store_id.source_of_import_data
+                        total_pages = destination_page or bigcommerce_store_id.destination_of_import_data
                     if total_pages > 1:
-                        while (total_pages != 0):
-                            try:
-                                page_api = "/v3/customers?page=%s" % (total_pages)
-                                page_response_data = bigcommerce_store_id.send_get_request_from_odoo_to_bigcommerce(
-                                    page_api)
-                                if page_response_data.status_code in [200, 201]:
-                                    page_response_data = page_response_data.json()
-                                    _logger.info("Customer Response Data : {0}".format(page_response_data))
-                                    page_records = page_response_data.get('data')
-                                    customer_response_pages.append(page_records)
-                            except Exception as e:
-                                category_process_message = "Page is not imported! %s" % (e)
-                                _logger.info("Getting an Error In Customer Response {}".format(e))
-                                process_message = "Getting an Error In Import Customer Response {}".format(e)
-                                self.create_bigcommerce_operation_detail('customer', 'import', page_response_data,
-                                                                         category_process_message,
-                                                                         customer_operation_id, warehouse_id, True,
-                                                                         process_message)
-                            total_pages = total_pages - 1
-
-
+                        while (total_pages >= from_page):
+                                try:
+                                    page_api = "/v3/customers?page=%s" % (total_pages)
+                                    page_response_data = bigcommerce_store_id.send_get_request_from_odoo_to_bigcommerce(
+                                        page_api)
+                                    if page_response_data.status_code in [200, 201]:
+                                        page_response_data = page_response_data.json()
+                                        _logger.info("Customer Response Data : {0}".format(page_response_data))
+                                        page_records = page_response_data.get('data')
+                                        customer_response_pages.append(page_records)
+                                except Exception as e:
+                                    category_process_message = "Page is not imported! %s" % (e)
+                                    _logger.info("Getting an Error In Customer Response {}".format(e))
+                                    process_message = "Getting an Error In Import Customer Response {}".format(e)
+                                    self.create_bigcommerce_operation_detail('customer', 'import', page_response_data,
+                                                                             category_process_message,
+                                                                             customer_operation_id, warehouse_id, True,
+                                                                             process_message)
+                                total_pages = total_pages - 1
                     else:
                         customer_response_pages.append(records)
-
                     for customer_response_page in customer_response_pages:
                         for record in customer_response_page:
                             bc_customer_id = bigcommerce_store_id.bc_customer_prefix + "_" + str(

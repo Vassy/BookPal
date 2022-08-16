@@ -23,7 +23,7 @@ class BigCommerceImportOperation(models.TransientModel):
     import_product_category = fields.Boolean(string="Product Category")
     import_operation_of_bc = fields.Selection(
         [('import_pc_pg_grp', 'Product Category, Brand, Group'), ('import_customer', 'Customer'),
-         ('import_products', 'Products'), ('import_order', 'Orders')], string="Import", default="import_pc_pg_cst_grp")
+         ('import_products', 'Products'), ('import_order', 'Orders')], string="Import", default="import_pc_pg_grp")
     import_product_bc_id_wise = fields.Boolean(string='Import Product Using BigCommerce ID',help='Enter Bigcommerce ID')
     bc_product_id = fields.Char(string="BigCommerce Product ID",
                                 help="Use BigCommerce Product ID if you want to list specific product.")
@@ -42,7 +42,14 @@ class BigCommerceImportOperation(models.TransientModel):
             self.bc_store_instance_id.bigcommerce_to_odoo_import_product_categories_main()
             self.bc_store_instance_id.bigcommerce_to_odoo_import_customer_groups()
         elif self.import_operation_of_bc == 'import_customer':
-            self.bc_store_instance_id.bigcommerce_to_odoo_import_customers_main()
+            #self.bc_store_instance_id.bigcommerce_to_odoo_import_customers_main()
+            self.bc_store_instance_id.bigcommerce_operation_message = "Import Customer Process Running..."
+            self._cr.commit()
+            with api.Environment.manage(), db_registry.cursor() as cr:
+                env_thread1 = api.Environment(cr, SUPERUSER_ID, self._context)
+                t = Thread(target=self.bc_store_instance_id.bigcommerce_to_odoo_import_customers,
+                           args=(self.source_of_import_data, self.destination_of_import_data))
+                t.start()
         elif self.import_operation_of_bc == 'import_products':
             product_obj = self.env['product.template']
             if self.import_product_bc_id_wise:

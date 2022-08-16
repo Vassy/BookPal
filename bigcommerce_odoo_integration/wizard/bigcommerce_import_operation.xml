@@ -15,8 +15,8 @@
                     </group>
                     <group>
                         <field name="import_product_bc_id_wise" widget="boolean_toggle" attrs="{'invisible':[('import_operation_of_bc','!=','import_products')]}" />
-                        <field name="source_of_import_data" attrs="{'invisible':['|',('import_operation_of_bc','!=','import_products'),('import_product_bc_id_wise','=',True)],'required':[('import_product_bc_id_wise','!=',True)]}"/>
-                        <field name="destination_of_import_data" attrs="{'invisible':['|',('import_operation_of_bc','!=','import_products'),('import_product_bc_id_wise','=',True)],'required':[('import_product_bc_id_wise','!=',True)]}" />
+                        <field name="source_of_import_data" attrs="{'invisible':['|',('import_operation_of_bc','not in',['import_customer','import_products']),('import_product_bc_id_wise','=',True)],'required':[('import_product_bc_id_wise','!=',True)]}"/>
+                        <field name="destination_of_import_data" attrs="{'invisible':['|',('import_operation_of_bc','not in',['import_customer','import_products']),('import_product_bc_id_wise','=',True)],'required':[('import_product_bc_id_wise','!=',True)]}" />
                         <field name="bc_product_id"
                                attrs="{'invisible':['|',('import_product_bc_id_wise','!=',True),('import_operation_of_bc','!=','import_products')],'required':[('import_product_bc_id_wise','=',True)]}"/>
                         <field name="from_order_date" attrs="{'invisible':[('import_operation_of_bc','!=','import_order')],'required':[('import_operation_of_bc','=','import_order')]}"/>
