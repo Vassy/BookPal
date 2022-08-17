@@ -49,10 +49,9 @@ class ProductTemplate(models.Model):
         """
         for record in self:
             listing = self.env['bc.store.listing'].search([('product_tmpl_id', '=', record.id)])
-            res = super(ProductTemplate, self).unlink()
-            if res and listing:
+            if listing:
                 listing.unlink()
-        return res
+        return super(ProductTemplate, self).unlink()
 
     def create_bigcommerce_operation(self, operation, operation_type, bigcommerce_store_id, log_message, warehouse_id):
         vals = {
