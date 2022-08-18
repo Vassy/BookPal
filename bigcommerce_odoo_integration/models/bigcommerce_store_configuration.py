@@ -260,7 +260,6 @@ class BigCommerceStoreConfiguration(models.Model):
             t = Thread(target=self.bigcommerce_to_odoo_import_customers, args=())
             t.start()
 
-
     def bigcommerce_to_odoo_import_customers(self,source_page=1,destination_page=1):
         with api.Environment.manage():
             new_cr = registry(self._cr.dbname).cursor()
