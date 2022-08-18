@@ -166,6 +166,7 @@ class ProductTemplate(models.Model):
             'categ_id': category_id and category_id.id,
             "weight": record.get("weight"),
             "list_price": record.get("price"),
+            "standard_price":record.get('cost_price'),
             "is_visible": record.get("is_visible"),
             "public_categ_ids": [(6, 0, public_category_ids.ids)],
             "bigcommerce_product_id": record.get('id'),
@@ -310,8 +311,9 @@ class ProductTemplate(models.Model):
                                         [('bc_brand_id', '=', record.get('brand_id'))], limit=1)
                                     _logger.info("BRAND : {0}".format(brand_id))
                                     product_template_id.write({
-                                        # "list_price": record.get("price"),
+                                        "list_price": record.get("price"),
                                         "is_visible": record.get("is_visible"),
+                                        "standard_price":record.get('cost_price'),
                                         "inventory_tracking": record.get("inventory_tracking"),
                                         "bigcommerce_product_id": record.get('id'),
                                         "bigcommerce_store_id": bigcommerce_store_id.id,
