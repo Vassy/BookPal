@@ -13,6 +13,8 @@
                             string="Update Product in BC" type="object" class="btn-primary"/>
                     <button name="export_product_in_bigcommerce" id="export_product_in_bigcommerce_btn"
                             string="Export Product To BC" type="object" class="btn-primary"/>
+                    <button name="update_product_from_bc_to_odoo" id="update_product_from_bc_to_odoo"
+                            string="Update Product To ODOO" type="object" class="btn-primary"/>
                     <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
@@ -27,7 +29,7 @@
             <field name="target">new</field>
             <!-- TODO: check if we need this -->
             <field name="binding_model_id" ref="product.model_product_template" />
-            <field name="binding_view_types">list</field>
+            <field name="binding_view_types">list,form</field>
         </record>
 
 </odoo>

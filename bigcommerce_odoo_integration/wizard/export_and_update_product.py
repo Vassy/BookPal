@@ -18,6 +18,13 @@ class ExportandUpdateProductinBC(models.TransientModel):
     bigcommerce_store_ids = fields.Many2many('bigcommerce.store.configuration','bc_store_export_and_update_product_rel',string='Bigcommerce Store')
     count = fields.Integer(default=_count, string='Order Count')
 
+    def update_product_from_bc_to_odoo(self):
+        product_templates = self.env['product.template'].browse(self._context.get('active_ids', []))
+        for bc_store in self.bigcommerce_store_ids:
+            for product in product_templates:
+                listing_id = self.env['bc.store.listing'].search([('product_tmpl_id','=',product.id)])
+                self.env['product.template'].import_product_from_bigcommerce(bigcommerce_store_ids=bc_store,bigcommerce_product_id=listing_id.bc_product_id, add_single_product=True)
+
     def update_product_in_bigcommerce(self):
         product_templates = self.env['product.template'].browse(self._context.get('active_ids', []))
         for bc_store in self.bigcommerce_store_ids:
