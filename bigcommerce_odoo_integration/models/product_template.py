@@ -274,8 +274,9 @@ class ProductTemplate(models.Model):
                                     [('bc_product_id', '=', record.get('id')),
                                      ('bigcommerce_store_id', '=', bigcommerce_store_id.id)])
                                 if listing_id:
+                                    product_template_id = listing_id.product_tmpl_id
                                     _logger.info("::: Listing is already created {}".format(listing_id.id))
-                                    continue
+                                    #continue
                                 if not product_template_id:
                                     if bigcommerce_store_id.bigcommerce_product_skucode and record.get('sku'):
                                         product_template_id = self.env['product.template'].sudo().search(
@@ -312,8 +313,8 @@ class ProductTemplate(models.Model):
                                     _logger.info("BRAND : {0}".format(brand_id))
                                     product_template_id.write({
                                         "list_price": record.get("price"),
+                                        "standard_price": record.get("cost_price"),
                                         "is_visible": record.get("is_visible"),
-                                        "standard_price":record.get('cost_price'),
                                         "inventory_tracking": record.get("inventory_tracking"),
                                         "bigcommerce_product_id": record.get('id'),
                                         "bigcommerce_store_id": bigcommerce_store_id.id,
@@ -337,9 +338,10 @@ class ProductTemplate(models.Model):
                                                                                                         product_template_id,
                                                                                                         operation_id)
 
-                                listing_id = self.env['bc.store.listing'].create_or_update_bc_store_listing(record,
-                                                                                                            product_template_id,
-                                                                                                            bigcommerce_store_id)
+                                if not listing_id:
+                                    listing_id = self.env['bc.store.listing'].create_or_update_bc_store_listing(record,
+                                                                                                                product_template_id,
+                                                                                                                bigcommerce_store_id)
                                 self.env['bigcommerce.product.image'].with_user(1).import_multiple_product_image(
                                     bigcommerce_store_id, product_template_id, listing_id)
                                 if product_template_id.product_variant_count > 1:
