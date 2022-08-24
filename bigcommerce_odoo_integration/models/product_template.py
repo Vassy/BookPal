@@ -315,6 +315,7 @@ class ProductTemplate(models.Model):
                                         "list_price": record.get("price"),
                                         "standard_price": record.get("cost_price"),
                                         "is_visible": record.get("is_visible"),
+                                        "standard_price":record.get('cost_price'),
                                         "inventory_tracking": record.get("inventory_tracking"),
                                         "bigcommerce_product_id": record.get('id'),
                                         "bigcommerce_store_id": bigcommerce_store_id.id,
