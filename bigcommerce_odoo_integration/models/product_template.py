@@ -312,14 +312,16 @@ class ProductTemplate(models.Model):
                                     brand_id = self.env['bc.product.brand'].sudo().search(
                                         [('bc_brand_id', '=', record.get('brand_id'))], limit=1)
                                     _logger.info("BRAND : {0}".format(brand_id))
+                                    public_category_ids = self.env['product.category'].sudo().search(
+                                        [('bigcommerce_product_category_id', 'in', record.get('categories'))])
                                     product_template_id.write({
                                         "list_price": record.get("price"),
                                         "standard_price": record.get("cost_price"),
                                         "is_visible": record.get("is_visible"),
-                                        "standard_price":record.get('cost_price'),
                                         "inventory_tracking": record.get("inventory_tracking"),
                                         "bigcommerce_product_id": record.get('id'),
                                         "bigcommerce_store_id": bigcommerce_store_id.id,
+                                        "public_categories_ids": [(6, 0, public_category_ids.ids)],
                                         "default_code": record.get("sku"),
                                         "is_imported_from_bigcommerce": True,
                                         "description_sale": "",
