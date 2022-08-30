@@ -732,7 +732,17 @@ class SaleOrderVts(models.Model):
                 "zip" : "{}".format(self.partner_id and self.partner_id.zip),
                 "country": "{}".format(self.partner_id and self.partner_id.country_id.name),
                 "email" :"{}".format(self.partner_id and self.partner_id.email) },
-            'products': ls }
+            'products': ls}
+        if self.partner_shipping_id:
+            request_data.update({'shipping_addresses': {
+                    "first_name": "{}".format(self.partner_shipping_id.name or ""),
+                    "street_1": "{}".format(self.partner_shipping_id.street or ""),
+                    "street_2": "{}".format(self.partner_shipping_id.street2 or ""),
+                    "city": "{}".format(self.partner_shipping_id.city or ""),
+                    "state": "{}".format(self.partner_shipping_id.state_id and self.partner_shipping_id.state_id.name or ""),
+                    "zip": "{}".format(self.partner_shipping_id.zip),
+                    "country": "{}".format(self.partner_shipping_id.country_id and self.partner_shipping_id.country_id.name),
+                    "email": "{}".format(self.partner_shipping_id.email)}})
         operation_id = self.create_bigcommerce_operation('order', 'export', self.bigcommerce_store_id, 'Processing...',
                                                          self.warehouse_id)
         self._cr.commit()

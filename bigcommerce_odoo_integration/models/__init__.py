@@ -1,4 +1,4 @@
-from . import product_image
+# from . import product_image
 from . import bc_store_listing
 from . import bc_store_listing_item
 from . import bigcommerce_store_configuration

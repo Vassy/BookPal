@@ -26,6 +26,7 @@ class ProductProduct(models.Model):
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
+    public_categories_ids = fields.Many2many('product.category', string='Product Categories')
     bigcommerce_product_image_ids = fields.One2many('bigcommerce.product.image', 'product_template_id',
                                                     string="Bigcommerce Product Image Ids")
     bigcommerce_product_id = fields.Char(string='Bigcommerce Product', copy=False)
@@ -154,7 +155,7 @@ class ProductTemplate(models.Model):
             message = "Category not found!"
             _logger.info("Category not found: {}".format(category_id))
             return False, message
-        public_category_ids = self.env['product.public.category'].sudo().search(
+        public_category_ids = self.env['product.category'].sudo().search(
             [('bigcommerce_product_category_id', 'in', record.get('categories'))])
         brand_id = self.env['bc.product.brand'].sudo().search([('bc_brand_id', '=', record.get('brand_id'))], limit=1)
         _logger.info("BRAND : {0}".format(brand_id))
@@ -168,7 +169,7 @@ class ProductTemplate(models.Model):
             "list_price": record.get("price"),
             "standard_price":record.get('cost_price'),
             "is_visible": record.get("is_visible"),
-            "public_categ_ids": [(6, 0, public_category_ids.ids)],
+            "public_categories_ids": [(6, 0, public_category_ids.ids)],
             "bigcommerce_product_id": record.get('id'),
             "bigcommerce_store_id": store_id.id,
             "default_code": record.get("sku"),
@@ -470,7 +471,7 @@ class ProductTemplate(models.Model):
             "weight": product_id.weight or 1.0,
             "is_visible": product_id.is_visible
         }
-        ecomm_categ = product_id.public_categ_ids.mapped('bigcommerce_product_category_id')
+        ecomm_categ = product_id.public_categories_ids.mapped('bigcommerce_product_category_id')
         for categ_id in ecomm_categ:
             categ_ids.append(int(categ_id))
         if not ecomm_categ:
@@ -530,14 +531,14 @@ class ProductTemplate(models.Model):
                     images.append({'image_url': product_standard_image_url, 'is_thumbnail': True,
                                    'url_standard': product_standard_image_url, 'url_tiny': product_tiny_image_url,
                                    'description': 'Main Image' + ":" + str(product.id)})
-                for product_image_id in product.product_template_image_ids:
-                    media_standard_image_url = web_base_url + '/web/image/product.image/{}/image_1024/'.format(
-                        product_image_id.id)
-                    media_tiny_image_url = web_base_url + '/web/image/product.image/{}/image_256/'.format(
-                        product_image_id.id)
-                    images.append({'image_url': media_standard_image_url, 'is_thumbnail': False,
-                                   'url_standard': media_standard_image_url, 'url_tiny': media_tiny_image_url,
-                                   'description': product_image_id.name + ":" + str(product_image_id.id)})
+                # for product_image_id in product.product_template_image_ids:
+                #     media_standard_image_url = web_base_url + '/web/image/product.image/{}/image_1024/'.format(
+                #         product_image_id.id)
+                #     media_tiny_image_url = web_base_url + '/web/image/product.image/{}/image_256/'.format(
+                #         product_image_id.id)
+                #     images.append({'image_url': media_standard_image_url, 'is_thumbnail': False,
+                #                    'url_standard': media_standard_image_url, 'url_tiny': media_tiny_image_url,
+                #                    'description': product_image_id.name + ":" + str(product_image_id.id)})
                 product_data.update({'images': images})
                 response_data = bigcommerce_store_id.send_request_from_odoo_to_bigcommerce(product_data,
                                                                                            api_operation)
@@ -584,10 +585,10 @@ class ProductTemplate(models.Model):
                         if 'Main Image' in product_image_desc:
                             product.bc_product_image_id = image.get('id')
                             listing_id.bc_product_image_id = image.get('id')
-                        else:
-                            ecom_product_image_id = self.env['product.image'].search(
-                                [('id', '=', product_image_desc[1])])
-                            ecom_product_image_id.bc_product_image_id = image.get('id')
+                        # else:
+                        #     ecom_product_image_id = self.env['product.image'].search(
+                        #         [('id', '=', product_image_desc[1])])
+                        #     ecom_product_image_id.bc_product_image_id = image.get('id')
                     product.write({'bigcommerce_product_id': bc_product_id, 'is_exported_to_bigcommerce': True})
                     process_message = "Product Exported Successfully : {0} BC Product ID : {1}".format(product.name,
                                                                                                       bc_product_id)

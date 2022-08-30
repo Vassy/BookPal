@@ -33,6 +33,7 @@
                                 <field name="inventory_warning_level"/>
                                 <field name="is_visible"/>
                                 <field name="warranty"/>
+                                <field name="public_categories_ids" widget="many2many_tags"/>
                             </group>
                         </group>
                     </page>
