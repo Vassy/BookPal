@@ -5,16 +5,15 @@ import logging
 _logger = logging.getLogger("BigCommerce")
 
 
-class ProductCategory(models.Model):
-    _inherit = "product.public.category"
-
-    bigcommerce_product_category_id = fields.Char("Bigcommerce Category ID", copy=False)
-    custom_url = fields.Char(string="Custom Url - B2B", copy=False)
-    is_visible = fields.Boolean(string="Is Visible - B2B", copy=False)
-    bigcommerce_parent_category_id = fields.Char("Bigcommerce Parent Category ID - B2B", copy=False)
-    is_exported_to_bigcommerce = fields.Boolean(string='Is Exported to BigCommerce', default=False)
-    bigcommerce_store_id = fields.Many2one('bigcommerce.store.configuration', string="Bigcommerce Store", copy=False)
-
+# class ProductCategory(models.Model):
+#     _inherit = "product.public.category"
+#
+#     bigcommerce_product_category_id = fields.Char("Bigcommerce Category ID", copy=False)
+#     custom_url = fields.Char(string="Custom Url - B2B", copy=False)
+#     is_visible = fields.Boolean(string="Is Visible - B2B", copy=False)
+#     bigcommerce_parent_category_id = fields.Char("Bigcommerce Parent Category ID - B2B", copy=False)
+#     is_exported_to_bigcommerce = fields.Boolean(string='Is Exported to BigCommerce', default=False)
+#     bigcommerce_store_id = fields.Many2one('bigcommerce.store.configuration', string="Bigcommerce Store", copy=False)
 
 class ProductCategory(models.Model):
     _inherit = "product.category"
@@ -191,36 +190,36 @@ class ProductCategory(models.Model):
                                                                      response_data, category_operation_id, warehouse_id,
                                                                      False, process_message)
                             self._cr.commit()
-                            public_category_id = self.env['product.public.category'].search(
-                                [('name', '=', record.get('name')),('bigcommerce_store_id','=',bigcommerce_store_id.id)],
-                                limit=1)
-                            if not public_category_id:
-                                vals = {
-                                    'name': record.get('name'),
-                                    'is_exported_to_bigcommerce': True,
-                                    'bigcommerce_product_category_id': record.get('id'),
-                                    'custom_url': record.get('custom_url') and record.get(
-                                        'custom_url').get('url'),
-                                    'bigcommerce_parent_category_id': record.get('parent_id'),
-                                    'is_visible': record.get('is_visible'),
-                                    'bigcommerce_store_id': bigcommerce_store_id.id
-                                }
-                                public_category_id = self.env['product.public.category'].create(vals)
-                                _logger.info("Ecommerce Product Category Created : {0}".format(public_category_id.name))
-                                response_data = record
-                                process_message = "Ecommerce Product Category Created : {0}".format(public_category_id.name)
-                            else:
-                                vals = {
-                                    'name': record.get('name'),
-                                    'bigcommerce_product_category_id': record.get('id'),
-                                    'custom_url': record.get('custom_url') and record.get('custom_url').get(
-                                        'url'), 'bigcommerce_parent_category_id': record.get('parent_id'),
-                                    'is_visible': record.get('is_visible')
-                                }
-                                public_category_id.write(vals)
-                                _logger.info("Ecommerce Product Category Updated : {0}".format(public_category_id.name))
-                                process_message = "Ecommerce Product Category Updated : {0}".format(public_category_id.name)
-                                req_data = record
+                            # public_category_id = self.env['product.public.category'].search(
+                            #     [('name', '=', record.get('name')),('bigcommerce_store_id','=',bigcommerce_store_id.id)],
+                            #     limit=1)
+                            # if not public_category_id:
+                            #     vals = {
+                            #         'name': record.get('name'),
+                            #         'is_exported_to_bigcommerce': True,
+                            #         'bigcommerce_product_category_id': record.get('id'),
+                            #         'custom_url': record.get('custom_url') and record.get(
+                            #             'custom_url').get('url'),
+                            #         'bigcommerce_parent_category_id': record.get('parent_id'),
+                            #         'is_visible': record.get('is_visible'),
+                            #         'bigcommerce_store_id': bigcommerce_store_id.id
+                            #     }
+                            #     public_category_id = self.env['product.public.category'].create(vals)
+                            #     _logger.info("Ecommerce Product Category Created : {0}".format(public_category_id.name))
+                            #     response_data = record
+                            #     process_message = "Ecommerce Product Category Created : {0}".format(public_category_id.name)
+                            # else:
+                            #     vals = {
+                            #         'name': record.get('name'),
+                            #         'bigcommerce_product_category_id': record.get('id'),
+                            #         'custom_url': record.get('custom_url') and record.get('custom_url').get(
+                            #             'url'), 'bigcommerce_parent_category_id': record.get('parent_id'),
+                            #         'is_visible': record.get('is_visible')
+                            #     }
+                            #     public_category_id.write(vals)
+                            #     _logger.info("Ecommerce Product Category Updated : {0}".format(public_category_id.name))
+                            #     process_message = "Ecommerce Product Category Updated : {0}".format(public_category_id.name)
+                            #     req_data = record
                             self.create_bigcommerce_operation_detail('product_category', 'import', req_data, response_data,
                                                                      category_operation_id, warehouse_id, False,
                                                                      process_message)
@@ -261,13 +260,13 @@ class ProductCategory(models.Model):
                     category.write({'parent_id': parent_id.id})
 
         # ecommerce categories
-        for category in self.env['product.public.category'].sudo().search(
-                [('bigcommerce_product_category_id', '!=', False)]):
-            if category.bigcommerce_parent_category_id:
-                parent_id = self.env['product.public.category'].search(
-                    [('bigcommerce_product_category_id', '=', category.bigcommerce_parent_category_id)])
-                if parent_id:
-                    category.write({'parent_id': parent_id.id})
+        # for category in self.env['product.public.category'].sudo().search(
+        #         [('bigcommerce_product_category_id', '!=', False)]):
+        #     if category.bigcommerce_parent_category_id:
+        #         parent_id = self.env['product.public.category'].search(
+        #             [('bigcommerce_product_category_id', '=', category.bigcommerce_parent_category_id)])
+        #         if parent_id:
+        #             category.write({'parent_id': parent_id.id})
         self._cr.commit()
         return True
 

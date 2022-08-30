@@ -35,7 +35,7 @@ class BigcommerceStoreListing(models.Model):
     is_listed = fields.Boolean("Listed?", copy=False)
     is_published = fields.Boolean("Published", copy=False)
     product_category_id = fields.Many2one('product.category',string='Product Category')
-    ecommerce_category_ids = fields.Many2many('product.public.category',string='Ecommerce Category')
+    ecommerce_category_ids = fields.Many2many('product.category', string='Ecommerce Category')
     #image_ids = fields.One2many('mk.listing.image', 'mk_listing_id', 'Images')
     bigcommerce_product_listing_image_ids = fields.One2many('bigcommerce.product.image', 'bigcommerce_listing_id',
                                                     string="Bigcommerce Product Image Ids")
@@ -49,7 +49,7 @@ class BigcommerceStoreListing(models.Model):
             message = "Category not found!"
             _logger.info("Category not found: {}".format(category_id))
             return False, message
-        public_category_ids = self.env['product.public.category'].sudo().search(
+        public_category_ids = self.env['product.category'].sudo().search(
             [('bigcommerce_product_category_id', 'in', product_data.get('categories'))])
         vals = {
             "name":product_data.get('name'),
@@ -57,7 +57,7 @@ class BigcommerceStoreListing(models.Model):
             "bc_product_id":product_data.get('id'),
             "description":product_data.get('description'),
             "product_category_id":category_id.id,
-            "ecommerce_category_ids":[(6,0,public_category_ids.ids or [])]
+            "ecommerce_category_ids": [(6, 0, public_category_ids.ids or [])]
         }
 
         update_bc_listing = self._context.get('update_bc_listing', False)

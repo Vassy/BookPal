@@ -12,7 +12,7 @@
     We also Provide the fedex,usps,easyship,stamp.com,ebay
 """,
 
-    'depends': ['delivery','sale_management','product','website_sale','sale_stock','website_sale_stock'],
+    'depends': ['delivery','sale_management','product','sale_stock'],
 
     'data': [
         'data/delivery_demo.xml',
@@ -54,3 +54,4 @@
 # 14.0.24.08.2021 (Improve UI)
 # 14.0.25.08.2021 (set parent_id in categories)
 # 14.0.14.10.2021 (added more features and improve listing functionality)
+# removed website dependency
