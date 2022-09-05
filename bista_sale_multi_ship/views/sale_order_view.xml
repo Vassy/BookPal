@@ -57,7 +57,7 @@
                             <button name="action_verify_customer_data" type="object"
                                 string="Verify Customer Details"
                                 class="btn-primary"/>
-                            <field name="so_line_dom"/>
+                            <field name="so_line_dom" invisible="1"/>
                         </group>
 
                         <!-- <button name="open_sale_multi_ship_wizard" type="object"
