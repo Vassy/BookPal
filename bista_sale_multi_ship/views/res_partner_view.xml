@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="account.res_partner_action_customer" model="ir.actions.act_window">
+            <field name="domain">[('is_multi_ship', '=',False)]
+            </field>
+    </record>
+
+    <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
+            <field name="domain">[('is_multi_ship', '=',False)]
+            </field>
+    </record>
+
+    <record id="contacts.action_contacts" model="ir.actions.act_window">
+        <field name="domain">[]</field>
+    </record>
+
+    <record id="view_res_partner_inherited_form_view" model="ir.ui.view">
+        <field name="name">res.partner.inherited.form.view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+                <xpath expr="//field[@name='property_ups_carrier_account']" position="replace">
+                        <field name="property_ups_carrier_account" attrs="{'invisible' : [('bill_my_account', '=', False)]}" string="Third Party Shipper #"/>
+                </xpath>
+                <xpath expr="//field[@name='property_delivery_carrier_id']" position="after">
+                        <field name="is_multi_ship"/>
+                </xpath>
+                <xpath expr="//field[@name='vat']" position="after">
+                    <field name="state" attrs="{'invisible': [('is_multi_ship', '=', False)]}"/>
+                </xpath>
+        </field>
+    </record>
+
+    <record id="res_partner_search_all_multi_ship" model="ir.ui.view">
+        <field name="name">res.partner.</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']" position="after">
+                <filter string="Multi Shipment Contact" name="multi_ship_contact" domain="[('is_multi_ship', '=', True)]" context="{'is_multi_ship': True}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_partner_custom_multi_shipment_form_view" model="ir.ui.view">
+        <field name="name">res.partner.custom.multi.shipment.view</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form String="Add Customer Address">
+                <header>
+                    <button name="verify_customer_details" string="Verify Details" type="object"
+                            attrs="{'invisible': [('state' ,'=', 'verified')]}"
+                            class="text-primary"/>
+                    <button name="reset_to_draft" string="Reset TO Draft" type="object"
+                            attrs="{'invisible': ['|',('state' ,'!=', 'verified'),('stock_picking_id','!=',False)]}"
+                            class="text-primary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,verified"/>
+                    <field name="stock_picking_id" readonly="1" invisible="1"/>
+                </header>
+                <div class="alert alert-danger" role="alert" style="margin-bottom:0px;"
+                     attrs="{'invisible': [('state', '!=', 'error')]}">
+                    <bold>
+                        <field name="error_msg" readonly="True"/>
+                    </bold>
+                </div>
+                <sheet>
+                    <group>
+                        <group string="Personal Information">
+                            <field name="multi_ship_id" invisible="1"
+                                   attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                            <field name="company_type"/>
+                            <field name="parent_id"/>
+                            <field name="name" required="1"
+                                   attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                            <field name="attention" required="0"
+                                   attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                            <field name="phone" widget="phone"
+                                   attrs="{'readonly':[('state', '=', 'verified')], 'required':[('is_international','=',True)]}"/>
+                            <field name="email" widget="email" required="0"
+                                   attrs="{'readonly':[('state', '=', 'verified')], 'required':[('is_international','=',True)]}"/>
+                            <field name="carrier_ids" invisible="1"/>
+                            <field name="property_delivery_carrier_id" attrs="{'readonly':[('state', '=', 'verified')]}"
+                                   required="1" options="{'no_create': True, 'no_open': True}" domain="[('id','in',carrier_ids)]"/>
+                            <field name="is_international" invisible="1"/>
+                        </group>
+                        <group string="Address">
+                            <div class="o_address_format">
+                                <field name="street" placeholder="Street..." class="o_address_street"
+                                       required="1" attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                                <field name="street2" placeholder="Street 2..." class="o_address_street"
+                                       attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                                <field name="city" placeholder="City" class="o_address_city"
+                                       required="1" attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                                <field name="state_id" class="o_address_state" placeholder="State"
+                                       options="{'no_open': True, 'no_quick_create': True}"
+                                       context="{'country_id': country_id, 'default_country_id': country_id, 'zip': zip}"
+                                       required="1" domain="[('country_id.code','!=', 'RU')]"
+                                       attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                                <field name="zip" placeholder="ZIP" class="o_address_zip" required="1"
+                                       attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                                <field name="country_id" placeholder="Country" class="o_address_country"
+                                       options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"
+                                       required="1" domain="[('code','!=','RU')]"
+                                       attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                                <field name="code" invisible="1"/>
+                            </div>
+                        </group>
+                    </group>
+                    <!-- <notebook>
+                        <page name="product_details" string="Product Details">
+                            <field name="split_so_lines">
+                                <tree string="Shipping Line Qty" editable="bottom" create="0">
+                                    <field name="so_line_id" optional="hide" invisible="0"/>
+                                    <field name="order_id"/>
+                                    <field name="product_id" readonly="1"/>
+                                    <field name="product_uom_qty" readonly="1"/>
+                                    <field name="product_qty" required="1"/>
+                                    <field name="personalization_1"/>
+                                    <field name="personalization_2"/>
+                                </tree>
+                            </field>
+                        </page> 
+                    </notebook>-->
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="res_partner_custom_multi_shipment_tree_view" model="ir.ui.view">
+        <field name="name">res.partner.custom.multi.shipment.view</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="state =='error'" decoration-success="state =='verified'">
+                <field name="state" readonly="1"/>
+                <field name="street" optional="hide" attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                <field name="street2" optional="hide"
+                       attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                <field name="multi_ship_id" invisible="1"
+                       attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                <field name="name" attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                <field name="city" attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                <field name="state_id" attrs="{'readonly':[('state', '=', 'verified')]}"
+                       options="{'no_create': True, 'no_open': True}"/>
+                <field name="zip" attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                <field name="country_id" attrs="{'readonly':[('state', '=', 'verified')]}"
+                       options="{'no_create': True, 'no_open': True}" domain="[('code','!=','RU')]"/>
+                <field name="phone" widget="phone" attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                <field name="email" widget="email" attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                <field name="attention" attrs="{'readonly':[('state', '=', 'verified')]}"/>
+                <field name="property_delivery_carrier_id" attrs="{'readonly':[('state', '=', 'verified')]}"
+                       options="{'no_create': True, 'no_open': True}"/>
+                <field name="stock_picking_id" readonly="1"
+                       options="{'no_create': True, 'no_open': True}"/>
+                <field name="carrier_track_ref" readonly="1"/>
+                <field name="state" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>
