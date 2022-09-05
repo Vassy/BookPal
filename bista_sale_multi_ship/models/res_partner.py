@@ -38,11 +38,8 @@ class ResPartner(models.Model):
         """Default get."""
         values = super().default_get(default_fields)
         ctx = self._context
-        # print ("\n self >>>")
-        print ("\n ctx >>>>>.", ctx)
         vals = {}
         if ctx.get('sale_id'):
-            print ("\n 3 >>>>>>>")
             sale_order = self.env['sale.order'].browse(ctx.get('sale_id'))
             val_lst = []
             if sale_order:
