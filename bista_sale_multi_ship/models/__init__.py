@@ -10,4 +10,4 @@ from . import sale
 from . import sale_multi_ship
 from . import res_partner
 from . import stock
-from . import delivery_ups
+# from . import delivery_ups

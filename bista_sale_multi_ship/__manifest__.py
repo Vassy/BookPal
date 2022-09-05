@@ -30,7 +30,7 @@
         'views/sale_multi_ship.xml',
         'views/sale_order_view.xml',
         'views/stock_view.xml',
-        'data/email_data.xml',
+        # 'data/email_data.xml',
     ],
     'installable': True,
     'auto_install': False,

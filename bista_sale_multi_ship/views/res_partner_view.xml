@@ -12,7 +12,7 @@
     </record>
 
     <record id="contacts.action_contacts" model="ir.actions.act_window">
-        <field name="domain">[]</field>
+        <field name="domain">[('is_multi_ship', '=',False)]</field>
     </record>
 
     <record id="view_res_partner_inherited_form_view" model="ir.ui.view">
