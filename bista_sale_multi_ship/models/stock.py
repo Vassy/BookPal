@@ -272,7 +272,6 @@ class StockMove(models.Model):
         domain = super(StockMove, self).\
             _search_picking_for_assignation_domain()
         if not self.group_id.sale_id.split_shipment:
-            print("\n super > _search_picking_for_assignation_domain >>>>")
             return domain
         if self.partner_id:
             domain += [('partner_id', '=', self.partner_id.id)]

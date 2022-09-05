@@ -286,7 +286,6 @@ class SaleOrderLine(models.Model):
                 'date_planned': ship_line.shipping_date,
                 'date_deadline': ship_line.shipping_date,
                 'route_ids': ship_line.route_id,
-                # 'route_ids': self.route_id,
                 'warehouse_id': self.order_id.warehouse_id or False,
                 'partner_id': ship_line.partner_id.id,
                 'product_description_variants': self.with_context(
@@ -295,9 +294,11 @@ class SaleOrderLine(models.Model):
                 'company_id': self.order_id.company_id,
                 'product_packaging_id': self.product_packaging_id,
                 'sequence': self.sequence,
+                'product_uom_qty': ship_line.product_qty,
                 'multi_ship_line_id': ship_line.id,
                 'ship_line': ship_line
             })
+        print ("\n values >>>>>>", values)
         return values
 
     def _action_launch_stock_rule(self, previous_product_uom_qty=False):
@@ -350,7 +351,10 @@ class SaleOrderLine(models.Model):
             quant_uom = line.product_id.uom_id
             product_qty, procurement_uom = line_uom._adjust_uom_quantities(
                 product_qty, quant_uom)
+            print ("\n product_qty >>>>", product_qty)
             for val in values:
+                product_qty = val.get('ship_line').product_qty - qty
+
                 procurements.append(self.env['procurement.group'].Procurement(
                     line.product_id, product_qty, procurement_uom,
                     line.order_id.partner_shipping_id.property_stock_customer,
