@@ -13,6 +13,7 @@
         'security/ir.model.access.csv',
         'data/data.xml',
         'wizard/import_vendor_views.xml',
+        'wizard/import_vendor_pricelist_views.xml',
     ],
     'auto_install': False,
     'installable': True,
