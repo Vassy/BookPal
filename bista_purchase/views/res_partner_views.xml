@@ -6,6 +6,15 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='child_ids']//kanban//field[@name='display_name']" position="after">
+                <field name="is_primary"/>
+            </xpath>
+            <xpath expr="//field[@name='child_ids']//kanban//templates/t//field[@name='name']" position="after">
+                <span t-if="record.is_primary.raw_value" style="float:right;"><i class="fa fa-star" role="img" aria-label="Primary Contact" title="Primary Contact"/></span>
+            </xpath>
+            <xpath expr="//field[@name='child_ids']//form//field[@name='name']" position="after">
+                <field name="is_primary"/>
+            </xpath>
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button class="oe_stat_button" name="open_partner_products" icon="fa-th-list" type="object">
                     <div class="o_field_widget o_stat_info">
@@ -27,7 +36,7 @@
                     <field name="rep"/>
                     <field name="write_uid" string="Last Modified By"/>
                     <field name="reviewed_date"/>
-                    <field name="active" string="Status"/>
+                    <!-- <field name="active" string="Status"/> -->
                     <field name="account_number"/>
                     <field name="top_publisher"/>
                     <field name="availability_check"/>

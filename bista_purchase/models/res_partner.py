@@ -5,6 +5,12 @@ from odoo import models, fields, _, api
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
+    type = fields.Selection(selection_add=[
+                            ('return', 'Return Address'),
+                            ('warehouse', 'Warehouse Address'),]
+                            )
+    is_primary = fields.Boolean(string="Primary Contact")
+
     # Supplier Details
     customer_service_email = fields.Char(string="Customer Service Email")
     customer_service_hours = fields.Char(string="Customer Service Hours")
@@ -45,8 +51,8 @@ class ResPartner(models.Model):
     warehouse_address = fields.Char(string="Warehouse Address")
     default_shipping_id = fields.Many2one('delivery.carrier', "Default Shipping")
     non_conus_shipping = fields.Char(string="Non-CONUS Shipping")
-    avg_processing_time = fields.Char(string="Average Processing Time")
-    rush_processing_time = fields.Char(string="Rush Processing Time")
+    avg_processing_time = fields.Char(string="Days to ship")
+    rush_processing_time = fields.Char(string="Rush days to ship")
     default_frieght_charges = fields.Float(string="Default Freight Charge")
     return_address = fields.Char(string="Returns Address")
     shipping_notes = fields.Text(string="Shipping Notes")
@@ -78,3 +84,14 @@ class ResPartner(models.Model):
         action = self.env['ir.actions.act_window']._for_xml_id('product.product_template_action_all')
         action['domain'] = [('id', 'in', self.product_tmpl_ids.ids)]
         return action
+
+    def name_get(self):
+        if self._context.get('res_partner_search_mode') != 'supplier':
+            return super(ResPartner, self).name_get()
+        res = []
+        for partner in self:
+            name = partner._get_name()
+            if partner.is_primary:
+                name += '  *'
+            res.append((partner.id, name))
+        return res
