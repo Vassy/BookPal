@@ -6,9 +6,13 @@
 #
 ##############################################################################
 
+from datetime import timedelta
+
 from odoo.tools import float_compare
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
+from odoo.addons.sale_stock.models.sale_order import SaleOrderLine as \
+    BaseSaleOrderLine
 
 
 class SaleOrder(models.Model):
@@ -171,7 +175,8 @@ class SaleOrder(models.Model):
         """Verify customer data."""
         for customer_line in self.sale_multi_ship_qty_lines.filtered(
                 lambda cl: cl.partner_id.state != 'verified'):
-            customer_line.partner_id.verify_customer_details()
+            customer_line.partner_id.with_context(
+                {'order_id': self.id}).verify_customer_details()
 
     @api.onchange('partner_id')
     def onchange_partner_id(self):
@@ -279,7 +284,8 @@ class SaleOrderLine(models.Model):
                 SaleOrderLine, self)._prepare_procurement_values(group_id)
         self.ensure_one()
         values = []
-        for ship_line in self.sale_multi_ship_qty_lines:
+        for ship_line in self.sale_multi_ship_qty_lines.filtered(
+                lambda l: l.partner_id.state == 'verified'):
             values.append({
                 'group_id': group_id,
                 'sale_line_id': self.id,
@@ -298,7 +304,6 @@ class SaleOrderLine(models.Model):
                 'multi_ship_line_id': ship_line.id,
                 'ship_line': ship_line
             })
-        print ("\n values >>>>>>", values)
         return values
 
     def _action_launch_stock_rule(self, previous_product_uom_qty=False):
@@ -311,6 +316,7 @@ class SaleOrderLine(models.Model):
         precision = self.env['decimal.precision'].precision_get(
             'Product Unit of Measure')
         procurements = []
+        shipping_lines = self.env['sale.multi.ship.qty.lines']
         for line in self:
             line = line.with_company(line.company_id)
             if line.state != 'sale' or \
@@ -353,8 +359,8 @@ class SaleOrderLine(models.Model):
                 product_qty, quant_uom)
             print ("\n product_qty >>>>", product_qty)
             for val in values:
+                shipping_lines += val.get('ship_line')
                 product_qty = val.get('ship_line').product_qty - qty
-
                 procurements.append(self.env['procurement.group'].Procurement(
                     line.product_id, product_qty, procurement_uom,
                     line.order_id.partner_shipping_id.property_stock_customer,
@@ -373,6 +379,9 @@ class SaleOrderLine(models.Model):
             if pickings_to_confirm:
                 # Trigger the Scheduler for Pickings
                 pickings_to_confirm.action_confirm()
+        # print ("\n shipping_lines >>>>> ", shipping_lines)
+        # confirm_ship_lines = procurements.mapped('ship_line')
+        # print ("\n confirm_ship_lines >>>", confirm_ship_lines)
         return True
 
     @api.model
@@ -384,3 +393,27 @@ class SaleOrderLine(models.Model):
             args += eval(self.env.context.get('so_line_dom'))
         return super(SaleOrderLine, self).name_search(
             name, args, operator, limit)
+
+    def write(self, values):
+        """Overide method to update the edit qty logic."""
+        lines = self.env['sale.order.line']
+        if 'product_uom_qty' in values:
+            lines = self.filtered(
+                lambda r: r.state == 'sale' and not r.is_expense)
+        previous_product_uom_qty = {line.id: line.product_uom_qty
+                                    for line in lines}
+        res = super(BaseSaleOrderLine, self).write(values)
+        if lines:
+            # if multi shipment true then need to create delivery
+            # from shipping details.
+            if not lines[0].order_id.split_shipment:
+                lines._action_launch_stock_rule(previous_product_uom_qty)
+        if 'customer_lead' in values and self.state == 'sale' and \
+                not self.order_id.commitment_date:
+            # Propagate deadline on related stock move
+            # if multi shipment true then need to create delivery
+            # from shipping details.
+            if not lines[0].order_id.split_shipment:
+                self.move_ids.date_deadline = self.order_id.date_order + \
+                    timedelta(days=self.customer_lead or 0.0)
+        return res

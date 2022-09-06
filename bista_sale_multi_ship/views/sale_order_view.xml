@@ -26,8 +26,10 @@
                 <field name='partner_shipping_id' position="attributes">
                     <attribute name="attrs">{'invisible': [('split_shipment', '=', True)]}</attribute>
                 </field>
+                <xpath expr="//page/field[@name='order_line']/tree/field[@name='name']" position="attributes">
+                    <attribute name="optional">hide</attribute>
+                </xpath>
                 <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom_qty']" position="after">
-                    <field name="remain_so_qty" optional="hide"/>
                     <field name="sale_split_shipment" invisible="1"/>
                     <button name="open_sale_multi_ship_qty_wizard"
                             type="object"
@@ -35,6 +37,7 @@
                             class="text-primary"
                             style="float:right"
                             attrs="{'invisible': ['|',('product_type','=','service'), ('sale_split_shipment', '=', False)]}"/>
+                    <field name="remain_so_qty" optional="hide"/>
                 </xpath>
                 <xpath expr="//page[last()]" position="after">
                     <page name="shipping_lines" string="Shipping"
@@ -63,16 +66,18 @@
                         <!-- <button name="open_sale_multi_ship_wizard" type="object"
                                 icon="fa-truck" string="Import Shipping Data" class="btn-primary" style="float:right"/> -->
                         <field name="sale_multi_ship_qty_lines">
-                            <tree editable="top">
-                                <field name="so_line_id" optional="show" context="{'so_line_dom': parent.so_line_dom}" domain="[('order_id', '=', parent.id), ('remain_so_qty', '>', 0)]"/>
+                            <tree decoration-danger="partner_state =='error'" decoration-success="partner_state =='verified'" editable="top">
+                                <field name="so_line_id" optional="show" context="{'so_line_dom': parent.so_line_dom}" domain="[('order_id', '=', parent.id)]"/>
                                 <field name="order_id" optional="hide"/>
-                                <field name="product_id" optional="show"/>
+                                <field name="product_id" optional="hide"/>
                                 <field name="product_uom_qty" optional="show"/>
                                 <field name="product_qty" optional="show" default="remain_qty"/>
                                 <field name="remain_qty" optional="hide" force_save="1"/>
                                 <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id}" domain="[('is_multi_ship', '=', True)]"/>
                                 <field name="shipping_date" optional="show"/>
                                 <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]"/>
+                                <field name="state" optional="hide"/>
+                                <field name="partner_state" invisible="1"/>
                                 <field name="attention" optional="hide"/>
                                 <!-- <field name="multi_ship_id" invisible="1"/> -->
                             </tree>
@@ -93,9 +98,11 @@
                         <field name="sale_multi_ship_qty_lines" nolabel="1" readonly="1">
                             <tree editable="bottom">
                                 <field name="name"/>
-                                <field name="attention"/>
+                                <!-- <field name="attention"/>
                                 <field name="personalization_1"/>
-                                <field name="personalization_2"/>
+                                <field name="personalization_2"/> -->
+                                <field name="shipping_date"/>
+                                <field name="route_id"/>
                                 <field name="property_delivery_carrier_id"/>
                                 <field name="stock_picking_id"/>
                                 <field name="carrier_track_ref"/>

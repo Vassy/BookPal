@@ -6,6 +6,32 @@
             </field>
     </record>
 
+    <record id="multi_ship_contact_action" model="ir.actions.act_window">
+        <field name="name">Shipment Contact</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">tree</field>
+        <field name="context">{'default_is_multi_ship':1}</field>
+        <field name="domain">[('is_multi_ship', '=', True)]</field>
+    </record>
+
+    <record model="ir.actions.act_window.view" id="multi_ship_contact_tree">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="res_partner_custom_multi_shipment_tree_view"/>
+        <field name="act_window_id" ref="multi_ship_contact_action"/>
+    </record>
+    <record model="ir.actions.act_window.view" id="multi_ship_contact_form">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="res_partner_custom_multi_shipment_form_view"/>
+        <field name="act_window_id" ref="multi_ship_contact_action"/>
+    </record>
+
+    <menuitem id="res_partner_multi_ship_contact_menu"
+            action="bista_sale_multi_ship.multi_ship_contact_action"
+            parent="sale.sale_order_menu"/>
+
     <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
             <field name="domain">[('is_multi_ship', '=',False)]
             </field>
@@ -32,7 +58,7 @@
         </field>
     </record>
 
-    <record id="res_partner_search_all_multi_ship" model="ir.ui.view">
+    <!-- <record id="res_partner_search_all_multi_ship" model="ir.ui.view">
         <field name="name">res.partner.</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_res_partner_filter"/>
@@ -41,7 +67,7 @@
                 <filter string="Multi Shipment Contact" name="multi_ship_contact" domain="[('is_multi_ship', '=', True)]" context="{'is_multi_ship': True}"/>
             </xpath>
         </field>
-    </record>
+    </record> -->
 
     <record id="res_partner_custom_multi_shipment_form_view" model="ir.ui.view">
         <field name="name">res.partner.custom.multi.shipment.view</field>

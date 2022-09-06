@@ -23,7 +23,8 @@ class ResPartner(models.Model):
         ctx = self._context
         if ctx.get('sale_id'):
             for rec in self:
-                if rec.country_id and rec.country_id != rec.sale_id.company_id.country_id:
+                if rec.country_id and rec.country_id != \
+                        rec.sale_id.company_id.country_id:
                     rec.is_international = True
                 else:
                     rec.is_international = False
@@ -50,22 +51,22 @@ class ResPartner(models.Model):
                         {'sale_id': sale_order.id})
                 values['multi_ship_id'] = multi_ship_id[0].id
 
-                for order_line in sale_order.order_line.filtered(lambda line: line.product_id.detailed_type == 'product'):
+                for order_line in sale_order.order_line.filtered(
+                        lambda line: line.product_id.detailed_type ==
+                        'product'):
                     consumed_qty = order_line.sale_multi_ship_qty_lines.mapped(
                         'product_qty')
                     line_product_qty = order_line.product_uom_qty
                     total_value = line_product_qty - sum(consumed_qty)
                     vals = {
-                        'so_line_id': order_line.id, 'product_qty': total_value}
+                        'so_line_id': order_line.id,
+                        'product_qty': total_value}
                     val_lst.append((0, 0, vals))
 
             if vals:
                 values['split_so_lines'] = val_lst
                 values['sale_id'] = sale_order.id
                 values['country_id'] = False
-        # if 'is_individual' in ctx and not ctx.get('is_individual'):
-        #     print ("d >>>>>")
-        #     values['parent_id'] = ctx.get('parent_id')
         return values
 
     def verify_customer_details(self):
@@ -103,22 +104,30 @@ class ResPartner(models.Model):
                     verify_line = 'error'
                     msg += _("- Country not matching with State.\n")
 
-                if record.split_so_lines:
-                    for multi_ship_qty_line in record.split_so_lines:
+                if self.env.context.get('order_id'):
+                    for multi_ship_qty_line in record.split_so_lines.filtered(
+                        lambda x: x.order_id == self.env.context.get(
+                            'order_id')
+                    ):
                         if multi_ship_qty_line.product_qty <= 0:
                             verify_line = 'error'
                             prod_name = multi_ship_qty_line.product_id.name
-                            if multi_ship_qty_line.product_id.product_template_attribute_value_ids:
+                            if multi_ship_qty_line.product_id.\
+                                    product_template_attribute_value_ids:
                                 prod_name += '(' + ','.join(
-                                    multi_ship_qty_line.product_id.product_template_attribute_value_ids.mapped(
-                                        'name')) + ')'
-                            msg += _("- Product qty for %s must be more than 0.0.\n" % (prod_name))
+                                    multi_ship_qty_line.product_id.
+                                    product_template_attribute_value_ids.
+                                    mapped('name')) + ')'
+                            msg += _("- Product qty for %s must be more than"
+                                     " 0.0.\n" %
+                                     (prod_name))
 
             if verify_line:
                 record.state = verify_line
             if msg:
                 record.error_msg = msg
-            if not record.multi_ship_id.partner_ids.filtered(lambda msl: msl.state != 'verified'):
+            if not record.multi_ship_id.partner_ids.filtered(
+                    lambda msl: msl.state != 'verified'):
                 record.sale_id.ship_lines_validated = True
             else:
                 record.sale_id.ship_lines_validated = False
@@ -136,13 +145,19 @@ class ResPartner(models.Model):
     stock_picking_id = fields.Many2one(
         'stock.picking', string='Delivery Order Ref')
     carrier_track_ref = fields.Char(
-        related="stock_picking_id.carrier_tracking_ref", help="Linked Tracking Reference")
-    state = fields.Selection([('draft', 'Draft'), ('verified', 'Verified'), ('error', 'Error')], string='Status',
-                             default='draft')
+        related="stock_picking_id.carrier_tracking_ref",
+        help="Linked Tracking Reference")
+    state = fields.Selection(
+        [('draft', 'Draft'),
+         ('verified', 'Verified'),
+         ('error', 'Error')],
+        string='Status',
+        default='draft')
     error_msg = fields.Text(string='Error Message')
 
     carrier_ids = fields.Many2many(
-        "delivery.carrier", compute='_get_delivery_type', string="Available Carriers")
+        "delivery.carrier", compute='_get_delivery_type',
+        string="Available Carriers")
 
     def _match_address(self, carrier):
         self.ensure_one()
@@ -150,9 +165,11 @@ class ResPartner(models.Model):
             return False
         if carrier.state_ids and self.state_id not in carrier.state_ids:
             return False
-        if carrier.zip_from and (self.zip or '').upper() < carrier.zip_from.upper():
+        if carrier.zip_from and (self.zip or '').upper() < \
+                carrier.zip_from.upper():
             return False
-        if carrier.zip_to and (self.zip or '').upper() > carrier.zip_to.upper():
+        if carrier.zip_to and (self.zip or '').upper() > \
+                carrier.zip_to.upper():
             return False
         return True
 
@@ -164,7 +181,9 @@ class ResPartner(models.Model):
                       ('company_id', '=', rec.sale_id.company_id.id)]
             if rec.sale_id.partner_carrier_id:
                 domain.append(
-                    ('delivery_type', '=', rec.sale_id.partner_carrier_id.delivery_type))
+                    ('delivery_type', '=',
+
+                     rec.sale_id.partner_carrier_id.delivery_type))
                 if rec.sale_id.partner_carrier_id.ups_bill_my_account:
                     domain.append(
                         ('ups_bill_my_account', '=', True))
@@ -192,43 +211,3 @@ class ResPartner(models.Model):
             args += [('is_multi_ship', '=', False)]
         ids = self._name_search(name, args, operator, limit=limit)
         return self.browse(ids).sudo().name_get()
-
-    # @api.model
-    # def search(self, args, offset=0, limit=None, order=None, count=False):
-    #     if not args:
-    #         args = []
-    #     partner = self
-    #     if self.ids:
-    #         partner = self[0]
-    #     # print ("\n partner >>1>>>>", partner)
-    #     if self.env.context.get('is_multi_ship', False):
-    #         args += [('is_multi_ship', '=', True)]
-    #     elif partner and (partner.is_multi_ship or partner.parent_id.is_multi_ship):
-    #         args += [('is_multi_ship', '=', True)]
-    #     # elif len(args) == 1 and len(args[0]) == 3 and args[0][:2] == ('id', 'child_of') \
-    #     #         and args[0][2] != [False]:
-    #     #     partner = self.browse(args[0][2][0])
-    #     #     if partner.is_multi_ship:
-    #     #         args += [('is_multi_ship', '=', True)]
-    #     #         print ("\n partner >>>2>", args[0][2])
-    #     #     else:
-    #     #         args += [('is_multi_ship', '=', False)]
-    #     else:
-    #         args += [('is_multi_ship', '=', False)]
-    #     res = super(ResPartner, self).search(args, offset, limit, order, count)
-    #     return res
-
-    # @api.model
-    # def search_read(self, domain=None, fields=None, offset=0, limit=None, order=None):
-    #     print ("\n search_read >>>>>>>>>", domain)
-    #     # print ("\n self.env.context >>>>>>", self.env.context)
-
-    #     # if self.env.context.get('is_multi_ship', False):
-    #     #     domain = [('is_multi_ship', '=', True)]
-    #     # # elif self.env.context.get('params', {}).get('view_type') == 'form':
-    #     # #     args += [('is_multi_ship', '=', True)]
-    #     # else:
-    #     #     domain += [('is_multi_ship', '=', False)]
-
-    #     # print ("\n args >>>>>w34", domain)
-    #     return super(ResPartner, self).search_read(domain, fields, offset, limit, order)

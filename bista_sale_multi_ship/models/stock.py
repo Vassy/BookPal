@@ -10,7 +10,7 @@ from datetime import timedelta
 # from collections import defaultdict
 from itertools import groupby
 
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 # from odoo.addons.stock.models.stock_rule import ProcurementException
 from odoo.exceptions import ValidationError
 from odoo.tools import float_compare
@@ -328,12 +328,9 @@ class StockMove(models.Model):
             moves._assign_picking_post_process(new=new_picking)
         return True
 
-
-# class PurchaseOrder(models.Model):
-#     _inherit = "purchase.order"
-
-#     def create(self, vals):
-#         print ("\n vals >>>>>.", vals.get('picking_type_id'))
-#         if vals.get('picking_type_id') == 7:
-#             3 / 0
-#         return super(PurchaseOrder, self).create(vals)
+    # @api.model
+    # def create(self, vals):
+    #     """Create."""
+    #     print ("\n vals >>>>>.", vals)
+    #     # 3 / 0
+    #     return super(StockMove, self).create(vals)
