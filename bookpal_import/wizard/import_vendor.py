@@ -26,7 +26,10 @@ class ImportVendor(models.TransientModel):
     _name='import.vendor'
     _description = "Import Vendor"
 
-    import_option = fields.Selection([('csv', 'CSV File'),('xls', 'XLS File')], string='Select',default='csv')
+    import_option = fields.Selection([
+            ('csv', 'CSV File'),
+            # ('xls', 'XLS File')
+        ], string='Select',default='csv')
     file_name = fields.Char(string="File Name")
     file = fields.Binary(string="Select File")
 
@@ -156,7 +159,7 @@ class ImportVendor(models.TransientModel):
                 else:
                     primary_contact.write(primary_contact_vals)
 
-            _logger.warning("Contact : %s", name)
+            _logger.info("Contact : %s", name)
 
     def import_xls_vendor(self):
         try:
