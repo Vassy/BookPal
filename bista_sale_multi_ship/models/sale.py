@@ -357,6 +357,7 @@ class SaleOrderLine(models.Model):
             quant_uom = line.product_id.uom_id
             product_qty, procurement_uom = line_uom._adjust_uom_quantities(
                 product_qty, quant_uom)
+            print ("\n product_qty >>>>", product_qty)
             for val in values:
                 shipping_lines += val.get('ship_line')
                 product_qty = val.get('ship_line').product_qty - qty
