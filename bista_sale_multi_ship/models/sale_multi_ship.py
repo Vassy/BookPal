@@ -274,10 +274,23 @@ class SaleMultiShipQtyLines(models.Model):
         'res.country', related='partner_id.country_id',
         help="Country to Ship")
     zip = fields.Char(related='partner_id.zip', help="Zip Code to Ship")
-    shipping_date = fields.Date('Shipping Date')
-    route_id = fields.Many2one('stock.location.route', 'Route')
+    shipping_date = fields.Date('Need By Date')
+    route_id = fields.Many2one('stock.location.route', 'Delivery Method')
     remain_qty = fields.Float(
         'Remaining Qty')
+    move_ids = fields.One2many(
+        'stock.move', 'multi_ship_line_id', 'Stock Moves')
+    state = fields.Selection([
+        ('draft', 'Quotation'),
+        ('sent', 'Quotation Sent'),
+        ('sale', 'Sales Order'),
+        ('done', 'Locked'),
+        ('cancel', 'Cancelled')],
+        string='Shipping Status',
+        readonly=True, copy=False, index=True, tracking=3,
+        default='draft')
+    partner_state = fields.Selection(
+        related="partner_id.state", string='Contact status')
 
     def name_get(self):
         """Updated the display name."""

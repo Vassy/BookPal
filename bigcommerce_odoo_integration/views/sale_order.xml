@@ -30,7 +30,7 @@
                 </xpath>
                 <xpath expr="//form/sheet/notebook/page[@name='order_lines']/field[@name='order_line']/tree/field[@name='product_uom_qty']"
                        position="before">
-                    <field name="quantity_shipped"/>
+                    <field name="quantity_shipped" optional="hide"/>
                 </xpath>
             </field>
         </record>
