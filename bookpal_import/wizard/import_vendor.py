@@ -34,8 +34,6 @@ class ImportVendor(models.TransientModel):
     file = fields.Binary(string="Select File")
 
     def import_vendor(self):
-        if self.import_option == 'xls':
-            self.import_xls_vendor()
         if self.import_option == 'csv':
             self.import_csv_vendor()
 
@@ -133,6 +131,7 @@ class ImportVendor(models.TransientModel):
                 'tracking_souurce': row[50],
                 'transfer_nuances': row[51],
                 'transfer_to_bp_warehouse': True if row[52] else False,
+                'supplier_rank': 1,
             }
 
             partner_id = self.env['res.partner'].search([('name','=', name),('account_number','=',account_number)], limit=1)
@@ -160,21 +159,3 @@ class ImportVendor(models.TransientModel):
                     primary_contact.write(primary_contact_vals)
 
             _logger.info("Contact : %s", name)
-
-    def import_xls_vendor(self):
-        try:
-            fp = tempfile.NamedTemporaryFile(delete= False,suffix=".xlsx")
-            fp.write(binascii.a2b_base64(self.file))
-            fp.seek(0)
-            values = {}
-            workbook = xlrd.open_workbook(fp.name)
-            sheet = workbook.sheet_by_index(0)
-        except Exception:
-            raise ValidationError(_("Invalid file!"))
-
-        for row_no in range(sheet.nrows):
-            val = {}
-            if row_no == 0:
-                continue
- 
-            line = list(map(lambda row:isinstance(row.value, bytes) and row.value.encode('utf-8') or str(row.value), sheet.row(row_no)))
