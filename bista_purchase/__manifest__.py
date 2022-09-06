@@ -3,6 +3,7 @@
     'name': "Bista Purchase",
     'summary': """Purchase Customisation""",
     'description': """Purchase Customisation""",
+    'license': "LGPL-3",
     'author': "Bista Solutions Pvt Ltd.",
     'website': "http://www.bistasolutions.com",
     'category': "Purchase",
