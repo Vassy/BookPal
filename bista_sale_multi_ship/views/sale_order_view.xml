@@ -68,7 +68,6 @@
                         <field name="sale_multi_ship_qty_lines">
                             <tree decoration-danger="partner_state =='error'" decoration-success="partner_state =='verified'" editable="top">
                                 <field name="so_line_id" optional="show" context="{'so_line_dom': parent.so_line_dom}" domain="[('order_id', '=', parent.id)]"/>
-                                <field name="order_id" optional="hide"/>
                                 <field name="product_id" optional="hide"/>
                                 <field name="product_uom_qty" optional="show"/>
                                 <field name="product_qty" optional="show" default="remain_qty"/>
@@ -77,9 +76,9 @@
                                 <field name="shipping_date" optional="show"/>
                                 <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]"/>
                                 <field name="state" optional="hide"/>
-                                <field name="partner_state" invisible="1"/>
                                 <field name="attention" optional="hide"/>
-                                <!-- <field name="multi_ship_id" invisible="1"/> -->
+                                <field name="partner_state" invisible="1"/>
+                                <field name="order_id" invisible="1"/>
                             </tree>
                         </field>
                         <field name="ship_lines_validated" invisible="1"/>
