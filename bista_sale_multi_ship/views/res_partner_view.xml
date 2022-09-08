@@ -32,13 +32,15 @@
             action="bista_sale_multi_ship.multi_ship_contact_action"
             parent="sale.sale_order_menu"/>
 
+    <!-- ('is_multi_ship', '=',False) -->
     <record id="account.res_partner_action_supplier" model="ir.actions.act_window">
-            <field name="domain">[('is_multi_ship', '=',False)]
+            <field name="domain">[]
             </field>
     </record>
 
+    <!-- ('is_multi_ship', '=',False) -->
     <record id="contacts.action_contacts" model="ir.actions.act_window">
-        <field name="domain">[('is_multi_ship', '=',False)]</field>
+        <field name="domain">[]</field>
     </record>
 
     <record id="view_res_partner_inherited_form_view" model="ir.ui.view">

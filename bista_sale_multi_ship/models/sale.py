@@ -134,7 +134,7 @@ class SaleOrder(models.Model):
                 lambda msl: msl.partner_id.state == 'verified')
             if self.split_shipment and len(verified_shipment_lines) == 0:
                 msg = _(
-                    "Please Validate the shipment lines before "
+                    "Please verfiy the shipment details before "
                     "confirming the sale order.\n")
 
         # COMMENTED AS ALL THE LINES SHOULD BE VERIFIED WAS STOPPING
@@ -284,16 +284,21 @@ class SaleOrderLine(models.Model):
                 SaleOrderLine, self)._prepare_procurement_values(group_id)
         self.ensure_one()
         values = []
+        date_deadline = self.order_id.commitment_date or (
+            self.order_id.date_order + timedelta(
+                days=self.customer_lead or 0.0))
+        date_planned = date_deadline - timedelta(
+            days=self.order_id.company_id.security_lead)
         for ship_line in self.sale_multi_ship_qty_lines.filtered(
                 lambda l: l.partner_id.state == 'verified'):
-            values.append({
+            proc_vals = {
                 'group_id': group_id,
                 'sale_line_id': self.id,
-                'date_planned': ship_line.shipping_date,
-                'date_deadline': ship_line.shipping_date,
-                'route_ids': ship_line.route_id,
+                'date_planned': date_planned,
+                'date_deadline': date_deadline,
+                'route_ids': self.route_id,
                 'warehouse_id': self.order_id.warehouse_id or False,
-                'partner_id': ship_line.partner_id.id,
+                'partner_id': self.order_id.partner_shipping_id.id,
                 'product_description_variants': self.with_context(
                     lang=self.order_id.partner_id.lang).
                 _get_sale_order_line_multiline_description_variants(),
@@ -303,7 +308,18 @@ class SaleOrderLine(models.Model):
                 'product_uom_qty': ship_line.product_qty,
                 'multi_ship_line_id': ship_line.id,
                 'ship_line': ship_line
-            })
+            }
+            if ship_line.partner_id:
+                proc_vals.update({
+                    'partner_id': self.order_partner_id.id})
+            if ship_line.shipping_date:
+                proc_vals.update({
+                    'date_planned': ship_line.shipping_date,
+                    'date_deadline': ship_line.shipping_date})
+            if ship_line.route_id:
+                proc_vals.update({
+                    'route_ids': ship_line.route_id})
+            values.append(proc_vals)
         return values
 
     def _action_launch_stock_rule(self, previous_product_uom_qty=False):
@@ -357,7 +373,6 @@ class SaleOrderLine(models.Model):
             quant_uom = line.product_id.uom_id
             product_qty, procurement_uom = line_uom._adjust_uom_quantities(
                 product_qty, quant_uom)
-            print ("\n product_qty >>>>", product_qty)
             for val in values:
                 shipping_lines += val.get('ship_line')
                 product_qty = val.get('ship_line').product_qty - qty
@@ -379,9 +394,6 @@ class SaleOrderLine(models.Model):
             if pickings_to_confirm:
                 # Trigger the Scheduler for Pickings
                 pickings_to_confirm.action_confirm()
-        # print ("\n shipping_lines >>>>> ", shipping_lines)
-        # confirm_ship_lines = procurements.mapped('ship_line')
-        # print ("\n confirm_ship_lines >>>", confirm_ship_lines)
         return True
 
     @api.model
