@@ -86,6 +86,16 @@
                             <field name="tracking_souurce"/>
                         </group>
                     </group>
+                    <group string="Shipping Carrier">
+                        <field name="partner_shipping_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <field name="delivery_carrier_id" options="{'no_create':1,'no_edit':1}"/>
+                                <!-- <field name="charge_type"/> -->
+                                <field name="amount" force_save="1"/>
+                                <field name="remarks"/>
+                            </tree>
+                        </field>
+                    </group>
                 </page>
                 <page name="discount_info" string="Discount Info">
                     <group>

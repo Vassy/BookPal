@@ -10,6 +10,7 @@
     'version': '15.0.1.0.1',
     'depends': ['purchase', 'delivery'],
     'data': [
+        'security/ir.model.access.csv',
         'views/res_partner_views.xml',
     ],
     'auto_install': False,

@@ -74,6 +74,8 @@ class ResPartner(models.Model):
     product_count = fields.Integer(compute="_compute_product_count")
     product_tmpl_ids = fields.Many2many('product.template', compute="_compute_product_count")
 
+    partner_shipping_ids = fields.One2many('res.partner.shipping', 'partner_id', string="Partner Shippings")
+
     def _compute_product_count(self):
         for partner_id in self:
             product_tmpl_ids = self.env['product.supplierinfo'].search([('name','=',partner_id.id)]).mapped('product_tmpl_id')
@@ -95,3 +97,13 @@ class ResPartner(models.Model):
                 name += '  *'
             res.append((partner.id, name))
         return res
+
+
+class ResPartnerShipping(models.Model):
+    _name = 'res.partner.shipping'
+
+    partner_id = fields.Many2one('res.partner', string="Vendor")
+    delivery_carrier_id = fields.Many2one('delivery.carrier', string="Delivery Carrier")
+    charge_type = fields.Selection([('free', "Free"),('paid',"Paid")], string="Charges Type")
+    amount = fields.Float(string="Charges")
+    remarks = fields.Text(string="Remarks")
