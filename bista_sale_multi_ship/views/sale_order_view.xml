@@ -72,7 +72,7 @@
                                 <field name="product_uom_qty" optional="show"/>
                                 <field name="product_qty" optional="show" default="remain_qty"/>
                                 <field name="remain_qty" optional="hide" force_save="1"/>
-                                <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id}" domain="[('is_multi_ship', '=', True)]"/>
+                                <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id}" domain="['|', ('parent_id', '=', parent.partner_id), ('id', '=', parent.partner_id)]" required="1"/>
                                 <field name="shipping_date" optional="show"/>
                                 <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]"/>
                                 <field name="state" optional="hide"/>
@@ -97,9 +97,6 @@
                         <field name="sale_multi_ship_qty_lines" nolabel="1" readonly="1">
                             <tree editable="bottom">
                                 <field name="name"/>
-                                <!-- <field name="attention"/>
-                                <field name="personalization_1"/>
-                                <field name="personalization_2"/> -->
                                 <field name="shipping_date"/>
                                 <field name="route_id"/>
                                 <field name="property_delivery_carrier_id"/>

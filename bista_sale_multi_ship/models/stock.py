@@ -34,20 +34,24 @@ class StockRule(models.Model):
         # import pdb
         # pdb.set_trace()
         if values.get('ship_line'):
+            if values.get('ship_line').shipping_date:
+                res.update({
+                    'date': values['ship_line'].shipping_date,
+                    'date_deadline': values['ship_line'].shipping_date})
             res.update({
                 'partner_id': values['ship_line'].partner_id.id,
-                'date': values['ship_line'].shipping_date,
-                'date_deadline': values['ship_line'].shipping_date,
             })
         elif values.get('move_dest_ids'):
             ship_line = values.get('move_dest_ids').mapped(
                 'multi_ship_line_id')
             dest_move = values.get('move_dest_ids')[0]
             if ship_line:
+                if ship_line.shipping_date:
+                    res.update({
+                        'date': values['ship_line'].shipping_date,
+                        'date_deadline': values['ship_line'].shipping_date})
                 res.update({
                     'partner_id': ship_line.partner_id.id,
-                    'date': ship_line.shipping_date,
-                    'date_deadline': ship_line.shipping_date,
                 })
             else:
                 res.update({
