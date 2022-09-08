@@ -331,10 +331,3 @@ class StockMove(models.Model):
             moves.write({'picking_id': picking.id})
             moves._assign_picking_post_process(new=new_picking)
         return True
-
-    # @api.model
-    # def create(self, vals):
-    #     """Create."""
-    #     print ("\n vals >>>>>.", vals)
-    #     # 3 / 0
-    #     return super(StockMove, self).create(vals)
