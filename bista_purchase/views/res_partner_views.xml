@@ -89,8 +89,9 @@
                     <group string="Shipping Carrier">
                         <field name="partner_shipping_ids" nolabel="1">
                             <tree editable="bottom">
-                                <field name="delivery_carrier_id" options="{'no_create':1,'no_edit':1}"/>
+                                <!-- <field name="delivery_carrier_id" options="{'no_create':1,'no_edit':1}"/> -->
                                 <!-- <field name="charge_type"/> -->
+                                <field name="shipping_information" required="1"/>
                                 <field name="amount" force_save="1"/>
                                 <field name="remarks"/>
                             </tree>

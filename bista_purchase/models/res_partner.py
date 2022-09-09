@@ -103,7 +103,8 @@ class ResPartnerShipping(models.Model):
     _name = 'res.partner.shipping'
 
     partner_id = fields.Many2one('res.partner', string="Vendor")
-    delivery_carrier_id = fields.Many2one('delivery.carrier', string="Delivery Carrier")
-    charge_type = fields.Selection([('free', "Free"),('paid',"Paid")], string="Charges Type")
+    # delivery_carrier_id = fields.Many2one('delivery.carrier', string="Delivery Carrier")
+    # charge_type = fields.Selection([('free', "Free"),('paid',"Paid")], string="Charges Type")
+    shipping_information = fields.Char(string="Shipping Information")
     amount = fields.Float(string="Charges")
     remarks = fields.Text(string="Remarks")
