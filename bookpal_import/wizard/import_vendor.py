@@ -104,7 +104,7 @@ class ImportVendor(models.TransientModel):
                 'default_frieght_charges': vals.get('Default Freight Charge'),
                 'default_shipping_id': delivery_carrier.id,
                 'discount_notes': vals.get('Discount Notes'),
-                'dropship_applicable': True if vals.get('Dropship') else False,
+                'dropship_applicable': True if vals.get('Dropship') in ['1',1] else False,
                 'frieght_nuances': vals.get('Freight Nuances'),
                 'future_ship_nuances': vals.get('Future Ship Nuances'),
                 'intl_shipping_notes': vals.get("Int'l Shipping Notes"),
@@ -134,10 +134,10 @@ class ImportVendor(models.TransientModel):
                 # 'email': vals.get('Supplier Email'),
                 'supplier_nuances': vals.get('Supplier Nuances'),
                 'property_supplier_payment_term_id': account_pyment_term.id,
-                'top_publisher': True if vals.get('Top publisher') else False,
+                'top_publisher': True if vals.get('Top publisher') in ['1',1] else False,
                 'tracking_souurce': vals.get('Tracking Source'),
                 'transfer_nuances': vals.get('Transfer Nuances'),
-                'transfer_to_bp_warehouse': True if vals.get('Transfer to BookPal Warehouse') == '1' else False,
+                'transfer_to_bp_warehouse': True if vals.get('Transfer to BookPal Warehouse') in ['1',1] else False,
                 'supplier_rank': 1,
             }
 
