@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="view_partner_form_inherit" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='child_ids']//kanban//field[@name='display_name']" position="after">
+                <field name="is_primary"/>
+            </xpath>
+            <xpath expr="//field[@name='child_ids']//kanban//templates/t//field[@name='name']" position="after">
+                <span t-if="record.is_primary.raw_value" style="float:right;"><i class="fa fa-star" role="img" aria-label="Primary Contact" title="Primary Contact"/></span>
+            </xpath>
+            <xpath expr="//field[@name='child_ids']//form//field[@name='name']" position="attributes">
+                <attribute name="string">Name</attribute>
+            </xpath>
+            <xpath expr="//field[@name='child_ids']//form//field[@name='name']" position="after">
+                <field name="is_primary"/>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" name="open_partner_products" icon="fa-th-list" type="object">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value"><field name="product_count"/></span>
+                        <span class="o_stat_text"> Products</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='website']" position="before">
+                <field name="cc_email" widget="email" context="{'gravatar_image': True}"/>
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <group name="customer_service" string="Customer Service">
+                    <field name="customer_service_email" string="Email (CS)"/>
+                    <field name="customer_service_phone" string="Phone (CS)"/>
+                    <field name="customer_service_hours" string="Hours (CS)"/>
+                </group>
+                <group>
+                    <field name="rep"/>
+                    <!-- <field name="write_uid" string="Last Modified By"/> -->
+                    <field name="write_date" string="Reviewed Date"/>
+                    <!-- <field name="active" string="Status"/> -->
+                    <field name="account_number"/>
+                    <field name="top_publisher"/>
+                    <field name="availability_check"/>
+                </group>
+            </xpath>
+            <xpath expr="//field[@name='property_account_payable_id']" position="after">
+                <field name="invoice_issues_contact"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page name="nuances" string="Nuances">
+                    <group>
+                        <group>
+                            <field name="supplier_nuances"/>
+                            <field name="shipping_acct_nuances"/>
+                            <field name="transfer_nuances"/>
+                            <field name="future_ship_nuances"/>
+                            <field name="minimums_nuances"/>
+                            <field name="shipping_nuances"/>
+                            <field name="rush_processing_nuances"/>
+                            <field name="frieght_nuances"/>
+                        </group>
+                        <group>
+                            <field name="pre_approval_nuances"/>
+                            <field name="processing_time_nuances"/>
+                            <field name="opening_text_nuances"/>
+                            <field name="note_to_vendor_nuances"/>
+                            <field name="author_event_naunces"/>
+                            <field name="author_event_shipping_naunces"/>
+                            <field name="publisher_nuances"/>
+                        </group>
+                    </group>
+                </page>
+                <page name="shipping_info" string="Shipping Info">
+                    <group>
+                        <group>
+                            <field name="dropship_applicable"/>
+                            <field name="transfer_to_bp_warehouse"/>
+                            <!-- <field name="warehouse_zip_code"/> -->
+                            <!-- <field name="warehouse_address"/> -->
+                            <field name="default_shipping_id"/>
+                            <field name="non_conus_shipping"/>
+                        </group>
+                        <group>
+                            <field name="avg_processing_time"/>
+                            <field name="rush_processing_time"/>
+                            <field name="default_frieght_charges"/>
+                            <!-- <field name="return_address"/> -->
+                            <field name="shipping_notes"/>
+                            <field name="intl_shipping_notes"/>
+                            <field name="tracking_souurce"/>
+                        </group>
+                    </group>
+                    <group string="Shipping Carrier">
+                        <field name="partner_shipping_ids" nolabel="1">
+                            <tree editable="bottom">
+                                <!-- <field name="delivery_carrier_id" options="{'no_create':1,'no_edit':1}"/> -->
+                                <!-- <field name="charge_type"/> -->
+                                <field name="shipping_information" required="1"/>
+                                <field name="amount" force_save="1"/>
+                                <field name="remarks"/>
+                            </tree>
+                        </field>
+                    </group>
+                </page>
+                <page name="discount_info" string="Discount Info">
+                    <group>
+                        <group>
+                            <field name="avg_discount"/>
+                            <field name="discount_notes"/>
+                            <field name="minimums"/>
+                            <field name="combine"/>
+                            <field name="returnable_terms"/>
+                        </group>
+                        <group>
+                            <field name="pricing_profile"/>
+                            <field name="pricing_profile_notes"/>
+                            <field name="price_match_discounts"/>
+                            <!-- <field name="supplier_contact"/> -->
+                            <field name="supplier_discount"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

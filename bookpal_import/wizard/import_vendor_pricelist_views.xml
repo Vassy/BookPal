@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="import_vendor_pricelist_form_view" model="ir.ui.view">
+        <field name="name">import.vendor.pricelist.form.view</field>
+        <field name="model">import.vendor.pricelist</field>
+        <field name="arch" type="xml">
+            <form string="Import Vendor Pricelist">
+                <group>
+                    <group>
+                        <field name="file_name" invisible="1"/>
+                        <field name="file" filename="file_name" />
+                        <field name="import_option" widget='radio' />
+                    </group>
+                </group>
+                <footer>
+                    <button name="import_vendor_pricelist" string="Import" class="oe_highlight" type="object"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_import_vendor_pricelist" model="ir.actions.act_window">
+        <field name="name">Import Vendor Pricelist</field>
+        <field name="res_model">import.vendor.pricelist</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+
+    <menuitem action="action_import_vendor_pricelist" id="import_vendor_pricelists" sequence="20" parent="menu_import" />
+
+</odoo>
