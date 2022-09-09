@@ -37,13 +37,16 @@
                 </group>
                 <group>
                     <field name="rep"/>
-                    <field name="write_uid" string="Last Modified By"/>
-                    <field name="reviewed_date"/>
+                    <!-- <field name="write_uid" string="Last Modified By"/> -->
+                    <field name="write_date" string="Reviewed Date"/>
                     <!-- <field name="active" string="Status"/> -->
                     <field name="account_number"/>
                     <field name="top_publisher"/>
                     <field name="availability_check"/>
                 </group>
+            </xpath>
+            <xpath expr="//field[@name='property_account_payable_id']" position="after">
+                <field name="invoice_issues_contact"/>
             </xpath>
             <xpath expr="//notebook" position="inside">
                 <page name="nuances" string="Nuances">
@@ -74,8 +77,8 @@
                         <group>
                             <field name="dropship_applicable"/>
                             <field name="transfer_to_bp_warehouse"/>
-                            <field name="warehouse_zip_code"/>
-                            <field name="warehouse_address"/>
+                            <!-- <field name="warehouse_zip_code"/> -->
+                            <!-- <field name="warehouse_address"/> -->
                             <field name="default_shipping_id"/>
                             <field name="non_conus_shipping"/>
                         </group>
@@ -83,7 +86,7 @@
                             <field name="avg_processing_time"/>
                             <field name="rush_processing_time"/>
                             <field name="default_frieght_charges"/>
-                            <field name="return_address"/>
+                            <!-- <field name="return_address"/> -->
                             <field name="shipping_notes"/>
                             <field name="intl_shipping_notes"/>
                             <field name="tracking_souurce"/>
@@ -114,7 +117,7 @@
                             <field name="pricing_profile"/>
                             <field name="pricing_profile_notes"/>
                             <field name="price_match_discounts"/>
-                            <field name="supplier_contact"/>
+                            <!-- <field name="supplier_contact"/> -->
                             <field name="supplier_discount"/>
                         </group>
                     </group>
