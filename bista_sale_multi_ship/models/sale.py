@@ -131,8 +131,8 @@ class SaleOrder(models.Model):
             msg = _("Please add shipment lines to confirm the sale order.\n")
         else:
             verified_shipment_lines = self.sale_multi_ship_qty_lines.filtered(
-                lambda msl: msl.partner_id.state == 'verified')
-            if self.split_shipment and len(verified_shipment_lines) == 0:
+                lambda msl: msl.partner_id.state != 'verified')
+            if self.split_shipment and verified_shipment_lines:
                 msg = _(
                     "Please verfiy the shipment details before "
                     "confirming the sale order.\n")
@@ -251,7 +251,7 @@ class SaleOrderLine(models.Model):
         help='To Check if Sale Order linked to line have '
         'Multi Ship Location for product')
     remain_so_qty = fields.Float(
-        "Remaining Qty")
+        "Unplanned Order Qty")
 
     @api.onchange('product_uom_qty')
     def onchange_product_uom_qty(self):
