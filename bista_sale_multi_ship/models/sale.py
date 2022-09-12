@@ -18,7 +18,7 @@ from odoo.addons.sale_stock.models.sale_order import SaleOrderLine as \
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    so_line_dom = fields.Char(default="[]")
+    so_line_dom = fields.Char(default="[]", copy=False)
     sale_ship_lines = fields.One2many(
         'sale.multi.ship', 'sale_id', string="Sale Multi Shipment")
 
@@ -429,3 +429,9 @@ class SaleOrderLine(models.Model):
                 self.move_ids.date_deadline = self.order_id.date_order + \
                     timedelta(days=self.customer_lead or 0.0)
         return res
+
+    def create(self, vals):
+        """Update the remaining qty on create time."""
+        for sol in vals:
+            sol.update({'remain_so_qty': sol.get('product_uom_qty')})
+        return super(SaleOrderLine, self).create(vals)

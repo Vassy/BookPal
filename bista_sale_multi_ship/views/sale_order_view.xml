@@ -37,7 +37,7 @@
                             class="text-primary"
                             style="float:right"
                             attrs="{'invisible': ['|',('product_type','=','service'), ('sale_split_shipment', '=', False)]}"/>
-                    <field name="remain_so_qty" optional="hide"/>
+                    <field name="remain_so_qty" optional="hide" readonly="1" force_save="1"/>
                 </xpath>
                 <xpath expr="//page[last()]" position="after">
                     <page name="shipping_lines" string="Shipping"
@@ -71,7 +71,7 @@
                                 <field name="product_id" optional="hide"/>
                                 <field name="product_uom_qty" optional="show"/>
                                 <field name="product_qty" optional="show" default="remain_qty"/>
-                                <field name="remain_qty" optional="hide" force_save="1"/>
+                                <field name="remain_qty" optional="hide" readonly="1" force_save="1"/>
                                 <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id}" domain="['|', ('parent_id', '=', parent.partner_id), ('id', '=', parent.partner_id)]" required="1"/>
                                 <field name="shipping_date" optional="show"/>
                                 <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]"/>
