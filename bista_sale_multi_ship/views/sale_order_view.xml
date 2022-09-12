@@ -29,7 +29,10 @@
                 <xpath expr="//page/field[@name='order_line']/tree/field[@name='name']" position="attributes">
                     <attribute name="optional">hide</attribute>
                 </xpath>
-                <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom_qty']" position="after">
+                <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom_qty']" position="attributes">
+                    <attribute name="sum">Total</attribute>
+                </xpath>
+                <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom']" position="before">
                     <field name="sale_split_shipment" invisible="1"/>
                     <button name="open_sale_multi_ship_qty_wizard"
                             type="object"
@@ -37,7 +40,7 @@
                             class="text-primary"
                             style="float:right"
                             attrs="{'invisible': ['|',('product_type','=','service'), ('sale_split_shipment', '=', False)]}"/>
-                    <field name="remain_so_qty" optional="hide"/>
+                    <field name="remain_so_qty" optional="hide" readonly="1" force_save="1"/>
                 </xpath>
                 <xpath expr="//page[last()]" position="after">
                     <page name="shipping_lines" string="Shipping"
@@ -70,8 +73,12 @@
                                 <field name="so_line_id" optional="show" context="{'so_line_dom': parent.so_line_dom}" domain="[('order_id', '=', parent.id)]"/>
                                 <field name="product_id" optional="hide"/>
                                 <field name="product_uom_qty" optional="show"/>
-                                <field name="product_qty" optional="show" default="remain_qty"/>
-                                <field name="remain_qty" optional="hide" force_save="1"/>
+                                <field name="product_qty" optional="show" default="remain_qty" sum="Total"/>
+                                <!-- <field name="display_qty_widget" invisible="1"/>
+                                <widget name="qty_at_date_widget" width="20px"/> -->
+                                <field name="remain_qty" optional="hide" readonly="1" force_save="1"/>
+                                <field name="qty_delivered" optional="hide"/>
+                                <field name="qty_invoiced" optional="hide"/>
                                 <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id}" domain="['|', ('parent_id', '=', parent.partner_id), ('id', '=', parent.partner_id)]" required="1"/>
                                 <field name="shipping_date" optional="show"/>
                                 <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]"/>

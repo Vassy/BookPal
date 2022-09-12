@@ -250,7 +250,7 @@ class SaleMultiShipQtyLines(models.Model):
     product_uom_qty = fields.Float(
         related='so_line_id.product_uom_qty',
         string="Ordered Qty", help='Product Quantity')
-    product_qty = fields.Float(string="Product Qty")
+    product_qty = fields.Float(string="Shipping Qty")
     personalization_1 = fields.Char('Personalization 1')
     personalization_2 = fields.Char('Personalization 2')
 
@@ -275,9 +275,9 @@ class SaleMultiShipQtyLines(models.Model):
         help="Country to Ship")
     zip = fields.Char(related='partner_id.zip', help="Zip Code to Ship")
     shipping_date = fields.Date('Need By Date')
-    route_id = fields.Many2one('stock.location.route', 'Delivery Method')
+    route_id = fields.Many2one('stock.location.route', 'Routes')
     remain_qty = fields.Float(
-        'Remaining Qty')
+        'Unplanned Qty')
     move_ids = fields.One2many(
         'stock.move', 'multi_ship_line_id', 'Stock Moves')
     state = fields.Selection([
@@ -291,6 +291,16 @@ class SaleMultiShipQtyLines(models.Model):
         default='draft')
     partner_state = fields.Selection(
         related="partner_id.state", string='Contact status')
+    qty_delivered_method = fields.Selection(
+        related="so_line_id.qty_delivered_method")
+    qty_delivered = fields.Float(
+        related="so_line_id.qty_delivered",
+        string='Delivered Quantity',
+        store=True,
+        default=0.0)
+    qty_invoiced = fields.Float(related="so_line_id.qty_invoiced")
+    display_qty_widget = fields.Boolean(
+        related="so_line_id.display_qty_widget")
 
     def name_get(self):
         """Updated the display name."""

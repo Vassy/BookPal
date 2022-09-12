@@ -2,8 +2,7 @@
 <odoo>
 
     <record id="account.res_partner_action_customer" model="ir.actions.act_window">
-            <field name="domain">[('is_multi_ship', '=',False)]
-            </field>
+            <field name="domain">[]</field>
     </record>
 
     <record id="multi_ship_contact_action" model="ir.actions.act_window">
