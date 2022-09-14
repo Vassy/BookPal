@@ -96,8 +96,8 @@
                         <group string="Personal Information">
                             <field name="multi_ship_id" invisible="1"
                                    attrs="{'readonly':[('state', '=', 'verified')]}"/>
-                            <field name="company_type"/>
-                            <field name="parent_id"/>
+                            <field name="company_type" invisible="1"/>
+                            <field name="parent_id" invisible="1"/>
                             <field name="name" required="1"
                                    attrs="{'readonly':[('state', '=', 'verified')]}"/>
                             <field name="attention" required="0"
