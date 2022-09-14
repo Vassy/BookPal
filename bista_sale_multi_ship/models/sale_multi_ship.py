@@ -11,6 +11,7 @@ import contextlib
 import csv
 import io
 from collections import defaultdict
+from datetime import timedelta
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
@@ -240,6 +241,14 @@ class SaleMultiShipQtyLines(models.Model):
     _description = 'Sale Order Line Split Qty'
     _rec_name = 'so_line_id'
 
+    def _get_schedule_date(self):
+        for line in self:
+            date_deadline = line.shipping_date
+            if not line.shipping_date:
+                date_deadline = line.order_id.date_order + \
+                    timedelta(days=line.so_line_id.customer_lead or 0.0)
+        return date_deadline
+
     so_line_dom = fields.Char('Sale order line domain')
     so_line_id = fields.Many2one(
         'sale.order.line', 'Sale Order Line',
@@ -314,7 +323,7 @@ class SaleMultiShipQtyLines(models.Model):
     product_type = fields.Selection(related='product_id.detailed_type')
     virtual_available_at_date = fields.Float(
         compute='_compute_qty_at_date', digits='Product Unit of Measure')
-    scheduled_date = fields.Datetime(compute='_compute_qty_at_date')
+    scheduled_date = fields.Date(compute='_compute_qty_at_date')
     forecast_expected_date = fields.Datetime(compute='_compute_qty_at_date')
     free_qty_today = fields.Float(
         compute='_compute_qty_at_date', digits='Product Unit of Measure')
@@ -324,6 +333,12 @@ class SaleMultiShipQtyLines(models.Model):
         compute='_compute_qty_to_deliver', digits='Product Unit of Measure')
     # is_mto = fields.Boolean(compute='_compute_is_mto')
     display_qty_widget = fields.Boolean(compute='_compute_qty_to_deliver')
+
+    @api.onchange('so_line_id')
+    def onchange_so_line_id(self):
+        """Set default schedule date."""
+        if self.so_line_id:
+            self.shipping_date = self._get_schedule_date()
 
     @api.depends('product_type', 'product_uom_qty',
                  'qty_delivered', 'state', 'move_ids', 'product_uom')
@@ -359,6 +374,9 @@ class SaleMultiShipQtyLines(models.Model):
         # If the state is already in sale the picking is created and a
         # simple forecasted quantity isn't enough
         # Then used the forecasted data of the related stock.move
+
+        for quat_line in self.filtered(lambda li: li.state == 'draft'):
+            quat_line.scheduled_date = quat_line._get_schedule_date()
         for line in self.filtered(lambda l: l.state == 'sale'):
             if not line.display_qty_widget:
                 continue
@@ -375,6 +393,7 @@ class SaleMultiShipQtyLines(models.Model):
                 line.free_qty_today += move.product_id.uom_id.\
                     _compute_quantity(
                         move.forecast_availability, line.product_uom)
+            line.scheduled_date = line._get_schedule_date()
             line.virtual_available_at_date = False
             treated |= line
 
@@ -388,11 +407,11 @@ class SaleMultiShipQtyLines(models.Model):
             if not (line.product_id and line.display_qty_widget):
                 continue
             grouped_lines[(
-                line.warehouse_id.id, line.shipping_date)] |= line
+                line.warehouse_id.id, line.scheduled_date)] |= line
 
-        for (warehouse, shipping_date), lines in grouped_lines.items():
+        for (warehouse, scheduled_date), lines in grouped_lines.items():
             product_qties = lines.mapped('product_id').with_context(
-                to_date=shipping_date, warehouse=warehouse).read([
+                to_date=scheduled_date, warehouse=warehouse).read([
                     'qty_available',
                     'free_qty',
                     'virtual_available',
@@ -433,35 +452,9 @@ class SaleMultiShipQtyLines(models.Model):
         remaining = (self - treated)
         remaining.virtual_available_at_date = False
         remaining.forecast_expected_date = False
+        remaining.scheduled_date = False
         remaining.free_qty_today = False
         remaining.qty_available_today = False
-
-    # @api.depends('product_id', 'route_id',
-    #              'order_id.warehouse_id', 'product_id.route_ids')
-    # def _compute_is_mto(self):
-    #     self.is_mto = False
-    #     for line in self:
-    #         if not line.display_qty_widget:
-    #             continue
-    #         product = line.product_id
-    #         product_routes = line.route_id or (
-    #             product.route_ids + product.categ_id.total_route_ids)
-
-    #         # Check MTO
-    #         mto_route = line.order_id.warehouse_id.mto_pull_id.route_id
-    #         if not mto_route:
-    #             try:
-    #                 mto_route = self.env['stock.warehouse']._find_global_route(
-    #                     'stock.route_warehouse0_mto', _('Make To Order'))
-    #             except UserError:
-    #                 # if route MTO not found in ir_model_data, we treat the
-    #                 # product as in MTS
-    #                 pass
-
-    #         if mto_route and mto_route in product_routes:
-    #             line.is_mto = True
-    #         else:
-    #             line.is_mto = False
 
     def _get_outgoing_incoming_moves(self):
         outgoing_moves = self.env['stock.move']
