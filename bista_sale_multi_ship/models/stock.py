@@ -22,7 +22,7 @@ class StockRule(models.Model):
     def _get_custom_move_fields(self):
         fields = super(StockRule, self)._get_custom_move_fields()
         fields += ['sale_line_id', 'partner_id',
-                   'shipping_partner_id']
+                   'shipping_partner_id', 'multi_ship_line_id']
         return fields
 
     def _get_stock_move_values(self, product_id, product_qty,
@@ -48,8 +48,8 @@ class StockRule(models.Model):
             if ship_line:
                 if ship_line.shipping_date:
                     res.update({
-                        'date': values['ship_line'].shipping_date,
-                        'date_deadline': values['ship_line'].shipping_date})
+                        'date': ship_line.shipping_date,
+                        'date_deadline': ship_line.shipping_date})
                 res.update({
                     'partner_id': ship_line.partner_id.id,
                 })
@@ -60,127 +60,6 @@ class StockRule(models.Model):
                     'date_deadline': dest_move.date,
                 })
         return res
-
-    # I updated this logic in _prepare_procurement_values method
-    # of sale order line becuase I want to add route before the rule
-    # @api.model
-    # def _run_pull(self, procurements):
-    #     print ("\n self >>>>>>, self, procurements")
-    #     # 8 / 0
-    #     moves_values_by_company = defaultdict(list)
-    #     mtso_products_by_locations = defaultdict(list)
-    #     # To handle the `mts_else_mto` procure method, we do a
-    #     # preliminary loop to isolate the products ]
-    #     # we would need to read the forecasted quantity,
-    #     # in order to to batch the read. We also make a sanitary check on the
-    #     # `location_src_id` field.
-    #     for procurement, rule in procurements:
-    #         if procurement.values and 'sale_line_id' in procurement.values:
-    #             so_line = self.env['sale.order.line'].browse(
-    #                 procurement.values['sale_line_id'])
-    #             if not so_line.order_id.split_shipment or not \
-    #                     so_line.sale_multi_ship_qty_lines:
-    #                 return super(StockRule, self)._run_pull(procurements)
-    #         if not rule.location_src_id:
-    #             msg = _('No source location defined on stock rule: %s!') % (
-    #                 rule.name,)
-    #             raise ProcurementException([(procurement, msg)])
-
-    #         if rule.procure_method == 'mts_else_mto':
-    #             mtso_products_by_locations[rule.location_src_id].append(
-    #                 procurement.product_id.id)
-
-    #     # Get the forecasted quantity for the `mts_else_mto` procurement.
-    #     forecasted_qties_by_loc = {}
-    #     for location, product_ids in mtso_products_by_locations.items():
-    #         products = self.env['product.product'].browse(
-    #             product_ids).with_context(location=location.id)
-    #         forecasted_qties_by_loc[location] = {
-    #             product.id: product.free_qty for product in products}
-
-    #     # Prepare the move values, adapt the `procure_method` if needed.
-    #     for procurement, rule in procurements:
-    #         so_line = ''
-    #         if procurement.values and 'sale_line_id' in procurement.values:
-    #             so_line = self.env['sale.order.line'].browse(
-    #                 procurement.values['sale_line_id'])
-
-    #         procure_method = rule.procure_method
-    #         if rule.procure_method == 'mts_else_mto':
-    #             qty_needed = procurement.product_uom._compute_quantity(
-    #                 procurement.product_qty,
-    #                 procurement.product_id.uom_id)
-    #             qty_available = forecasted_qties_by_loc[
-    #                 rule.location_src_id][procurement.product_id.id]
-    #             if float_compare(
-    #                     qty_needed, qty_available,
-    #                     precision_rounding=procurement.product_id.
-    #                     uom_id.rounding) <= 0:
-    #                 procure_method = 'make_to_stock'
-    #                 forecasted_qties_by_loc[rule.location_src_id][
-    #                     procurement.product_id.id] -= qty_needed
-    #             else:
-    #                 procure_method = 'make_to_order'
-    #         if so_line:
-    #             partner_shipping_id = so_line.order_id.partner_id
-    #             split_qty_lines = so_line.sale_multi_ship_qty_lines.filtered(
-    #                 lambda st: st.partner_id.state == 'verified')
-    #             if self.env.context.get('external_delivery') and \
-    #                     self.env.context.get('split_so_line'):
-    #                 split_qty_lines = split_qty_lines.filtered(
-    #                     lambda st: st.id in self.env.context.get(
-    #                         'split_so_line'))
-    #             for split_qty_line in split_qty_lines:
-    #                 move_values = rule._get_stock_move_values(*procurement)
-    #                 move_values['procure_method'] = procure_method
-    #                 move_values['product_uom_qty'] = split_qty_line.\
-    #                    product_qty
-    #                 move_values['partner_id'] = split_qty_line.partner_id.id
-    #                 move_values['shipping_partner_id'] = \
-    #                   partner_shipping_id.id
-    #                 # if ship_date:
-    #                 move_values['date'] = split_qty_line.shipping_date
-    #                 move_values['date_deadline'] = \
-    #                    split_qty_line.shipping_date
-    #                 move_values['sale_line_id'] = so_line.id
-    #                 if split_qty_line.route_id:
-    #                     move_values['route_ids'] = \
-    #                        split_qty_line.route_id.id,
-    #                 # move_values['route_ids'] = split_qty_line.route_id.id,
-    #                 moves_values_by_company[
-    #                     procurement.company_id.id].append(move_values)
-    #         else:
-    #             move_values = rule._get_stock_move_values(*procurement)
-    #             move_values['procure_method'] = procure_method
-    #             moves_values_by_company[
-    #                 procurement.company_id.id].append(move_values)
-    #             if 'move_dest_ids' in move_values and \
-    #                     move_values['move_dest_ids']:
-    #                 for dest_move in move_values['move_dest_ids']:
-    #                     move_id = self.env['stock.move'].browse(dest_move[1])
-    #                     if move_id.partner_id:
-    #                         move_values['partner_id'] = move_id.partner_id.id
-    #                         move_values[
-    #                             'shipping_partner_id'] = move_id.\
-    #                             shipping_partner_id.id
-    #     for company_id, moves_values in moves_values_by_company.items():
-    #         # create the move as SUPERUSER because the current user may not
-    #         # have the rights to do it (mto product launched by a sale for
-    #         # example)
-    #         moves = self.env['stock.move'].with_user(
-    #             SUPERUSER_ID).sudo().with_company(company_id).create(
-    #             moves_values)
-    #         # Since action_confirm launch following procurement_group
-    #         # we should
-    #         # activate it.
-    #         moves._action_confirm()
-    #         # set the Delivery Order in Multi ship lines to show DO and
-    #         # Shipping reference in SO.
-    #         for move_line in moves:
-    #             if move_line.picking_id and move_line.partner_id:
-    #                 move_line.partner_id.stock_picking_id = move_line.\
-    #                     picking_id
-    #     return True
 
 
 class StockPicking(models.Model):
@@ -221,19 +100,14 @@ class StockPicking(models.Model):
         action['context'] = ctx
         return action
 
-    # def create(self, vals):
-    #     print ("\n vals >>>>>.", vals.get('picking_type_id'))
-    #     if vals.get('picking_type_id') == 7:
-    #         3 / 0
-    #     return super(StockPicking, self).create(vals)
-
 
 class StockMove(models.Model):
     _inherit = 'stock.move'
 
     shipping_partner_id = fields.Many2one(
         'res.partner', string="Shipping Customer")
-    multi_ship_line_id = fields.Many2one('sale.multi.ship.qty.lines', '')
+    multi_ship_line_id = fields.Many2one(
+        'sale.multi.ship.qty.lines', 'Multi Shipments')
 
     def _get_new_picking_values(self):
         """_get_new_picking_values.
@@ -331,3 +205,42 @@ class StockMove(models.Model):
             moves.write({'picking_id': picking.id})
             moves._assign_picking_post_process(new=new_picking)
         return True
+
+    @api.model
+    def _prepare_merge_moves_distinct_fields(self):
+        distinct_fields = super(StockMove, self).\
+            _prepare_merge_moves_distinct_fields()
+        distinct_fields.append('multi_ship_line_id')
+        return distinct_fields
+
+
+class PurchaseOrderLine(models.Model):
+    """Overided due to update shipping line reference in dropship move."""
+
+    _inherit = "purchase.order.line"
+
+    multi_ship_line_id = fields.Many2one(
+        'sale.multi.ship.qty.lines', 'Shipment Lines')
+
+    @api.model
+    def _prepare_purchase_order_line_from_procurement(
+            self, product_id, product_qty, product_uom, company_id,
+            values, po):
+        """Update shipping line value."""
+        res = super(PurchaseOrderLine, self).\
+            _prepare_purchase_order_line_from_procurement(
+                product_id, product_qty, product_uom,
+                company_id, values, po)
+        if values.get('ship_line'):
+            res.update({'multi_ship_line_id': values.get('ship_line').id})
+        return res
+
+    def _prepare_stock_move_vals(self, picking, price_unit, product_uom_qty,
+                                 product_uom):
+        self.ensure_one()
+        self._check_orderpoint_picking_type()
+        res = super(PurchaseOrderLine, self)._prepare_stock_move_vals(
+            picking, price_unit, product_uom_qty, product_uom)
+        if self.multi_ship_line_id:
+            res.update({'multi_ship_line_id': self.multi_ship_line_id.id})
+        return res

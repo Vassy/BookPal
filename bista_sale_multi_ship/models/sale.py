@@ -157,7 +157,7 @@ class SaleOrder(models.Model):
             product_uom_qty = sum(order_line.mapped('product_uom_qty'))
             product_qty = sum(
                 order_line.sale_multi_ship_qty_lines.mapped('product_qty'))
-            if product_uom_qty < product_qty:
+            if self.split_shipment and product_uom_qty < product_qty:
                 msg += _("For %s shipping qty %s is more than ordered "
                          "qty %s.\n" % (
                              order_line.product_id.name +
@@ -430,8 +430,9 @@ class SaleOrderLine(models.Model):
                     timedelta(days=self.customer_lead or 0.0)
         return res
 
+    @api.model
     def create(self, vals):
         """Update the remaining qty on create time."""
-        for sol in vals:
+        for sol in self:
             sol.update({'remain_so_qty': sol.get('product_uom_qty')})
         return super(SaleOrderLine, self).create(vals)

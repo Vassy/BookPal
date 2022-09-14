@@ -74,11 +74,22 @@
                                 <field name="product_id" optional="hide"/>
                                 <field name="product_uom_qty" optional="show"/>
                                 <field name="product_qty" optional="show" default="remain_qty" sum="Total"/>
-                                <!-- <field name="display_qty_widget" invisible="1"/>
-                                <widget name="qty_at_date_widget" width="20px"/> -->
+                                <field name="product_uom" optional="hide"/>
+                                <!-- below fields are used in the widget qty_at_date_widget -->
+                                <field name="product_type" invisible="1"/>
+                                <field name="virtual_available_at_date" invisible="1"/>
+                                <field name="qty_available_today" invisible="1"/>
+                                <field name="free_qty_today" invisible="1"/>
+                                <field name="forecast_expected_date" invisible="1"/>
+                                <field name="warehouse_id" invisible="1"/>
+                                <field name="move_ids" invisible="1"/>
+                                <field name="qty_to_deliver" invisible="1"/>
+                                <!-- <field name="is_mto" invisible="0"/> -->
+                                <field name="display_qty_widget" invisible="1"/>
+                                <widget name="qty_at_date_widget" width="20px"/>
                                 <field name="remain_qty" optional="hide" readonly="1" force_save="1"/>
-                                <field name="qty_delivered" optional="hide"/>
-                                <field name="qty_invoiced" optional="hide"/>
+                                <field name="qty_delivered" optional="hide" readonly="1" force_save="1"/>
+                                <!-- <field name="qty_invoiced" optional="hide"/> -->
                                 <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id}" domain="['|', ('parent_id', '=', parent.partner_id), ('id', '=', parent.partner_id)]" required="1"/>
                                 <field name="shipping_date" optional="show"/>
                                 <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]"/>
@@ -86,6 +97,8 @@
                                 <field name="attention" optional="hide"/>
                                 <field name="partner_state" invisible="1"/>
                                 <field name="order_id" invisible="1"/>
+                                <field name="qty_delivered_method"/>
+                                <field name="move_ids"/>
                             </tree>
                         </field>
                         <field name="ship_lines_validated" invisible="1"/>
