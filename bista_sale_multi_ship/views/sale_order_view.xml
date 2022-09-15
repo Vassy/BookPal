@@ -97,6 +97,8 @@
                                 <field name="attention" optional="hide"/>
                                 <field name="partner_state" invisible="1"/>
                                 <field name="order_id" invisible="1"/>
+                                <field name="qty_delivered_method"/>
+                                <field name="move_ids"/>
                             </tree>
                         </field>
                         <field name="ship_lines_validated" invisible="1"/>

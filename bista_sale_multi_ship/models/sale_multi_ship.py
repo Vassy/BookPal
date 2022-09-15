@@ -374,7 +374,6 @@ class SaleMultiShipQtyLines(models.Model):
         # If the state is already in sale the picking is created and a
         # simple forecasted quantity isn't enough
         # Then used the forecasted data of the related stock.move
-
         for quat_line in self.filtered(lambda li: li.state == 'draft'):
             quat_line.scheduled_date = quat_line._get_schedule_date()
         for line in self.filtered(lambda l: l.state == 'sale'):
