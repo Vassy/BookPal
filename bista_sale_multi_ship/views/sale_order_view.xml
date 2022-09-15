@@ -81,10 +81,10 @@
                                 <field name="qty_available_today" invisible="1"/>
                                 <field name="free_qty_today" invisible="1"/>
                                 <field name="forecast_expected_date" invisible="1"/>
+                                <field name="scheduled_date" invisible="1"/>
                                 <field name="warehouse_id" invisible="1"/>
                                 <field name="move_ids" invisible="1"/>
                                 <field name="qty_to_deliver" invisible="1"/>
-                                <!-- <field name="is_mto" invisible="0"/> -->
                                 <field name="display_qty_widget" invisible="1"/>
                                 <widget name="qty_at_date_widget" width="20px"/>
                                 <field name="remain_qty" optional="hide" readonly="1" force_save="1"/>
@@ -93,7 +93,7 @@
                                 <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id}" domain="['|', ('parent_id', '=', parent.partner_id), ('id', '=', parent.partner_id)]" required="1"/>
                                 <field name="shipping_date" optional="show"/>
                                 <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]"/>
-                                <field name="state" optional="hide"/>
+                                <field name="state" optional="hide" readonly="0"/>
                                 <field name="attention" optional="hide"/>
                                 <field name="partner_state" invisible="1"/>
                                 <field name="order_id" invisible="1"/>
