@@ -12,6 +12,9 @@
     'data': [
         'security/ir.model.access.csv',
         'views/res_partner_views.xml',
+        'report/purchase.xml',
+        'report/purchase_quotation_templates.xml',
+        'report/report_templates.xml'
     ],
     'auto_install': False,
     'installable': True,
