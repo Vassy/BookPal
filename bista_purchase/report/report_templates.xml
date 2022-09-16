@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Customized header section for make the logo and company details single block -->
+    <template id="external_layout_boxed_extended" inherit_id="web.external_layout_boxed">
+        <xpath expr="//div[hasclass('o_boxed_header')]" position="replace">
+            <t t-if="doc_model == 'purchase.order'">
+                <div class="o_boxed_header">
+                    <div class="row mb8">
+                        <div class="col-6">
+                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
+                            <div t-field="o.company_id.partner_id"
+                                 t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'
+                            />
+                        </div>
+                        <div t-if="xmlid == 'purchase.report_purchaseorder'" name="report_info"
+                             class="col-6 text-right mb4">
+                            <h3 t-if="o.state in ['draft','sent','purchase','done']">Purchase Order</h3>
+                            <h3 t-if="o.state == 'cancel'">Cancelled Purchase Quotation/Order</h3>
+                            <h4>
+                                <strong>
+                                    <t t-esc="o.name"/>
+                                </strong>
+                            </h4>
+                            <strong>Date:
+                                <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                            </strong>
+                            <br/>
+                        </div>
+                        <div t-if="xmlid == 'purchase.report_purchasequotation'" name="report_info"
+                             class="col-6 text-right mb4">
+                            <h3>Request for Quotation</h3>
+                            <h4>
+                                <strong>
+                                    <t t-esc="o.name"/>
+                                </strong>
+                            </h4>
+                            <strong>Date:
+                                <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                            </strong>
+                            <br/>
+                        </div>
+                    </div>
+                </div>
+                <t t-if="doc_model == 'purchase.order' and o.state in ['draft','sent'] and xmlid == 'purchase.report_purchaseorder'">
+                    <div class="watermark"
+                         style="top:450px; left: 90px; border: 2px solid green; font-size:7em; position:fixed; text-align:center; width:70%; opacity:0.25; -webkit-transform: rotate(-30deg);">
+                        <p>Draft</p>
+                    </div>
+                </t>
+            </t>
+            <t t-else="">
+                <div class="o_boxed_header">
+                    <div class="row mb8">
+                        <div class="col-6">
+                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
+                            <!-- <h4 class="mt0" t-field="company.report_header"/> -->
+                            <div name="company_address" class="mb4" style="font-size: 15px;">
+                                <span t-if="company.company_details" t-field="company.company_details"/>
+                            </div>
+                        </div>
+                        <div name="report_info" class="col-6 text-right mb4">
+
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+        <xpath expr="//div[@t-attf-class='footer o_boxed_footer o_company_#{company.id}_layout']" position="replace">
+            <t t-if="doc_model == 'purchase.order'and xmlid == 'purchase.report_purchaseorder'">
+                <div t-attf-class="footer o_company_#{company.id}_layout">
+                    <!--            <t t ="">-->
+                    <!--                <div t-attf-class="footer o_boxed_footer o_company_#{company.id}_layout">-->
+                    <div class="text-center">
+                        <!--                        <div t-field="company.report_footer"/>-->
+                        <div t-if="report_type == 'pdf'">
+                            <span t-field="res_company.partner_id.name"/>
+                            |
+                            <span t-field="res_company.partner_id.street"/>
+                            |
+                            <span t-field="res_company.partner_id.phone"/>
+                            |
+                            <span t-field="res_company.partner_id.city"/>
+                            |
+                            <span t-field="res_company.partner_id.website"/>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+        <xpath expr="//div[hasclass('pt-5')]" position="replace">
+            <t t-call="web.address_layout"/>
+        </xpath>
+    </template>
+    <template id="address_layout_extended" inherit_id="web.address_layout">
+        <xpath expr="//div[hasclass('address', 'row')]" position="replace">
+            <div class="address row" style="margin-left: 5px;">
+                <div name="address" class="col-4">
+                    <t t-esc="address"/>
+                </div>
+                <t t-if="information_block">
+                    <t t-set="colclass" t-value="'col-5 offset-1'"/>
+                    <div name="information_block" class="col-4">
+                        <t t-out="information_block"/>
+                    </div>
+                </t>
+                <div name="custom_information_block" class="col-4"/>
+            </div>
+        </xpath>
+    </template>
+</odoo>
