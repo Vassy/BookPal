@@ -70,7 +70,7 @@
                 <div t-attf-class="footer o_company_#{company.id}_layout">
                     <!--            <t t ="">-->
                     <!--                <div t-attf-class="footer o_boxed_footer o_company_#{company.id}_layout">-->
-                    <div class="text-center" >
+                    <div class="text-center">
                         <!--                        <div t-field="company.report_footer"/>-->
                         <div t-if="report_type == 'pdf'">
                             <span t-field="res_company.partner_id.name"/>
