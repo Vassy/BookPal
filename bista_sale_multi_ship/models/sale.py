@@ -18,7 +18,7 @@ from odoo.addons.sale_stock.models.sale_order import SaleOrderLine as \
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
-    so_line_dom = fields.Char(default="[]", copy=False)
+    so_lines = fields.Char(default="[]", copy=False)
     sale_ship_lines = fields.One2many(
         'sale.multi.ship', 'sale_id', string="Sale Multi Shipment")
 
@@ -234,9 +234,40 @@ class SaleOrder(models.Model):
             lambda x: x.remain_so_qty > 0)
         if self._origin.sale_multi_ship_qty_lines or \
                 self.sale_multi_ship_qty_lines:
-            so_line_dom = "[('id', 'in', %s)]" % \
-                str(filter_so_line._origin.ids)
-            self.so_line_dom = so_line_dom
+            so_lines = str(filter_so_line._origin.ids)
+            self.so_lines = so_lines
+
+    @api.onchange('order_line')
+    def onchnage_order_lines(self):
+        """Updated unplanned qty."""
+        if self.env.context.get('multi_ship'):
+            return
+        for rec in self:
+            for line in rec.order_line:
+                planned_qty = sum(
+                    line._origin.sale_multi_ship_qty_lines.filtered(
+                        lambda sl: sl.so_line_id.id == line._origin.id).mapped(
+                        'product_qty'))
+                line.remain_so_qty = line.product_uom_qty - planned_qty
+                lines = []
+                if line.remain_so_qty and line._origin:
+                    lines = str(eval(line.order_id.so_lines) + [
+                        line._origin.id])
+                rec.so_lines = lines
+
+    def _action_cancel(self):
+        res = super(SaleOrder, self)._action_cancel()
+        for so in self:
+            so.sale_multi_ship_qty_lines.filtered(
+                lambda x: x.state != 'sale').write({'state': 'cancel'})
+        return res
+
+    def action_draft(self):
+        """Set to draft shipping line."""
+        res = super(SaleOrder, self).action_draft()
+        for so in self:
+            so.sale_multi_ship_qty_lines.write({'state': 'draft'})
+        return res
 
 
 class SaleOrderLine(models.Model):
@@ -252,12 +283,7 @@ class SaleOrderLine(models.Model):
         'Multi Ship Location for product')
     remain_so_qty = fields.Float(
         "Unplanned Order Qty")
-
-    @api.onchange('product_uom_qty')
-    def onchange_product_uom_qty(self):
-        """Onchange product uom qty."""
-        for rec in self:
-            rec.remain_so_qty = rec.product_uom_qty
+    supplier_id = fields.Many2one('res.partner', 'Vendor')
 
     def open_sale_multi_ship_qty_wizard(self):
         """Open sale multi ship qty wizard."""
@@ -290,7 +316,8 @@ class SaleOrderLine(models.Model):
         date_planned = date_deadline - timedelta(
             days=self.order_id.company_id.security_lead)
         for ship_line in self.sale_multi_ship_qty_lines.filtered(
-                lambda l: l.partner_id.state == 'verified'):
+            lambda l: l.partner_id.state == 'verified' and
+                l.state == 'draft'):
             proc_vals = {
                 'group_id': group_id,
                 'sale_line_id': self.id,
@@ -338,12 +365,6 @@ class SaleOrderLine(models.Model):
             if line.state != 'sale' or \
                     not (line.product_id.type in ('consu', 'product')):
                 continue
-            qty = line._get_qty_procurement(previous_product_uom_qty)
-            if float_compare(
-                    qty, line.product_uom_qty,
-                    precision_digits=precision) == 0:
-                continue
-
             group_id = line._get_procurement_group()
             if not group_id:
                 group_id = self.env['procurement.group'].create(
@@ -367,15 +388,19 @@ class SaleOrderLine(models.Model):
                     group_id.write(updated_vals)
 
             values = line._prepare_procurement_values(group_id=group_id)
-            product_qty = line.product_uom_qty - qty
-
-            line_uom = line.product_uom
-            quant_uom = line.product_id.uom_id
-            product_qty, procurement_uom = line_uom._adjust_uom_quantities(
-                product_qty, quant_uom)
             for val in values:
+                qty = val.get('ship_line')._get_qty_procurement(
+                    previous_product_uom_qty)
+                if float_compare(
+                    qty, line.product_qty,
+                        precision_digits=precision) == 0:
+                    continue
                 shipping_lines += val.get('ship_line')
                 product_qty = val.get('ship_line').product_qty - qty
+                line_uom = line.product_uom
+                quant_uom = line.product_id.uom_id
+                product_qty, procurement_uom = line_uom._adjust_uom_quantities(
+                    product_qty, quant_uom)
                 procurements.append(self.env['procurement.group'].Procurement(
                     line.product_id, product_qty, procurement_uom,
                     line.order_id.partner_shipping_id.property_stock_customer,
@@ -388,6 +413,7 @@ class SaleOrderLine(models.Model):
         # scheduler trigger is done by picking confirmation rather
         # than stock.move confirmation
         orders = self.mapped('order_id')
+        shipping_lines.write({'state': 'sale'})
         for order in orders:
             pickings_to_confirm = order.picking_ids.filtered(
                 lambda p: p.state not in ['cancel', 'done'])
@@ -401,8 +427,8 @@ class SaleOrderLine(models.Model):
         """Overide name_search for sale order line domain."""
         if not args:
             args = []
-        if self.env.context.get('so_line_dom'):
-            args += eval(self.env.context.get('so_line_dom'))
+        if self.env.context.get('so_lines') and eval(self.env.context.get('so_lines')):
+            args += [('id', 'in', eval(self.env.context.get('so_lines')))]
         return super(SaleOrderLine, self).name_search(
             name, args, operator, limit)
 
@@ -431,8 +457,17 @@ class SaleOrderLine(models.Model):
         return res
 
     @api.model
-    def create(self, vals):
-        """Update the remaining qty on create time."""
-        for sol in self:
-            sol.update({'remain_so_qty': sol.get('product_uom_qty')})
-        return super(SaleOrderLine, self).create(vals)
+    def create(self, vals_list):
+        """Skip create delvery when multi shipment is on."""
+        lines = super(BaseSaleOrderLine, self).create(vals_list)
+        if not lines.mapped('order_id').split_shipment:
+            lines.filtered(
+                lambda line: line.state == 'sale')._action_launch_stock_rule()
+        for ship_line in lines:
+            planned_qty = sum(ship_line.sale_multi_ship_qty_lines.filtered(
+                lambda sl: sl.so_line_id.id == ship_line.id).mapped(
+                'product_qty'))
+            ship_line.update(
+                {'remain_so_qty':
+                    ship_line.product_uom_qty - planned_qty})
+        return lines

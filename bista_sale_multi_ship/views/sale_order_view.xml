@@ -18,7 +18,8 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <field name='partner_shipping_id' position="after">
-                    <field name="split_shipment" invisible="0"/>
+                    <field name="split_shipment" invisible="0" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="so_lines" invisible="1" force_save="1"/>
                 </field>
                 <xpath expr="//header" position="inside">
                     <button string="External Delivery" name="action_open_shiping_wizard" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'not in', ('sale'))]}"/>
@@ -42,6 +43,9 @@
                             attrs="{'invisible': ['|',('product_type','=','service'), ('sale_split_shipment', '=', False)]}"/>
                     <field name="remain_so_qty" optional="hide" readonly="1" force_save="1"/>
                 </xpath>
+                 <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom']" position="after">
+                    <field name="supplier_id"/>
+                 </xpath>
                 <xpath expr="//page[last()]" position="after">
                     <page name="shipping_lines" string="Shipping"
                           attrs="{'invisible': [('split_shipment', '=', False)]}">
@@ -63,17 +67,19 @@
                             <button name="action_verify_customer_data" type="object"
                                 string="Verify Customer Details"
                                 class="btn-primary"/>
-                            <field name="so_line_dom" invisible="1"/>
                         </group>
 
                         <!-- <button name="open_sale_multi_ship_wizard" type="object"
                                 icon="fa-truck" string="Import Shipping Data" class="btn-primary" style="float:right"/> -->
-                        <field name="sale_multi_ship_qty_lines">
+                        <field name="sale_multi_ship_qty_lines" context="{'multi_ship': True}">
                             <tree decoration-danger="partner_state =='error'" decoration-success="partner_state =='verified'" editable="top">
-                                <field name="so_line_id" optional="show" context="{'so_line_dom': parent.so_line_dom}" domain="[('order_id', '=', parent.id)]"/>
+                                <field name="id" invisible="1"/>
+                                <field name="shipping_date" optional="show" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id}" domain="['|', ('parent_id', '=', parent.partner_id), ('id', '=', parent.partner_id)]" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="so_line_id" optional="show" context="{'so_lines': parent.so_lines}" domain="[('order_id', '=', parent.id)]" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="product_id" optional="hide"/>
                                 <field name="product_uom_qty" optional="show"/>
-                                <field name="product_qty" optional="show" default="remain_qty" sum="Total"/>
+                                <field name="product_qty" optional="show" default="remain_qty" sum="Total" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="product_uom" optional="hide"/>
                                 <!-- below fields are used in the widget qty_at_date_widget -->
                                 <field name="product_type" invisible="1"/>
@@ -85,20 +91,23 @@
                                 <field name="warehouse_id" invisible="1"/>
                                 <field name="move_ids" invisible="1"/>
                                 <field name="qty_to_deliver" invisible="1"/>
+                                <field name="is_mto" invisible="1"/>
                                 <field name="display_qty_widget" invisible="1"/>
                                 <widget name="qty_at_date_widget" width="20px"/>
                                 <field name="remain_qty" optional="hide" readonly="1" force_save="1"/>
                                 <field name="qty_delivered" optional="hide" readonly="1" force_save="1"/>
-                                <!-- <field name="qty_invoiced" optional="hide"/> -->
-                                <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id}" domain="['|', ('parent_id', '=', parent.partner_id), ('id', '=', parent.partner_id)]" required="1"/>
-                                <field name="shipping_date" optional="show"/>
-                                <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]"/>
-                                <field name="state" optional="hide" readonly="0"/>
-                                <field name="attention" optional="hide"/>
+                                <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="supplier_id"/>
+                                <field name="state" optional="hide" readonly="1" force_save="1"/>
+                                <field name="attention" optional="hide" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="partner_state" invisible="1"/>
                                 <field name="order_id" invisible="1"/>
-                                <field name="qty_delivered_method"/>
-                                <field name="move_ids"/>
+                                <button name="cancel_shipment"
+                                    type="object"
+                                    icon="fa-close"
+                                    class="text-primary"
+                                    style="float:right"
+                                    attrs="{'invisible': ['|',('product_type','=','service'), ('state', '=', 'draft')]}"/>
                             </tree>
                         </field>
                         <field name="ship_lines_validated" invisible="1"/>
