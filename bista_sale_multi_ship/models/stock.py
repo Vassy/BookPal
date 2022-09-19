@@ -31,8 +31,24 @@ class StockRule(models.Model):
         res = super(StockRule, self)._get_stock_move_values(
             product_id, product_qty, product_uom,
             location_id, name, origin, company_id, values)
-        # import pdb
-        # pdb.set_trace()
+        # Update the sale order line reference in all operation move.
+        # like outgoing, internal and pick operation,
+        if values.get('sale_line_id'):
+            res.update({
+                'sale_line_id': values['sale_line_id']})
+        elif values.get('move_dest_ids'):
+            sale_line = values.get('move_dest_ids').mapped(
+                'sale_line_id')
+            dest_move = values.get('move_dest_ids')[0]
+            if sale_line:
+                res.update({
+                    'sale_line_id': sale_line.id,
+                })
+            else:
+                res.update({
+                    'sale_line_id': dest_move.sale_line_id.id
+                })
+
         if values.get('ship_line'):
             if values.get('ship_line').shipping_date:
                 res.update({
@@ -40,6 +56,7 @@ class StockRule(models.Model):
                     'date_deadline': values['ship_line'].shipping_date})
             res.update({
                 'partner_id': values['ship_line'].partner_id.id,
+                'multi_ship_line_id': values.get('ship_line').id
             })
         elif values.get('move_dest_ids'):
             ship_line = values.get('move_dest_ids').mapped(
@@ -52,14 +69,32 @@ class StockRule(models.Model):
                         'date_deadline': ship_line.shipping_date})
                 res.update({
                     'partner_id': ship_line.partner_id.id,
+                    'multi_ship_line_id': ship_line.id
                 })
             else:
                 res.update({
                     'partner_id': dest_move.partner_id.id,
                     'date': dest_move.date,
                     'date_deadline': dest_move.date,
+                    'multi_ship_line_id': dest_move.multi_ship_line_id.id
                 })
         return res
+
+    def _prepare_purchase_order(self, company_id, origins, values):
+        """Overriden method to update vendor based on sale and shipment."""
+        res = super(StockRule, self)._prepare_purchase_order(
+            company_id, origins, values)
+        val = values[0]
+        if val.get('supplier_id'):
+            res.update({'partner_id': val.get('supplier_id').id})
+        return res
+
+    def _make_po_get_domain(self, company_id, values, partner):
+        """Override method to update partner as per sale or shipment."""
+        if values.get('supplier_id'):
+            partner = values.get('supplier_id')
+        return super(StockRule, self)._make_po_get_domain(
+            company_id, values, partner)
 
 
 class StockPicking(models.Model):
@@ -76,6 +111,7 @@ class StockPicking(models.Model):
         'res.partner', string="Customer")
 
     def action_automatic_entry(self):
+        """Action automatic entry."""
         action = self.env.ref(
             'bista_sale_multi_ship.action_put_in_pack_wizard').sudo().read()[0]
 
@@ -212,6 +248,19 @@ class StockMove(models.Model):
             _prepare_merge_moves_distinct_fields()
         distinct_fields.append('multi_ship_line_id')
         return distinct_fields
+
+    def _prepare_procurement_values(self):
+        proc_values = super()._prepare_procurement_values()
+        # print ("\n proc_values >>>", proc_values)
+        if self.sale_line_id and self.sale_line_id.supplier_id:
+            proc_values.update({'supplier_id': self.sale_line_id.supplier_id})
+        if self.multi_ship_line_id and self.multi_ship_line_id.supplier_id:
+            proc_values.update(
+                {'supplier_id': self.multi_ship_line_id.supplier_id})
+        if self.restrict_partner_id:
+            proc_values['supplierinfo_name'] = self.restrict_partner_id
+            self.restrict_partner_id = False
+        return proc_values
 
 
 class PurchaseOrderLine(models.Model):
