@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+bista_sale.access_white_glove_type,access_white_glove_type,bista_sale.model_white_glove_type,base.group_user,1,1,1,1
+bista_sale.access_journal_customization,access_journal_customization,bista_sale.model_journal_customization,base.group_user,1,1,1,1
+bista_sale.access_artwork_status,access_artwork_status,bista_sale.model_artwork_status,base.group_user,1,1,1,1
+bista_sale.access_death_type,access_death_type,bista_sale.model_death_type,base.group_user,1,1,1,1
+bista_sale.access_customization_type,access_customization_type,bista_sale.model_customization_type,base.group_user,1,1,1,1

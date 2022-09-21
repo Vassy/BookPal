@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="artwork_status_form_view" model="ir.ui.view">
+        <field name="name">artwork_status_form_view</field>
+        <field name="model">artwork.status</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name" />                      
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="artwork_status_tree_view" model="ir.ui.view">
+        <field name="name">artwork.status.tree.view</field>
+        <field name="model">artwork.status</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />               
+            </tree>
+        </field>
+    </record>
+
+    <record id="artwork_status_action" model="ir.actions.act_window">
+        <field name="name">Artwork Status</field>
+        <field name="res_model">artwork.status</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="bookpal_menu" name="BookPal" parent="sale.menu_sale_config" sequence="100"/>
+
+    <menuitem id="artwork_status_menu" name="Artwork Status" action="artwork_status_action"
+              parent="bookpal_menu" sequence="1"/>
+
+
+</odoo>

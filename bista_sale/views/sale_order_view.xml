@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sale_order_view_extended" model="ir.ui.view">
+        <field name="name">sale.order.view.extend</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!--Picking notes-->
+            <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
+                <field name="picking_note"/>
+            </xpath>
+            <!--Common Picking Note-->
+            <xpath expr="//group[@name='note_group']" position="after">
+                <group name="common_note" col="6" class="mt-2 mt-md-0">
+                    <group colspan="4">
+                        <field name="common_pick_note"
+                               class="oe-bordered-editor" nolabel="1"
+                               placeholder="Common Picking Notes..."/>
+                    </group>
+                </group>
+            </xpath>
+<!--             <xpath expr="//page[@name='other_information']/group[2]" position="after">-->
+<!--                <group>-->
+<!--                    <group name="order_notes" string="Order Notes">-->
+<!--                        <field name="event_date" />-->
+<!--                        <field name="order_notes" />-->
+<!--                        <field name="gorgias_ticket" />-->
+<!--                        <field name="product_status_notes" />-->
+<!--                        <field name="white_glove_id"/>-->
+<!--                        <field name="ce_notes" />-->
+<!--                        <field name="payment_notes" />-->
+<!--                        <field name="am_notes" />-->
+<!--                        <field name="ce_ops_acct_notes" />-->
+<!--                    </group>-->
+<!--                    <group name="journal_details" string="Journal Details">-->
+<!--                        <field name="journal_customization_id" />-->
+<!--                        <field name="customization_cost" />-->
+<!--                        <field name="link_to_art_files" />-->
+<!--                        <field name="artwork_status_id" />-->
+<!--                        <field name="journal_notes" />-->
+<!--                        <field name="journal_setup_fee" />-->
+<!--                        <field name="shipping_account" />-->
+<!--                        <field name="shipping_cost" />-->
+<!--                        <field name="death_type_id" />-->
+<!--                        <field name="existing_death_order" />-->
+<!--                    </group>-->
+<!--                    <group name="project_fulfilment_tracking" string="Project and Fulfilment Tracking">-->
+<!--                        <field name="fulfilment_project" />-->
+<!--                        <field name="am_owner" />-->
+<!--                        <field name="project_description" />-->
+<!--                        <field name="status_notes" />-->
+<!--                        <field name="delivery_location" />-->
+<!--                        <field name="shipping_instruction" />-->
+<!--                        <field name="customization_type_ids" widget="many2many_tags"/>-->
+<!--                        <field name="special_insert_note" />-->
+<!--                        <field name="attachment_note" />-->
+<!--                        <field name="individual_mailer_return_receiver" />-->
+<!--                        <field name="recipient_list_status" />-->
+<!--                        <field name="recipient_list_expected" />-->
+<!--                        <field name="individual_mailer_return_address" />-->
+<!--                        <field name="book_status" />-->
+<!--                        <field name="on_hold_reason" />-->
+<!--                    </group>-->
+<!--                    <group name="payment_info" string="Payment Information">-->
+<!--                        <field name="billing_notes" />-->
+<!--                        <field name="placed_from_ip" />-->
+<!--                    </group>-->
+<!--                </group>-->
+<!--            </xpath>-->
+<!--        </field>-->
+
+            <xpath expr="//notebook/page[@name='other_information']" position="after">
+                <page string="Order Notes" name="order_notes">
+                    <sheet>
+                        <group>
+                            <group name="order_notes">
+                                <field name="event_date"/>
+                                <field name="order_notes"/>
+                                <field name="gorgias_ticket"/>
+                                <field name="product_status_notes"/>
+                            </group>
+                            <group>
+                                <field name="white_glove_id"/>
+                                <field name="ce_notes"/>
+                                <field name="payment_notes"/>
+                                <field name="am_notes"/>
+                                <field name="ce_ops_acct_notes"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </page>
+            </xpath>
+            <xpath expr="//notebook/page[@name='order_notes']" position="after">
+                <page name="journal_details" string="Journal Details">
+                    <group>
+                        <group name="journal_details">
+                            <field name="journal_customization_id"/>
+                            <field name="customization_cost"/>
+                            <field name="link_to_art_files"/>
+                            <field name="artwork_status_id"/>
+                            <field name="journal_notes"/>
+                        </group>
+                        <group>
+                            <field name="journal_setup_fee"/>
+                            <field name="shipping_account"/>
+                            <field name="shipping_cost"/>
+                            <field name="death_type_id"/>
+                            <field name="existing_death_order"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+            <xpath expr="//notebook/page[@name='journal_details']" position="after">
+                <page string="Project Tracking" name="project_fulfilment_trac">
+                    <group>
+                        <group name="project_fulfilment_tracking">
+                            <field name="fulfilment_project"/>
+                            <field name="am_owner"/>
+                            <field name="project_description"/>
+                            <field name="status_notes"/>
+                            <field name="delivery_location"/>
+                            <field name="shipping_instruction"/>
+                            <field name="customization_type_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="special_insert_note"/>
+                            <field name="attachment_note"/>
+                            <field name="individual_mailer_return_receiver"/>
+                            <field name="recipient_list_status"/>
+                            <field name="recipient_list_expected"/>
+                            <field name="individual_mailer_return_address"/>
+                            <field name="book_status"/>
+                            <field name="on_hold_reason"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+            <xpath expr="//notebook/page[@name='project_fulfilment_trac']" position="after">
+                <page string="Payment">
+                    <group>
+                        <group name="payment_info">
+                            <field name="billing_notes"/>
+                        </group>
+                        <group>
+                            <field name="placed_from_ip"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
