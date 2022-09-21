@@ -674,22 +674,22 @@ class SaleMultiShipQtyLines(models.Model):
 
     def cancel_shipment(self):
         """Cancel the ready or waiting move operation line."""
-        # for rec in self:
-        #     done_move = rec.move_ids.filtered(lambda x: x.state == 'done')
-        #     todo_move = rec.move_ids.filtered(lambda x: x.state != 'done')
-        #     if todo_move and not done_move:
-        #         rec.state = 'draft'
-        #         old_qty = rec.product_uom
-        #         rec.product_qty = 0
-        #         rec.so_line_id._action_launch_stock_rule(old_qty)
-        #     todo_move._action_cancel()
-        #     cancel_state = 'cancel'
-        #     if todo_move and rec.qty_delivered > 0:
-        #         cancel_state = 'short_close'
+        for rec in self:
+            done_move = rec.move_ids.filtered(lambda x: x.state == 'done')
+            todo_move = rec.move_ids.filtered(lambda x: x.state != 'done')
+            if todo_move and not done_move:
+                rec.state = 'draft'
+                old_qty = rec.product_uom
+                rec.product_qty = 0
+                rec.so_line_id._action_launch_stock_rule(old_qty)
+            todo_move._action_cancel()
+            cancel_state = 'cancel'
+            if todo_move and rec.qty_delivered > 0:
+                cancel_state = 'short_close'
 
-        #     rec.state = cancel_state
-        #     rec.order_id.onchange_sale_multi_ship_qty_lines()
-        raise ValidationError("Work In progress")
+            rec.state = cancel_state
+            rec.order_id.onchange_sale_multi_ship_qty_lines()
+        # raise ValidationError("Work In progress")
 
     def unlink(self):
         """Restrict to unlnk shipment if its not cancel or draft."""
