@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <template id="address_layout_extended" inherit_id="web.address_layout">
         <xpath expr="//div[hasclass('address', 'row')]" position="replace">
             <div class="address row" style="margin-left: 5px;">
