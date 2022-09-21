@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record model="ir.ui.view" id="res_partner_form_view">
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='property_product_pricelist']" position="attributes">
+                <attribute name="domain">[('used_for','=','sale')]</attribute>
+            </xpath>
+            <xpath expr="//field[@name='property_supplier_payment_term_id']" position="after">
+                <field name="property_product_vendor_pricelist" options="{'no_create':1}" domain="[('used_for','=','purchase')]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
