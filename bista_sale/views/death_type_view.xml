@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="death_type_form_view" model="ir.ui.view">
+        <field name="name">death.type.form.view</field>
+        <field name="model">death.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name" />                      
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="death_type_tree_view" model="ir.ui.view">
+        <field name="name">death.type.tree.view</field>
+        <field name="model">death.type</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />               
+            </tree>
+        </field>
+    </record>
+
+    <record id="death_type_action" model="ir.actions.act_window">
+        <field name="name">Death Type</field>
+        <field name="res_model">death.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <menuitem id="death_type_menu" name="Death Type" action="death_type_action"
+              parent="bookpal_menu" sequence="3"/>
+
+
+</odoo>
