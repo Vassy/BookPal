@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="white_glove_type_form_view" model="ir.ui.view">
+        <field name="name">white.glove.type.form.view</field>
+        <field name="model">white.glove.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                         <field name="code" />
+                        <field name="name" />                      
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="white_glove_type_tree_view" model="ir.ui.view">
+        <field name="name">white.glove.type.tree.view</field>
+        <field name="model">white.glove.type</field>
+        <field name="arch" type="xml">
+            <tree>
+                 <field name="code" />
+                <field name="name" />               
+
+            </tree>
+        </field>
+    </record>
+
+    <record id="white_glove_type_action" model="ir.actions.act_window">
+        <field name="name">White Glove Type</field>
+        <field name="res_model">white.glove.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="white_glove_type_menu" name="White Glove Type" action="white_glove_type_action"
+              parent="bookpal_menu" sequence="5"/>
+
+
+</odoo>

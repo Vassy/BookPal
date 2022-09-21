@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="1">
+    
+        <record id="artwork_status_1" model="artwork.status">
+            <field name="name">Need Artwork</field>
+        </record>
+        <record id="artwork_status_2" model="artwork.status">
+            <field name="name">Need Proof</field>
+        </record>
+        <record id="artwork_status_3" model="artwork.status">
+            <field name="name">Proofing</field>
+        </record>
+        <record id="artwork_status_4" model="artwork.status">
+            <field name="name">Approved</field>
+        </record>
+
+        <!-- customization.type -->
+        <record id="customization_type_1" model="customization.type">
+            <field name="name">Individual Mailers</field>
+        </record>  
+        <record id="customization_type_2" model="customization.type">
+            <field name="name">Belly Band</field>
+        </record>  
+        <record id="customization_type_3" model="customization.type">
+            <field name="name">Bookplates/Stickers</field>
+        </record>  
+        <record id="customization_type_4" model="customization.type">
+            <field name="name">Loose leaf insert</field>
+        </record>  
+        <record id="customization_type_5" model="customization.type">
+            <field name="name">Shrinkwrap</field>
+        </record>  
+        <record id="customization_type_6" model="customization.type">
+            <field name="name">Signed Copies</field>
+        </record>  
+        <record id="customization_type_7" model="customization.type">
+            <field name="name">Tippin Page</field>
+        </record>  
+        <record id="customization_type_8" model="customization.type">
+            <field name="name">Foil Stamp/Custom Cover</field>
+        </record>  
+        <record id="customization_type_9" model="customization.type">
+            <field name="name">Bundle</field>
+        </record>  
+        <record id="customization_type_10" model="customization.type">
+            <field name="name">Labeling</field>
+        </record>  
+        <record id="customization_type_11" model="customization.type">
+            <field name="name">Split Shipment</field>
+        </record>  
+        <!-- death.type -->
+        <record id="death_type_1" model="death.type">
+            <field name="name">New</field>
+        </record>  
+        <record id="death_type_2" model="death.type">
+            <field name="name">Existing</field>
+        </record>  
+      <!-- journal.customization -->
+        <record id="journal_customization_1" model="journal.customization">
+            <field name="name">Logo Only</field>
+        </record>  
+        <record id="journal_customization_2" model="journal.customization">
+            <field name="name">Tipin Page</field>
+        </record>  
+        <record id="journal_customization_3" model="journal.customization">
+            <field name="name">Belly Band</field>
+        </record>  
+        <record id="journal_customization_4" model="journal.customization">
+            <field name="name">Personalization</field>
+        </record>  
+        <record id="journal_customization_5" model="journal.customization">
+            <field name="name">Gel Dome</field>
+        </record>  
+        <record id="journal_customization_6" model="journal.customization">
+            <field name="name">Oversized Die Charge</field>
+        </record>  
+        <record id="journal_customization_7" model="journal.customization">
+            <field name="name">Second Die Charge</field>
+        </record>  
+        <record id="journal_customization_8" model="journal.customization">
+            <field name="name">Gift Box</field>
+        </record>  
+        <record id="journal_customization_9" model="journal.customization">
+            <field name="name">Mirror</field>
+        </record>  
+        <record id="journal_customization_10" model="journal.customization">
+            <field name="name">Pen</field>
+        </record>
+        <!-- white.glove.type -->
+        <record id="white_glove_type" model="white.glove.type">
+            <field name="code">0</field>
+            <field name="name">Author Event</field>
+        </record>
+     
+    </data>
+    
+
+</odoo>

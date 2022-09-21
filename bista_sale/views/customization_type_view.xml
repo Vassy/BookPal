@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="customization_type_form_view" model="ir.ui.view">
+        <field name="name">customization.type.form.view</field>
+        <field name="model">customization.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name" />                      
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="customization_type_tree_view" model="ir.ui.view">
+        <field name="name">customization.type.tree.view</field>
+        <field name="model">customization.type</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />               
+            </tree>
+        </field>
+    </record>
+
+    <record id="customization_type_action" model="ir.actions.act_window">
+        <field name="name">Customization Type</field>
+        <field name="res_model">customization.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <menuitem id="customization_type_menu" name="Customization Type" action="customization_type_action"
+              parent="bookpal_menu" sequence="2"/>
+
+
+</odoo>
