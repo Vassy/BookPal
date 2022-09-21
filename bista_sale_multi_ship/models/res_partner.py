@@ -209,5 +209,22 @@ class ResPartner(models.Model):
             args = []
         if not self.env.context.get('default_is_multi_ship'):
             args += [('is_multi_ship', '=', False)]
+        if self.env.context.get('product_id'):
+            prod_tmpl = self.env['product.product'].browse(
+                self.env.context.get('product_id')).product_tmpl_id
+            vendors = prod_tmpl.seller_ids.mapped('name')
+            args += [('id', 'in', vendors.ids)]
         ids = self._name_search(name, args, operator, limit=limit)
         return self.browse(ids).sudo().name_get()
+
+    def name_get(self):
+        """Updated display name."""
+        res = []
+        for partner in self:
+            if partner.is_multi_ship and partner.parent_id:
+                # name = partner._get_name()
+                res.append((partner.id, partner.name))
+            else:
+                name = partner._get_name()
+                res.append((partner.id, name))
+        return res

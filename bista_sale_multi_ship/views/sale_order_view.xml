@@ -44,7 +44,7 @@
                     <field name="remain_so_qty" optional="hide" readonly="1" force_save="1"/>
                 </xpath>
                  <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom']" position="after">
-                    <field name="supplier_id"/>
+                    <field name="supplier_id" context="{'product_id': product_id}" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                  </xpath>
                 <xpath expr="//page[last()]" position="after">
                     <page name="shipping_lines" string="Shipping"
@@ -62,22 +62,26 @@
                                 </group>
                             </group>
                         </div> -->
-                        <group name="shipping_details" string="Shipping Details"/>
-                        <group>
+                        <!-- <group name="shipping_details" string="Shipping Details"/> -->
+                        <group col="4">
                             <button name="action_verify_customer_data" type="object"
                                 string="Verify Customer Details"
                                 class="btn-primary"/>
+                            <button name="confirm_shipment" type="object"
+                                string="Confirm Shipment"
+                                class="btn-primary" attrs="{'invisible': [('is_confirm_ship', '=', False)]}"/>
+                            <field name="is_confirm_ship" invisible="1"/>
                         </group>
 
                         <!-- <button name="open_sale_multi_ship_wizard" type="object"
                                 icon="fa-truck" string="Import Shipping Data" class="btn-primary" style="float:right"/> -->
                         <field name="sale_multi_ship_qty_lines" context="{'multi_ship': True}">
-                            <tree decoration-danger="partner_state =='error'" decoration-success="partner_state =='verified'" editable="top">
+                            <tree decoration-danger="partner_state =='error' and state=='draft'" decoration-success="partner_state =='verified' and state=='draft'" decoration-muted="state == 'cancel' or state == 'short_close'" decoration-warning="qty_delivered and product_qty != qty_delivered" editable="top">
                                 <field name="id" invisible="1"/>
                                 <field name="shipping_date" optional="show" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id}" domain="['|', ('parent_id', '=', parent.partner_id), ('id', '=', parent.partner_id)]" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="so_line_id" optional="show" context="{'so_lines': parent.so_lines}" domain="[('order_id', '=', parent.id)]" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                                <field name="product_id" optional="hide"/>
+                                <field name="product_id" invisible="1"/>
                                 <field name="product_uom_qty" optional="show"/>
                                 <field name="product_qty" optional="show" default="remain_qty" sum="Total" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="product_uom" optional="hide"/>
@@ -96,8 +100,9 @@
                                 <widget name="qty_at_date_widget" width="20px"/>
                                 <field name="remain_qty" optional="hide" readonly="1" force_save="1"/>
                                 <field name="qty_delivered" optional="hide" readonly="1" force_save="1"/>
+                                <field name="qty_short_close" optional="hide"/>
                                 <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                                <field name="supplier_id"/>
+                                <field name="supplier_id" context="{'product_id': product_id}" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="state" optional="hide" readonly="1" force_save="1"/>
                                 <field name="attention" optional="hide" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="partner_state" invisible="1"/>
@@ -107,7 +112,8 @@
                                     icon="fa-close"
                                     class="text-primary"
                                     style="float:right"
-                                    attrs="{'invisible': ['|',('product_type','=','service'), ('state', '=', 'draft')]}"/>
+                                    confirm="Are you sure to cancel this shipment."
+                                    attrs="{'invisible': ['|',('product_type','=','service'), ('state', '!=', 'sale')]}"/>
                             </tree>
                         </field>
                         <field name="ship_lines_validated" invisible="1"/>

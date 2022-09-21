@@ -53,6 +53,17 @@ class SaleOrder(models.Model):
 
     ups_bill_my_account = fields.Boolean(
         related='partner_carrier_id.ups_bill_my_account', readonly=True)
+    is_confirm_ship = fields.Boolean(
+        'Confirm Shipment', compute="_compute_confirm_shipment")
+
+    def _compute_confirm_shipment(self):
+        for rec in self:
+            if rec.state == 'sale' and \
+                rec.sale_multi_ship_qty_lines.filtered(
+                    lambda x: x.state == 'draft'):
+                rec.is_confirm_ship = True
+            else:
+                rec.is_confirm_ship = False
 
     def open_sale_multi_ship_wizard(self):
         """Open sale multi ship wizard."""
@@ -214,7 +225,8 @@ class SaleOrder(models.Model):
         for line in self.sale_multi_ship_qty_lines:
             total_prod_qty = sum(
                 self.sale_multi_ship_qty_lines.filtered(
-                    lambda x: x.so_line_id.id == line.so_line_id.id).mapped(
+                    lambda x: x.so_line_id.id == line.so_line_id.id and
+                    x.state != 'cancel').mapped(
                     'product_qty'))
             line.remain_qty = line.product_uom_qty - total_prod_qty
             for so_line in self.order_line:
@@ -225,7 +237,7 @@ class SaleOrder(models.Model):
             if ship_line.id not in new_ship_lines:
                 other_ship_line = self.sale_multi_ship_qty_lines.filtered(
                     lambda sl: sl.so_line_id.id ==
-                    ship_line.so_line_id._origin.id)
+                    ship_line.so_line_id._origin.id and sl.state != 'cancel')
                 if not other_ship_line:
                     so_old_line = self.order_line.filtered(
                         lambda l: l._origin.id == ship_line.so_line_id.id)
@@ -246,7 +258,8 @@ class SaleOrder(models.Model):
             for line in rec.order_line:
                 planned_qty = sum(
                     line._origin.sale_multi_ship_qty_lines.filtered(
-                        lambda sl: sl.so_line_id.id == line._origin.id).mapped(
+                        lambda sl: sl.so_line_id.id == line._origin.id and
+                        sl.state != 'cancel').mapped(
                         'product_qty'))
                 line.remain_so_qty = line.product_uom_qty - planned_qty
                 lines = []
@@ -268,6 +281,22 @@ class SaleOrder(models.Model):
         for so in self:
             so.sale_multi_ship_qty_lines.write({'state': 'draft'})
         return res
+
+    def confirm_shipment(self):
+        """Confirm shipment after confirmed sale order."""
+        for so in self:
+            if so.sale_multi_ship_qty_lines.filtered(
+                    lambda x: x.state == 'draft' and
+                    x.partner_id.state != 'verified'):
+                raise ValidationError("Please verify the shipment details.")
+            if so.sale_multi_ship_qty_lines.filtered(
+                    lambda x: x.state == 'draft' and
+                    not x.product_qty):
+                raise ValidationError("Please enter the shipment qty.")
+            order_lines = so.sale_multi_ship_qty_lines.filtered(
+                lambda li: li.state == 'draft').mapped('so_line_id').filtered(
+                lambda line: line.state == 'sale')
+            order_lines._action_launch_stock_rule()
 
 
 class SaleOrderLine(models.Model):
@@ -388,11 +417,13 @@ class SaleOrderLine(models.Model):
                     group_id.write(updated_vals)
 
             values = line._prepare_procurement_values(group_id=group_id)
+            # Date wise reserved the stock
+            values = sorted(values, key=lambda d: d['date_planned'])
             for val in values:
                 qty = val.get('ship_line')._get_qty_procurement(
                     previous_product_uom_qty)
                 if float_compare(
-                    qty, line.product_qty,
+                    qty, val.get('ship_line').product_qty,
                         precision_digits=precision) == 0:
                     continue
                 shipping_lines += val.get('ship_line')
@@ -427,10 +458,21 @@ class SaleOrderLine(models.Model):
         """Overide name_search for sale order line domain."""
         if not args:
             args = []
-        if self.env.context.get('so_lines') and eval(self.env.context.get('so_lines')):
+        if self.env.context.get('so_lines') and eval(
+                self.env.context.get('so_lines')):
             args += [('id', 'in', eval(self.env.context.get('so_lines')))]
         return super(SaleOrderLine, self).name_search(
             name, args, operator, limit)
+
+    def name_get(self):
+        """Updated display name."""
+        res = []
+        if self.env.context.get('multi_ship'):
+            for sline in self:
+                res.append((sline.id, sline.product_id.name))
+        else:
+            res = super(SaleOrderLine, self).name_get()
+        return res
 
     def write(self, values):
         """Overide method to update the edit qty logic."""

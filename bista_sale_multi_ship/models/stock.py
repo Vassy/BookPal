@@ -251,7 +251,6 @@ class StockMove(models.Model):
 
     def _prepare_procurement_values(self):
         proc_values = super()._prepare_procurement_values()
-        # print ("\n proc_values >>>", proc_values)
         if self.sale_line_id and self.sale_line_id.supplier_id:
             proc_values.update({'supplier_id': self.sale_line_id.supplier_id})
         if self.multi_ship_line_id and self.multi_ship_line_id.supplier_id:
