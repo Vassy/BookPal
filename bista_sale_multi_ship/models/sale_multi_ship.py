@@ -252,14 +252,14 @@ class SaleMultiShipQtyLines(models.Model):
 
     so_line_dom = fields.Char('Sale order line domain')
     so_line_id = fields.Many2one(
-        'sale.order.line', 'Sale Order Line',
+        'sale.order.line', 'Product',
         help="Linked Sale Order Line")
     order_id = fields.Many2one("sale.order", "Order Reference")
     product_id = fields.Many2one(
         'product.product',
         related='so_line_id.product_id',
         store=True,
-        string="Product",
+        string="Shipment Product",
         help='Name of Product from linked Sale Order Lines')
     product_uom_qty = fields.Float(
         related='so_line_id.product_uom_qty',
@@ -302,7 +302,8 @@ class SaleMultiShipQtyLines(models.Model):
         ('sale', 'Sales Order'),
         ('deliver', 'Delivered'),
         ('done', 'Locked'),
-        ('cancel', 'Cancelled')],
+        ('cancel', 'Cancelled'),
+        ('short_close', 'Short Closed')],
         string='Shipping Status',
         readonly=True, copy=False, index=True, tracking=3,
         default='draft')
@@ -316,6 +317,10 @@ class SaleMultiShipQtyLines(models.Model):
         inverse='_inverse_qty_delivered',
         store=True, digits='Product Unit of Measure',
         default=0.0)
+    qty_short_close = fields.Float(
+        'Short Closed Qty',
+        compute="_compute_qty_short_close",
+        store=True)
     qty_delivered_manual = fields.Float(
         'Delivered Manually', copy=False,
         digits='Product Unit of Measure', default=0.0)
@@ -511,7 +516,8 @@ class SaleMultiShipQtyLines(models.Model):
 
         moves = self.move_ids.filtered(
             lambda r: r.state != 'cancel' and not
-            r.scrapped and self.product_id == r.product_id)
+            r.scrapped and self.product_id == r.product_id and
+            r.picking_type_id.code in ['outgoing', 'incoming'])
         if self._context.get('accrual_entry_date'):
             moves = moves.filtered(
                 lambda r: fields.Date.to_date(
@@ -568,6 +574,13 @@ class SaleMultiShipQtyLines(models.Model):
                 line.qty_delivered = line.qty_delivered_manual or 0.0
             if line.product_qty and line.qty_delivered == line.product_qty:
                 line.state = 'deliver'
+
+    @api.depends('state')
+    def _compute_qty_short_close(self):
+        for rec in self:
+            rec.qty_short_close = 0
+            if rec.state == 'short_close':
+                rec.qty_short_close = rec.product_qty - rec.qty_delivered
 
     @api.onchange('qty_delivered')
     def _inverse_qty_delivered(self):
@@ -627,64 +640,63 @@ class SaleMultiShipQtyLines(models.Model):
                     rounding_method='HALF-UP')
             return qty
 
-    def write(self, values):
-        """Overide method to create delivery when update shipping qty."""
-        lines = self.env['sale.multi.ship.qty.lines']
-        if 'product_qty' in values:
-            lines = self.filtered(
-                lambda r: r.state == 'sale' and not r.is_expense)
+    # def write(self, values):
+    #     """Overide method to create delivery when update shipping qty."""
+    #     lines = self.env['sale.multi.ship.qty.lines']
+    #     if 'product_qty' in values:
+    #         lines = self.filtered(
+    #             lambda r: r.state == 'sale' and not r.is_expense)
 
-        previous_product_uom_qty = {
-            line.id: line.product_qty for line in lines}
-        res = super(SaleMultiShipQtyLines, self).write(values)
-        if lines:
-            order_lines = lines.mapped('so_line_id')
-            order_lines._action_launch_stock_rule(previous_product_uom_qty)
-        if 'shipping_date' in values and self.state == 'sale' and not \
-                self.order_id.commitment_date:
-            # Propagate deadline on related stock move
-            self.move_ids.date_deadline = self.shipping_date
-        return res
+    #     previous_product_uom_qty = {
+    #         line.id: line.product_qty for line in lines}
+    #     res = super(SaleMultiShipQtyLines, self).write(values)
+    #     if lines:
+    #         order_lines = lines.mapped('so_line_id')
+    #         order_lines._action_launch_stock_rule(previous_product_uom_qty)
+    #     if 'shipping_date' in values and self.state == 'sale' and not \
+    #             self.order_id.commitment_date:
+    #         # Propagate deadline on related stock move
+    #         self.move_ids.date_deadline = self.shipping_date
+    #     return res
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        """When add shipping line in confirm sale order."""
-        lines = super(SaleMultiShipQtyLines, self).create(vals_list)
-        order_lines = lines.mapped('so_line_id').filtered(
-            lambda line: line.state == 'sale')
-        order_lines.filtered(
-            lambda line: line.state == 'sale')._action_launch_stock_rule()
-        return lines
+    # @api.model_create_multi
+    # def create(self, vals_list):
+    #     """When add shipping line in confirm sale order."""
+    #     lines = super(SaleMultiShipQtyLines, self).create(vals_list)
+    #     order_lines = lines.mapped('so_line_id').filtered(
+    #         lambda line: line.state == 'sale')
+    #     if order_lines:
+    #         lines.mapped('partner_id').verify_customer_details()
+    #         if lines.filtered(lambda x: x.state != 'verified'):
+    #             raise ValidationError('Please verfiy the shipment details')
+    #         order_lines._action_launch_stock_rule()
+    #     return lines
 
     def cancel_shipment(self):
         """Cancel the ready or waiting move operation line."""
-        for rec in self:
-            todo_move = rec.move_ids.filtered(lambda x: x.state != 'done')
-            todo_move += todo_move.move_dest_ids.filtered(
-                lambda x: x.state != 'done')
-            todo_move += todo_move.move_dest_ids.mapped(
-                'move_orig_ids').filtered(lambda x: x.state != 'done')
-            todo_move += todo_move.move_dest_ids.mapped(
-                'move_dest_ids').filtered(lambda x: x.state != 'done')
-            # todo_move += todo_move.move_orig_ids
-            # todo_move += todo_move.move_orig_ids.mapped('move_orig_ids')
-            # todo_move += todo_move.move_orig_ids.mapped('move_dest_ids')
-            # print ("\n todo_move >>", todo_move)
-            # print ("\n dest >>>>", todo_move.move_dest_ids)
-            # print (
-            #     "\n origin >>>", todo_move.move_orig_ids,
-            #     todo_move.move_orig_ids.state)
-            # for mv in todo_move:
-            #     print ('\n mv >>>', mv.propagate_cancel)
-            # todo_move._action_cancel()
-            # if done_move:
-            #     raise ValidationError("You can not cancel done shipment")
+        # for rec in self:
+        #     done_move = rec.move_ids.filtered(lambda x: x.state == 'done')
+        #     todo_move = rec.move_ids.filtered(lambda x: x.state != 'done')
+        #     if todo_move and not done_move:
+        #         rec.state = 'draft'
+        #         old_qty = rec.product_uom
+        #         rec.product_qty = 0
+        #         rec.so_line_id._action_launch_stock_rule(old_qty)
+        #     todo_move._action_cancel()
+        #     cancel_state = 'cancel'
+        #     if todo_move and rec.qty_delivered > 0:
+        #         cancel_state = 'short_close'
+
+        #     rec.state = cancel_state
+        #     rec.order_id.onchange_sale_multi_ship_qty_lines()
         raise ValidationError("Work In progress")
 
     def unlink(self):
-        """Restrict to unlnk line if it has done moves."""
+        """Restrict to unlnk shipment if its not cancel or draft."""
         for rec in self:
-            done_move = rec.move_ids.filtered(lambda x: x.state == 'done')
-            if done_move:
-                raise ValidationError("You can not delete done shipment")
+            if rec.state not in ['cancel', 'draft']:
+                raise ValidationError("You can delete only cancel shipment.")
+            if rec.move_ids.filtered(
+                    lambda x: x.state == 'done'):
+                raise ValidationError("This shipment has some done move")
         return super(SaleMultiShipQtyLines, self).unlink()
