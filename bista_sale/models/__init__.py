@@ -6,4 +6,4 @@ from . import artwork_status
 from . import death_type
 from . import journal_customization
 from . import customization_type
-from . import sale_order_line
+
