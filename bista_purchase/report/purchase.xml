@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <template id="address_layout_extended" inherit_id="web.address_layout">
+        <xpath expr="//div[hasclass('address', 'row')]" position="replace">
+            <div class="address row" style="margin-left: 5px;">
+                <div name="address" class="col-4">
+                    <t t-esc="address"/>
+                </div>
+                <t t-if="information_block">
+                    <t t-set="colclass" t-value="'col-5 offset-1'"/>
+                    <div name="information_block" class="col-4">
+                        <t t-out="information_block"/>
+                    </div>
+                </t>
+                <div name="custom_information_block" class="col-4"></div>
+            </div>
+        </xpath>
+    </template>
     <template id="address_layout_extended_purchase" inherit_id="web.address_layout">
         <xpath expr="//div[@name='custom_information_block']" position="inside">
             <t t-if="not o" t-set="o" t-value="doc"/>
