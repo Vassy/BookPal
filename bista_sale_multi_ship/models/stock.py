@@ -136,6 +136,16 @@ class StockPicking(models.Model):
         action['context'] = ctx
         return action
 
+    def action_cancel(self):
+        """Overriden this method to cancel related ship line."""
+        res = super(StockPicking, self).action_cancel()
+        ship_lines = self.move_lines.filtered(
+            lambda x: x.state != 'done').mapped(
+            'multi_ship_line_id')
+        for ship_line in ship_lines:
+            ship_line.cancel_shipment()
+        return res
+
 
 class StockMove(models.Model):
     _inherit = 'stock.move'
@@ -291,4 +301,21 @@ class PurchaseOrderLine(models.Model):
             picking, price_unit, product_uom_qty, product_uom)
         if self.multi_ship_line_id:
             res.update({'multi_ship_line_id': self.multi_ship_line_id.id})
+        return res
+
+
+class StockBackorderConfirmation(models.TransientModel):
+    _inherit = 'stock.backorder.confirmation'
+
+    def process_cancel_backorder(self):
+        """Overriden method to cancel shipment in case of no backorder."""
+        res = super(StockBackorderConfirmation,
+                    self).process_cancel_backorder()
+        ship_lines = self.pick_ids.filtered(
+            lambda pick: pick.picking_type_id.code == 'outgoing').mapped(
+            'move_lines').filtered(
+            lambda x: x.state != 'done').mapped(
+            'multi_ship_line_id')
+        for ship_line in ship_lines:
+            ship_line.cancel_shipment()
         return res
