@@ -674,10 +674,17 @@ class SaleMultiShipQtyLines(models.Model):
 
     def cancel_shipment(self):
         """Cancel the ready or waiting move operation line."""
+        flag = True
         for rec in self:
-            done_move = rec.move_ids.filtered(lambda x: x.state == 'done')
             todo_move = rec.move_ids.filtered(lambda x: x.state != 'done')
-            if todo_move and not done_move:
+            for move in todo_move.mapped('move_orig_ids'):
+                if move.picking_type_id.code == 'incoming' and \
+                    move.purchase_line_id and \
+                        move.purchase_line_id.state == 'purchase':
+                    flag = False
+                    todo_move -= move.move_dest_ids
+            done_move = rec.move_ids.filtered(lambda x: x.state == 'done')
+            if todo_move and not done_move and flag:
                 rec.state = 'draft'
                 old_qty = rec.product_uom
                 rec.product_qty = 0
