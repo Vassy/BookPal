@@ -5,48 +5,10 @@ from odoo import api, fields, models
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
 
-    pricelist_id = fields.Many2one('product.pricelist', "Pricelist", compute="_compute_product_pricelist", store=True)
-    without_disc_amount_untaxed = fields.Monetary(string='Without Untaxed Amount', store=True, readonly=True, compute='_amount_all')
-    total_discount_amount = fields.Monetary(string='Total Discount Amount', store=True, readonly=True, compute='_amount_all')
-    total_quantity = fields.Float(string="Total Quantity", store=True, compute="_compute_total_quantity")
-
-    @api.depends('order_line', 'order_line.product_qty')
-    def _compute_total_quantity(self):
-        for order in self:
-            order.total_quantity = sum(order.order_line.mapped('product_qty'))
-
-    @api.onchange('currency_id')
-    def onchange_currency_pricelist(self):
-        if self.pricelist_id.currency_id != self.currency_id:
-            self.pricelist_id = False
-
-    def _amount_all(self):
-        super(PurchaseOrder, self)._amount_all()
-        for order in self:
-            without_disc_amount_untaxed = total_discount_amount = 0.0
-            for line in order.order_line:
-                without_disc_amount_untaxed += line.without_disc_price_subtotal
-                total_discount_amount += line.discount_amount
-            currency = order.currency_id or order.partner_id.property_purchase_currency_id or self.env.company.currency_id
-            order.update({
-                'without_disc_amount_untaxed': currency.round(without_disc_amount_untaxed),
-                'total_discount_amount': currency.round(total_discount_amount),
-            })
-
-    @api.depends('partner_id')
-    def _compute_product_pricelist(self):
-        for order in self:
-            order.pricelist_id = order.partner_id.property_product_vendor_pricelist
+    pricelist_id = fields.Many2one('product.pricelist', "Pricelist")
 
     def update_prices(self):
-        for order in self:
-            if order.pricelist_id:
-                price_list_line = order.pricelist_id.get_pricelist_order_line_based_on_order(order.without_disc_amount_untaxed, order.total_quantity)
-                non_discounted_lines = order.order_line
-                if non_discounted_lines and price_list_line:
-                    non_discounted_lines.discount = price_list_line.discount
-                else:
-                    non_discounted_lines.discount = 0
+        pass
 
 
 class PurchaseOrderLine(models.Model):

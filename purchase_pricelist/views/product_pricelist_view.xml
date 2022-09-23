@@ -12,18 +12,12 @@
                 <attribute name="attrs">{'invisible':[('used_for','=','purchase'),('on_order','=',True)]}</attribute>
             </xpath>
             <xpath expr="//field[@name='item_ids']" position="after">
-                <group>
-                    <group>
-                        <field name="apply_on"  attrs="{'invisible':['|',('used_for','!=','purchase'),('on_order','!=',True)]}"/>
-                    </group>
-                </group>
-                <p class="text-danger" attrs="{'invisible':['|',('used_for','=','sale'),('on_order','=',False)]}">*In case of not set range with <b>To value</b> set descending order of <b>From Value</b>.</p>
+                <p>Set quantity in descending order lines</p>
                 <field name="product_pricelist_order_ids" attrs="{'invisible':['|',('used_for','=','sale'),('on_order','=',False)]}">
                     <tree editable="bottom">
                         <field name="pricelist_id" invisible="1"/>
                         <field name="sequence" widget="handle"/>
-                        <field name="from_value"/>
-                        <field name="to_value"/>
+                        <field name="order_amount"/>
                         <field name="discount"/>
                     </tree>
                 </field>
