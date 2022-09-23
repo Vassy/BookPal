@@ -1,42 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <template id="custom_session_header_footer">
+        <t t-set="company" t-value="user.company_id"/>
+        <div class="header">
+            <div class="row" style="font-family: 'Trebuchet MS', sans-serif;">
+                <div class="col-5 mb4">
+                    <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height: 80px;"
+                         alt="Logo"/>
+                </div>
+
+                <div class="col-5 mb4 text-right">
+                    <div>
+                        <span style="padding-top:30px;" t-if="doc.state not in ['draft','sent']">
+                            <h3 style="padding-top:30px;">Order</h3>
+                        </span>
+                        <span t-if="doc.state in ['draft','sent']">
+                            <h3>Quotation</h3>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div t-if="company.logo or company.report_header" class="row zero_min_height">
+            </div>
+            <div class="row">
+                <div style="margin-top:50px" class="col-4">
+                    <span t-if="doc.state in ['draft','sent']">
+                        <div style="margin-top:50px;">
+                            <p>Quote Number
+                            </p>
+                        </div>
+                    </span>
+                    <span t-if="doc.state not in ['draft','sent']">
+                        <div>
+                            <strong>Order Number
+                            </strong>
+                        </div>
+                    </span>
+                </div>
+                <div style="margin-top:50px" class="col-3">
+                    <strong>
+                        <span class="text-left" t-field="doc.name"/>
+                    </strong>
+                </div>
+            </div>
+        </div>
+        <div class="article o_report_layout_standard" t-att-data-oe-model="doc and doc._name"
+             t-att-data-oe-id="doc and doc.id">
+            <div class="pt-5">
+                <!-- This div ensures that the address is not cropped by the header. -->
+                <t t-call="web.address_layout"/>
+            </div>
+            <t t-out="0"/>
+        </div>
+
+        <div class="footer">
+            <div class="text-center" style="border-top: 1px solid black;">
+                <ul class="list-inline mb4 text-nowrap">
+                    <li t-if="company.phone" class="list-inline-item d-inline">Phone:
+                        <span class="o_force_ltr" t-field="company.phone"/>
+                    </li>
+                    <li t-if="company.email" class="list-inline-item d-inline">Email:
+                        <span t-field="company.email"/>
+                    </li>
+                    <li t-if="company.website" class="list-inline-item d-inline">Web:
+                        <span t-field="company.website"/>
+                    </li>
+                    <li t-if="company.vat" class="list-inline-item d-inline"><t
+                            t-esc="company.country_id.vat_label or 'Tax ID'"/>:
+                        <span t-field="company.vat"/>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </template>
     <template id="report_quotation_inherit_new" inherit_id="sale.report_saleorder_document">
-        <xpath expr="//div[@t-field='doc.partner_id']" position="before">
-            <div style="margin-top:100px;margin-bottom:100px;text-align:right;">
-                <span t-if="doc.state in ['draft','sent']">
-                    <h3>Quotation</h3>
-                </span>
-            </div>
-
-        </xpath>
-     <xpath expr="//div[@t-field='doc.partner_id']" position="before">
-            <div style="margin-bottom:50px;text-align:right;">
-                <span t-if="doc.state not in ['draft','sent']">
-                    <h3>Order</h3>
-                </span>
-            </div>
-
+        <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
+            <attribute name="t-call">bista_sale.custom_session_header_footer</attribute>
         </xpath>
         <xpath expr="//div[@t-field='doc.partner_id']" position="replace">
-            <div>
-                <table style="border: 1px solid;width: 100%;border-collapse: collapse;">
-                    <thead>
-                        <tr>
-                            <th scope="col">Ship To Address</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row" style="border: 1px solid;">
-                                <div t-field="doc.partner_id"
-                                     t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
-                            </th>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
         </xpath>
-        <xpath expr="//p[@t-field='doc.validity_date']" position='replace'>
+
+        <xpath expr="//div[@class='page']" position="before">
+            <div class="row">
+                <div class="col-5">
+                    <span>
+                        <div>
+                            <h6>Created Date:
+                                <t t-esc="doc.date_order.strftime('%d th %B %Y')"/>
+                            </h6>
+                        </div>
+                    </span>
+                    <span>
+                        <div>
+                            <t t-if="doc.validity_date">
+                                <h6>Valid Until:
+                                    <t t-esc="doc.validity_date.strftime('%d th %B %Y')"/>
+                                </h6>
+                            </t>
+                        </div>
+                    </span>
+                </div>
+                <div class="col-3">
+                </div>
+                <div class="col-4">
+
+                    <table style="margin-top:50px;margin-left:10px;border: 1px solid;width: 100%;">
+                        <thead>
+                            <tr>
+                                <th scope="col">Ship To Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" style="border: 1px solid;">
+                                    <div style=" font-weight: normal;" t-field="doc.partner_id"
+                                         t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                                </th>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </xpath>
         <xpath expr="//div[@name='expiration_date']" position="replace">
         </xpath>
@@ -46,34 +131,24 @@
         <xpath expr="//div[@t-if='doc.user_id.name']" position="replace">
         </xpath>
 
+        <xpath expr="//h2[@class='mt16']" position="replace">
 
-        <xpath expr="//p[@t-field='doc.date_order']" position="replace">
+        </xpath>
+        <xpath expr="//div[@id='informations']" position="replace">
 
-            <t t-esc="doc.date_order.strftime('%d th %B %Y')"/>
         </xpath>
 
-        <xpath expr="//div[@class='row mt32 mb32']" position="before">
-            <strong>Valid Until:</strong>
-            <t t-esc="doc.validity_date.strftime('%d th %B %Y')"/>
-        </xpath>
         <xpath expr="//table[@class='table table-sm o_main_table']" position="before">
-            <h5 style="border-bottom:solid 1px;">Special Instructions and Notes</h5>
-<!--            <t t-foreach="doc.order_line" t-as="line">-->
-                <div style="margin-top:10px;margin-bottom:10px;">
+            <div style="margin-bottom:60px;">
+                <h5 style="margin-top:50px;border-bottom:solid 1px;">Special Instructions and Notes</h5>
+                <div>
                     <span t-field="doc.common_pick_note"/>
                 </div>
-<!--            </t>-->
+            </div>
         </xpath>
-
-        <xpath expr="//table[@class='table table-sm o_main_table']//thead//tr[1]//th[1]" position="replace">
-            <th name="product_id" class="text-left">Product Details</th>
-
-
-        </xpath>
-
         <xpath expr="//td[@name ='td_name']" position="before">
-            <td name="td_product_image">
-                <img t-attf-src="data:image/*;base64,{{line.product_image}}"
+            <td>
+                <img t-attf-src="data:image/*;base64,{{line.product_id.image_1920}}"
                      style="max-height:100px; max-width:100px;"/>
             </td>
         </xpath>
@@ -86,8 +161,8 @@
                 <br/>
                 <span t-field="line.product_id.default_code"/>
                 <br/>
-                <span>Format:</span>
-                <span t-field="line.product_id.format"/>
+                <span>format:</span>
+                <!--                <span t-field="line.product_id.format"/>-->
                 <br/>
                 <div>
                     <b>
@@ -116,7 +191,9 @@
 
         <xpath expr="//span[@t-field='line.product_uom_qty']" position="after">
             <td class="text-right">
-                <span class="text-right" t-field="line.product_id.standard_price"/>
+                <s>
+                    <span class="text-right" t-field="line.product_id.standard_price"/>
+                </s>
             </td>
         </xpath>
         <xpath expr="//th[@name='th_subtotal']" position="replace">
@@ -126,35 +203,65 @@
         <xpath expr="//th[@name='th_taxes']" position="replace">
             <th class="text-right"></th>
         </xpath>
-<!--        <xpath expr="//th[@name='th_description']" position="replace">-->
-<!--            <th class="text-right"></th>-->
-<!--        </xpath>-->
+        <xpath expr="//span[@t-field='line.product_uom']" position="replace">
+
+        </xpath>
 
         <xpath expr="//td[@name='td_taxes']" position="replace">
             <th class="text-right"></th>
         </xpath>
-
-<!--        <xpath expr="//td[@name ='td_name']" position="before">-->
-
-<!--            <td name="td_product_image">-->
-<!--                <img t-attf-src="data:image/*;base64,{{line.product_image}}"-->
-<!--                     style="max-height:100px; max-width:100px;"/>-->
-<!--            </td>-->
-<!--        </xpath>-->
-
-        <xpath expr="//table[@class='table table-sm']" position="inside">
-            <strong>Subtotal:</strong>
+        <xpath expr="//th[@name='th_description']" position="replace">
+            <th class="text-right"></th>
         </xpath>
-
-
         <xpath expr="//p[@t-field='doc.note']" position="replace">
-              <h5 style="border-bottom:solid 1px;">Order Terms and Conditions</h5>
-                <div style="margin-top:10px;margin-bottom:10px;">
-                    <span t-field="doc.note"/>
-                </div>
+            <h5 style="border-bottom:solid 1px;">Order Terms and Conditions</h5>
+            <div style="margin-top:10px;margin-bottom:10px;">
+                <span t-field="doc.note"/>
+            </div>
 
         </xpath>
+        <xpath expr="//table[@class ='table table-sm']" position="replace">
+            <table class="table table-borderless">
 
+                <tr>
+                    <td class="text-right">
+                        <strong>Subtotal</strong>
+                    </td>
+                    <td class="text-right">
+                         <span t-field="doc.amount_untaxed"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">
+                        <strong class="text-right">Tax</strong>
+                    </td>
+                    <td class="text-right">
+                         <span t-field="doc.amount_tax"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">
+                        <strong class="text-right">Shipping</strong>
+                    </td>
+                    <td class="text-right">
+                        <!--                    <span t-esc="tax_totals['formatted_amount_total']"/>-->
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-right">
+                        <strong class="text-right">Total</strong>
+                    </td>
+                    <td class="text-right">
+                        <span t-field="doc.amount_total"/>
 
+                        <!--                         <span t-field="doc.amount_untaxed"/>
+-->
+                    </td>
+                </tr>
+            </table>
+        </xpath>
     </template>
+
+
+
 </odoo>
