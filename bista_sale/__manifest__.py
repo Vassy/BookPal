@@ -21,7 +21,6 @@
         'views/death_type_view.xml',
         'views/customization_type_view.xml',
         #report
-        'report/sale_order_line_view.xml',
         'report/sale_order_report.xml',
         #data
         'data/data.xml',
