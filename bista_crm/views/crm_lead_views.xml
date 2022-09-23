@@ -113,8 +113,8 @@
                             <field name="product_status_notes" style="max-height: 25px;"/>
                         </group>
                         <group name="Pricing_info" string="Pricing Info">
-                            <field name="special_pricing_type_id"/>
-                            <field name="special_pricing_notes" style="max-height: 25px;"/>
+<!--                            <field name="special_pricing_type_id"/>-->
+                            <field name="special_pricing_notes"/>
                         </group>
                     </group>
                 </page>
