@@ -73,18 +73,18 @@
                 <page string="Order Notes" name="order_notes">
                     <sheet>
                         <group>
-                            <group name="order_notes">
+                            <group name="order_notes" widget='html'>
                                 <field name="event_date"/>
-                                <field name="order_notes"/>
-                                <field name="gorgias_ticket"/>
-                                <field name="product_status_notes"/>
+                                <field name="order_notes" widget='html'/>
+                                <field name="gorgias_ticket" widget='html'/>
+                                <field name="product_status_notes" widget='html'/>
                             </group>
                             <group>
-                                <field name="white_glove_id"/>
-                                <field name="ce_notes"/>
-                                <field name="payment_notes"/>
-                                <field name="am_notes"/>
-                                <field name="ce_ops_acct_notes"/>
+                                <field name="white_glove_id" widget='html'/>
+                                <field name="ce_notes" widget='html'/>
+                                <field name="payment_notes" widget='html'/>
+                                <field name="am_notes" widget='html'/>
+                                <field name="ce_ops_acct_notes" widget='html'/>
                             </group>
                         </group>
                     </sheet>
@@ -98,7 +98,8 @@
                             <field name="customization_cost"/>
                             <field name="link_to_art_files"/>
                             <field name="artwork_status_id"/>
-                            <field name="journal_notes"/>
+                            <field name="journal_notes" widget='html'/>
+                            <field name="journal_setup_fee_waived"/>
                         </group>
                         <group>
                             <field name="journal_setup_fee"/>
@@ -117,8 +118,9 @@
                             <field name="fulfilment_project"/>
                             <field name="am_owner"/>
                             <field name="project_description"/>
-                            <field name="status_notes"/>
+                            <field name="status_notes" widget='html'/>
                             <field name="delivery_location"/>
+                            <field name="project_status"/>
                             <field name="shipping_instruction"/>
                             <field name="customization_type_ids" widget="many2many_tags"/>
                         </group>
@@ -130,7 +132,7 @@
                             <field name="recipient_list_expected"/>
                             <field name="individual_mailer_return_address"/>
                             <field name="book_status"/>
-                            <field name="on_hold_reason"/>
+                            <field name="on_hold_reason" widget='html'/>
                         </group>
                     </group>
                 </page>

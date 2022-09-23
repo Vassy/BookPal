@@ -27,7 +27,7 @@ class SaleOrder(models.Model):
     journal_setup_fee = fields.Char(string="Journal Set Up Fee")
     journal_setup_fee_waived = fields.Char(string="Journal Set Up Fee Waived")
     shipping_account = fields.Char(string="Shipping Account")
-    shipping_cost = fields.Float(string="Shipping Cost")
+    shipping_cost = fields.Float(string=" Our Shipping Cost")
     death_type_id = fields.Many2one('death.type', string='Death Type')
     existing_death_order = fields.Char(string="Existing Death Order #")
     # Project & Fulfilment Tracking.
