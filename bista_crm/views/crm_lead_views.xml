@@ -103,7 +103,7 @@
                             <field name="product_status_notes"/>
                         </group>
                         <group name="Pricing_info" string="Pricing Info">
-                            <field name="special_pricing_type_id"/>
+<!--                            <field name="special_pricing_type_id"/>-->
                             <field name="special_pricing_notes"/>
                         </group>
                     </group>
