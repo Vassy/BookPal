@@ -5,6 +5,11 @@ from odoo import api, fields, models
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
 
+    pricelist_id = fields.Many2one('product.pricelist', "Pricelist")
+
+    def update_prices(self):
+        pass
+
 
 class PurchaseOrderLine(models.Model):
     _inherit = "purchase.order.line"
@@ -54,6 +59,8 @@ class PurchaseOrderLine(models.Model):
     @api.model
     def _apply_value_from_seller(self, seller):
         if not seller:
+            for line in self:
+                line.discount = 0
             return
 
         for line in self:
@@ -100,7 +107,6 @@ class PurchaseOrderLine(models.Model):
                 )
             try:
                 discount = max(0, (res.get('price_unit') - product.vendor_price) * 100 / res.get('price_unit'))
-
                 res['discount'] = discount
             except:
                 res['discount'] = 0

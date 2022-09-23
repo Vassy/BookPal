@@ -10,8 +10,9 @@
     'category': "Purchase Management",
     'depends': ["purchase_stock"],
     'data': [
+        "security/ir.model.access.csv",
         "views/product_pricelist_view.xml",
-        "views/purchase_discount_view.xml",
+        "views/purchase_order_view.xml",
         "views/sale_order_views.xml",
         "views/product_supplierinfo_view.xml",
         "views/res_partner_view.xml",
