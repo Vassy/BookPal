@@ -7,6 +7,6 @@ class ProductSupplierInfo(models.Model):
 
     vendor_pricelist_id = fields.Many2one('product.pricelist', string="Pricelist")
 
-    @api.onchange("name")
-    def onchange_name(self):
-        self.vendor_pricelist_id = self.name.property_product_vendor_pricelist
+    # @api.onchange("name")
+    # def onchange_name(self):
+    #     self.vendor_pricelist_id = self.name.property_product_vendor_pricelist
