@@ -48,7 +48,7 @@
                  </xpath>
                 <xpath expr="//page[last()]" position="after">
                     <page name="shipping_lines" string="Shipping"
-                          attrs="{'invisible': [('split_shipment', '=', False)]}">
+                          attrs="{'invisible': ['|', ('split_shipment', '=', False), ('id', '=', False)]}">
                         <!-- <div>
                             <group>
                                 <group name="third_party_billing" string="Third Party Billing"
@@ -79,7 +79,7 @@
                             <tree decoration-danger="partner_state =='error' and state=='draft'" decoration-success="partner_state =='verified' and state=='draft'" decoration-muted="state == 'cancel' or state == 'short_close'" decoration-warning="qty_delivered and product_qty != qty_delivered" editable="top">
                                 <field name="id" invisible="1"/>
                                 <field name="shipping_date" optional="show" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                                <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id}" domain="['|', ('parent_id', '=', parent.partner_id), ('id', '=', parent.partner_id)]" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id}" domain="['|', ('id', 'child_of', parent.partner_id), ('id', '=', parent.partner_id)]" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="so_line_id" optional="show" context="{'so_lines': parent.so_lines}" domain="[('order_id', '=', parent.id)]" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="product_id" invisible="1"/>
                                 <field name="product_uom_qty" optional="show"/>
