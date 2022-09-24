@@ -147,6 +147,10 @@ class SaleOrder(models.Model):
                 msg = _(
                     "Please verfiy the shipment details before "
                     "confirming the sale order.\n")
+            if self.split_shipment and \
+                self.sale_multi_ship_qty_lines.filtered(
+                    lambda x: x.product_qty == 0):
+                msg = _("Please enter shipping qty.")
 
         # COMMENTED AS ALL THE LINES SHOULD BE VERIFIED WAS STOPPING
         # THE FLOW
@@ -338,6 +342,7 @@ class SaleOrderLine(models.Model):
             return super(
                 SaleOrderLine, self)._prepare_procurement_values(group_id)
         self.ensure_one()
+
         values = []
         date_deadline = self.order_id.commitment_date or (
             self.order_id.date_order + timedelta(
@@ -420,7 +425,7 @@ class SaleOrderLine(models.Model):
             # Date wise reserved the stock
             values = sorted(values, key=lambda d: d['date_planned'])
             for val in values:
-                qty = val.get('ship_line')._get_qty_procurement(
+                qty = val.get('ship_line').with_context(rule=True)._get_qty_procurement(
                     previous_product_uom_qty)
                 if float_compare(
                     qty, val.get('ship_line').product_qty,
