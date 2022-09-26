@@ -5,20 +5,45 @@ from odoo import api, fields, models
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
 
-    pricelist_id = fields.Many2one('product.pricelist', "Pricelist")
+    pricelist_id = fields.Many2one('product.pricelist', "Pricelist", compute="_compute_product_pricelist", store=True)
+    without_disc_amount_untaxed = fields.Monetary(string='Without Untaxed Amount', store=True, readonly=True, compute='_amount_all')
+    total_discount_amount = fields.Monetary(string='Total Discount Amount', store=True, readonly=True, compute='_amount_all')
+
+    def _amount_all(self):
+        super(PurchaseOrder, self)._amount_all()
+        for order in self:
+            without_disc_amount_untaxed = total_discount_amount = 0.0
+            for line in order.order_line:
+                without_disc_amount_untaxed += line.without_disc_price_subtotal
+                total_discount_amount += line.discount_amount
+            currency = order.currency_id or order.partner_id.property_purchase_currency_id or self.env.company.currency_id
+            order.update({
+                'without_disc_amount_untaxed': currency.round(without_disc_amount_untaxed),
+                'total_discount_amount': currency.round(total_discount_amount),
+            })
+
+    @api.depends('partner_id')
+    def _compute_product_pricelist(self):
+        for order in self:
+            order.pricelist_id = order.partner_id.property_product_vendor_pricelist
 
     def update_prices(self):
-        pass
+        for order in self:
+            if order.pricelist_id:
+                price_list_line = order.pricelist_id.get_pricelist_order_line_based_on_amount(order.without_disc_amount_untaxed)
+                non_discounted_lines = order.order_line
+                if non_discounted_lines and price_list_line:
+                    non_discounted_lines.discount = price_list_line.discount
 
 
 class PurchaseOrderLine(models.Model):
     _inherit = "purchase.order.line"
 
-    disc_price_unit = fields.Float(string="Discounted Unit Price", store=True, compute="_compute_disc_price_unit", digits='Product Price')
+
+    disc_price_unit = fields.Float(string="Disc Unit Price", compute="_compute_disc_price_unit")
     without_disc_price_subtotal = fields.Monetary(compute='_compute_amount', string='Without Disc. Subtotal', store=True)
     discount_amount = fields.Monetary(compute='_compute_amount', string='Discount Amount', store=True)
 
-    @api.depends('price_unit', 'discount')
     def _compute_disc_price_unit(self):
         for order_line in self:
             order_line.disc_price_unit = order_line._get_discounted_price_unit()
