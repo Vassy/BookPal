@@ -16,7 +16,7 @@
         <field name="inherit_id" ref="purchase.purchase_order_line_tree" />
         <field name="arch" type="xml">
             <field name="price_unit" position="after">
-                <field name="discount" />
+                <field name="discount"/>
             </field>
         </field>
     </record>
@@ -26,22 +26,24 @@
         <field name="inherit_id" ref="purchase.purchase_order_form" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='partner_ref']" position="after">
+                <label for="pricelist_id"/>
                 <div class="o_row">
-                    <field name="pricelist_id" options="{'no_open':True,'no_create': True}" domain="[('used_for','=','purchase'),]"/>
-                    <button name="update_prices" type="object" string=" Update Prices" attrs="{'invisible': [('state', 'in', ['purchase', 'done','cancel'])]}"/>
+                    <field name="pricelist_id" options="{'no_open':True,'no_create': True}" domain="[('used_for','=','purchase'),]" attrs="{'readonly': [('state', 'in', ['purchase', 'done','cancel'])]}"/>
+                    <button name="update_prices" type="object" class="btn-link mb-1 px-0" icon="fa-refresh" string="Update Prices" attrs="{'invisible': [('state', 'in', ['purchase', 'done','cancel'])]}"/>
                 </div>
             </xpath>
-            <xpath
-                expr="//field[@name='order_line']/tree/field[@name='price_unit']"
-                position="after"
-            >
-                <field name="discount" />
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
+                <field name="discount"/>
+                <field name="disc_price_unit" optional="hide"/>
+                <field name="without_disc_price_subtotal" invisible="1"/>
             </xpath>
-            <xpath
-                expr="//field[@name='order_line']/form//field[@name='price_unit']"
-                position="after"
-            >
-                <field name="discount" />
+            <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="after">
+                <field name="discount"/>
+                <field name="disc_price_unit"/>
+            </xpath>
+            <xpath expr="//field[@name='tax_totals_json']" position="before">
+                <field name="without_disc_amount_untaxed" colspan="2" string="Amount Untaxed (Without Disc.)"/>
+                <field name="total_discount_amount" colspan="2" string="Discount"/>
             </xpath>
         </field>
     </record>
