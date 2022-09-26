@@ -14,6 +14,12 @@ class ProductPricelist(models.Model):
         res.append(('used_for', '=', 'sale'))
         return res
 
+    def get_pricelist_order_line_based_on_amount(self, amount):
+        pricelist_order_line = self.product_pricelist_order_ids.filtered(lambda x:x.order_amount<=amount).sorted('sequence')
+        pricelist_order_line = pricelist_order_line[0] if pricelist_order_line else pricelist_order_line
+        return pricelist_order_line
+
+
 class ProductPricelistOrder(models.Model):
     _name = "product.pricelist.order"
     _description = "Product Pricelist On Order"
