@@ -696,7 +696,6 @@ class SaleMultiShipQtyLines(models.Model):
 
             rec.state = cancel_state
             rec.order_id.onchange_sale_multi_ship_qty_lines()
-        # raise ValidationError("Work In progress")
 
     def unlink(self):
         """Restrict to unlnk shipment if its not cancel or draft."""
