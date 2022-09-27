@@ -14,7 +14,7 @@ class CrmLead(models.Model):
     pre_release = fields.Boolean(string="Pre-Release")
     product_use = fields.Char(string='Product Use')
     product_status_notes = fields.Text(string='Product Status Notes')
-    # special_pricing_type_id = fields.Many2one('special.pricing.type', string='Special Pricing Type')
+    special_pricing_type_id = fields.Many2one('special.pricing.type', string='Special Pricing Type')
     special_pricing_notes = fields.Text(string='Special Pricing Notes')
 
     # Billing Fields
