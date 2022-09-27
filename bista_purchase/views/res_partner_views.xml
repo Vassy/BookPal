@@ -10,7 +10,7 @@
                 <field name="is_primary"/>
             </xpath>
             <xpath expr="//field[@name='child_ids']//kanban//templates/t//field[@name='name']" position="after">
-                <span t-if="record.is_primary.raw_value" style="float:right;"><i class="fa fa-star" role="img" aria-label="Primary Contact" title="Primary Contact"/></span>
+                <span t-if="record.is_primary.raw_value" style="float:right;color:#f3cc00;"><i class="fa fa-star" role="img" aria-label="Primary Contact" title="Primary Contact"/></span>
             </xpath>
             <xpath expr="//field[@name='child_ids']//form//field[@name='name']" position="attributes">
                 <attribute name="string">Name</attribute>
