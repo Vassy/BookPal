@@ -83,12 +83,12 @@
             <!--            <span style="color: black; font-weight: bold;">Product Details</span>-->
             <thead>
                 <tr>
-                    <th name="th_sn" class="text-center">
+                    <!--                    <th name="th_sn" class="text-center">-->
+                    <!--                        <strong>ISBN</strong>-->
+                    <!--                    </th>-->
+                    <th name="th_default_code" class="text-center">
                         <strong>ISBN</strong>
                     </th>
-                    <!--                    <th name="th_default_code" class="text-center">-->
-                    <!--                        <strong>Item</strong>-->
-                    <!--                    </th>-->
                     <th name="th_description" class="text-cente">
                         <strong>Description</strong>
                     </th>
@@ -120,19 +120,19 @@
                 </tr>
             </thead>
         </xpath>
-        <xpath expr="//t[@t-foreach='o.order_line']" position="before">
-            <t t-set="sn" t-value="1"/>
-        </xpath>
+        <!--        <xpath expr="//t[@t-foreach='o.order_line']" position="before">-->
+        <!--            <t t-set="sn" t-value="9780743477116"/>-->
+        <!--        </xpath>-->
         <xpath expr="//t[@t-if='not line.display_type']" position="replace">
             <t t-if="not line.display_type">
-                <td name="td_sn" class="text-center">
-                    <span t-esc="sn"/>
-                    <br/>
-                    <t t-set="sn" t-value="sn+1"/>
-                </td>
-                <!--                <td id="td_default_code" class="text-center">-->
-                <!--                    <span t-field="line.product_id.default_code"/>-->
+                <!--                <td name="td_sn" class="text-center">-->
+                <!--                    <span t-esc="sn"/>-->
+                <!--                    <br/>-->
+                <!--                    <t t-set="sn" t-value="sn+1"/>-->
                 <!--                </td>-->
+                <td id="td_default_code" class="text-center">
+                    <span t-field="line.product_id.default_code"/>
+                </td>
                 <td id="product">
                     <span t-field="line.name"/>
                 </td>
@@ -147,8 +147,8 @@
                 </td>
 
                 <td class="text-center" name="td_format">
-                    <!--                    <t t-set="format" t-value="MMP"/>-->
-                    <span t-esc="MMP"/>
+                    <t t-set="format" t-value="MMP"/>
+                    <span t-esc="format"/>
                 </td>
                 <!--                <td class="text-center" name="td_uom">-->
                 <!--                    <span t-field="line.product_uom.name" groups="uom.group_uom"/>-->
@@ -157,10 +157,12 @@
                     <span t-esc="6.99"/>
                 </td>
                 <td class="text-center" name="td_discount">
-                    <span t-esc="65"/>
+                    <div>
+                        <span t-field="line.discount"/>%
+                    </div>
                 </td>
                 <td class="text-center" name="td_bp_price">
-                    <span t-esc="245"/>
+                    <span t-esc="2.45"/>
                 </td>
                 <!--                <td class="text-center">-->
                 <!--                    <span t-field="line.price_unit"/>-->
