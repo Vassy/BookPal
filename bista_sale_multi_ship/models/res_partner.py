@@ -229,11 +229,14 @@ class ResPartner(models.Model):
     def name_get(self):
         """Updated display name."""
         res = []
-        for partner in self:
-            if partner.is_multi_ship and partner.parent_id:
-                # name = partner._get_name()
-                res.append((partner.id, partner.name))
-            else:
-                name = partner._get_name()
-                res.append((partner.id, name))
-        return res
+        if self.env.context.get('default_is_multi_ship'):
+            for partner in self:
+                if partner.is_multi_ship and partner.parent_id:
+                    # name = partner._get_name()
+                    res.append((partner.id, partner.name))
+                else:
+                    name = partner._get_name()
+                    res.append((partner.id, name))
+            return res
+        else:
+            return super(ResPartner, self).name_get()
