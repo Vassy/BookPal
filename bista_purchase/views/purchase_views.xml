@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="purchase_order_form_inherit_added_custom_field" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit.added.custom.fields</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//page[@name='purchase_delivery_invoice']" position="after">
+                <page name="po_details" string="PO Details">
+                    <group>
+                        <group name="po_conf">
+                            <field name="po_conf" style="max-height: 25px;"/>
+                            <field name="hours_process" style="max-height: 20px;"/>
+                        </group>
+                        <group name="po_clock">
+                            <field name="clock_start_override" style="max-height: 20px;"/>
+                            <field name="clock_override_reason" style="max-height: 25px;"/>
+                        </group>
+                    </group>
+                </page>
+                <page name="review_order_notes_and_requirements" string="Review Order Notes and Requirements">
+                    <group name="review_order_notes_and_requirements" string="Review Order Notes and Requirements">
+                        <group>
+                            <field name="order_notes" style="max-height: 25px;"/>
+                        </group>
+                        <group>
+                            <field name="fulfilment_project"/>
+                        </group>
+                    </group>
+                </page>
+                <page name="ops_project_owner" string="Steps">
+                    <group>
+                        <group name="ops_project_owner" string="Ops Project Owner">
+                            <field name="ops_project_owner_id"/>
+                        </group>
+                        <group name="approved_payment" string="Approved Payment">
+                            <field name="payment_receive_date"/>
+                            <field name="billing_notes" style="max-height: 25px;"/>
+                        </group>
+                        <group name="confirm_supplier" string="Confirm Supplier">
+                            <field name="cc_email"/>
+                            <field name="supplier_nuances"/>
+                            <field name="minimum_nuances"/>
+                            <field name="pre_approval_nuances"/>
+                        </group>
+                        <group name="dropship_or_transfer" string="Dropship Or Transfer">
+                            <!--                            <field name="transfer_to_bookpal_warehouse"/>-->
+                            <field name="type"/>
+                            <field name="supplier_warehouse"/>
+                        </group>
+                    </group>
+                    <group name="date_delivary_requirements" string="Date And Delivary">
+                        <group>
+                            <field name="future_ship_nuances"/>
+                            <field name="shipping_nuances"/>
+                            <field name="processing_time_nuances"/>
+                        </group>
+                        <group>
+                            <field name="author_event_naunces"/>
+                            <field name="author_event_shipping_naunces"/>
+                        </group>
+                    </group>
+                    <group name="shipping_method_instructions" string="Shipping Method and Instructions">
+                        <group>
+                            <field name="rush_status_id"/>
+                            <field name="shipping_instructions"/>
+                            <field name="order_shipping_desc"/>
+                            <field name="default_supplier_shipping"/>
+                            <field name="freight_charges" style="max-height: 25px;"/>
+                        </group>
+                        <group>
+                            <field name="rush_shipping_nuances"/>
+                            <field name="shipping_acct_nuances"/>
+                            <field name="freight_nuances"/>
+                            <field name="opening_text_nuances"/>
+                            <field name="note_to_vendor_nuances"/>
+                        </group>
+                    </group>
+                </page>
+                <page name="note_details" string="Notes and Details">
+                    <group>
+                        <group>
+                            <field name="memo" style="max-height: 25px;"/>
+                        </group>
+                        <group>
+                            <field name="gorgias_ticket" style="max-height: 25px;"/>
+                        </group>
+                    </group>
+                </page>
+                <page name="financials" string="Financials">
+                    <group name="financials" string="Financials">
+                        <group>
+                            <field name="supplier_order_number"/>
+                        </group>
+                        <group>
+                            <field name="create_uid" string="Created By"/>
+                            <field name="write_uid" string="Last Modified By"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
