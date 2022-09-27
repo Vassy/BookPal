@@ -28,7 +28,7 @@
             <xpath expr="//field[@name='partner_ref']" position="after">
                 <label for="pricelist_id"/>
                 <div class="o_row">
-                    <field name="pricelist_id" options="{'no_open':True,'no_create': True}" domain="[('used_for','=','purchase'),]" attrs="{'readonly': [('state', 'in', ['purchase', 'done','cancel'])]}"/>
+                    <field name="pricelist_id" options="{'no_open':True,'no_create': True}" domain="[('used_for','=','purchase'),('on_order','=',True),('currency_id','=',currency_id)]" attrs="{'readonly': [('state', 'in', ['purchase', 'done','cancel'])]}"/>
                     <button name="update_prices" type="object" class="btn-link mb-1 px-0" icon="fa-refresh" string="Update Prices" attrs="{'invisible': [('state', 'in', ['purchase', 'done','cancel'])]}"/>
                 </div>
             </xpath>
