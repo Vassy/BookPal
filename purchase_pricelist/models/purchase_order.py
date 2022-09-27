@@ -9,6 +9,11 @@ class PurchaseOrder(models.Model):
     without_disc_amount_untaxed = fields.Monetary(string='Without Untaxed Amount', store=True, readonly=True, compute='_amount_all')
     total_discount_amount = fields.Monetary(string='Total Discount Amount', store=True, readonly=True, compute='_amount_all')
 
+    @api.onchange('currency_id')
+    def onchange_currency_pricelist(self):
+        if self.pricelist_id.currency_id != self.currency_id:
+            self.pricelist_id = False
+
     def _amount_all(self):
         super(PurchaseOrder, self)._amount_all()
         for order in self:

@@ -7,7 +7,7 @@
             <xpath expr="//field[@name='property_product_pricelist']" position="attributes">
                 <attribute name="domain">[('used_for','=','sale')]</attribute>
             </xpath>
-            <xpath expr="//field[@name='property_product_pricelist']" position="after">
+            <xpath expr="//field[@name='property_supplier_payment_term_id']" position="after">
                 <field name="property_product_vendor_pricelist" options="{'no_create':1}" domain="[('used_for','=','purchase'),('on_order','=',True)]"/>
             </xpath>
         </field>
