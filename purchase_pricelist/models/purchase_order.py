@@ -123,7 +123,7 @@ class PurchaseOrderLine(models.Model):
                     seller=seller,
                 )
                 try:
-                    vendor_price = line.product_id.currency_id._convert(product.vendor_price, line.order_id.currency_id, line.order_id.company_id, fields.Date.today())
+                    vendor_price = seller.currency_id._convert(product.vendor_price, line.order_id.currency_id, line.order_id.company_id, fields.Date.today())
                     discount = max(0, (line.price_unit - vendor_price) * 100 / line.price_unit)
                     line.discount = discount
                 except:
