@@ -686,7 +686,7 @@ class SaleMultiShipQtyLines(models.Model):
             done_move = rec.move_ids.filtered(lambda x: x.state == 'done')
             if todo_move and not done_move and flag:
                 rec.state = 'draft'
-                old_qty = rec.product_uom
+                old_qty = rec.product_qty
                 rec.product_qty = 0
                 rec.so_line_id._action_launch_stock_rule(old_qty)
             todo_move._action_cancel()
@@ -696,7 +696,6 @@ class SaleMultiShipQtyLines(models.Model):
 
             rec.state = cancel_state
             rec.order_id.onchange_sale_multi_ship_qty_lines()
-        # raise ValidationError("Work In progress")
 
     def unlink(self):
         """Restrict to unlnk shipment if its not cancel or draft."""

@@ -7,6 +7,7 @@
 ##############################################################################
 
 import re
+from odoo.osv import expression
 
 from odoo import models, api, fields, _
 
@@ -209,6 +210,14 @@ class ResPartner(models.Model):
             args = []
         if not self.env.context.get('default_is_multi_ship'):
             args += [('is_multi_ship', '=', False)]
+        if self.env.context.get('order_id'):
+            order = self.env['sale.order'].browse(
+                self.env.context.get('order_id'))
+            if order and order.warehouse_id:
+                args = expression.OR(
+                    [args, [('id', '=', order.warehouse_id.partner_id.id)]]
+                )
+
         if self.env.context.get('product_id'):
             prod_tmpl = self.env['product.product'].browse(
                 self.env.context.get('product_id')).product_tmpl_id

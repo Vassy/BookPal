@@ -21,8 +21,9 @@ class StockRule(models.Model):
 
     def _get_custom_move_fields(self):
         fields = super(StockRule, self)._get_custom_move_fields()
-        fields += ['sale_line_id', 'partner_id',
-                   'shipping_partner_id', 'multi_ship_line_id']
+        if self.group_id and self.group_id.sale_id.split_shipment:
+            fields += ['partner_id',
+                       'multi_ship_line_id']
         return fields
 
     def _get_stock_move_values(self, product_id, product_qty,
@@ -256,7 +257,8 @@ class StockMove(models.Model):
     def _prepare_merge_moves_distinct_fields(self):
         distinct_fields = super(StockMove, self).\
             _prepare_merge_moves_distinct_fields()
-        distinct_fields.append('multi_ship_line_id')
+        if self.group_id and self.group_id.sale_id.split_shipment:
+            distinct_fields.append('multi_ship_line_id')
         return distinct_fields
 
     def _prepare_procurement_values(self):
