@@ -74,3 +74,7 @@ class CrmLead(models.Model):
     # deal_close_lost_reason = fields.Char(string='Close Lost Reason')
     split_order_number = fields.Char(string='Split Orders Number')
     # sale_order_count = fields.Char(string="Orders Count", compute="compute_sale_order_ids")
+
+
+class SpecialPricingType(models.Model):
+    _name = "special.pricing.type"

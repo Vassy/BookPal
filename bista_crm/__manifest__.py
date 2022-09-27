@@ -10,6 +10,7 @@
     'depends': ['sale_crm'],
     'data': [
         # Views
+        'security/ir.model.access.csv',
         'views/crm_lead_views.xml',
     ],
     'installable': True,

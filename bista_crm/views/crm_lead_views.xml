@@ -32,16 +32,22 @@
                     <group>
                         <group>
                             <field name="google_search_team"/>
+                        </group>
+                        <group>
                             <field name="estim_deal_size"/>
                         </group>
                     </group>
                 </page>
                 <page name="billing_info" string="Billing Info">
                     <group name="billing_info" string="Billing Info">
-                        <!--                        <field name="billing_address"/>-->
-                        <field name="tax_exempt"/>
-                        <!-- <field name="payment_method" /> -->
-                        <field name="payment_notes"/>
+                        <group>
+                            <!--                        <field name="billing_address"/>-->
+                            <field name="tax_exempt"/>
+                        </group>
+                        <group>
+                            <!-- <field name="payment_method" /> -->
+                            <field name="payment_notes" style="max-height: 25px;"/>
+                        </group>
                     </group>
                 </page>
                 <page name="shipping_info" string="Shipping Info">
@@ -52,10 +58,10 @@
                             <field name="event_date"/>
                             <field name="need_date"/>
                             <field name="international_shipping"/>
-                            <field name="order_notes"/>
+                            <field name="order_notes" style="max-height: 25px;"/>
                         </group>
                         <group>
-                            <field name="shipping_notes"/>
+                            <field name="shipping_notes" style="max-height: 25px;"/>
                             <field name="shipping_to"/>
                             <field name="potential_pallets"/>
                             <field name="accept_pallets"/>
@@ -66,15 +72,19 @@
                 </page>
                 <page name="journal_details" string="Journal Details">
                     <group name="journal_details" string="Journal Details">
-                        <field name="journal_customization_id"/>
-                        <field name="customization_cost"/>
-                        <field name="link_to_art_files"/>
-                        <field name="artwork_status_id"/>
-                        <field name="journal_notes"/>
-                        <field name="journal_setup_fee"/>
-                        <!-- <field name="shipping_account" /> -->
-                        <field name="death_type_id"/>
-                        <field name="existing_death_order"/>
+                        <group>
+                            <field name="journal_customization_id"/>
+                            <field name="customization_cost"/>
+                            <field name="link_to_art_files"/>
+                            <field name="artwork_status_id"/>
+                        </group>
+                        <group>
+                            <field name="journal_notes" style="max-height: 22px;"/>
+                            <field name="journal_setup_fee"/>
+                            <!-- <field name="shipping_account" /> -->
+                            <field name="death_type_id"/>
+                            <field name="existing_death_order"/>
+                        </group>
                     </group>
                 </page>
                 <page name="fulfilment_project" string="Fulfilment Project">
@@ -84,7 +94,7 @@
                             <field name="customization_type_ids" widget="many2many_tags"/>
                             <field name="project_details"/>
                             <field name="shipping_instructions"/>
-                            <field name="special_insert_note"/>
+                            <field name="special_insert_note" style="max-height: 25px;"/>
                         </group>
                         <group>
                             <field name="fulfilment_warehouse"/>
@@ -100,11 +110,11 @@
                             <!--<field name="deal_title"/>-->
                             <field name="pre_release"/>
                             <field name="product_use"/>
-                            <field name="product_status_notes"/>
+                            <field name="product_status_notes" style="max-height: 25px;"/>
                         </group>
                         <group name="Pricing_info" string="Pricing Info">
-<!--                            <field name="special_pricing_type_id"/>-->
-                            <field name="special_pricing_notes"/>
+                            <field name="special_pricing_type_id"/>
+                            <field name="special_pricing_notes" style="max-height: 25px;"/>
                         </group>
                     </group>
                 </page>

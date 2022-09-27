@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 bista_purchase.access_res_partner_shipping,access_res_partner_shipping,bista_purchase.model_res_partner_shipping,base.group_user,1,1,1,1
+bista_purchase.access_rush_status,access_rush_status,bista_purchase.model_rush_status,base.group_user,1,1,1,1
