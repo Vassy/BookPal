@@ -11,7 +11,7 @@
     ],
     'assets': {
         'web.assets_backend': [
-            'bista_sale/static/src/css/sale_order.css',
+            'bista_sale/static/src/css/custome_field.css',
         ]
     },
     'data': [
@@ -25,7 +25,6 @@
         'views/journal_customization_view.xml',
         'views/death_type_view.xml',
         'views/customization_type_view.xml',
-        # 'views/sale_order_css.xml',
         # report
         'report/sale_order_report.xml',
         # data
