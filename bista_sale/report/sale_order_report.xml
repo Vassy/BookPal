@@ -80,8 +80,7 @@
         </xpath>
         <xpath expr="//div[@t-field='doc.partner_id']" position="replace">
         </xpath>
-
-        <xpath expr="//div[@class='page']" position="before">
+        <xpath expr="//div[hasclass('page')]" position="before">
             <div class="row">
                 <div class="col-5">
                     <span>
@@ -131,14 +130,14 @@
         <xpath expr="//div[@t-if='doc.user_id.name']" position="replace">
         </xpath>
 
-        <xpath expr="//h2[@class='mt16']" position="replace">
-
+        <xpath expr="//h2[hasclass('mt16')]" position="replace">
         </xpath>
         <xpath expr="//div[@id='informations']" position="replace">
 
         </xpath>
 
-        <xpath expr="//table[@class='table table-sm o_main_table']" position="before">
+
+        <xpath expr="//table[hasclass('table','table-sm','o_main_table')]" position="before">
             <div style="margin-bottom:60px;">
                 <h5 style="margin-top:50px;border-bottom:solid 1px;">Special Instructions and Notes</h5>
                 <div>
@@ -176,7 +175,7 @@
         <!--        table-->
 
 
-        <xpath expr="//table[@class='table table-sm o_main_table']//thead//tr[1]//th[1]" position="before">
+        <xpath expr="//table[hasclass('table','table-sm','o_main_table')]//thead//tr[1]//th[1]" position="before">
             <th name="sequence_id" class="text-left">Product Details</th>
         </xpath>
 
@@ -220,7 +219,7 @@
             </div>
 
         </xpath>
-        <xpath expr="//table[@class ='table table-sm']" position="replace">
+        <xpath expr="//div[@name='so_total_summary']//table[hasclass('table')]" position="replace">
             <table class="table table-borderless">
 
                 <tr>
