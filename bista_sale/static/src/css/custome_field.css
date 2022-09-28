@@ -1,12 +1,12 @@
-.field_style {
+.bp_text_field{
    max-height:28px;
 }
-.field_style_height{
+.bp_text_field_height{
     height:25px
 
 }
 
-.style_height{
+.bp_text_field_char{
     height:15px
 
 }
