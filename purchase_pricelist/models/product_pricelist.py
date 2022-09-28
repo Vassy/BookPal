@@ -7,15 +7,23 @@ class ProductPricelist(models.Model):
 
     used_for = fields.Selection([('sale',"Sale"),('purchase',"Purchase")], default='sale')
     on_order = fields.Boolean(string="On Order")
+    apply_on = fields.Selection([('order_amount',"Order Amount"),('order_qty',"Order Quantity")], string="Apply On")
     product_pricelist_order_ids = fields.One2many('product.pricelist.order', 'pricelist_id', string="Items")
+
+    @api.onchange('used_for')
+    def onchange_used_for(self):
+        if self.used_for == 'sale':
+            self.on_order = False
+            self.apply_on = False
 
     def _get_partner_pricelist_multi_search_domain_hook(self, company_id):
         res = super(ProductPricelist, self)._get_partner_pricelist_multi_search_domain_hook(company_id)
         res.append(('used_for', '=', 'sale'))
         return res
 
-    def get_pricelist_order_line_based_on_amount(self, amount):
-        pricelist_order_line = self.product_pricelist_order_ids.filtered(lambda x:x.order_amount<=amount).sorted('sequence')
+    def get_pricelist_order_line_based_on_order(self, amount, quantity):
+        value = quantity if self.apply_on == 'order_qty' else amount
+        pricelist_order_line = self.product_pricelist_order_ids.filtered(lambda x:x.from_value<=value and x.to_value>=value).sorted('sequence')
         pricelist_order_line = pricelist_order_line[0] if pricelist_order_line else pricelist_order_line
         return pricelist_order_line
 
@@ -26,5 +34,7 @@ class ProductPricelistOrder(models.Model):
 
     pricelist_id = fields.Many2one('product.pricelist', string="Pricelist")
     sequence = fields.Integer(string="Sequence")
-    order_amount = fields.Float(string="Order Amount (>=)")
+    # order_amount = fields.Float(string="Order Amount (>=)")
+    from_value = fields.Float(string="From")
+    to_value = fields.Float(string="To")
     discount = fields.Float(string="Discount (%)")
