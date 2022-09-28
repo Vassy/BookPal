@@ -75,16 +75,16 @@
                         <group>
                             <group name="order_notes">
                                 <field name="event_date"/>
-                                <field name="order_notes" style="max-height:28px;"/>
-                                <field name="gorgias_ticket"  widget='url' style="max-height:28px;"/>
-                                <field name="product_status_notes"  style="max-height:28px;"/>
+                                <field name="order_notes"  class="field_style"/>
+                                <field name="gorgias_ticket"  widget='url'  class="field_style"/>
+                                <field name="product_status_notes" class="field_style"/>
                             </group>
                             <group>
                                 <field name="white_glove_id"/>
-                                <field name="ce_notes" style="max-height:28px;"/>
-                                <field name="payment_notes"  style="max-height:28px;"/>
-                                <field name="am_notes"  style="max-height:28px;"/>
-                                <field name="ce_ops_acct_notes"  style="max-height:28px;"/>
+                                <field name="ce_notes"  class="field_style"/>
+                                <field name="payment_notes"   class="field_style"/>
+                                <field name="am_notes"  class="field_style"/>
+                                <field name="ce_ops_acct_notes"  class="field_style"/>
                             </group>
                         </group>
                     </sheet>
@@ -93,21 +93,20 @@
             <xpath expr="//notebook/page[@name='order_notes']" position="after">
                 <page name="journal_details" string="Journal Details">
                     <group>
-                        <group name="journal_details">
-                            <field name="journal_customization_id" style="height:15px;"/>
-                            <field name="link_to_art_files" style="max-height:23px;"/>
-                            <field name="artwork_status_id" style="height:13px;"/>
-                            <field name="journal_notes" style="max-height:23px;"/>
-                            <field name="journal_setup_fee_waived" style="height:15px; size:2;"/>
+                        <group name="journal_details" >
+                            <field name="journal_customization_id" class="field_style"/>
+                            <field name="link_to_art_files" class="field_style"/>
+                            <field name="journal_notes" class="field_style"/>
+                            <field name="journal_setup_fee_waived"/>
+                            <field name="journal_setup_fee" class="style_height"/>
                         </group>
                         <group>
-                            <field name="journal_setup_fee"/>
                             <field name="shipping_account"/>
                             <field name="shipping_cost"/>
+                            <field name="artwork_status_id" class="field_style"/>
                             <field name="death_type_id"/>
                             <field name="existing_death_order"/>
                             <field name="customization_cost"/>
-
                         </group>
                     </group>
                 </page>
@@ -119,21 +118,21 @@
                             <field name="fulfilment_project"/>
                             <field name="am_owner"/>
                             <field name="project_description"/>
-                            <field name="status_notes" style="max-height:28px;"/>
+                            <field name="status_notes"  class="field_style"/>
                             <field name="delivery_location"/>
-                            <field name="project_status" style="height:30px;"/>
-                            <field name="shipping_instruction" style="max-height:28px;"/>
+                            <field name="project_status"/>
+                            <field name="shipping_instruction" class="field_style" />
                             <field name="customization_type_ids" widget="many2many_tags"/>
-                            <field name="individual_mailer_return_address" style="height:30px;"/>
+                            <field name="individual_mailer_return_address" class="field_style_height"/>
                         </group>
                         <group>
-                            <field name="special_insert_note" style="max-height:28px;"/>
-                            <field name="attachment_note" style="max-height:28px;"/>
+                            <field name="special_insert_note" class="field_style"/>
+                            <field name="attachment_note" class="field_style"/>
                             <field name="book_status"/>
-                            <field name="on_hold_reason" style="max-height:28px;"/>
+                            <field name="on_hold_reason" class="field_style"/>
                             <field name="recipient_list_status"/>
-                            <field name="individual_mailer_return_receiver" style="height:28px; size:50;" />
-                            <field name="recipient_list_expected" style="height:15px;"/>
+                            <field name="individual_mailer_return_receiver" class="field_style_height" />
+                            <field name="recipient_list_expected" class="style_height"/>
                         </group>
                     </group>
                 </page>

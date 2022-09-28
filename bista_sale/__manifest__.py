@@ -9,10 +9,15 @@
     'depends': [
         'sale'
     ],
+    'assets': {
+        'web.assets_backend': [
+            'bista_sale/static/src/css/sale_order.css',
+        ]
+    },
     'data': [
-        #security
+        # security
         'security/ir.model.access.csv',
-        #views
+        # views
         'views/artwork_status_view.xml',
         'views/sale_order_view.xml',
         'views/stock_picking_view.xml',
@@ -20,11 +25,11 @@
         'views/journal_customization_view.xml',
         'views/death_type_view.xml',
         'views/customization_type_view.xml',
-        #report
+        # 'views/sale_order_css.xml',
+        # report
         'report/sale_order_report.xml',
-        #data
+        # data
         'data/data.xml',
-
 
     ],
     'installable': True,
