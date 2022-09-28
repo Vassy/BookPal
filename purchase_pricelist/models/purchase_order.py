@@ -52,7 +52,7 @@ class PurchaseOrder(models.Model):
 class PurchaseOrderLine(models.Model):
     _inherit = "purchase.order.line"
 
-    disc_price_unit = fields.Float(string="Disc Unit Price", compute="_compute_disc_price_unit")
+    disc_price_unit = fields.Float(string="Discounted Unit Price", compute="_compute_disc_price_unit")
     without_disc_price_subtotal = fields.Monetary(compute='_compute_amount', string='Without Disc. Subtotal', store=True)
     discount_amount = fields.Monetary(compute='_compute_amount', string='Discount Amount', store=True)
 
