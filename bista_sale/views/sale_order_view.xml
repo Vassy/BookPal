@@ -73,18 +73,18 @@
                 <page string="Order Notes" name="order_notes">
                     <sheet>
                         <group>
-                            <group name="order_notes" widget='html'>
+                            <group name="order_notes">
                                 <field name="event_date"/>
-                                <field name="order_notes" widget='html'/>
-                                <field name="gorgias_ticket" widget='html'/>
-                                <field name="product_status_notes" widget='html'/>
+                                <field name="order_notes"  class="bp_text_field"/>
+                                <field name="gorgias_ticket"  widget='url'  class="bp_text_field"/>
+                                <field name="product_status_notes" class="bp_text_field"/>
                             </group>
                             <group>
-                                <field name="white_glove_id" widget='html'/>
-                                <field name="ce_notes" widget='html'/>
-                                <field name="payment_notes" widget='html'/>
-                                <field name="am_notes" widget='html'/>
-                                <field name="ce_ops_acct_notes" widget='html'/>
+                                <field name="white_glove_id"/>
+                                <field name="ce_notes"  class="bp_text_field"/>
+                                <field name="payment_notes"   class="bp_text_field"/>
+                                <field name="am_notes"  class="bp_text_field"/>
+                                <field name="ce_ops_acct_notes"  class="bp_text_field"/>
                             </group>
                         </group>
                     </sheet>
@@ -93,20 +93,20 @@
             <xpath expr="//notebook/page[@name='order_notes']" position="after">
                 <page name="journal_details" string="Journal Details">
                     <group>
-                        <group name="journal_details">
-                            <field name="journal_customization_id"/>
-                            <field name="customization_cost"/>
-                            <field name="link_to_art_files"/>
-                            <field name="artwork_status_id"/>
-                            <field name="journal_notes" widget='html'/>
+                        <group name="journal_details" >
+                            <field name="journal_customization_id" class="bp_text_field"/>
+                            <field name="link_to_art_files" class="bp_text_field"/>
+                            <field name="journal_notes" class="bp_text_field"/>
                             <field name="journal_setup_fee_waived"/>
+                            <field name="journal_setup_fee" class="bp_text_field_char"/>
                         </group>
                         <group>
-                            <field name="journal_setup_fee"/>
                             <field name="shipping_account"/>
                             <field name="shipping_cost"/>
+                            <field name="artwork_status_id" class="bp_text_field"/>
                             <field name="death_type_id"/>
                             <field name="existing_death_order"/>
+                            <field name="customization_cost"/>
                         </group>
                     </group>
                 </page>
@@ -118,21 +118,21 @@
                             <field name="fulfilment_project"/>
                             <field name="am_owner"/>
                             <field name="project_description"/>
-                            <field name="status_notes" widget='html'/>
+                            <field name="status_notes"  class="bp_text_field"/>
                             <field name="delivery_location"/>
                             <field name="project_status"/>
-                            <field name="shipping_instruction"/>
+                            <field name="shipping_instruction" class="bp_text_field" />
                             <field name="customization_type_ids" widget="many2many_tags"/>
+                            <field name="individual_mailer_return_address" class="bp_text_field_height"/>
                         </group>
                         <group>
-                            <field name="special_insert_note"/>
-                            <field name="attachment_note"/>
-                            <field name="individual_mailer_return_receiver"/>
-                            <field name="recipient_list_status"/>
-                            <field name="recipient_list_expected"/>
-                            <field name="individual_mailer_return_address"/>
+                            <field name="special_insert_note" class="bp_text_field"/>
+                            <field name="attachment_note" class="bp_text_field"/>
                             <field name="book_status"/>
-                            <field name="on_hold_reason" widget='html'/>
+                            <field name="on_hold_reason" class="bp_text_field"/>
+                            <field name="recipient_list_status"/>
+                            <field name="individual_mailer_return_receiver" class="bp_text_field_height" />
+                            <field name="recipient_list_expected" class="bp_text_field_char"/>
                         </group>
                     </group>
                 </page>
@@ -141,7 +141,7 @@
                 <page string="Payment">
                     <group>
                         <group name="payment_info">
-                            <field name="billing_notes"/>
+                            <field name="billing_notes" class="bp_text_field"/>
                         </group>
                         <group>
                             <field name="placed_from_ip"/>
@@ -151,5 +151,4 @@
             </xpath>
         </field>
     </record>
-
 </odoo>

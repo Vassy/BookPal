@@ -8,6 +8,12 @@ class PurchaseOrder(models.Model):
     pricelist_id = fields.Many2one('product.pricelist', "Pricelist", compute="_compute_product_pricelist", store=True)
     without_disc_amount_untaxed = fields.Monetary(string='Without Untaxed Amount', store=True, readonly=True, compute='_amount_all')
     total_discount_amount = fields.Monetary(string='Total Discount Amount', store=True, readonly=True, compute='_amount_all')
+    total_quantity = fields.Float(string="Total Quantity", store=True, compute="_compute_total_quantity")
+
+    @api.depends('order_line', 'order_line.product_qty')
+    def _compute_total_quantity(self):
+        for order in self:
+            order.total_quantity = sum(order.order_line.mapped('product_qty'))
 
     @api.onchange('currency_id')
     def onchange_currency_pricelist(self):
@@ -35,16 +41,18 @@ class PurchaseOrder(models.Model):
     def update_prices(self):
         for order in self:
             if order.pricelist_id:
-                price_list_line = order.pricelist_id.get_pricelist_order_line_based_on_amount(order.without_disc_amount_untaxed)
+                price_list_line = order.pricelist_id.get_pricelist_order_line_based_on_order(order.without_disc_amount_untaxed, order.total_quantity)
                 non_discounted_lines = order.order_line
                 if non_discounted_lines and price_list_line:
                     non_discounted_lines.discount = price_list_line.discount
+                else:
+                    non_discounted_lines.discount = 0
 
 
 class PurchaseOrderLine(models.Model):
     _inherit = "purchase.order.line"
 
-    disc_price_unit = fields.Float(string="Disc Unit Price", compute="_compute_disc_price_unit")
+    disc_price_unit = fields.Float(string="Discounted Unit Price", compute="_compute_disc_price_unit")
     without_disc_price_subtotal = fields.Monetary(compute='_compute_amount', string='Without Disc. Subtotal', store=True)
     discount_amount = fields.Monetary(compute='_compute_amount', string='Discount Amount', store=True)
 
