@@ -148,13 +148,13 @@
 
                 <td class="text-center" name="td_format">
                     <t t-set="format" t-value="MMP"/>
-                    <span t-esc="format"/>
+                    <span>MMP</span>
                 </td>
                 <!--                <td class="text-center" name="td_uom">-->
                 <!--                    <span t-field="line.product_uom.name" groups="uom.group_uom"/>-->
                 <!--                </td>-->
                 <td class="text-center" name="td_cover">
-                    <span t-esc="6.99"/>
+                    <span t-field="line.price_unit"/>
                 </td>
                 <td class="text-center" name="td_discount">
                     <div>
@@ -162,7 +162,7 @@
                     </div>
                 </td>
                 <td class="text-center" name="td_bp_price">
-                    <span t-esc="2.45"/>
+                    <span t-field="line.disc_price_unit" />
                 </td>
                 <!--                <td class="text-center">-->
                 <!--                    <span t-field="line.price_unit"/>-->
@@ -203,13 +203,51 @@
     </template>
     <template id="document_tax_totals_extended" inherit_id="account.document_tax_totals">
         <xpath expr="//td[1]" position="replace">
-            <td>Subtotal</td>
+            <td style="border-right: 1px solid black;">Subtotal</td>
         </xpath>
-        <xpath expr="//tr[hasclass('o_total')]" position="before">
-            <td>Shipping</td>
-            <td class="text-right">
-                <span t-esc="20"/>
-            </td>
+
+        <xpath expr="//tr[hasclass('o_subtotal')]" position="before">
+<!--            <t t-if="'groups_by_subtotal' in tax_totals and len(tax_totals['groups_by_subtotal']) == 0">-->
+<!--                <tr>-->
+<!--                    <td>-->
+<!--                        <strong>Subtotal</strong>-->
+<!--                    </td>-->
+<!--                    <td class="text-right">-->
+<!--                        <span t-esc="0.0"/>-->
+<!--&lt;!&ndash;                        <span t-esc="tax_totals"/>&ndash;&gt;-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--            </t>-->
+            <tr class="border-black o_subtotal">
+                <td>
+                    <span>Without Disc Total</span>
+                </td>
+                <td class="text-right"  style="border-left: 1px solid black;">
+                    <span t-field="o.without_disc_amount_untaxed"/>
+                </td>
+            </tr>
+            <tr class="border-black o_subtotal">
+                <td>
+                    <span>Discount</span>
+                </td>
+                <td class="text-right" style="border-left: 1px solid black;">
+                    <span t-field="o.total_discount_amount"/>
+                </td>
+            </tr>
+<!--            <tr>-->
+<!--                <td>-->
+<!--                    <strong>Shipping</strong>-->
+<!--                </td>-->
+<!--                <td class="text-right">-->
+<!--                    <span t-esc="20"/>-->
+<!--                </td>-->
+<!--            </tr>-->
         </xpath>
+
     </template>
+<!--     <template id="tax_groups_totals_extended" inherit_id="account.tax_groups_totals">-->
+<!--         <xpath expr="//t[@t-else='']//td[2]" position="replace">-->
+<!--             <td class="text-right "></td>-->
+<!--         </xpath>-->
+<!--     </template>-->
 </odoo>
