@@ -13,9 +13,11 @@
             </xpath>
             <xpath expr="//field[@name='item_ids']" position="after">
                 <group>
-                    <field name="apply_on" class="oe_inline" widget="radio" attrs="{'invisible':['|',('used_for','!=','purchase'),('on_order','!=',True)]}"/>
+                    <group>
+                        <field name="apply_on"  attrs="{'invisible':['|',('used_for','!=','purchase'),('on_order','!=',True)]}"/>
+                    </group>
                 </group>
-                <!--                <p class="text-danger" attrs="{'invisible':['|',('used_for','=','sale'),('on_order','=',False)]}">Set quantity in descending order lines</p>-->
+                <p class="text-danger" attrs="{'invisible':['|',('used_for','=','sale'),('on_order','=',False)]}">*In case of not set range with <b>To value</b> set descending order of <b>From Value</b>.</p>
                 <field name="product_pricelist_order_ids" attrs="{'invisible':['|',('used_for','=','sale'),('on_order','=',False)]}">
                     <tree editable="bottom">
                         <field name="pricelist_id" invisible="1"/>
@@ -34,6 +36,20 @@
         <field name="context">{"default_base":'list_price','default_used_for':'sale'}</field>
     </record>
 
+    <record id="product_purchase_pricelist_view_tree" model="ir.ui.view">
+        <field name="name">product.pricelist.tree</field>
+        <field name="model">product.pricelist</field>
+        <field name="arch" type="xml">
+            <tree string="Products Price List" sample="1">
+                <field name="sequence" widget="handle" />
+                <field name="name"/>
+                <field name="on_order"/>
+                <field name="currency_id" groups="base.group_multi_currency"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
     <record id="product_purchase_pricelist_action" model="ir.actions.act_window">
         <field name="name">Pricelists</field>
         <field name="type">ir.actions.act_window</field>
@@ -41,6 +57,8 @@
         <field name="view_mode">tree,kanban,form</field>
         <field name="domain">[('used_for','=','purchase')]</field>
         <field name="search_view_id" ref="product.product_pricelist_view_search" />
+        <field name="view_ids" eval="[(5, 0, 0),
+                          (0, 0, {'view_mode': 'tree', 'view_id': ref('purchase_pricelist.product_purchase_pricelist_view_tree')})]"/>
         <field name="context">{"default_base":'list_price','default_used_for':'purchase'}</field>
     </record>
 
