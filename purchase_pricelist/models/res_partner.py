@@ -16,6 +16,6 @@ class ResPartner(models.Model):
             return {
                 'warning': {
                     'title': "Vendor Pricelist Change",
-                    'message':"Vendor pricelist have been reset due to currency change."
+                    'message':"Vendor pricelist need to reset due to change in currency."
                 }
             }
