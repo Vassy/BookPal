@@ -23,7 +23,7 @@ class ProductPricelist(models.Model):
 
     def get_pricelist_order_line_based_on_order(self, amount, quantity):
         value = quantity if self.apply_on == 'order_qty' else amount
-        pricelist_order_line = self.product_pricelist_order_ids.filtered(lambda x:x.from_value<=value and x.to_value>=value).sorted('sequence')
+        pricelist_order_line = self.product_pricelist_order_ids.filtered(lambda x:x.from_value<=value and (x.to_value>=value or x.to_value==0)).sorted('sequence')
         pricelist_order_line = pricelist_order_line[0] if pricelist_order_line else pricelist_order_line
         return pricelist_order_line
 

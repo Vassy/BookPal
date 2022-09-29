@@ -17,7 +17,7 @@
                         <field name="apply_on"  attrs="{'invisible':['|',('used_for','!=','purchase'),('on_order','!=',True)]}"/>
                     </group>
                 </group>
-                <!--                <p class="text-danger" attrs="{'invisible':['|',('used_for','=','sale'),('on_order','=',False)]}">Set quantity in descending order lines</p>-->
+                <p class="text-danger" attrs="{'invisible':['|',('used_for','=','sale'),('on_order','=',False)]}">*In case of not set range with <b>To value</b> set descending order of <b>From Value</b>.</p>
                 <field name="product_pricelist_order_ids" attrs="{'invisible':['|',('used_for','=','sale'),('on_order','=',False)]}">
                     <tree editable="bottom">
                         <field name="pricelist_id" invisible="1"/>
