@@ -32,6 +32,7 @@
     </record>
 
     <record id="product.product_pricelist_action2" model="ir.actions.act_window">
+        <field name="name">Sale Pricelists</field>
         <field name="domain">[('used_for','=','sale')]</field>
         <field name="context">{"default_base":'list_price','default_used_for':'sale'}</field>
     </record>
@@ -51,7 +52,7 @@
     </record>
 
     <record id="product_purchase_pricelist_action" model="ir.actions.act_window">
-        <field name="name">Pricelists</field>
+        <field name="name">Purchase Pricelists</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">product.pricelist</field>
         <field name="view_mode">tree,kanban,form</field>
