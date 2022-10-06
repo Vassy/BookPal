@@ -47,6 +47,8 @@ class PurchaseOrder(models.Model):
     memo = fields.Text(string="Memo")
     gorgias_ticket = fields.Text(string="Gorgias Ticket")
     supplier_order_number = fields.Char(string="Supplier Order Number")
+    special_pick_note = fields.Html('Special Instructions and Notes')
+
 
     @api.onchange('partner_id')
     def onchange_partner_id_cc_email(self):
