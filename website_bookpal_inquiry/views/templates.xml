@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="product_selection" name="Product Selection">
+        <div t-attf-class="form-group #{error.get('product') and 'o_has_error' or ''} col-xl-6">
+            <label class="col-form-label" for="name">Product</label>
+            <select type="text" class="product_id form-control" name="product_id">
+                <t t-set="select_op" t-value="json.dumps({'id': '', 'display_name': '--- Select Product ---'})"/>
+                <option value="" t-att-data-record="select_op">--- Select Product ---</option>
+                <option t-foreach="products" t-as="p" t-att-value="p.id" t-att-data-record="json.dumps([p.id,p.display_name])">
+                    <t t-esc="p.display_name"/>
+                </option>
+            </select>
+        </div>
+    </template>
+    <template id="product_inquiry" name="Website Product Inquiry">
+        <form id="website-inquiry" method="post" action="/inquiry">
+            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+            <div class="row o_product_inquiry">
+                <div class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div t-if="error_message" class="alert alert-danger" role="alert">
+                                <t t-foreach="error_message" t-as="err"><t t-esc="err"/><br /></t>
+                            </div>
+                        </div>
+                        <t t-call="website_bookpal_inquiry.product_selection"/>
+                        <div t-attf-class="form-group #{error.get('quantity') and 'o_has_error' or ''} col-xl-6">
+                            <label class="col-form-label" for="name">Quantity</label>
+                            <input type="text" name="quantity" t-attf-class="form-control #{error.get('quantity') and 'is-invalid' or ''}" t-att-value="quantity or 1" />
+                        </div>
+                        <div t-attf-class="form-group #{error.get('quantity') and 'o_has_error' or ''} col-xl-12">
+                            <label class="col-form-label" for="name">Notes</label>
+                            <textarea name="notes" t-attf-class="form-control #{error.get('quantity') and 'is-invalid' or ''}" t-att-value="quantity or 1" />
+                        </div>
+                    </div>
+                    <div class="clearfix">
+                        <button type="submit" class="btn btn-primary mb32">
+                            Confirm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </template>
+
+    <template id="website_inquiry" name="Website Inquiry">
+        <t t-call="portal.portal_layout">
+            <t t-set="additional_title">Inquiry</t>
+            <div class="container">
+                <t t-call="website_bookpal_inquiry.product_inquiry"/>
+            </div>
+        </t>
+    </template>
+</odoo>

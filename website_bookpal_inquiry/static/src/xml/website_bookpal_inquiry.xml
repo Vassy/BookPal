@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="website_bookpal_inquiry.product">
+        <div class="media align-items-center o_search_product_item">
+            <img t-if="product[0]" t-attf-src="/web/image/product.product/#{product[0]}/image_128"
+                 class="flex-shrink-0 o_image_24_cover"/>
+            <div class="media-body px-3">
+                <h6 class="font-weight-bold mb-0" t-esc="product[1]"/>
+            </div>
+        </div>
+    </t>
+</templates>
