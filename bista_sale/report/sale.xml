@@ -5,8 +5,7 @@
               inherit_id="sale.report_saleorder_document">
         <!-- Show table header in all pages  -->
         <xpath expr="//table[hasclass('table','table-sm','o_main_table')]" position="before">
-            <div
-            >
+            <div>
                 <h5 style="margin-top:50px;border-bottom:solid 1px;">Special Instructions and Notes</h5>
                 <div>
                     <span class="mb4" t-field="doc.common_pick_note"/>
@@ -14,19 +13,15 @@
             </div>
         </xpath>
 
-<!--        <xpath expr="//td[@name ='td_name']" position="before">-->
-<!--            <td>-->
-<!--                <img t-attf-src="data:image/*;base64,{{line.product_id.image_1920}}"-->
-<!--                     style="max-height:100px; max-width:100px;"/>-->
-<!--            </td>-->
-<!--        </xpath>-->
-
         <xpath expr="//p[@t-field='doc.note']" position="replace">
             <div style="margin-top:40px;">
-                <h5 style="border-bottom:solid 1px;">Order Terms and Conditions</h5>
-                <span t-field="doc.note"/>
+                <strong style="border-bottom:solid 1px;">Order Terms and Conditions</strong>
+                <p class="mb-1" t-field="doc.note" style="margin-left: 50px;"/>
+
+<!--                <span t-field="doc.note"/>-->
             </div>
         </xpath>
+
         <xpath expr="//table[hasclass('table','table-sm','o_main_table')]" position="before">
             <span style="font-size:20px;">
                 <strong>Product Details</strong>
@@ -35,15 +30,15 @@
         <xpath expr="//thead" position="replace">
             <thead>
                 <tr style="border-top: 1px solid black;">
-                    <th style= "border: none;" name="th_sn" class="text-center">
+                    <th style="border: none;" name="th_sn" class="text-center">
                         <strong>SN</strong>
                     </th>
                     <th colspan="2" style=" border-collapse: collapse;
                    border: none;" name="image" class="text-center">Description
                     </th>
-<!--                    <th style=" border-collapse: collapse;-->
-<!--                   border: none;" name="th_description" class="text-center">-->
-<!--                    </th>-->
+                    <!--                    <th style=" border-collapse: collapse;-->
+                    <!--                   border: none;" name="th_description" class="text-center">-->
+                    <!--                    </th>-->
                     <th style=" border-collapse: collapse;
                    border: none;" name="th_quantity" class="text-center">Quantity
                     </th>
@@ -78,21 +73,21 @@
 
         <xpath expr="//t[@t-if='not line.display_type']" position="replace">
             <t t-if="not line.display_type">
-                <td  style="border-top: 1px solid black; border-left: none;
+                <td style="border-top: 1px solid black; border-left: none;
                 border-right: none;" name="td_sn" class="text-center">
                     <span t-esc="sn"/>
                     <br/>
                     <t t-set="sn" t-value="sn+1"/>
                 </td>
-                <td  style="border-top: 1px solid black; border-left: none;
-                border-right: none;" name="image"  class="text-center">
+                <td style="border-top: 1px solid black; border-left: none;
+                border-right: none;" name="image" class="text-center">
                     <t t-if="line.product_id.image_1920">
-                    <img t-attf-src="data:image/*;base64,{{line.product_id.image_1920}}"
-                    style="max-height:100px; max-width:100px;"/>
+                        <img t-attf-src="data:image/*;base64,{{line.product_id.image_1920}}"
+                             style="max-height:100px; max-width:100px;"/>
                     </t>
-<!--                    <span t-field-options='{"widget": "image","class": "oe_avatar"}'/>-->
+                    <!--                    <span t-field-options='{"widget": "image","class": "oe_avatar"}'/>-->
                     <t t-else="">
-<!--                        <span t-field="line.product_id.image_1920" t-field-options='{"widget": "image", "style":"width: 150px;height: 150px"}'/>-->
+                        <!--                        <span t-field="line.product_id.image_1920" t-field-options='{"widget": "image", "style":"width: 150px;height: 150px"}'/>-->
                         <img widget="image" class="oe_avatar" alt="loading" t-options='{"widget": "image"}'/>
                     </t>
                 </td>
@@ -148,8 +143,9 @@
                                t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
                         </t>
                         <t t-else="">
-                            <span t-field="line.discount">
-                            </span>
+                            <span t-field="line.discount"
+                             t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+
                         </t>
                     </span>
 
@@ -163,7 +159,7 @@
                 </td> -->
                 <td style="border-top: 1px solid black; border-left: none;
                 border-right: none;"
-                   name="td_subtotal" class="text-center">
+                    name="td_subtotal" class="text-center">
                     <span t-field="line.price_subtotal"
                           groups="account.group_show_line_subtotals_tax_excluded"/>
                     <span t-field="line.price_total"
@@ -181,15 +177,15 @@
                position="replace">
         </xpath>
         <!-- Added "Customer Details" label in report  -->
-        <xpath expr="//t[@t-set='address']/div" position="before">
+        <xpath expr="//div[@t-field='doc.partner_id']" position="before">
             <strong>Customer Details</strong>
         </xpath>
 
         <!-- Hidden information block from base report  -->
-        <xpath expr="//div[@id='informations']" position="replace">
+        <xpath expr="//div[hasclass('row', 'mt32', 'mb32')]" position="replace">
         </xpath>
         <!-- Hidden Quotation & Order # from base report  -->
-        <xpath expr="//h2" position="replace">
+        <xpath expr="//h2[hasclass('mt16')]" position="replace">
         </xpath>
         <!-- Added info table beside total summery table  -->
         <xpath expr="//div[@name='so_total_summary']" position="replace">
@@ -206,9 +202,9 @@
                     <div>
                         <table style="border: none;"
 
-                              class="table table-borderless">
+                               class="table table-borderless">
                             <tr>
-                                <td  style="border: none;" class="text-right">
+                                <td style="border: none;" class="text-right">
                                     <strong>Subtotal</strong>
                                 </td>
 
@@ -227,17 +223,17 @@
                             <tr>
                                 <td style="border: none;" class="text-right">
                                     <strong class="text-left">Shipping</strong>
-                                   <br/>
+                                    <br/>
                                     <t t-if="doc.carrier_id">
-                                     (<span style="font-size:14px;" t-field="doc.carrier_id"/>)
+                                        (<span style="font-size:14px;" t-field="doc.carrier_id"/>)
                                     </t>
                                 </td>
-                                <td style="border: none;"  class="text-right">
-<!--                                    <span t-field="doc.product_id.carrier_id."/>-->
+                                <td style="border: none;" class="text-right">
+                                    <!--                                    <span t-field="doc.product_id.carrier_id."/>-->
                                     <t t-esc="sum([line.price_total for line in doc.order_line if line.is_delivery])"
-                                    t-options='{"widget": "monetary", "display_currency": doc.currency_id}'>
+                                       t-options='{"widget": "monetary", "display_currency": doc.currency_id}'>
                                     </t>
-<!--                                    <span t-field="doc.delivery_price"/>-->
+                                    <!--                                    <span t-field="doc.delivery_price"/>-->
                                 </td>
                             </tr>
                             <tr>
