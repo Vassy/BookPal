@@ -7,10 +7,11 @@
                 <div class="o_boxed_header">
                     <div class="row mb8">
                         <div class="col-6">
+
                             <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
-                            <div t-field="o.company_id.partner_id"
-                                 t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'
-                            />
+                            <div  t-field="o.company_id.partner_id"
+                                 t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+
                         </div>
                         <div t-if="xmlid == 'purchase.report_purchaseorder'" name="report_info"
                              class="col-6 text-right mb4">
@@ -48,14 +49,52 @@
                     </div>
                 </t>
             </t>
+            <t t-elif="doc_model == 'sale.order'">
+                <div class="o_boxed_header">
+                    <div class="row mb8">
+                         <div class="col-6">
+
+                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
+                            <div style="top-margin:50px; margin-bottom:10px;" t-field="o.company_id.partner_id"
+                                 t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+
+                        </div>
+                        <div name="report_info" class="col-6 text-right mb4">
+                            <h3 t-if="doc.state in ['draft','sent']">Sales Quotation</h3>
+                            <h3 t-if="doc.state in ['sale','done']">Sales Order
+                            </h3>
+                            <h3 t-if="doc.state in ['cancel']">Cancelled Quotation/Order
+                            </h3>
+                            <h4>
+                                <strong>
+                                    <t t-esc="o.name"/>
+                                </strong>
+                            </h4>
+                            <strong t-if="doc.state in ['sale','done']">Order Date:
+<!--                                <t t-esc="o.date_order" t-options='{"widget": "date"}'/> -->
+                                <span t-esc="datetime.datetime.now()" t-options='{"widget": "date"}'></span>
+                            </strong>
+
+                            <strong t-if="doc.state in ['draft','sent']">Quotation Date:
+                                <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                            </strong>
+
+                            <strong t-if="doc.state in ['cancel']">Cancelled Date:
+                                <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                            </strong>
+                            <br/>
+                        </div>
+                    </div>
+                </div>
+            </t>
             <t t-else="">
                 <div class="o_boxed_header">
                     <div class="row mb8">
                         <div class="col-6">
                             <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
                             <!-- <h4 class="mt0" t-field="company.report_header"/> -->
-                            <div name="company_address" class="mb4" style="font-size: 15px;">
-                                <span t-if="company.company_details" t-field="company.company_details"/>
+                            <div name="company_address" class="mb4" style="font-size: 15px; margin-bottom:10px;">
+                                <span style="margin-bottom:10px;" t-if="company.company_details" t-field="company.company_details"/>
                             </div>
                         </div>
                         <div name="report_info" class="col-6 text-right mb4">
@@ -66,23 +105,27 @@
             </t>
         </xpath>
         <xpath expr="//div[@t-attf-class='footer o_boxed_footer o_company_#{company.id}_layout']" position="replace">
-            <t t-if="doc_model == 'purchase.order'and xmlid == 'purchase.report_purchaseorder'">
+            <t t-if="not o" t-set="o" t-value="doc"/>
+            <t t-if="doc_model in ['sale.order','purchase.order']">
                 <div t-attf-class="footer o_company_#{company.id}_layout">
-                    <!--            <t t ="">-->
-                    <!--                <div t-attf-class="footer o_boxed_footer o_company_#{company.id}_layout">-->
-                    <div class="text-center">
+                    <div class="text-center" style="border-top: 3px solid black; text-color: black;">
+                        <!--                        <div t-field="company.report_footer" style="font-size: 90%; text-color: black;"/>-->
+                        <!--                        <div t-if="report_type == 'pdf'">-->
 
-                        <!--                        <div t-field="company.report_footer"/>-->
-                        <div t-if="report_type == 'pdf'">
-                            <span t-field="res_company.partner_id.name"/>
+                        <!--                            Page: <span class="page"/> / <span class="topage"/>-->
+                        <!--                        </div>-->
+                        <div  t-if="report_type == 'pdf'">
+                            <span  t-field="res_company.partner_id.name"/>
+                            <span style="margin-right: 15px;" t-field="res_company.partner_id.street"/>
                             |
-                            <span t-field="res_company.partner_id.street"/>
+                            <span style="margin-left: 15px;" t-field="res_company.partner_id.city"/>
+                            <span t-field="res_company.partner_id.state_id"/>
+                            <span style="margin-right: 15px;" t-field="res_company.partner_id.zip"/>
                             |
-                            <span t-field="res_company.partner_id.phone"/>
+                            <span style="margin-left: 15px;margin-right: 15px;" t-field="res_company.partner_id.phone"/>
                             |
-                            <span t-field="res_company.partner_id.city"/>
-                            |
-                            <span t-field="res_company.partner_id.website"/>
+                            <span style="margin-left: 15px;" t-field="res_company.partner_id.website"/>
+
                         </div>
                     </div>
                 </div>
@@ -94,7 +137,7 @@
     </template>
     <template id="address_layout_extended" inherit_id="web.address_layout">
         <xpath expr="//div[hasclass('address', 'row')]" position="replace">
-            <div class="address row" style="margin-left: 5px;">
+            <div class="address row" style="margin-left: 5px; margin-bottom:10px;">
                 <div name="address" class="col-4">
                     <t t-esc="address"/>
                 </div>
