@@ -22,14 +22,13 @@ except ImportError:
 
 
 class ImportVendor(models.TransientModel):
-
-    _name='import.vendor.pricelist'
+    _name = 'import.vendor.pricelist'
     _description = "Import Vendor Pricelist"
 
     import_option = fields.Selection([
-            ('csv', 'CSV File'),
-            # ('xls', 'XLS File')
-        ], string='Select',default='csv')
+        ('csv', 'CSV File'),
+        # ('xls', 'XLS File')
+    ], string='Select', default='csv')
     file_name = fields.Char(string="File Name")
     file = fields.Binary(string="Select File")
 
@@ -50,27 +49,27 @@ class ImportVendor(models.TransientModel):
         count = 0
         for row in file_reader:
             count += 1
-            if count ==1:
+            if count == 1:
                 continue
             # if count == 100:
             #     break
             product_code = row[0]
             vendor_name = row[1]
 
-            product_tmpl_id = self.env['product.template'].search([('default_code','=',product_code)], limit=1)
-            partner_id = self.env['res.partner'].search([('name','=',vendor_name)], limit=1)
+            product_tmpl_id = self.env['product.template'].search([('default_code', '=', product_code)], limit=1)
+            partner_id = self.env['res.partner'].search([('name', '=', vendor_name)], limit=1)
 
             commercial_partner_id = partner_id.commercial_partner_id
 
             if product_tmpl_id and partner_id:
                 vendor_pricelist = self.env['product.supplierinfo'].search([
-                    ('name','=',commercial_partner_id.id),
-                    ('product_tmpl_id','=', product_tmpl_id.id)  
+                    ('name', '=', commercial_partner_id.id),
+                    ('product_tmpl_id', '=', product_tmpl_id.id)
                 ], limit=1)
                 if not vendor_pricelist:
                     vendor_pricelist.create({
                         'name': commercial_partner_id.id,
-                        'product_tmpl_id': product_tmpl_id.id,  
+                        'product_tmpl_id': product_tmpl_id.id,
                     })
             else:
                 not_found_code_vendor[product_code] = vendor_name
