@@ -5,7 +5,15 @@
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
-
+            <xpath expr="//div[hasclass('oe_clear')]" position="before">
+                <group name="special_pick_note" col="6" class="mt-2 mt-md-0">
+                    <group colspan="4">
+                        <field name="special_pick_note"
+                               class="oe-bordered-editor" nolabel="1"
+                               placeholder="Special Picking Notes..."/>
+                    </group>
+                </group>
+            </xpath>
             <xpath expr="//page[@name='purchase_delivery_invoice']" position="after">
                 <page name="po_details" string="PO Details">
                     <group>
