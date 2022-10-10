@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_saleorder_document_extended"
+              inherit_id="sale.report_saleorder_document">
+        <!-- Show table header in all pages  -->
+        <xpath expr="//table[hasclass('table','table-sm','o_main_table')]" position="before">
+            <div
+            >
+                <h5 style="margin-top:50px;border-bottom:solid 1px;">Special Instructions and Notes</h5>
+                <div>
+                    <span class="mb4" t-field="doc.common_pick_note"/>
+                </div>
+            </div>
+        </xpath>
+
+<!--        <xpath expr="//td[@name ='td_name']" position="before">-->
+<!--            <td>-->
+<!--                <img t-attf-src="data:image/*;base64,{{line.product_id.image_1920}}"-->
+<!--                     style="max-height:100px; max-width:100px;"/>-->
+<!--            </td>-->
+<!--        </xpath>-->
+
+        <xpath expr="//p[@t-field='doc.note']" position="replace">
+            <div style="margin-top:40px;">
+                <h5 style="border-bottom:solid 1px;">Order Terms and Conditions</h5>
+                <span t-field="doc.note"/>
+            </div>
+        </xpath>
+        <xpath expr="//table[hasclass('table','table-sm','o_main_table')]" position="before">
+            <span style="font-size:20px;">
+                <strong>Product Details</strong>
+            </span>
+        </xpath>
+        <xpath expr="//thead" position="replace">
+            <thead>
+                <tr style="border-top: 1px solid black;">
+                    <th style= "border: none;" name="th_sn" class="text-center">
+                        <strong>SN</strong>
+                    </th>
+                    <th colspan="2" style=" border-collapse: collapse;
+                   border: none;" name="image" class="text-center">Description
+                    </th>
+<!--                    <th style=" border-collapse: collapse;-->
+<!--                   border: none;" name="th_description" class="text-center">-->
+<!--                    </th>-->
+                    <th style=" border-collapse: collapse;
+                   border: none;" name="th_quantity" class="text-center">Quantity
+                    </th>
+                    <th style=" border-collapse: collapse;
+                   border: none;" name="th_uom" class="text-center">Cover
+                    </th>
+                    <th style=" border-collapse: collapse;
+                   border: none;" name="th_priceunit" class="text-center">Price
+                    </th>
+                    <!--                    <th name="th_discount" t-if="display_discount"-->
+                    <!--                        class="text-center"-->
+                    <!--                        groups="product.group_discount_per_so_line">-->
+                    <!--                        <span>Disc.%</span>-->
+                    <!--                    </th>-->
+                    <!-- <th name="th_taxes" class="text-center">Taxes</th> -->
+                    <th style=" border-collapse: collapse;
+                   border: none;" name="th_subtotal" class="text-center">
+                        <span groups="account.group_show_line_subtotals_tax_excluded">
+                            Total
+                        </span>
+                        <span groups="account.group_show_line_subtotals_tax_included">
+                            Total Price
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+
+        </xpath>
+        <xpath expr="//t[@t-foreach='doc.order_line']" position="before">
+            <t t-set="sn" t-value="1"/>
+        </xpath>
+
+        <xpath expr="//t[@t-if='not line.display_type']" position="replace">
+            <t t-if="not line.display_type">
+                <td  style="border-top: 1px solid black; border-left: none;
+                border-right: none;" name="td_sn" class="text-center">
+                    <span t-esc="sn"/>
+                    <br/>
+                    <t t-set="sn" t-value="sn+1"/>
+                </td>
+                <td  style="border-top: 1px solid black; border-left: none;
+                border-right: none;" name="image"  class="text-center">
+                    <t t-if="line.product_id.image_1920">
+                    <img t-attf-src="data:image/*;base64,{{line.product_id.image_1920}}"
+                    style="max-height:100px; max-width:100px;"/>
+                    </t>
+<!--                    <span t-field-options='{"widget": "image","class": "oe_avatar"}'/>-->
+                    <t t-else="">
+<!--                        <span t-field="line.product_id.image_1920" t-field-options='{"widget": "image", "style":"width: 150px;height: 150px"}'/>-->
+                        <img widget="image" class="oe_avatar" alt="loading" t-options='{"widget": "image"}'/>
+                    </t>
+                </td>
+                <td name="td_name" style="width:30%; border-top: 1px solid black; border-left: none;
+                border-right: none;">
+
+                    <b>
+                        <span t-field="line.product_id.name"/>
+                    </b>
+                    <br/>
+                    <span t-field="line.product_id.default_code"/>
+                    <br/>
+                    <span>Format:</span>
+                    <!--                        <span t-field="line.product_id.format"/>-->
+                    <br/>
+                    <div>
+                        <b>
+                            <span>Product Notes:</span>
+                        </b>
+                        <br/>
+                        <span t-field="line.picking_note"/>
+                    </div>
+                </td>
+
+                <td style="border-top: 1px solid black; border-left: none;
+                 border-right: none;" name="td_quantity" class="text-center">
+                    <span t-if="float(line.product_uom_qty).is_integer()"
+                          t-esc="int(line.product_uom_qty)"/>
+                    <span t-if="not float(line.product_uom_qty).is_integer()"
+                          t-field="line.product_uom_qty"/>
+                </td>
+                <td style="border-top: 1px solid black; border-left: none;
+                            border-right: none;"
+                    name="td_uom" class="text-center">
+                    <t t-if="line.discount">
+                        <s>
+                            <span t-field="line.price_unit"
+                                  t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        </s>
+                    </t>
+                    <t t-else="">
+                        <span t-field="line.price_unit"
+                              t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                    </t>
+
+                </td>
+                <td style="border-top: 1px solid black; border-left: none;
+                     border-right: none;" name="td_priceunit" class="text-center">
+                    <span>
+                        <!--                    <t t-esc="data['td_priceunit']" t-options='{"widget": "monetary", "display_currency": currency}'/>-->
+                        <t t-if="line.discount">
+                            <t t-esc="line.price_unit-(line.discount/line.price_unit)"
+                               t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        </t>
+                        <t t-else="">
+                            <span t-field="line.discount">
+                            </span>
+                        </t>
+                    </span>
+
+                </td>
+                <!--                                <td t-if="td_priceunit" class="text-center"-->
+                <!--                                    groups="product.group_discount_per_so_line">-->
+                <!--                                    <span t-field="line.discount"/>-->
+                <!--                                </td>-->
+                <!-- <td name="td_taxes" class="text-center">
+                    <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_id))"/>
+                </td> -->
+                <td style="border-top: 1px solid black; border-left: none;
+                border-right: none;"
+                   name="td_subtotal" class="text-center">
+                    <span t-field="line.price_subtotal"
+                          groups="account.group_show_line_subtotals_tax_excluded"/>
+                    <span t-field="line.price_total"
+                          groups="account.group_show_line_subtotals_tax_included"/>
+                </td>
+            </t>
+        </xpath>
+
+        <xpath expr="//table[hasclass('table', 'table-sm', 'o_main_table')]"
+               position="attributes">
+            <attribute name="style">margin-top: 10px; border:none;</attribute>
+        </xpath>
+        <!-- Hidden payment terms from base  -->
+        <xpath expr="//p[@t-if='not is_html_empty(doc.payment_term_id.note)']"
+               position="replace">
+        </xpath>
+        <!-- Added "Customer Details" label in report  -->
+        <xpath expr="//t[@t-set='address']/div" position="before">
+            <strong>Customer Details</strong>
+        </xpath>
+
+        <!-- Hidden information block from base report  -->
+        <xpath expr="//div[@id='informations']" position="replace">
+        </xpath>
+        <!-- Hidden Quotation & Order # from base report  -->
+        <xpath expr="//h2" position="replace">
+        </xpath>
+        <!-- Added info table beside total summery table  -->
+        <xpath expr="//div[@name='so_total_summary']" position="replace">
+            <div class="clearfix row" name="so_total_summary">
+                <div class="col-6">
+                    <span style="color:black;">
+                        <b>Total Savings:
+                        </b>
+                        <span t-esc="sum((line.product_uom_qty*line.price_unit)-line.price_subtotal for line in doc.order_line)"
+                              t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                    </span>
+                </div>
+                <div class="offset-2 col-4">
+                    <div>
+                        <table style="border: none;"
+
+                              class="table table-borderless">
+                            <tr>
+                                <td  style="border: none;" class="text-right">
+                                    <strong>Subtotal</strong>
+                                </td>
+
+                                <td style="border: none;" class="text-right">
+                                    <span t-field="doc.amount_untaxed"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border: none;" class="text-right">
+                                    <strong class="text-right">Tax</strong>
+                                </td>
+                                <td style="border: none;" class="text-right">
+                                    <span t-field="doc.amount_tax"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border: none;" class="text-right">
+                                    <strong class="text-left">Shipping</strong>
+                                   <br/>
+                                    <t t-if="doc.carrier_id">
+                                     (<span style="font-size:14px;" t-field="doc.carrier_id"/>)
+                                    </t>
+                                </td>
+                                <td style="border: none;"  class="text-right">
+<!--                                    <span t-field="doc.product_id.carrier_id."/>-->
+                                    <t t-esc="sum([line.price_total for line in doc.order_line if line.is_delivery])"
+                                    t-options='{"widget": "monetary", "display_currency": doc.currency_id}'>
+                                    </t>
+<!--                                    <span t-field="doc.delivery_price"/>-->
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border: none;" class="text-right">
+                                    <strong class="text-right">Total</strong>
+                                </td>
+                                <td style="border: none;" class="text-right">
+                                    <span t-field="doc.amount_total"/>
+
+                                    <!--                         <span t-field="doc.amount_untaxed"/>
+            -->
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//t[@t-if='doc.partner_shipping_id == doc.partner_invoice_id
+                             and doc.partner_invoice_id != doc.partner_id
+                             or doc.partner_shipping_id != doc.partner_invoice_id']"
+               position="replace">
+            <t t-set="information_block">
+                <div class="row">
+                    <div>
+                        <t t-if="doc.split_shipment">
+                        </t>
+                        <t t-else="">
+                            <strong>Shipping Details:</strong>
+                            <div t-field="doc.partner_shipping_id" t-options='{"widget": "contact",
+                            "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+
+    <template id="address_layout_extended_sale"
+              inherit_id="bista_purchase.address_layout_extended">
+        <xpath expr="//div[@name='custom_information_block']"
+               position="inside">
+            <t t-if="not o" t-set="o" t-value="doc"/>
+            <t t-if="doc_model == 'sale.order'">
+                <t t-if="doc.state in ['draft','sent']">
+                    <strong>Quotation:</strong>
+                    <t t-esc="doc.name"/>
+                    <br/>
+                </t>
+                <t t-if="doc.state not in ['draft','sent']">
+                    <strong>Sale Order:</strong>
+                    <t t-esc="doc.name"/>
+                    <br/>
+                </t>
+                <t t-if="doc.state in ['draft','sent']">
+                    <strong>Quotation Date:</strong>
+                    <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                    <br/>
+                </t>
+                <t t-if="doc.state not in ['draft','sent']">
+                    <strong>Order Date:</strong>
+                    <span t-esc="datetime.datetime.now()" t-options='{"widget": "date"}'></span>
+                    <br/>
+                </t>
+                <strong>Customer Ref:</strong>
+                <t t-esc="doc.client_order_ref"/>
+                <br/>
+                <strong>Valid Until:</strong>
+                <t t-foreach="doc.payment_term_id" t-as="payment">
+                    <t t-esc="payment.name"/>
+                </t>
+                <br/>
+                <strong>Salesperson:</strong>
+                <t t-esc="o.user_id.name"/>
+                <br/>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

@@ -6,7 +6,7 @@
     'summary': 'Manage Sale',
     'website': 'http://www.bistasolutions.com',
     'license': 'AGPL-3',
-    'depends': [
+    'depends': [ 'web',
         'sale'
     ],
     'assets': {
@@ -25,9 +25,9 @@
         'views/journal_customization_view.xml',
         'views/death_type_view.xml',
         'views/customization_type_view.xml',
-        #report
-        'report/sale_order_report.xml',
-        # data
+        # report
+        # 'report/report_templates.xml',
+        'report/sale.xml',
         'data/data.xml',
 
     ],
