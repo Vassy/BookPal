@@ -302,6 +302,12 @@ class SaleOrder(models.Model):
                 lambda line: line.state == 'sale')
             order_lines._action_launch_stock_rule()
 
+    def print_shipment(self):
+        """Print the shipment report."""
+        report_action = self.env.ref(
+            'bista_sale_multi_ship.shipment_report_action').read()[0]
+        return report_action
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'

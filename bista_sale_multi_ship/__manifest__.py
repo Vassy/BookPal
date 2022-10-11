@@ -29,6 +29,8 @@
         'views/sale_multi_ship.xml',
         'views/sale_order_view.xml',
         'views/stock_view.xml',
+        'report/shipment_report_view.xml',
+        'report/report_register.xml',
         # 'data/email_data.xml',
     ],
     'installable': True,

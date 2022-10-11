@@ -88,6 +88,12 @@ class StockRule(models.Model):
         val = values[0]
         if val.get('supplier_id'):
             res.update({'partner_id': val.get('supplier_id').id})
+        elif val.get('ship_line'):
+            res.update({'partner_id': val.get('ship_line').supplier_id.id})
+        elif val.get('sale_line_id'):
+            sale_line_id = self.env['sale.order.line'].browse(
+                val.get('sale_line_id'))
+            res.update({'partner_id': sale_line_id.supplier_id.id})
         return res
 
     def _make_po_get_domain(self, company_id, values, partner):
@@ -321,3 +327,22 @@ class StockBackorderConfirmation(models.TransientModel):
         for ship_line in ship_lines:
             ship_line.cancel_shipment()
         return res
+
+
+class StockLocationRoute(models.Model):
+    _inherit = "stock.location.route"
+
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        """Overide name_search for sale order line domain."""
+        if not args:
+            args = []
+        if self.env.context.get('partner_id'):
+            shipment_contact = self.env['res.partner'].sudo().browse(
+                self.env.context.get('partner_id'))
+            warehouse_partner = self.env['stock.warehouse'].sudo().search(
+                []).mapped('partner_id')
+            if shipment_contact.id in warehouse_partner.ids:
+                args += [('name', '!=', 'Dropship')]
+        return super(StockLocationRoute, self).name_search(
+            name, args, operator, limit)

@@ -70,6 +70,9 @@
                             <button name="confirm_shipment" type="object"
                                 string="Confirm Shipment"
                                 class="btn-primary" attrs="{'invisible': [('is_confirm_ship', '=', False)]}"/>
+                            <button name="print_shipment" type="object"
+                                string="Print Shipment"
+                                class="btn-primary"/>
                             <field name="is_confirm_ship" invisible="1"/>
                         </group>
 
@@ -101,7 +104,7 @@
                                 <field name="remain_qty" optional="hide" readonly="1" force_save="1"/>
                                 <field name="qty_delivered" optional="hide" readonly="1" force_save="1"/>
                                 <field name="qty_short_close" optional="hide"/>
-                                <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]" attrs="{'readonly': [('state', '!=', 'draft')]}" context="{'partner_id': partner_id}"/>
                                 <field name="supplier_id" context="{'product_id': product_id}" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="state" optional="hide" readonly="1" force_save="1"/>
                                 <field name="attention" optional="hide" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
