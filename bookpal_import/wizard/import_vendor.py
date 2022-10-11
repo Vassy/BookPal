@@ -22,14 +22,13 @@ except ImportError:
 
 
 class ImportVendor(models.TransientModel):
-
-    _name='import.vendor'
+    _name = 'import.vendor'
     _description = "Import Vendor"
 
     import_option = fields.Selection([
-            ('csv', 'CSV File'),
-            # ('xls', 'XLS File')
-        ], string='Select',default='csv')
+        ('csv', 'CSV File'),
+        # ('xls', 'XLS File')
+    ], string='Select', default='csv')
     file_name = fields.Char(string="File Name")
     file = fields.Binary(string="Select File")
 
@@ -52,7 +51,7 @@ class ImportVendor(models.TransientModel):
         count = 0
         for row in file_reader:
             count += 1
-            if count ==1:
+            if count == 1:
                 header_colunms = row
                 continue
 
@@ -64,10 +63,10 @@ class ImportVendor(models.TransientModel):
             default_shipping = vals.get('Default Shipping')
             delivery_carrier = self.env['delivery.carrier']
             if default_shipping:
-                delivery_carrier = delivery_carrier.search([('name','=',default_shipping)], limit=1)
+                delivery_carrier = delivery_carrier.search([('name', '=', default_shipping)], limit=1)
                 if not delivery_carrier:
                     delivery_carrier = delivery_carrier.create({
-                        'name':default_shipping,
+                        'name': default_shipping,
                         'delivery_type': 'fixed',
                         'product_id': delivery_product_id.id,
                     })
@@ -75,10 +74,10 @@ class ImportVendor(models.TransientModel):
             supplier_terms = vals.get('Supplier Terms')
             account_pyment_term = self.env['account.payment.term']
             if supplier_terms:
-                account_pyment_term = account_pyment_term.search([('name','=',supplier_terms)], limit=1)
+                account_pyment_term = account_pyment_term.search([('name', '=', supplier_terms)], limit=1)
                 if not account_pyment_term:
                     account_pyment_term = account_pyment_term.create({
-                        'name':supplier_terms
+                        'name': supplier_terms
                     })
 
             state_id = self.get_state(vals.get('Address:State'))
@@ -105,7 +104,7 @@ class ImportVendor(models.TransientModel):
                 'default_frieght_charges': vals.get('Default Freight Charge'),
                 'default_shipping_id': delivery_carrier.id,
                 'discount_notes': vals.get('Discount Notes'),
-                'dropship_applicable': True if vals.get('Dropship') in ['1',1] else False,
+                'dropship_applicable': True if vals.get('Dropship') in ['1', 1] else False,
                 'frieght_nuances': vals.get('Freight Nuances'),
                 'future_ship_nuances': vals.get('Future Ship Nuances'),
                 'intl_shipping_notes': vals.get("Int'l Shipping Notes"),
@@ -135,14 +134,15 @@ class ImportVendor(models.TransientModel):
                 # 'email': vals.get('Supplier Email'),
                 'supplier_nuances': vals.get('Supplier Nuances'),
                 'property_supplier_payment_term_id': account_pyment_term.id,
-                'top_publisher': True if vals.get('Top publisher') in ['1',1] else False,
+                'top_publisher': True if vals.get('Top publisher') in ['1', 1] else False,
                 'tracking_souurce': vals.get('Tracking Source'),
                 'transfer_nuances': vals.get('Transfer Nuances'),
-                'transfer_to_bp_warehouse': True if vals.get('Transfer to BookPal Warehouse') in ['1',1] else False,
+                'transfer_to_bp_warehouse': True if vals.get('Transfer to BookPal Warehouse') in ['1', 1] else False,
                 'supplier_rank': 1,
             }
 
-            partner_id = self.env['res.partner'].search([('name','=', name),('account_number','=',account_number)], limit=1)
+            partner_id = self.env['res.partner'].search([('name', '=', name), ('account_number', '=', account_number)],
+                                                        limit=1)
 
             if partner_id:
                 partner_id.write(vendor_vals)
@@ -175,14 +175,14 @@ class ImportVendor(models.TransientModel):
                     'type': 'return',
                     'parent_id': partner_id.id,
                     'street': return_address_street,
-                    'street2':vals.get('Returns Address:Street2'),
-                    'city':vals.get('Returns Address:City'),
-                    'state_id':return_state_id.id,
-                    'zip':vals.get('Returns Address:Zip'),
-                    'country_id':return_state_id.country_id.id,
+                    'street2': vals.get('Returns Address:Street2'),
+                    'city': vals.get('Returns Address:City'),
+                    'state_id': return_state_id.id,
+                    'zip': vals.get('Returns Address:Zip'),
+                    'country_id': return_state_id.country_id.id,
                 }
                 return_address = self.env['res.partner'].search([
-                    ('type','=','return'),
+                    ('type', '=', 'return'),
                     ('street', '=', return_address_street),
                     ('parent_id', '=', partner_id.id)
                 ], limit=1)
@@ -200,13 +200,13 @@ class ImportVendor(models.TransientModel):
                     'parent_id': partner_id.id,
                     'street': warehouse_address_street,
                     'street2': vals.get('Warehouse Address:Street2'),
-                    'city':vals.get('Warehouse Address:City'),
-                    'state_id':warehouse_state_id.id,
-                    'zip':vals.get('Warehouse Address:Zip'),
-                    'country_id':warehouse_state_id.country_id.id,
+                    'city': vals.get('Warehouse Address:City'),
+                    'state_id': warehouse_state_id.id,
+                    'zip': vals.get('Warehouse Address:Zip'),
+                    'country_id': warehouse_state_id.country_id.id,
                 }
                 wh_address = self.env['res.partner'].search([
-                    ('type','=','warehouse'),
+                    ('type', '=', 'warehouse'),
                     ('street', '=', warehouse_address_street),
                     ('parent_id', '=', partner_id.id)
                 ], limit=1)
@@ -225,7 +225,7 @@ class ImportVendor(models.TransientModel):
 
     def get_state(self, state_name):
         state_id = self.env['res.country.state'].search([
-            '|',('code','=',state_name),
-            ('name','=',state_name)
+            '|', ('code', '=', state_name),
+            ('name', '=', state_name)
         ], limit=1)
         return state_id
