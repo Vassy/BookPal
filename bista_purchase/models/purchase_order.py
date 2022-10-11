@@ -49,7 +49,6 @@ class PurchaseOrder(models.Model):
     supplier_order_number = fields.Char(string="Supplier Order Number")
     special_pick_note = fields.Html('Special Instructions and Notes')
 
-
     @api.onchange('partner_id')
     def onchange_partner_id_cc_email(self):
         self.cc_email = self.partner_id.cc_email

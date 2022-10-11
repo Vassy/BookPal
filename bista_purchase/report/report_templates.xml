@@ -116,9 +116,13 @@
         </xpath>
         <xpath expr="//div[@t-attf-class='footer o_boxed_footer o_company_#{company.id}_layout']" position="replace">
             <t t-if="doc_model == 'purchase.order'and xmlid == 'purchase.report_purchaseorder' ">
-                <div t-attf-class="footer o_company_#{company.id}_layout">
-
-                    <div class="text-center last-page">
+                <div t-attf-class="footer o_boxed_footer o_company_#{company.id}_layout">
+                    <!--                     <br/>-->
+                    <!--                     <br/>-->
+                    <!--                     <br/>-->
+                    <!--                     <br/>-->
+                    <!--                     <br/>-->
+                    <div class="text-center last-page mb-0 ">
 
                         <!--                        <div t-field="company.report_footer"/>-->
                         <div class="mb-0" style="margin-bottom: 0px;">
@@ -135,14 +139,18 @@
                             <span t-field="res_company.partner_id.website"
                                   style="margin-left: 15px; margin-right: 15px;"/>
                         </div>
-                        <!--                        <div t-if="report_type == 'pdf'">-->
-                        <!--                            Page: <span class="page"/> / <span class="topage"/>-->
-                        <!--                        </div>-->
+                    </div>
+                    <div t-if="report_type == 'pdf'" class="text-center mt-1">
+                        Page:
+                        <span class="page"/>
+                        /
+                        <span class="topage"/>
                     </div>
                 </div>
             </t>
             <t t-else="">
-                <div t-attf-class="footer o_company_#{company.id}_layout">
+                <div t-attf-class="footer o_boxed_footer o_company_#{company.id}_layout"
+                     style="margin-bottom: 0px; margin-left: 0px; margin-right: 0px;">
                     <div class="text-center last-page">
                         <div class="mb-0" style="margin-bottom: 0px;">
                             <span t-field="res_company.partner_id.name" style="margin-left: 15px; margin-right: 15px;"/>
@@ -158,6 +166,13 @@
                             <span t-field="res_company.partner_id.website"
                                   style="margin-left: 15px; margin-right: 15px;"/>
                         </div>
+
+                    </div>
+                    <div t-if="report_type == 'pdf'" class="text-center mt-1">
+                        Page:
+                        <span class="page"/>
+                        /
+                        <span class="topage"/>
                     </div>
                 </div>
             </t>
