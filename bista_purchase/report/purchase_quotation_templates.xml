@@ -5,7 +5,7 @@
         <xpath expr="//h2" position="attributes">
             <attribute name="style">margin-top: 15px;</attribute>
         </xpath>
-                <xpath expr="//table[hasclass('table', 'table-sm')]" position="attributes">
+        <xpath expr="//table[hasclass('table', 'table-sm')]" position="attributes">
             <attribute name="style">margin-top: 10px;</attribute>
         </xpath>
 
@@ -51,33 +51,33 @@
         </xpath>
         <xpath expr="//td[hasclass('text-right')]" position="replace">
 
-            <td class="text-center" name="td_format">
+            <td class="text-center" name="td_format" style="border-bottom: 1px solid black;">
                 <t t-set="format" t-value="MMP"/>
                 <span>MMP</span>
             </td>
-            <td class="text-center">
+            <td class="text-center" style="border-bottom: 1px solid black;">
                 <span t-if="float(order_line.product_qty).is_integer()"
                       t-esc="int(order_line.product_qty)"/>
                 <span t-if="not float(order_line.product_qty).is_integer()"
                       t-field="order_line.product_qty"/>
             </td>
-            <td class="text-center">
+            <td class="text-center" style="border-bottom: 1px solid black;">
                 <span t-field="order_line.product_uom" groups="uom.group_uom"/>
             </td>
-            <td class="text-center" name="td_price_unit">
+            <td class="text-center" name="td_price_unit" style="border-bottom: 1px solid black;">
                 <span t-field="order_line.price_unit"/>
             </td>
-            <td class="text-center" name="td_discount">
+            <td class="text-center" name="td_discount" style="border-bottom: 1px solid black;">
                 <div>
                     <span t-field="order_line.discount"/>%
                 </div>
             </td>
-            <td class="text-center" name="td_bp_price">
+            <td class="text-center" name="td_bp_price" style="border-bottom: 1px solid black;">
                 <div>
                     <span t-field="order_line.disc_price_unit"/>
                 </div>
             </td>
-            <td class="text-center bg-light" name="td_total">
+            <td class="text-center bg-light" name="td_total" style="border-bottom: 1px solid black;">
                 <span t-field="order_line.price_subtotal"/>
             </td>
         </xpath>
@@ -89,21 +89,47 @@
         </xpath>
         <xpath expr="//th[@name='th_description']" position="before">
             <th name="th_sn" class="text-center">
-                <strong>SN</strong>
+                <strong>ISBN</strong>
             </th>
         </xpath>
-        <xpath expr="//t[@t-foreach='o.order_line']" position="before">
-            <t t-set="sn" t-value="1"/>
+        <xpath expr="//td[@id='product']" position="attributes">
+            <attribute name="style">border-bottom: 1px solid black;</attribute>
         </xpath>
+        <!--        <xpath expr="//t[@t-foreach='o.order_line']" position="before">-->
+        <!--            <span t-esc="sn"/>-->
+        <!--        </xpath>-->
         <xpath expr="//t[@t-if='not order_line.display_type']/td[1]" position="before">
-            <td name="td_sn" class="text-center">
-                <span t-esc="sn"/>
-                <br/>
-                <t t-set="sn" t-value="sn+1"/>
+            <td name="td_sn" class="text-center" style="border-bottom: 1px solid black;">
+                <span t-field="order_line.product_id.default_code"/>
+                <!--                <br/>-->
+                <!--                <t t-set="sn" t-value="sn+1"/>-->
             </td>
         </xpath>
         <xpath expr="//thead" position="attributes">
             <attribute name="style"></attribute>
+        </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm')]" position="before">
+            <t t-if="o.special_pick_note">
+                <div class='row mt-4'>
+                    <div class="col-12" style="margin-left: 5px; margin-bottom: 20px; ">
+                        <strong>Special Instructions and Notes</strong>
+                        <!--                        <div clas="text-center" style="border-top: 1px solid black;">-->
+                        <!--                        </div>-->
+                        <p t-field="o.special_pick_note"
+                           style="border-top: 1px solid black; margin-top: 1px;"/>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+
+        <xpath expr="//p[@t-field='o.notes']" position="replace">
+            <div class="mt-5 mx-3" t-if="o.notes">
+                <strong>Purchase Order Terms and
+                    Conditions
+                </strong>
+                <!--                    <hr class="mt-0 mb-1"/>-->
+                <p class="mb-1" t-field="o.notes" style="margin-left: 50px;"/>
+            </div>
         </xpath>
     </template>
 

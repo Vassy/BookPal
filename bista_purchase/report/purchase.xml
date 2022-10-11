@@ -52,7 +52,7 @@
                 </t>
 
                 <strong>Shipping Method :</strong>
-                <span>Ground</span>
+                <span>Free Delivary Method</span>
                 <br/>
                 <t t-if="o.shipping_instructions">
                     <strong>Shipping Instructions :</strong>
@@ -159,20 +159,20 @@
                 <!--                    <br/>-->
                 <!--                    <t t-set="sn" t-value="sn+1"/>-->
                 <!--                </td>-->
-                <td id="td_default_code" class="text-center">
+                <td id="td_default_code" class="text-center" style="border-bottom: 1px solid black;">
                     <span t-field="line.product_id.default_code"/>
                 </td>
-                <td id="product">
+                <td id="product" style="border-bottom: 1px solid black;">
                     <span t-field="line.name"/>
                 </td>
                 <!-- <td name="td_taxes" class="text-center">
                     <span t-esc="', '.join(map(lambda x: x.name, line.taxes_id))"/>
                 </td> -->
-                <td class="text-center" name="td_format">
+                <td class="text-center" name="td_format" style="border-bottom: 1px solid black;">
                     <t t-set="format" t-value="MMP"/>
                     <span>MMP</span>
                 </td>
-                <td class="text-center">
+                <td class="text-center" style="border-bottom: 1px solid black;">
                     <span t-if="float(line.product_qty).is_integer()"
                           t-esc="int(line.product_qty)"/>
                     <span t-if="not float(line.product_qty).is_integer()"
@@ -182,25 +182,28 @@
                 <!--                <td class="text-center" name="td_uom">-->
                 <!--                    <span t-field="line.product_uom.name" groups="uom.group_uom"/>-->
                 <!--                </td>-->
-                <td class="text-center" name="td_cover">
+                <td class="text-center" name="td_cover" style="border-bottom: 1px solid black;">
                     <span t-field="line.price_unit"/>
                 </td>
-                <td class="text-center" name="td_discount">
+                <td class="text-center" name="td_discount" style="border-bottom: 1px solid black;">
                     <div>
                         <span t-field="line.discount"/>%
                     </div>
                 </td>
-                <td class="text-center text-danger" name="td_bp_price">
+                <td class="text-center text-danger" name="td_bp_price" style="border-bottom: 1px solid black;">
                     <span t-field="line.disc_price_unit"/>
                 </td>
                 <!--                <td class="text-center">-->
                 <!--                    <span t-field="line.price_unit"/>-->
                 <!--                </td>-->
-                <td class="text-center">
+                <td class="text-center" style="border-bottom: 1px solid black;">
                     <span t-field="line.price_subtotal"
                           t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                 </td>
+
             </t>
+
+            <!--            <hr style="background-color:gray"/>-->
         </xpath>
         <!-- Add Comments before note field  -->
         <xpath expr="//p[@t-field='o.notes']" position="before">
@@ -225,15 +228,15 @@
         <!--        </xpath>-->
         <xpath expr="//p[@t-field='o.notes']" position="replace">
             <div class="mt-5 mx-3" t-if="o.notes">
-                <strong >Purchase Order Terms and
+                <strong>Purchase Order Terms and
                     Conditions
                 </strong>
                 <!--                    <hr class="mt-0 mb-1"/>-->
                 <p class="mb-1" t-field="o.notes" style="margin-left: 50px;"/>
             </div>
-<!--            <div class="mx-4 mt-0">-->
-<!--                <p t-field="o.notes"/>-->
-<!--            </div>-->
+            <!--            <div class="mx-4 mt-0">-->
+            <!--                <p t-field="o.notes"/>-->
+            <!--            </div>-->
         </xpath>
 
     </template>
