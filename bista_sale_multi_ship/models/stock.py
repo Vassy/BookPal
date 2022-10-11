@@ -172,10 +172,10 @@ class StockMove(models.Model):
         res.update(
             {'shipping_partner_id': self.mapped('shipping_partner_id').id})
         if self.picking_type_id and \
-            self.picking_type_id.code == 'outgoing' and \
-            'carrier_id' in res and not \
+                self.picking_type_id.code == 'outgoing' and \
+                'carrier_id' in res and not \
                 res.get('carrier_id') and \
-            self.group_id and self.group_id.sale_id and \
+                self.group_id and self.group_id.sale_id and \
                 self.group_id.sale_id.carrier_id:
             res.update({'carrier_id': self.group_id.sale_id.carrier_id.id})
         if self.partner_id and self.picking_type_id.code == 'outgoing' \
@@ -200,7 +200,7 @@ class StockMove(models.Model):
 
     def _search_picking_for_assignation_domain(self):
         """Added domain for partner and date."""
-        domain = super(StockMove, self).\
+        domain = super(StockMove, self). \
             _search_picking_for_assignation_domain()
         if not self.group_id.sale_id.split_shipment:
             return domain
@@ -223,7 +223,7 @@ class StockMove(models.Model):
                 self,
                 key=lambda m: [f if isinstance(
                     f, fields.datetime) else
-                    f.id for f in m._key_assign_picking()]),
+                               f.id for f in m._key_assign_picking()]),
             key=lambda m: [m._key_assign_picking()])
         for group, moves in grouped_moves:
             moves = self.env['stock.move'].concat(*list(moves))
@@ -238,7 +238,7 @@ class StockMove(models.Model):
                 # In this case, we chose to wipe them.
                 vals = {}
                 if any(picking.partner_id.id !=
-                        m.partner_id.id for m in moves):
+                       m.partner_id.id for m in moves):
                     vals['partner_id'] = False
                 if any(picking.origin != m.origin for m in moves):
                     vals['origin'] = False
@@ -261,7 +261,7 @@ class StockMove(models.Model):
 
     @api.model
     def _prepare_merge_moves_distinct_fields(self):
-        distinct_fields = super(StockMove, self).\
+        distinct_fields = super(StockMove, self). \
             _prepare_merge_moves_distinct_fields()
         if self.group_id and self.group_id.sale_id.split_shipment:
             distinct_fields.append('multi_ship_line_id')
@@ -293,10 +293,10 @@ class PurchaseOrderLine(models.Model):
             self, product_id, product_qty, product_uom, company_id,
             values, po):
         """Update shipping line value."""
-        res = super(PurchaseOrderLine, self).\
+        res = super(PurchaseOrderLine, self). \
             _prepare_purchase_order_line_from_procurement(
-                product_id, product_qty, product_uom,
-                company_id, values, po)
+            product_id, product_qty, product_uom,
+            company_id, values, po)
         if values.get('ship_line'):
             res.update({'multi_ship_line_id': values.get('ship_line').id})
         return res
