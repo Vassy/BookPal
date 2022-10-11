@@ -182,8 +182,7 @@
         </xpath>
 
         <!-- Hidden information block from base report  -->
-        <xpath expr="//div[hasclass('row', 'mt32', 'mb32')]" position="replace">
-        </xpath>
+        <xpath expr="//div[@id='informations']" position="replace"/>
         <!-- Hidden Quotation & Order # from base report  -->
         <xpath expr="//h2[hasclass('mt16')]" position="replace">
         </xpath>
