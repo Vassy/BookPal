@@ -47,6 +47,7 @@ class SaleOrder(models.Model):
     individual_mailer_return_address = fields.Char(string="Individual Mailer Return Address")
     book_status = fields.Char(string="Book Status")
     on_hold_reason = fields.Text(string='On Hold Reason(s)')
+    valid_until=fields.Date('Valid Until')
 
 
 

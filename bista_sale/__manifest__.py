@@ -7,7 +7,7 @@
     'website': 'http://www.bistasolutions.com',
     'license': 'AGPL-3',
     'depends': [ 'web',
-        'sale'
+           'sale','bista_purchase',
     ],
     'assets': {
         'web.assets_backend': [
