@@ -54,8 +54,7 @@ class PutInPackWizard(models.TransientModel):
         if not self.shipping_weight:
             raise UserError(_("Please add Shipping Weight."))
 
-        if not all(self.package_type.package_carrier_type == picking.carrier_id.delivery_type for picking in
-                   self.picking_ids):
+        if not all(self.package_type.package_carrier_type == picking.carrier_id.delivery_type for picking in self.picking_ids):
             raise UserError(
                 _("Select proper package type compatible with shipping carrier selected in delivery orders. \nThere might be orders with different shipping carrier are selected."))
 
@@ -81,3 +80,4 @@ class PutInPackWizard(models.TransientModel):
                     delivery_package.package_type_id = self.package_type
                 if self.shipping_weight:
                     delivery_package.shipping_weight = self.shipping_weight
+

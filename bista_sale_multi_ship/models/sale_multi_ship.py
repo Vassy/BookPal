@@ -389,12 +389,6 @@ class SaleMultiShipQtyLines(models.Model):
                     line.is_mto = True
                     break
 
-    @api.onchange('so_line_id')
-    def onchange_so_line_id(self):
-        """Set default schedule date."""
-        if self.so_line_id:
-            self.shipping_date = self._get_schedule_date()
-
     @api.depends('product_type', 'product_uom_qty',
                  'qty_delivered', 'state', 'move_ids', 'product_uom')
     def _compute_qty_to_deliver(self):
@@ -598,6 +592,12 @@ class SaleMultiShipQtyLines(models.Model):
             else:
                 line.qty_delivered_manual = 0.0
 
+    @api.onchange('so_line_id')
+    def onchange_so_line_id(self):
+        """Set default schedule date."""
+        if self.so_line_id:
+            self.shipping_date = self._get_schedule_date()
+
     def name_get(self):
         """Updated the display name."""
         res = []
@@ -639,38 +639,6 @@ class SaleMultiShipQtyLines(models.Model):
                     move.product_uom_qty, self.product_uom,
                     rounding_method='HALF-UP')
             return qty
-
-    # def write(self, values):
-    #     """Overide method to create delivery when update shipping qty."""
-    #     lines = self.env['sale.multi.ship.qty.lines']
-    #     if 'product_qty' in values:
-    #         lines = self.filtered(
-    #             lambda r: r.state == 'sale' and not r.is_expense)
-
-    #     previous_product_uom_qty = {
-    #         line.id: line.product_qty for line in lines}
-    #     res = super(SaleMultiShipQtyLines, self).write(values)
-    #     if lines:
-    #         order_lines = lines.mapped('so_line_id')
-    #         order_lines._action_launch_stock_rule(previous_product_uom_qty)
-    #     if 'shipping_date' in values and self.state == 'sale' and not \
-    #             self.order_id.commitment_date:
-    #         # Propagate deadline on related stock move
-    #         self.move_ids.date_deadline = self.shipping_date
-    #     return res
-
-    # @api.model_create_multi
-    # def create(self, vals_list):
-    #     """When add shipping line in confirm sale order."""
-    #     lines = super(SaleMultiShipQtyLines, self).create(vals_list)
-    #     order_lines = lines.mapped('so_line_id').filtered(
-    #         lambda line: line.state == 'sale')
-    #     if order_lines:
-    #         lines.mapped('partner_id').verify_customer_details()
-    #         if lines.filtered(lambda x: x.state != 'verified'):
-    #             raise ValidationError('Please verfiy the shipment details')
-    #         order_lines._action_launch_stock_rule()
-    #     return lines
 
     def cancel_shipment(self):
         """Cancel the ready or waiting move operation line."""
