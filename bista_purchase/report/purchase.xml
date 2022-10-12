@@ -78,8 +78,15 @@
         <xpath expr="//h2[last()]" position="replace">
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm', 'o_main_table')]" position="attributes">
-            <attribute name="style">margin-bottom: 5px;</attribute>
+            <attribute name="style">margin-bottom: 0px;</attribute>
         </xpath>
+<!--        <xpath expr="//div[@id='total']/div//table[hasclass('table', 'table-sm')]" position="attributes">-->
+<!--             <attribute name="style">width: 150%;</attribute>-->
+<!--&lt;!&ndash;             <attribute name="style">margin-left: 58.5px;</attribute>&ndash;&gt;-->
+<!--        </xpath>-->
+<!--        <xpath expr="//table[hasclass('table', 'table-sm')]" position="attributes">-->
+<!--            <attribute name="style">width: 86px; margin-left: 58.5px;</attribute>-->
+<!--        </xpath>-->
         <!-- Hidden information block from base report  -->
         <xpath expr="//div[@id='informations']" position="replace">
         </xpath>
@@ -115,35 +122,35 @@
                     <!--                    <th name="th_sn" class="text-center">-->
                     <!--                        <strong>ISBN</strong>-->
                     <!--                    </th>-->
-                    <th name="th_default_code" class="text-center">
+                    <th name="th_default_code" class="text-left">
                         <strong>ISBN</strong>
                     </th>
-                    <th name="th_description" class="text-center">
+                    <th name="th_description" class="text-left">
                         <strong>Description</strong>
                     </th>
-                    <th name="th_format" class="text-center">
+                    <th name="th_format" class="text-right">
                         <strong>Format</strong>
                     </th>
                     <!-- <th name="th_taxes" class="text-center"><strong>Taxes</strong></th> -->
-                    <th name="th_quantity" class="text-center">
+                    <th name="th_quantity" class="text-right">
                         <strong>Qty</strong>
                     </th>
                     <!--                    <th name="th_uom" class="text-center">-->
                     <!--                        <strong>Uom</strong>-->
                     <!--                    </th>-->
-                    <th name="th_cover" class="text-center">
+                    <th name="th_cover" class="text-right">
                         <strong>Cover</strong>
                     </th>
                     <!--                    <th name="th_price_unit" class="text-center">-->
                     <!--                        <strong>Unit Price</strong>-->
                     <!--                    </th>-->
-                    <th name="th_discount" class="text-center">
+                    <th name="th_discount" class="text-right">
                         <strong>Discount</strong>
                     </th>
-                    <th name="th_bp_price" class="text-center text-danger">
+                    <th name="th_bp_price" class="text-right text-danger">
                         <strong>BP Price</strong>
                     </th>
-                    <th name="th_amount" class="text-center">
+                    <th name="th_amount" class="text-right">
                         <strong>Total</strong>
                     </th>
                 </tr>
@@ -159,7 +166,7 @@
                 <!--                    <br/>-->
                 <!--                    <t t-set="sn" t-value="sn+1"/>-->
                 <!--                </td>-->
-                <td id="td_default_code" class="text-center" style="border-bottom: 1px solid black;">
+                <td id="td_default_code" class="text-right" style="border-bottom: 1px solid black;">
                     <span t-field="line.product_id.default_code"/>
                 </td>
                 <td id="product" style="border-bottom: 1px solid black;">
@@ -182,21 +189,21 @@
                 <!--                <td class="text-center" name="td_uom">-->
                 <!--                    <span t-field="line.product_uom.name" groups="uom.group_uom"/>-->
                 <!--                </td>-->
-                <td class="text-center" name="td_cover" style="border-bottom: 1px solid black;">
+                <td class="text-right" name="td_cover" style="border-bottom: 1px solid black;">
                     <span t-field="line.price_unit"/>
                 </td>
-                <td class="text-center" name="td_discount" style="border-bottom: 1px solid black;">
+                <td class="text-right" name="td_discount" style="border-bottom: 1px solid black;">
                     <div>
                         <span t-field="line.discount"/>%
                     </div>
                 </td>
-                <td class="text-center text-danger" name="td_bp_price" style="border-bottom: 1px solid black;">
+                <td class="text-right text-danger" name="td_bp_price" style="border-bottom: 1px solid black;">
                     <span t-field="line.disc_price_unit"/>
                 </td>
                 <!--                <td class="text-center">-->
                 <!--                    <span t-field="line.price_unit"/>-->
                 <!--                </td>-->
-                <td class="text-center" style="border-bottom: 1px solid black;">
+                <td class="text-right" style="border-bottom: 1px solid black; margin: auto; width: 150px;">
                     <span t-field="line.price_subtotal"
                           t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                 </td>
@@ -256,33 +263,35 @@
     </template>
     <template id="document_tax_totals_extended" inherit_id="account.document_tax_totals">
         <xpath expr="//td[1]" position="replace">
-            <td style="border-right: 1px solid black;">Subtotal</td>
+            <td style="border-right: 1px solid black;  margin: auto; width: 150px;">
+                <strong>Subtotal</strong>
+            </td>
         </xpath>
 
         <xpath expr="//t[@t-as='subtotal']" position="before">
 
             <tr class="border-black o_subtotal">
                 <td>
-                    <span>Without Disc Total</span>
+                    <strong>Without Disc Total</strong>
                 </td>
-                <td class="text-right" style="border-left: 1px solid black; margin-right: 5px;">
+                <td class="text-right" style="border-left: 1px solid black; margin: auto; width: 150px; ">
                     <span t-field="o.without_disc_amount_untaxed"/>
                 </td>
             </tr>
             <tr class="border-black o_subtotal">
                 <td>
-                    <span>Discount</span>
+                    <strong>Discount</strong>
                 </td>
-                <td class="text-right" style="border-left: 1px solid black; margin-right: 5px;">
+                <td class="text-right" style="border-left: 1px solid black;">
                     <span t-field="o.total_discount_amount"/>
                 </td>
             </tr>
             <t t-if="'groups_by_subtotal' in tax_totals and len(tax_totals['groups_by_subtotal']) == 0">
                 <tr class="border-black o_subtotal">
                     <td>
-                        <span>Subtotal</span>
+                        <strong>Subtotal</strong>
                     </td>
-                    <td class="text-right" style="border-left: 1px solid black; margin-right: 5px;">
+                    <td class="text-right" style="border-left: 1px solid black;">
                         $
                         <span t-esc="0.0"/>
                         <!--                        <span t-esc="tax_totals"/>-->
@@ -290,9 +299,9 @@
                 </tr>
                 <tr class="border-black o_subtotal">
                     <td>
-                        <span>Tax</span>
+                        <strong>Tax</strong>
                     </td>
-                    <td class="text-right" style="border-left: 1px solid black; margin-right: 5px;">
+                    <td class="text-right" style="border-left: 1px solid black;">
                         $
                         <span t-esc="0.0"/>
                         <!--                        <span t-esc="tax_totals"/>-->
@@ -303,9 +312,9 @@
         <xpath expr="//tr[hasclass('o_total')]" position="before">
             <tr class="border-black o_subtotal">
                 <td>
-                    <span>Shipping</span>
+                    <strong>Shipping</strong>
                 </td>
-                <td class="text-right" style="border-left: 1px solid black; margin-right: 5px;">
+                <td class="text-right" style="border-left: 1px solid black;">
                     <div>
                         $
                         <span t-esc="0.0"/>
@@ -318,7 +327,8 @@
     </template>
     <template id="tax_groups_totals_extended" inherit_id="account.tax_groups_totals">
         <xpath expr="//t[@t-else='']//td[2]" position="attributes">
-            <attribute name="class">text-right o_price_total bg-light</attribute>
+            <attribute name="class">text-right o_price_total bg-light  </attribute>
+            <attribute name="style">border-left: 1px solid black; margin-right: 2px;</attribute>
         </xpath>
     </template>
 </odoo>
