@@ -14,14 +14,14 @@
             </div>
         </xpath>
 
-<!--         <xpath expr="//p[@t-field='doc.note']" position="replace">-->
-<!--              <div style="margin-top:40px;">-->
-<!--                <strong style="border-bottom:solid 1px;">Order Terms and Conditions</strong>-->
-<!--                <p class="mb-1" t-field="doc.note" style="margin-left: 50px;"/>-->
+        <!--         <xpath expr="//p[@t-field='doc.note']" position="replace">-->
+        <!--              <div style="margin-top:40px;">-->
+        <!--                <strong style="border-bottom:solid 1px;">Order Terms and Conditions</strong>-->
+        <!--                <p class="mb-1" t-field="doc.note" style="margin-left: 50px;"/>-->
 
-<!--&lt;!&ndash;                <span t-field="doc.note"/>&ndash;&gt;-->
-<!--            </div>-->
-<!--        </xpath>-->
+        <!--&lt;!&ndash;                <span t-field="doc.note"/>&ndash;&gt;-->
+        <!--            </div>-->
+        <!--        </xpath>-->
 
         <xpath expr="//table[hasclass('table','table-sm','o_main_table')]" position="before">
             <span style="font-size:20px;">
@@ -56,7 +56,7 @@
                     <!--                    </th>-->
                     <!-- <th name="th_taxes" class="text-center">Taxes</th> -->
                     <th style=" border-collapse: collapse;
-                   border: none;" name="th_subtotal" class="text-center">
+                   border: none;padding-left:15px;" name="th_subtotal" class="text-center">
                         <span groups="account.group_show_line_subtotals_tax_excluded">
                             Total
                         </span>
@@ -89,7 +89,8 @@
                     <!--                    <span t-field-options='{"widget": "image","class": "oe_avatar"}'/>-->
                     <t t-else="">
                         <!--                        <span t-field="line.product_id.image_1920" t-field-options='{"widget": "image", "style":"width: 150px;height: 150px"}'/>-->
-                        <img widget="image" class="oe_avatar" alt="loading" t-options='{"widget": "image"}'/>
+                        <!--                        <img alt="loading" t-options='{"widget": "image"}'/>-->
+                        <strong>No Image</strong>
                     </t>
                 </td>
                 <td name="td_name" style="width:30%; border-top: 1px solid black; border-left: none;
@@ -145,7 +146,7 @@
                         </t>
                         <t t-else="">
                             <span t-field="line.discount"
-                             t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                  t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
 
                         </t>
                     </span>
@@ -161,10 +162,15 @@
                 <td style="border-top: 1px solid black; border-left: none;
                 border-right: none; border-bottom: 1px solid black;"
                     name="td_subtotal" class="text-center">
+                    <t t-if="line.price_subtotal">
                     <span t-field="line.price_subtotal"
                           groups="account.group_show_line_subtotals_tax_excluded"/>
                     <span t-field="line.price_total"
                           groups="account.group_show_line_subtotals_tax_included"/>
+                    </t>
+                    <t t-else="">
+                          <span style="padding-left:22px;" t-field="line.price_subtotal"/>
+                    </t>
                 </td>
             </t>
         </xpath>
@@ -189,9 +195,9 @@
         </xpath>
         <!-- Added info table beside total summery table  -->
         <xpath expr="//div[@name='so_total_summary']" position="replace">
-            <div class="clearfix" name="so_total_summary">
-                <div class="row">
-                <div  class="col-6">
+            <div class="clearfix row" name="so_total_summary">
+                <t t-if="td_sn == 5"/>
+                    <div class="col-6">
                         <span style="color:black;">
                             <b>Total Savings:
                             </b>
@@ -200,60 +206,69 @@
                         </span>
                     </div>
                     <div class="offset-2 col-4">
-                        <div>
-                            <table style="width:200pt; height:140pt">
-                                <tr>
-                                    <td style="height:1px; width: 100px; border-top: 1px solid black;"
-                                        class="text-center">
-                                        <strong>Subtotal</strong>
-                                    </td>
+    <!--                    <t t-if="td_sn == 5"/>-->
+                        <table style="width:200pt; height:140pt; page-break-before:always;">
+                            <tr>
+                                <td style="height:1px; width:180px; border-top: 1px solid black; color: black; padding-left:10px;"
+                                    class="text-left">
+                                    <strong>Subtotal</strong>
+                                </td>
 
-                                    <td style="height:1px; border-top: 1px solid black;" class="text-center">
-                                        <span t-field="doc.amount_untaxed"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="height:1px; width: 100px; border-top: 1px solid black;"
-                                        class="text-center">
-                                        <strong class="text-right">Tax</strong>
-                                    </td>
-                                    <td style="height:1px; border-top: 1px solid black;" class="text-center">
-                                        <span t-field="doc.amount_tax"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="height:1px; width: 100px;border-top: 1px solid black;"
-                                        class="text-center">
-                                        <strong class="text-left">Shipping</strong>
-                                        <br/>
-                                        <t t-if="doc.carrier_id">
-                                            (<span style="font-size:14px;" t-field="doc.carrier_id"/>)
-                                        </t>
-                                    </td>
-                                    <td style="height:1px;width: 100px; border-top: 1px solid black;"
-                                        class="text-center">
-                                        <!--                                    <span t-field="doc.product_id.carrier_id."/>-->
-                                        <t t-esc="sum([line.price_total for line in doc.order_line if line.is_delivery])"
-                                           t-options='{"widget": "monetary", "display_currency": doc.currency_id}'>
-                                        </t>
-                                        <!--                                    <span t-field="doc.delivery_price"/>-->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="border-top: 1px solid black; height:1pt" class="text-center">
-                                        <strong class="border-black o_subtotal;text-right">Total</strong>
-                                    </td>
-                                    <td style="border-top: 1px solid black; height:1pt " class="text-center">
-                                        <span t-field="doc.amount_total"/>
+                                <td style="padding-right:8px; height:1px; border-top: 1px solid black; padding-left:10px; background-color: white;"
+                                    class="text-right">
+                                    <span t-field="doc.amount_untaxed"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="height:1.5px; border-top: 1px solid black; color: black; padding-left:10px; background-color: white;"
+                                    class="text-left">
+                                    <strong class="text-right">Tax</strong>
+                                </td>
+                                <td style="padding-right:8px; height:1.5px; border-top: 1px solid black;padding-left:10px; background-color: white;"
+                                    class="text-right">
+                                    <span t-field="doc.amount_tax"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-top:5px; height:1px;border-top: 1px solid black; color: black; padding-left:10px; background-color: white;"
+                                    class="text-left">
+                                     <t t-if="doc.carrier_id">
+                                    <strong class="text-left">Shipping</strong>
+                                    <br/>
 
-                                        <!--                         <span t-field="doc.amount_untaxed"/>
-                -->
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
+                                        (<span style="font-size:14px; color: black;" t-field="doc.carrier_id"/>)
+                                    </t>
+                                    <t t-else="">
+                                    <strong class="text-left">Shipping</strong>
+                                    </t>
+
+                                </td>
+                                <td style="height:1px; padding-right:8px; padding-bottom:10px; padding-top:5px;border-top: 1px solid black; padding-left:10px; background-color: white;"
+                                    class="text-right">
+                                    <!--                                    <span t-field="doc.product_id.carrier_id."/>-->
+                                    <t t-esc="sum([line.price_total for line in doc.order_line if line.is_delivery])"
+                                       t-options='{"widget": "monetary", "display_currency": doc.currency_id}'>
+                                    </t>
+                                    <!--                                    <span t-field="doc.delivery_price"/>-->
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-top: 1px solid black; padding-top:10px; padding-left:10px;
+                                      background: black;color: white; height:1px ;"
+                                    class="text-left">
+                                    <strong class="border-black o_subtotal;text-right">Total</strong>
+                                </td>
+                                <td style="border-top: 1px solid black; padding-left:10px;padding-right:8px; height:1px ; padding-top:10px; background-color: black; color: white;"
+                                    class="text-right">
+                                    <span t-field="doc.amount_total"/>
+
+                                    <!--                         <span t-field="doc.amount_untaxed"/>
+            -->
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                </div>
+
             </div>
         </xpath>
 
@@ -308,9 +323,9 @@
                 <t t-esc="doc.client_order_ref"/>
                 <br/>
                 <strong>Valid Until:</strong>
-                 <t t-if="doc.state in ['draft','sent']">
-                  <t t-esc="doc.valid_until"/>
-                 </t>
+                <t t-if="doc.state in ['draft','sent']">
+                    <t t-esc="doc.valid_until"/>
+                </t>
                 <br/>
                 <strong>Salesperson:</strong>
                 <t t-esc="o.user_id.name"/>
