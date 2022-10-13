@@ -37,9 +37,6 @@
                     <th colspan="2" style=" border-collapse: collapse;
                    border: none;" name="image" class="text-center">Description
                     </th>
-                    <!--                    <th style=" border-collapse: collapse;-->
-                    <!--                   border: none;" name="th_description" class="text-center">-->
-                    <!--                    </th>-->
                     <th style=" border-collapse: collapse;
                    border: none;" name="th_quantity" class="text-center">Quantity
                     </th>
