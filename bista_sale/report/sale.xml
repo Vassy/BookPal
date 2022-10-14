@@ -53,7 +53,7 @@
                     <!--                    </th>-->
                     <!-- <th name="th_taxes" class="text-center">Taxes</th> -->
                     <th style=" border-collapse: collapse;
-                   border: none;padding-left:15px;" name="th_subtotal" class="text-center">
+                   border: none;padding-left:15px;" name="th_subtotal" class="text-right">
                         <span groups="account.group_show_line_subtotals_tax_excluded">
                             Total
                         </span>
@@ -120,7 +120,7 @@
                 </td>
                 <td style="border-top: 1px solid black; border-left: none;
                             border-right: none; border-bottom: 1px solid black;"
-                    name="td_uom" class="text-center">
+                    name="td_uom" class="text-right">
                     <t t-if="line.discount">
                         <s>
                             <span t-field="line.price_unit"
@@ -134,11 +134,11 @@
 
                 </td>
                 <td style="border-top: 1px solid black; border-left: none;
-                     border-right: none; border-bottom: 1px solid black;" name="td_priceunit" class="text-center">
+                     border-right: none; border-bottom: 1px solid black;" name="td_priceunit" class="text-right">
                     <span>
                         <!--                    <t t-esc="data['td_priceunit']" t-options='{"widget": "monetary", "display_currency": currency}'/>-->
                         <t t-if="line.discount">
-                            <t t-esc="line.price_unit-(line.discount/line.price_unit)"
+                            <t t-esc="line.price_unit-((line.discount/100)*line.price_unit)"
                                t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
                         </t>
                         <t t-else="">
@@ -158,10 +158,11 @@
                 </td> -->
                 <td style="border-top: 1px solid black; border-left: none;
                 border-right: none; border-bottom: 1px solid black;"
-                    name="td_subtotal" class="text-center">
+                    name="td_subtotal" class="text-right">
                     <t t-if="line.price_subtotal">
                     <span t-field="line.price_subtotal"
                           groups="account.group_show_line_subtotals_tax_excluded"/>
+<!--                         <t t-esc="line.price_unit*float(line.product_uom_qty)"/>-->
                     <span t-field="line.price_total"
                           groups="account.group_show_line_subtotals_tax_included"/>
                     </t>
@@ -201,8 +202,8 @@
                                   t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
                         </span>
                     </div>
-                    <div class="offset-2 col-4">
-                        <table style="width:200pt; height:140pt;">
+                    <div class="offset-1 col-5">
+                        <table style="width:250pt; height:140pt;">
                             <tr>
                                 <td style="height:1px; width:180px; border-top: 1px solid black; color: black; padding-left:10px;"
                                     class="text-left">
@@ -319,7 +320,7 @@
                 <br/>
                 <strong>Valid Until:</strong>
                 <t t-if="doc.state in ['draft','sent']">
-                    <t t-esc="doc.valid_until"/>
+                    <t t-esc="doc.valid_until" t-options='{"widget": "date"}'/>
                 </t>
                 <br/>
                 <strong>Salesperson:</strong>

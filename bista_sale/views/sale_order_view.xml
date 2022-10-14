@@ -12,6 +12,16 @@
              <xpath expr="//field[@name='payment_term_id']" position="after">
                 <field name="valid_until"/>
             </xpath>
+             <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="client_order_ref"/>
+            </xpath>
+<!--             <xpath expr="//page[@name='other_information']/field[@name='client_order_ref']" position="replace">-->
+<!--            </xpath>-->
+
+            <xpath expr="//group/group[@name='sales_person']/field[@name='client_order_ref']" position="replace">
+            </xpath>
+
+
             <!--Common Picking Note-->
             <xpath expr="//group[@name='note_group']" position="after">
                 <group name="common_note" col="6" class="mt-2 mt-md-0">
