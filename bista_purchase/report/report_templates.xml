@@ -7,11 +7,9 @@
                 <div class="o_boxed_header">
                     <div class="row mb-3">
                         <div class="col-6">
-
                             <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
                             <div t-field="o.company_id.partner_id"
                                  t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
-
                         </div>
                         <div t-if="xmlid == 'purchase.report_purchaseorder'" name="report_info"
                              class="col-6 text-right mb4">
@@ -41,8 +39,8 @@
                                     <t t-esc="o.name"/>
                                 </strong>
                             </h4>
-                            <strong t-if="o.state in ['purchase','done']">Confirm Date:
-                                <t t-esc="o.date_approve" t-options='{"widget": "date"}'/>
+                            <strong t-if="o.state in ['purchase','done']">RFQ Date:
+                                <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                             </strong>
                             <strong t-if="o.state in ['draft','sent']">RFQ Date:
                                 <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
@@ -62,11 +60,9 @@
                 <div class="o_boxed_header">
                     <div class="row mb8" style="border-bottom: 1px solid black;">
                         <div class="col-6">
-
                             <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
                             <div style="top-margin:50px; padding-bottom:10px; " t-field="o.company_id.partner_id"
                                  t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
-
                         </div>
                         <div name="report_info" class="col-6 text-right mb4">
                             <h3 t-if="doc.state in ['draft','sent']">Sales Quotation</h3>
@@ -83,11 +79,9 @@
                                 <!--                                <t t-esc="o.date_order" t-options='{"widget": "date"}'/> -->
                                 <span t-esc="datetime.datetime.now()" t-options='{"widget": "date"}'></span>
                             </strong>
-
                             <strong t-if="doc.state in ['draft','sent']">Quotation Date:
                                 <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                             </strong>
-
                             <strong t-if="doc.state in ['cancel']">Cancelled Date:
                                 <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                             </strong>
@@ -108,7 +102,6 @@
                             </div>
                         </div>
                         <div name="report_info" class="col-6 text-right mb4">
-
                         </div>
                     </div>
                 </div>
@@ -121,84 +114,86 @@
                     <div class="text-center" style="border-top: 3px solid black; padding-bottom:30px; color:grey;">
                         <div t-field="company.report_footer" style="font-size: 90%; text-color: black;"/>
                         <div t-if="report_type == 'pdf'">
-
-                            Page: <span class="page"/> / <span class="topage"/>
+                            Page:
+                            <span class="page"/>
+                            /
+                            <span class="topage"/>
                         </div>
-<!--                        <div  t-if="report_type == 'pdf'">-->
-<!--                            <span style="margin-right: 15px;" t-field="res_company.partner_id.name"/>-->
-<!--                            |-->
-<!--                            <span style="margin-right: 15px; margin-left: 15px;" t-field="res_company.partner_id.street"/>-->
-<!--                            |-->
-<!--                            <span style="margin-left: 15px;" t-field="res_company.partner_id.city"/>-->
-<!--&lt;!&ndash;                            <span t-field="res_company.partner_id.state_id"/>&ndash;&gt;-->
-<!--                            <span style="margin-right: 15px;" t-field="res_company.partner_id.zip"/>-->
-<!--                            |-->
-<!--                            <span style="margin-left: 15px;margin-right: 15px;" t-field="res_company.partner_id.phone"/>-->
-<!--                            |-->
-<!--                            <span style="margin-left: 15px;" t-field="res_company.partner_id.website"/>-->
-                        </div>
-<!--                        <div t-if="report_type == 'pdf'">-->
-<!--                         Page: <span class="page"/> / <span class="topage"/>-->
-<!--                        </div>-->
+                        <!--                        <div  t-if="report_type == 'pdf'">-->
+                        <!--                            <span style="margin-right: 15px;" t-field="res_company.partner_id.name"/>-->
+                        <!--                            |-->
+                        <!--                            <span style="margin-right: 15px; margin-left: 15px;" t-field="res_company.partner_id.street"/>-->
+                        <!--                            |-->
+                        <!--                            <span style="margin-left: 15px;" t-field="res_company.partner_id.city"/>-->
+                        <!--&lt;!&ndash;                            <span t-field="res_company.partner_id.state_id"/>&ndash;&gt;-->
+                        <!--                            <span style="margin-right: 15px;" t-field="res_company.partner_id.zip"/>-->
+                        <!--                            |-->
+                        <!--                            <span style="margin-left: 15px;margin-right: 15px;" t-field="res_company.partner_id.phone"/>-->
+                        <!--                            |-->
+                        <!--                            <span style="margin-left: 15px;" t-field="res_company.partner_id.website"/>-->
+                    </div>
+                    <!--                        <div t-if="report_type == 'pdf'">-->
+                    <!--                         Page: <span class="page"/> / <span class="topage"/>-->
+                    <!--                        </div>-->
 
-<!--                    </div>-->
+                    <!--                    </div>-->
                 </div>
             </t>
-<!--        <xpath expr="//div[@t-attf-class='footer o_boxed_footer o_company_#{company.id}_layout']" position="replace">-->
-<!--            <t t-if="doc_model == 'purchase.order'and xmlid == 'purchase.report_purchaseorder' ">-->
-<!--                <div t-attf-class="footer o_company_#{company.id}_layout">-->
+            <!--        <xpath expr="//div[@t-attf-class='footer o_boxed_footer o_company_#{company.id}_layout']" position="replace">-->
+            <!--            <t t-if="doc_model == 'purchase.order'and xmlid == 'purchase.report_purchaseorder' ">-->
+            <!--                <div t-attf-class="footer o_company_#{company.id}_layout">-->
 
-<!--                    <div class="text-center last-page">-->
+            <!--                    <div class="text-center last-page">-->
 
-<!--                        &lt;!&ndash;                        <div t-field="company.report_footer"/>&ndash;&gt;-->
-<!--                        <div class="mb-0" style="margin-bottom: 0px;">-->
-<!--                            <span t-field="res_company.partner_id.name" style="margin-left: 15px; margin-right: 15px;"/>-->
-<!--                            |-->
-<!--                            <span t-field="res_company.partner_id.street"-->
-<!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
-<!--                            |-->
-<!--                            <span t-field="res_company.partner_id.phone"-->
-<!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
-<!--                            |-->
-<!--                            <span t-field="res_company.partner_id.city" style="margin-left: 15px; margin-right: 15px;"/>-->
-<!--                            |-->
-<!--                            <span t-field="res_company.partner_id.website"-->
-<!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
-<!--                        </div>-->
-<!--                                                <div t-if="report_type == 'pdf'">-->
-<!--                                                    Page: <span class="page"/> / <span class="topage"/>-->
-<!--                                                </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </t>-->
-<!--            <t t-else="">-->
-<!--                <div t-attf-class="footer o_boxed_footer o_company_#{company.id}_layout"-->
-<!--                     style="margin-bottom: 0px; margin-left: 0px; margin-right: 0px;">-->
-<!--                    <div class="text-center last-page">-->
-<!--                        <div class="mb-0" style="margin-bottom: 0px;">-->
-<!--                            <span t-field="res_company.partner_id.name" style="margin-left: 15px; margin-right: 15px;"/>-->
-<!--                            |-->
-<!--                            <span t-field="res_company.partner_id.street"-->
-<!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
-<!--                            |-->
-<!--                            <span t-field="res_company.partner_id.phone"-->
-<!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
-<!--                            |-->
-<!--                            <span t-field="res_company.partner_id.city" style="margin-left: 15px; margin-right: 15px;"/>-->
-<!--                            |-->
-<!--                            <span t-field="res_company.partner_id.website"-->
-<!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
-<!--                        </div>-->
+            <!--                        &lt;!&ndash;                        <div t-field="company.report_footer"/>&ndash;&gt;-->
+            <!--                        <div class="mb-0" style="margin-bottom: 0px;">-->
+            <!--                            <span t-field="res_company.partner_id.name" style="margin-left: 15px; margin-right: 15px;"/>-->
+            <!--                            |-->
+            <!--                            <span t-field="res_company.partner_id.street"-->
+            <!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
+            <!--                            |-->
+            <!--                            <span t-field="res_company.partner_id.phone"-->
+            <!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
+            <!--                            |-->
+            <!--                            <span t-field="res_company.partner_id.city" style="margin-left: 15px; margin-right: 15px;"/>-->
+            <!--                            |-->
+            <!--                            <span t-field="res_company.partner_id.website"-->
+            <!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
+            <!--                        </div>-->
+            <!--                                                <div t-if="report_type == 'pdf'">-->
+            <!--                                                    Page: <span class="page"/> / <span class="topage"/>-->
+            <!--                                                </div>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--            </t>-->
+            <!--            <t t-else="">-->
+            <!--                <div t-attf-class="footer o_boxed_footer o_company_#{company.id}_layout"-->
+            <!--                     style="margin-bottom: 0px; margin-left: 0px; margin-right: 0px;">-->
+            <!--                    <div class="text-center last-page">-->
+            <!--                        <div class="mb-0" style="margin-bottom: 0px;">-->
+            <!--                            <span t-field="res_company.partner_id.name" style="margin-left: 15px; margin-right: 15px;"/>-->
+            <!--                            |-->
+            <!--                            <span t-field="res_company.partner_id.street"-->
+            <!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
+            <!--                            |-->
+            <!--                            <span t-field="res_company.partner_id.phone"-->
+            <!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
+            <!--                            |-->
+            <!--                            <span t-field="res_company.partner_id.city" style="margin-left: 15px; margin-right: 15px;"/>-->
+            <!--                            |-->
+            <!--                            <span t-field="res_company.partner_id.website"-->
+            <!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
+            <!--                        </div>-->
 
-<!--                    </div>-->
-<!--                    <div t-if="report_type == 'pdf'" class="text-center mt-1">-->
-<!--                        Page:-->
-<!--                        <span class="page"/>-->
-<!--                        /-->
-<!--                        <span class="topage"/>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </t>-->
+            <!--                    </div>-->
+            <!--                    <div t-if="report_type == 'pdf'" class="text-center mt-1">-->
+            <!--                        Page:-->
+            <!--                        <span class="page"/>-->
+            <!--                        /-->
+            <!--                        <span class="topage"/>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--            </t>-->
         </xpath>
         <xpath expr="//div[hasclass('pt-5')]" position="replace">
             <t t-call="web.address_layout"/>
