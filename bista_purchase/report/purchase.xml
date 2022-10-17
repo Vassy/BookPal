@@ -335,7 +335,9 @@
         </xpath>
         <xpath expr="//t[@t-else='']//td[1]/span" position="replace">
             <!--            <attribute name="class"> font-weight-bold</attribute>-->
+
             <strong class="text-nowrap" t-esc="amount_by_group['tax_group_name']"/>
+
         </xpath>
     </template>
 </odoo>
