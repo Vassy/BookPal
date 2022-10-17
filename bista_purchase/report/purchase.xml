@@ -57,7 +57,7 @@
                 </t>
 
                 <strong>Shipping Method :</strong>
-                <span>Free Delivary Method</span>
+                <span>Free Delivery Method</span>
                 <br/>
                 <t t-if="o.shipping_instructions">
                     <strong>Shipping Instructions :</strong>
