@@ -83,7 +83,7 @@
         <xpath expr="//h2[last()]" position="replace">
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm', 'o_main_table')]" position="attributes">
-            <attribute name="style">margin-bottom: 0px;</attribute>
+            <attribute name="style">margin-bottom: 5px;</attribute>
         </xpath>
         <!--        <xpath expr="//div[@id='total']/div//table[hasclass('table', 'table-sm')]" position="attributes">-->
         <!--             <attribute name="style">width: 150%;</attribute>-->
@@ -335,7 +335,7 @@
         </xpath>
         <xpath expr="//t[@t-else='']//td[1]/span" position="replace">
             <!--            <attribute name="class"> font-weight-bold</attribute>-->
-            <strong class="text-nowrap" t-esc="amount_by_group['tax_group_name']"/>
+       <strong class="text-nowrap" t-esc="amount_by_group['tax_group_name']"/>
         </xpath>
     </template>
 </odoo>

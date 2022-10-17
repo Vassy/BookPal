@@ -17,30 +17,30 @@
             </th>
         </xpath>
         <xpath expr="//th[@name='th_uom']" position="after">
-            <th name="th_cover" class="text-center">
+            <th name="th_cover" class="text-right">
                 <strong>Cover</strong>
             </th>
         </xpath>
         <xpath expr="//th[@name='th_cover']" position="after">
-            <th name="th_Discount" class="text-center">
+            <th name="th_Discount" class="text-right">
                 <strong>Discount</strong>
             </th>
         </xpath>
         <xpath expr="//th[@name='th_Discount']" position="after">
-            <th name="th_bp_price" class="text-center">
+            <th name="th_bp_price" class="text-right">
                 <strong>BP Price</strong>
             </th>
         </xpath>
         <xpath expr="//th[@name='th_bp_price']" position="after">
-            <th name="th_total" class="text-center">
+            <th name="th_total" class="text-right">
                 <strong>Total</strong>
             </th>
         </xpath>
         <xpath expr="//th[@name='th_quantity']" position="attributes">
-            <attribute name="class">text-center</attribute>
+            <attribute name="class">text-right</attribute>
         </xpath>
         <xpath expr="//th[@name='th_quantity']" position="before">
-            <th name="th_format" class="text-center">
+            <th name="th_format" class="text-right">
                 <strong>Format</strong>
             </th>
         </xpath>
@@ -51,7 +51,7 @@
                 <t t-set="format" t-value="MMP"/>
                 <span>MMP</span>
             </td>
-            <td class="text-center" style="border-bottom: 1px solid black;">
+            <td class="text-right" style="border-bottom: 1px solid black;">
                 <span t-if="float(order_line.product_qty).is_integer()"
                       t-esc="int(order_line.product_qty)"/>
                 <span t-if="not float(order_line.product_qty).is_integer()"
@@ -84,7 +84,7 @@
             <attribute name="style">margin-top:15px;</attribute>
         </xpath>
         <xpath expr="//th[@name='th_description']" position="before">
-            <th name="th_sn" class="text-center">
+            <th name="th_sn" class="text-left">
                 <strong>ISBN</strong>
             </th>
         </xpath>
@@ -98,7 +98,7 @@
         <!--            <span t-esc="sn"/>-->
         <!--        </xpath>-->
         <xpath expr="//t[@t-if='not order_line.display_type']/td[1]" position="before">
-            <td name="td_sn" class="text-center" style="border-bottom: 1px solid black;">
+            <td name="td_sn" class="text-" style="border-bottom: 1px solid black;">
                 <span t-field="order_line.product_id.default_code"/>
                 <!--                <br/>-->
                 <!--                <t t-set="sn" t-value="sn+1"/>-->
