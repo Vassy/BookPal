@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Customized header section for make the logo and company details single block -->
+    <!-- Customized header section for(purchase order) make the logo and company details single block -->
     <template id="external_layout_boxed_extended" inherit_id="web.external_layout_boxed">
         <xpath expr="//div[hasclass('o_boxed_header')]" position="replace">
             <t t-if="doc_model == 'purchase.order'">
@@ -56,6 +56,8 @@
                     </div>
                 </t>
             </t>
+            <!-- Customized header section for(sale order) make the logo and company details single block -->
+
             <t t-elif="doc_model == 'sale.order'">
                 <div class="o_boxed_header">
                     <div class="row mb8" style="border-bottom: 1px solid black;">
@@ -107,6 +109,12 @@
                 </div>
             </t>
         </xpath>
+
+
+
+
+<!--     customize page footer-->
+
         <xpath expr="//div[@t-attf-class='footer o_boxed_footer o_company_#{company.id}_layout']" position="replace">
             <t t-if="not o" t-set="o" t-value="doc"/>
             <t t-if="doc_model in ['sale.order','purchase.order']">
@@ -139,66 +147,26 @@
                     <!--                    </div>-->
                 </div>
             </t>
-            <!--        <xpath expr="//div[@t-attf-class='footer o_boxed_footer o_company_#{company.id}_layout']" position="replace">-->
-            <!--            <t t-if="doc_model == 'purchase.order'and xmlid == 'purchase.report_purchaseorder' ">-->
-            <!--                <div t-attf-class="footer o_company_#{company.id}_layout">-->
-
-            <!--                    <div class="text-center last-page">-->
-
-            <!--                        &lt;!&ndash;                        <div t-field="company.report_footer"/>&ndash;&gt;-->
-            <!--                        <div class="mb-0" style="margin-bottom: 0px;">-->
-            <!--                            <span t-field="res_company.partner_id.name" style="margin-left: 15px; margin-right: 15px;"/>-->
-            <!--                            |-->
-            <!--                            <span t-field="res_company.partner_id.street"-->
-            <!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
-            <!--                            |-->
-            <!--                            <span t-field="res_company.partner_id.phone"-->
-            <!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
-            <!--                            |-->
-            <!--                            <span t-field="res_company.partner_id.city" style="margin-left: 15px; margin-right: 15px;"/>-->
-            <!--                            |-->
-            <!--                            <span t-field="res_company.partner_id.website"-->
-            <!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
-            <!--                        </div>-->
-            <!--                                                <div t-if="report_type == 'pdf'">-->
-            <!--                                                    Page: <span class="page"/> / <span class="topage"/>-->
-            <!--                                                </div>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--            </t>-->
-            <!--            <t t-else="">-->
-            <!--                <div t-attf-class="footer o_boxed_footer o_company_#{company.id}_layout"-->
-            <!--                     style="margin-bottom: 0px; margin-left: 0px; margin-right: 0px;">-->
-            <!--                    <div class="text-center last-page">-->
-            <!--                        <div class="mb-0" style="margin-bottom: 0px;">-->
-            <!--                            <span t-field="res_company.partner_id.name" style="margin-left: 15px; margin-right: 15px;"/>-->
-            <!--                            |-->
-            <!--                            <span t-field="res_company.partner_id.street"-->
-            <!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
-            <!--                            |-->
-            <!--                            <span t-field="res_company.partner_id.phone"-->
-            <!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
-            <!--                            |-->
-            <!--                            <span t-field="res_company.partner_id.city" style="margin-left: 15px; margin-right: 15px;"/>-->
-            <!--                            |-->
-            <!--                            <span t-field="res_company.partner_id.website"-->
-            <!--                                  style="margin-left: 15px; margin-right: 15px;"/>-->
-            <!--                        </div>-->
-
-            <!--                    </div>-->
-            <!--                    <div t-if="report_type == 'pdf'" class="text-center mt-1">-->
-            <!--                        Page:-->
-            <!--                        <span class="page"/>-->
-            <!--                        /-->
-            <!--                        <span class="topage"/>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--            </t>-->
         </xpath>
         <xpath expr="//div[hasclass('pt-5')]" position="replace">
             <t t-call="web.address_layout"/>
         </xpath>
+        <xpath expr="//div[@t-att-data-oe-id='o and o.id']"
+               position="replace">
+            <div t-attf-class="article o_report_layout_boxed o_company_#{company.id}_layout {{  'o_layout_background' if company.layout_background in ['Geometric', 'Custom']  else  '' }}"
+                 t-attf-style="background-image: url({{ 'data:image/png;base64,%s' % company.layout_background_image.decode('utf-8') if company.layout_background_image and company.layout_background == 'Custom' else '' }});"
+                 t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id"
+                 t-att-data-oe-lang="o and o.env.context.get('lang')">
+                <div class="pt-5">
+                    <!-- This div ensures that the address is not cropped by the header. -->
+                    <t t-call="web.address_layout"/>
+                </div>
+                <t t-out="0"/>
+            </div>
+        </xpath>
     </template>
+
+<!--    customize information block-->
     <template id="address_layout_extended" inherit_id="web.address_layout">
         <xpath expr="//div[hasclass('address', 'row')]" position="replace">
             <div class="address row" style="margin-left: 5px; margin-bottom:10px;">
