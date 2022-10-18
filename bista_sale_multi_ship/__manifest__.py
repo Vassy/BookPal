@@ -17,7 +17,9 @@
 
     # Dependent module required for this module to be installed
     'depends': ['sale',
-                'delivery_ups', 'contacts'],
+                'delivery_ups',
+                'contacts',
+                'bista_report_header_footer'],
 
     # always loaded
     'data': [

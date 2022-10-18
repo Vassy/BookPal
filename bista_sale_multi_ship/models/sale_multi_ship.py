@@ -271,7 +271,7 @@ class SaleMultiShipQtyLines(models.Model):
     personalization_2 = fields.Char('Personalization 2')
 
     partner_id = fields.Many2one(
-        'res.partner', string="Shipment Details", ondelete='cascade')
+        'res.partner', string="Shipping Address", ondelete='cascade')
     # Fields only for display purpose from SO Line
     name = fields.Char(related='partner_id.name')
     attention = fields.Char(related='partner_id.attention')
