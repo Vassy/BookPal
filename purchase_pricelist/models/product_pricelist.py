@@ -10,6 +10,14 @@ class ProductPricelist(models.Model):
     apply_on = fields.Selection([('order_amount',"Order Amount"),('order_qty',"Order Quantity")], string="Apply On")
     product_pricelist_order_ids = fields.One2many('product.pricelist.order', 'pricelist_id', string="Items")
 
+    @api.onchange('product_pricelist_order_ids', 'product_pricelist_order_ids.from_value')
+    def onchange_product_pricelist_order_ids(self):
+        pricelist_line_ids = self.product_pricelist_order_ids.sorted('from_value', reverse=True)
+        count = 1
+        for line in pricelist_line_ids:
+            line.sequence = count
+            count += 1
+
     @api.onchange('used_for')
     def onchange_used_for(self):
         if self.used_for == 'sale':
