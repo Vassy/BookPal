@@ -10,6 +10,11 @@ class PurchaseOrder(models.Model):
     total_discount_amount = fields.Monetary(string='Total Discount Amount', store=True, readonly=True, compute='_amount_all')
     total_quantity = fields.Float(string="Total Quantity", store=True, compute="_compute_total_quantity")
 
+    @api.onchange('partner_id')
+    def _onchange_partner_id(self):
+        for line in self.order_line:
+            line._onchange_quantity()
+
     @api.depends('order_line', 'order_line.product_qty')
     def _compute_total_quantity(self):
         for order in self:
@@ -52,6 +57,7 @@ class PurchaseOrder(models.Model):
 class PurchaseOrderLine(models.Model):
     _inherit = "purchase.order.line"
 
+    pricelist_id = fields.Many2one('product.pricelist', "Pricelist")
     disc_price_unit = fields.Float(string="Discounted Unit Price", store=True, compute="_compute_disc_price_unit", digits='Product Price')
     without_disc_price_subtotal = fields.Monetary(compute='_compute_amount', string='Without Disc. Subtotal', store=True)
     discount_amount = fields.Monetary(compute='_compute_amount', string='Discount Amount', store=True)
@@ -132,10 +138,19 @@ class PurchaseOrderLine(models.Model):
                     seller=seller,
                 )
                 try:
+                    product_context = dict(self.env.context, partner_id=line.order_id.partner_id.id, date=line.order_id.date_order, uom=line.product_uom.id)
+                    price, rule_id = seller.vendor_pricelist_id.with_context(product_context).get_product_price_rule(line.product_id, self.product_uom_qty or 1.0, line.order_id.partner_id)
+                    line.pricelist_id = seller.vendor_pricelist_id
                     vendor_price = seller.currency_id._convert(product.vendor_price, line.order_id.currency_id, line.order_id.company_id, fields.Date.today())
                     discount = max(0, (line.price_unit - vendor_price) * 100 / line.price_unit)
+                    if rule_id:
+                        rule = self.env['product.pricelist.item'].browse(rule_id)
+                        if rule.compute_price == 'percentage':
+                            discount = rule.percent_price
+
                     line.discount = discount
                 except:
+                    line.pricelist_id = False
                     line.discount = 0
 
     def _prepare_account_move_line(self, move=False):
