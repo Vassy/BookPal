@@ -42,7 +42,7 @@
              t-att-data-oe-id="doc and doc.id">
             <div class="pt-4">
                 <!-- This div ensures that the address is not cropped by the header. -->
-                <t t-call="`= bista_report_header_footer.custom_address_layout"/>
+                <t t-call="bista_report_header_footer.custom_address_layout"/>
             </div>
             <t t-out="0"/>
         </div>
