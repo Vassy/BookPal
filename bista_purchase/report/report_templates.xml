@@ -57,41 +57,6 @@
                 </t>
             </t>
             <!-- Customized header section for(sale order) make the logo and company details single block -->
-
-            <t t-elif="doc_model == 'sale.order'">
-                <div class="o_boxed_header">
-                    <div class="row mb8" style="border-bottom: 1px solid black;">
-                        <div class="col-6">
-                            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
-                            <div style="top-margin:50px; padding-bottom:10px; " t-field="o.company_id.partner_id"
-                                 t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
-                        </div>
-                        <div name="report_info" class="col-6 text-right mb4">
-                            <h3 t-if="doc.state in ['draft','sent']">Sales Quotation</h3>
-                            <h3 t-if="doc.state in ['sale','done']">Sales Order
-                            </h3>
-                            <h3 t-if="doc.state in ['cancel']">Cancelled Quotation/Order
-                            </h3>
-                            <h4>
-                                <strong>
-                                    <t t-esc="o.name"/>
-                                </strong>
-                            </h4>
-                            <strong t-if="doc.state in ['sale','done']">Order Date:
-                                <!--                                <t t-esc="o.date_order" t-options='{"widget": "date"}'/> -->
-                                <span t-esc="datetime.datetime.now()" t-options='{"widget": "date"}'></span>
-                            </strong>
-                            <strong t-if="doc.state in ['draft','sent']">Quotation Date:
-                                <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
-                            </strong>
-                            <strong t-if="doc.state in ['cancel']">Cancelled Date:
-                                <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
-                            </strong>
-                            <br/>
-                        </div>
-                    </div>
-                </div>
-            </t>
             <t t-else="">
                 <div class="o_boxed_header">
                     <div class="row ">
@@ -117,7 +82,7 @@
 
         <xpath expr="//div[@t-attf-class='footer o_boxed_footer o_company_#{company.id}_layout']" position="replace">
             <t t-if="not o" t-set="o" t-value="doc"/>
-            <t t-if="doc_model in ['sale.order','purchase.order']">
+            <t t-if="doc_model in ['purchase.order']">
                 <div t-attf-class="footer o_company_#{company.id}_layout">
                     <div class="text-center" style="border-top: 3px solid black; padding-bottom:30px; color:grey;">
                         <div t-field="company.report_footer" style="font-size: 90%; text-color: black;"/>
@@ -150,19 +115,6 @@
         </xpath>
         <xpath expr="//div[hasclass('pt-5')]" position="replace">
             <t t-call="web.address_layout"/>
-        </xpath>
-        <xpath expr="//div[@t-att-data-oe-id='o and o.id']"
-               position="replace">
-            <div t-attf-class="article o_report_layout_boxed o_company_#{company.id}_layout {{  'o_layout_background' if company.layout_background in ['Geometric', 'Custom']  else  '' }}"
-                 t-attf-style="background-image: url({{ 'data:image/png;base64,%s' % company.layout_background_image.decode('utf-8') if company.layout_background_image and company.layout_background == 'Custom' else '' }});"
-                 t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id"
-                 t-att-data-oe-lang="o and o.env.context.get('lang')">
-                <div class="pt-5">
-                    <!-- This div ensures that the address is not cropped by the header. -->
-                    <t t-call="web.address_layout"/>
-                </div>
-                <t t-out="0"/>
-            </div>
         </xpath>
     </template>
 
