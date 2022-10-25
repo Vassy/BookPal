@@ -58,9 +58,13 @@ class SaleOrderLine(models.Model):
 
     def _prepare_procurement_values(self, group_id=False):
         values = super(SaleOrderLine, self)._prepare_procurement_values(group_id)
-        values.update({
-            'picking_note': self.picking_note,
-        })
+        pick_note = {
+            'picking_note': self.picking_note
+            }
+        if values and type(values) is list:
+            values[0].update(pick_note)
+        elif values and type(values) is dict:
+            values.update(pick_note)
         return values
 
     def check_bo_transfer(self):
