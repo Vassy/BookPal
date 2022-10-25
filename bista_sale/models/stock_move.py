@@ -12,14 +12,13 @@ class StockMove(models.Model):
         distinct_fields.append('picking_note')
         return distinct_fields
 
-    # def _get_new_picking_values(self):
-    #     vals = super(StockMove, self)._get_new_picking_values()
-    #     if self.group_id.sale_id.common_pick_note:
-    #         vals['note'] = self.group_id.sale_id.common_pick_note
-    #     else:
-    #         purchase_id = self.env['purchase.order'].search([('name', '=', vals['origin'])])
-    #         if purchase_id and purchase_id.common_pick_note:
-    #             vals['note'] = purchase_id.common_pick_note
-    #     return vals
-
+    def _get_new_picking_values(self):
+        vals = super(StockMove, self)._get_new_picking_values()
+        if self.group_id.sale_id.common_pick_note:
+            vals['note'] = self.group_id.sale_id.common_pick_note
+        else:
+            purchase_id = self.env['purchase.order'].search([('name', '=', vals['origin'])])
+            if purchase_id and purchase_id.special_pick_note:
+                vals['note'] = purchase_id.special_pick_note
+        return vals
 

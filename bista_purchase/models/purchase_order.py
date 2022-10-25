@@ -53,10 +53,10 @@ class PurchaseOrder(models.Model):
     def onchange_partner_id_cc_email(self):
         self.cc_email = self.partner_id.cc_email
 
-    # def _prepare_picking(self):
-    #     res = super(PurchaseOrder , self)._prepare_picking()
-    #     res.update({'note': self.special_pick_note})
-    #     return res
+    def _prepare_picking(self):
+        res = super(PurchaseOrder , self)._prepare_picking()
+        res.update({'note': self.special_pick_note})
+        return res
 
 
 class RushStatus(models.Model):
