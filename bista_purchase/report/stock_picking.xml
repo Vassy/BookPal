@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <template id="report_purchaseorder_delivery_report"
+              inherit_id="stock.report_picking">
+        <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
+            <attribute name="t-call">bista_report_header_footer.shipment_custom_header</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('page')]" position="inside">
+            <t t-foreach="docs" t-as="o">
+                <!--                <div t-set="address">-->
+                <!--                    <span>-->
+                <!--                        <strong>Customer Detail:</strong>-->
+                <!--                    </span>-->
+                <!--                    <div t-field="o.partner_id"-->
+                <!--                         t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>-->
+                <!--                </div>-->
+                <t t-set="report_info" class="col-6 text-right mb4">
+                    <h3 t-esc="env['ir.actions.report'].search([('report_name', '=', xmlid)]).name"/>
+                    <h3>
+                        <t t-esc="o.name"/>
+                    </h3>
+                    <t t-if="o.state !='done' and o.picking_type_code =='incoming'">
+                        <h5 style="font-size: 20px;">Receipt Date:
+                            <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/>
+                        </h5>
+                    </t>
+                    <t t-elif="o.state !='done' and o.picking_type_code =='outgoing'">
+                        <h5 style="font-size: 20px;">Delivery Date:
+                            <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/>
+                        </h5>
+                    </t>
+                    <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name =='Pick'">
+                        <h5 style="font-size: 20px;">Picking Date:
+                            <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/>
+                        </h5>
+                    </t>
+                    <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name !='Pick'">
+                        <h5 style="font-size: 20px;">Internal Transfer Date:
+                            <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/>
+                        </h5>
+                    </t>
+                    <t t-elif="o.state =='done'">
+                        <h5>Validated Date:
+                            <t t-esc="o.date_done" t-options='{"widget": "date"}'/>
+                        </h5>
+                    </t>
+                    <t t-else="">
+                        <h5 style="font-size: 20px;">Date:
+                            <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/>
+                        </h5>
+                    </t>
+                    <h4>
+                        <t t-esc="o.picking_type_id.warehouse_id.name"/>
+                    </h4>
+<!--                    <div class="row offset-md-4 col-6" style="padding-bottom: 20px;">-->
+<!--                        <t t-esc="o.name"-->
+<!--                           t-options="{'widget': 'barcode', 'width': 500, 'height': 100, 'img_style': 'width:500px;height:55px;'}"/>-->
+<!--                        <br/>-->
+<!--                    </div>-->
+                </t>
+            </t>
+        </xpath>
+    </template>
+    <template id="report_purchaseorder_deliveryslip_report"
+              inherit_id="stock.report_delivery_document">
+        <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
+            <attribute name="t-call">bista_report_header_footer.shipment_custom_header</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('page')]" position="inside">
+            <t t-foreach="docs" t-as="o">
+                <!--                <div t-set="address">-->
+                <!--                    <span>-->
+                <!--                        <strong>Customer Detail:</strong>-->
+                <!--                    </span>-->
+                <!--                    <div t-field="o.partner_id"-->
+                <!--                         t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>-->
+                <!--                </div>-->
+                <t t-set="report_info" class="col-6 text-right mb4">
+                    <h3 t-esc="env['ir.actions.report'].search([('report_name', '=', xmlid)]).name"/>
+                    <h3>
+                        <t t-esc="o.name"/>
+                    </h3>
+                    <t t-if="o.state !='done' and o.picking_type_code =='incoming'">
+                        <h5 style="font-size: 20px;">Receipt Date:
+                            <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/>
+                        </h5>
+                    </t>
+                    <t t-elif="o.state !='done' and o.picking_type_code =='outgoing'">
+                        <h5 style="font-size: 20px;">Delivery Date:
+                            <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/>
+                        </h5>
+                    </t>
+                    <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name =='Pick'">
+                        <h5 style="font-size: 20px;">Picking Date:
+                            <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/>
+                        </h5>
+                    </t>
+                    <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name !='Pick'">
+                        <h5 style="font-size: 20px;">Internal Transfer Date:
+                            <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/>
+                        </h5>
+                    </t>
+                    <t t-elif="o.state =='done'">
+                        <h5>Validated Date:
+                            <t t-esc="o.date_done" t-options='{"widget": "date"}'/>
+                        </h5>
+                    </t>
+                    <t t-else="">
+                        <h5 style="font-size: 20px;">Date:
+                            <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/>
+                        </h5>
+                    </t>
+                    <h4>
+                        <t t-esc="o.picking_type_id.warehouse_id.name"/>
+                    </h4>
+<!--                    <div class="row offset-md-4 col-6" style="padding-bottom: 20px;">-->
+<!--                        <t t-esc="o.name"-->
+<!--                           t-options="{'widget': 'barcode', 'width': 500, 'height': 100, 'img_style': 'width:500px;height:55px;'}"/>-->
+<!--                        <br/>-->
+<!--                    </div>-->
+
+                </t>
+            </t>
+        </xpath>
+
+    </template>
+</odoo>
