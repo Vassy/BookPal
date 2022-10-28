@@ -8,6 +8,17 @@ from odoo import models, fields, _, api
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
+    shipping_acct_nuances = fields.Text(string="Shipping Acct Nuances", related="partner_id.shipping_acct_nuances")
+    transfer_nuances = fields.Text(string="Transfer Nuances", related="partner_id.transfer_nuances")
+    future_ship_nuances = fields.Text(string="Future Ship Nuances", related="partner_id.future_ship_nuances")
+    minimums_nuances = fields.Text(string="Minimums Nuances", related="partner_id.minimums_nuances")
+    shipping_nuances = fields.Text(string="Shipping Nuances", related="partner_id.shipping_nuances")
+    rush_processing_nuances = fields.Text(string="Rush Shipping Nuances", related="partner_id.rush_processing_nuances")
+    frieght_nuances = fields.Text(string="Freight Nuances", related="partner_id.frieght_nuances")
+    pre_approval_nuances = fields.Text(string="Pre Approval Nuances", related="partner_id.pre_approval_nuances")
+    author_event_shipping_naunces = fields.Text(string="Author Event Shipping Nuances",
+                                                related="partner_id.author_event_shipping_naunces")
+
     def backorder_run_scheduler(self):
 
         today_datetime = datetime.now()
