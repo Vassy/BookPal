@@ -51,6 +51,7 @@ class SaleOrder(models.Model):
     due_amount=fields.Monetary('Due Amount' ,readonly='1')
 
 
+     # due amount of customer
     def create(self, vals):
         sale_order = super(SaleOrder, self).create(vals)
         for order in sale_order:
