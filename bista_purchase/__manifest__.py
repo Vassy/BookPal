@@ -13,6 +13,7 @@
         'security/ir.model.access.csv',
         'views/res_partner_views.xml',
         'views/purchase_views.xml',
+        'views/stock_picking_views.xml',
         'report/purchase.xml',
         'report/purchase_quotation_templates.xml',
         'report/report_templates.xml',
