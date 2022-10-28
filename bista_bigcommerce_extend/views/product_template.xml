@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="added_x_studio_manufacturer_product_template_extend_form_view" model="ir.ui.view">
+            <field name="name">added.x_studio.manufacturer.product.template.product.extened.view</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='x_studio_manufacturer']" position="attributes">
+                    <attribute name="string">Brand </attribute>
+                </xpath>
+                <xpath expr="//field[@name='x_studio_manufacturer']" position="after">
+                    <field name="product_format"/>
+                    <field name="origin"/>
+                </xpath>
+                <xpath expr="//field[@name='uom_po_id']" position="after">
+                    <field name="publisher_id"/>
+                    <field name="author_id"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
