@@ -48,7 +48,16 @@ class SaleOrder(models.Model):
     book_status = fields.Char(string="Book Status")
     on_hold_reason = fields.Text(string='On Hold Reason(s)')
     valid_until=fields.Date('Valid Until')
+    due_amount=fields.Monetary('Due Amount' ,related='partner_id.total_due')
 
+
+     # due amount of customer
+    # def create(self, vals):
+    #     sale_order = super(SaleOrder, self).create(vals)
+    #     for order in sale_order:
+    #         if order.partner_id.total_due:
+    #            order.due_amount = order.partner_id.total_due
+    #     return sale_order
 
 
 class SaleOrderLine(models.Model):
