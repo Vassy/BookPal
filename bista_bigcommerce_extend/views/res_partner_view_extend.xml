@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="bigcommerce_customer_form_view_extend" model="ir.ui.view">
+            <field name="name">bigcommerce_customer_form_view_extend</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='top_publisher']" position="before">
+                    <field name="is_author"/>
+                    <field name="is_publisher"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

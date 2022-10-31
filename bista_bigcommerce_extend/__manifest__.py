@@ -13,6 +13,7 @@
 
     'data': [
         'views/product_template.xml',
+        'views/res_partner_view_extend.xml',
     ],
     'installable': True,
     'application': True,
