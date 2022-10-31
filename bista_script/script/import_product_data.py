@@ -12,9 +12,9 @@ os.chdir('../')
 current_path = os.getcwd()
 sys.path.append(current_path)
 username = 'admin'  # the user
-password = 'a'  # the password of the user
-dbname = 'book_pal_new'  # the database
-url = 'http://127.0.0.1:8069'  # ESP-staging url
+password = 'admin'  # the password of the user
+dbname = 'nikita-bistait-bookpal-bista-staging-5356920'  # the database
+url = 'https://nikita-bistait-bookpal-bista-staging-5356920.dev.odoo.com'  # ESP-staging url
 
 sock_common = xmlrpclib.ServerProxy(url + '/xmlrpc/common')
 uid = sock_common.login(dbname, username, password)
@@ -23,7 +23,6 @@ sock = xmlrpclib.ServerProxy(url + '/xmlrpc/object')
 print ("\n current_path >>>>", current_path)
 output = open(current_path + '/Errors.txt', 'w')
 file_upload = '/sheet/ProductDataforOdooFinal.xlsx'
-# file_upload = 'bista_script/creatio_contacts.xlsx'
 book = xlrd.open_workbook(current_path + file_upload)
 sheet = book.sheet_by_index(0)
 
@@ -35,12 +34,96 @@ try:
     for row_no in range(1, 10):  #
         error = False
         row_values = sheet.row_values(row_no)
-        prod_tmpl_id = sock.execute(
+        print ("\n row_values >>>>>", row_values)
+        prod_vals = {
+            'isbn': row_values[1],
+            'prod_format': row_values[7],
+            'origin': row_values[8],
+            'weight': row_values[11],
+        }
+        prod_id = sock.execute(
             dbname, uid, password,
-            'product.template',
+            'product.product',
             'search',
             [('default_code', '=', row_values[0])])
-        print ("\n prod_tmpl_id>>>>>.", prod_tmpl_id)
+        print ("\n prod_tmpl_id>>>>>.", prod_id, row_values[0])
+        if prod_id and prod_id[0]:
+            publisher_id = sock.execute(
+                dbname, uid, password,
+                'res.partner',
+                'search',
+                [('name', 'ilike', row_values[3])])
+            publisher_id = publisher_id and publisher_id[0] or False
+            print ("\n publisher_id >>>>>>.", publisher_id)
+            # if not publisher_id:
+            #     publisher_id = sock.execute(
+            #         dbname, uid, password,
+            #         'res.partner',
+            #         'create',
+            #         {'name': row_values[3]})
+            #     publisher_id = publisher_id and publisher_id[0] or False
+            if publisher_id:
+                prod_vals.update({'publisher_id': publisher_id})
+            author_id = sock.execute(
+                dbname, uid, password,
+                'res.partner',
+                'search',
+                [('name', 'ilike', row_values[6])])
+            author_id = author_id and author_id[0] or False
+            print ("\n author_id >>>>", author_id)
+            # if not author_id:
+            #     author_id = sock.execute(
+            #         dbname, uid, password,
+            #         'res.partner',
+            #         'create',
+            #         {'name': row_values[6]})
+            #     author_id = author_id and author_id[0] or False
+            if author_id:
+                prod_vals.update({'author_id': author_id})
+            supplier_id = sock.execute(
+                dbname, uid, password,
+                'res.partner',
+                'search',
+                [('name', 'ilike', row_values[2])])
+            supplier_id = supplier_id and supplier_id[0] or False
+            # if not supplier_id:
+            #     supplier_id = sock.execute(
+            #         dbname, uid, password,
+            #         'res.partner',
+            #         'create',
+            #         {'name': row_values[2]})
+            #     supplier_id = supplier_id and supplier_id[0] or False
+            print ("\n supplier_id >>>", supplier_id)
+            # if supplier_id:
+            #     prod_tmpl_id = sock.execute(
+            #         dbname, uid, password,
+            #         'product.product',
+            #         prod_id,
+            #         ['product_tmpl_id'])
+            #     print ("\n prod_tmpl_id >>>>>", prod_tmpl_id)
+            #     prod_tmpl_id = prod_tmpl_id and prod_tmpl_id[0] or 0
+            #     print ("\n prod_tmpl_id >>final>>>", prod_tmpl_id)
+            #     # vendor_price_list = sock.execute(
+            #     #     dbname, uid, password,
+            #     #     'product.supplierinfo',
+            #     #     'search',
+            #     #     [('name.id', '=', supplier_id),
+            #     #      ('product_id.id', '=', prod_id),
+            #     #      ('price', '=', row_values[5])])
+            #     # print ("\n vendor_price_list >>>>>", vendor_price_list)
+        #         if vendor_price_list and vendor_price_list[0]:
+        #             print ("\n continue ????")
+        #             continue
+        #         # sock.execute(
+        #         #     dbname, uid, password,
+        #         #     'product.supplierinfo',
+        #         #     'create',
+        #         #     {
+        #         #         'name': supplier_id,
+        #         #         'product_id': prod_id,
+        #         #         'product_tmpl_id': prod_tmpl_id,
+        #         #         'price': row_values[5],
+        #         #     })
 
 except Exception as e:
     row_values.append(str(e))

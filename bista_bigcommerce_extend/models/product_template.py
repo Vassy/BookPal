@@ -15,3 +15,10 @@ class ProductProduct(models.Model):
     _inherit = "product.product"
 
     isbn = fields.Char('ISBN')
+
+
+class ResPartner(models.Model):
+    _inherit = "res.partner"
+
+    is_publisher = fields.Boolean('Is Publisher?')
+    is_author = fields.Boolean('Is Author?')
