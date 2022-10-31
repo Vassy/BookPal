@@ -49,6 +49,25 @@ class PurchaseOrder(models.Model):
     supplier_order_number = fields.Char(string="Supplier Order Number")
     special_pick_note = fields.Html('Special Instructions and Notes')
 
+    def update_shipping(self):
+        po_lines = self.env['purchase.order.line'].search([('id', 'in', self.order_line.ids)])
+
+        return {
+            'name': _('Update Status'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'update.shipping',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'new',
+            'context': {'default_po_lines': po_lines.ids,'default_order_id': self.id},
+
+            'domain': (['id', 'in', po_lines.ids]),
+        }
+
+
+
+
+
     @api.onchange('partner_id')
     def onchange_partner_id_cc_email(self):
         self.cc_email = self.partner_id.cc_email
@@ -57,3 +76,62 @@ class PurchaseOrder(models.Model):
 class RushStatus(models.Model):
     _name = "rush.status"
     _description = 'Rush Status model details.'
+
+class UpdateStatus(models.Model):
+    _name = "update.status"
+   
+
+class PurchaseOrderLine(models.Model):
+    _inherit = ['purchase.order.line', 'mail.thread', 'mail.activity.mixin']
+    _name = 'purchase.order.line'
+
+    status = fields.Selection([('draft', 'Draft'),
+                               ('ready_for_preview', 'Ready For Preview '),
+                               ('ordered', 'Ordered '),
+                               ('pending', 'Pending/In Transint'),
+                               ('received', 'Received'),
+                               ('stocked', 'Stocked'),
+                               ('completed', 'Completed'),
+                               ('return_created', 'Return created'),
+                               ('rush_ordered', 'Rush Ordered'),
+                               ('on_hold', 'On Hold'),
+                               ('canceled', 'Canceled'),
+                               ('invoiced', 'Invoiced'),
+                               ('partially_received', 'Partially Received')], default='draft', tracking=True)
+
+
+    def write(self, vals):
+        res = super(PurchaseOrderLine, self).write(vals)
+        print('self',self)
+        for line in self:
+            print('line',line.name,line.status,line.order_id)
+            status_flag = True
+            for all_poline in line.order_id.order_line:
+                print("all order id",all_poline)
+                if all_poline.status != 'ordered':
+                    status_flag = False
+            if status_flag:
+                line.order_id.write({
+                    'state': 'purchase'
+                })
+            # lines = self.env['update.shipping'].sudo().search([('po_lines', 'in', self.id)])
+            # print('-----po-----lines',lines,lines.po_lines.order_id,self.order_id,self.status,self)
+            # if line.status == 'ordered':
+            #     line.order_id.write({
+            #         'state': 'purchase'
+            #     })
+        return res
+
+    def open_po_line(self):
+        self.ensure_one()
+        return {
+            'name': _('Purchase Order Line'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'purchase.order.line',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'current',
+            'res_id': self.id,
+            'view_id': self.env.ref('bista_purchase.purchase_order_line_form').id,
+            'context': {'create': False, 'edit': False},
+        }

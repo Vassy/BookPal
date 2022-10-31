@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="update_shipping_views" model="ir.ui.view">
+        <field name="name">Update Shipping</field>
+        <field name="model">update.shipping</field>
+        <field name="arch" type="xml">
+            <form editable="top" string="Purchase Order Line">
+                    <group>
+                        <field name="order_id" invisible="1"/>
+                        <field name="po_lines" domain="[('order_id','=',order_id)]"/>
+                       <field name="status" required="1"/>
+                    </group>
+                    <footer>
+                        <button name="update" string="Update" type="object"
+                            class="btn-primary"/>
+<!--                        <button name='update' string="Update" class="btn btn-primary"/>-->
+                        <button string="Cancel" special="cancel" class="btn btn-primary"/>
+
+                    </footer>
+            </form>
+        </field>
+    </record>
+    <record id="update_shipping_record_view" model="ir.actions.act_window">
+        <field name="name">update.shipping</field>
+        <field name="res_model">update.shipping</field>
+        <field name="view_mode">form,tree</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
+
