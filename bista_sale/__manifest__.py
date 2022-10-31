@@ -7,7 +7,7 @@
     'website': 'http://www.bistasolutions.com',
     'license': 'AGPL-3',
     'depends': [ 'web',
-           'sale','bista_report_header_footer',
+           'sale','bista_report_header_footer', 'bista_sale_multi_ship',
     ],
     'assets': {
         'web.assets_backend': [
@@ -26,7 +26,7 @@
         'views/death_type_view.xml',
         'views/customization_type_view.xml',
         # report
-        # 'report/report_templates.xml',
+        # 'report/sale_delivery_report.xml',
         'report/sale.xml',
         'data/data.xml',
 

@@ -92,7 +92,6 @@
 <!--                            <t t-set="current_subtotal"-->
 <!--                               t-value="current_subtotal + (line.product_qty* line.so_line_id.price_unit)"-->
 <!--                               />-->
-
                             <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.so_line_id.display_type == 'line_section' else 'font-italic o_line_note' if line.so_line_id.display_type == 'line_note' else ''">
                                 <t t-if="not line.so_line_id.display_type">
                                     <td>

@@ -72,6 +72,11 @@ class PurchaseOrder(models.Model):
     def onchange_partner_id_cc_email(self):
         self.cc_email = self.partner_id.cc_email
 
+    def _prepare_picking(self):
+        res = super(PurchaseOrder , self)._prepare_picking()
+        res.update({'note': self.special_pick_note})
+        return res
+
 
 class RushStatus(models.Model):
     _name = "rush.status"
@@ -98,7 +103,6 @@ class PurchaseOrderLine(models.Model):
                                ('canceled', 'Canceled'),
                                ('invoiced', 'Invoiced'),
                                ('partially_received', 'Partially Received')], default='draft', tracking=True)
-
 
     def write(self, vals):
         res = super(PurchaseOrderLine, self).write(vals)
@@ -135,3 +139,33 @@ class PurchaseOrderLine(models.Model):
             'view_id': self.env.ref('bista_purchase.purchase_order_line_form').id,
             'context': {'create': False, 'edit': False},
         }
+
+class PurchaseOrderLine(models.Model):
+    _inherit = 'purchase.order.line'
+    _description = 'Purchase Order Line model details.'
+
+    def check_bo_transfer(self):
+        name = ''
+        picking_ids = self.env['stock.picking'].search([('picking_type_code', '=', 'incoming'),\
+            ('partner_id', '=', self.order_id.partner_id.id),\
+            ('backorder_id', '!=', False),
+            ('state', 'not in', ['done', 'cancel'])])
+        pick_id = picking_ids.move_ids_without_package.filtered(lambda x: x.product_id == self.product_id)
+        if pick_id:
+            for ref in pick_id:
+                name += '\n' + ref.picking_id.name
+        return name
+
+    @api.onchange('product_id')
+    def onchange_product_vendor(self):
+        result = {}
+        bo_transfer = self.check_bo_transfer()
+        if self.product_id and bo_transfer:
+            message = _('"%s" Product is already in back order. you can check this backorder. %s')\
+                 %(self.product_id.display_name, bo_transfer)
+            warning_mess = {
+                'title': _('WARNING!'),
+                'message': message
+            }
+            result = {'warning': warning_mess}
+            return result

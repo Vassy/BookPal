@@ -48,7 +48,16 @@ class SaleOrder(models.Model):
     book_status = fields.Char(string="Book Status")
     on_hold_reason = fields.Text(string='On Hold Reason(s)')
     valid_until=fields.Date('Valid Until')
+    due_amount=fields.Monetary('Due Amount' ,related='partner_id.total_due')
 
+
+     # due amount of customer
+    # def create(self, vals):
+    #     sale_order = super(SaleOrder, self).create(vals)
+    #     for order in sale_order:
+    #         if order.partner_id.total_due:
+    #            order.due_amount = order.partner_id.total_due
+    #     return sale_order
 
 
 class SaleOrderLine(models.Model):
@@ -58,7 +67,74 @@ class SaleOrderLine(models.Model):
 
     def _prepare_procurement_values(self, group_id=False):
         values = super(SaleOrderLine, self)._prepare_procurement_values(group_id)
-        values.update({
-            'picking_note': self.picking_note,
-        })
+        pick_note = {
+            'picking_note': self.picking_note
+            }
+        if values and type(values) is list:
+            values[0].update(pick_note)
+        elif values and type(values) is dict:
+            values.update(pick_note)
         return values
+
+    def check_bo_transfer(self):
+        name = ''
+        if self.product_id:
+            domain = [('picking_type_code', '=', 'incoming'),\
+                    ('partner_id', '=', self.product_id.seller_ids[0].name.id\
+                        if not self.supplier_id else self.supplier_id.id),\
+                    ('backorder_id', '!=', False),
+                    ('state', 'not in', ['done', 'cancel'])]
+            picking_ids = self.env['stock.picking'].search(domain)
+            pick_id = picking_ids.move_ids_without_package.filtered(lambda x: x.product_id == self.product_id)
+            if pick_id:
+                for ref in pick_id:
+                    name += '\n' + ref.picking_id.name
+        return name
+
+    @api.onchange('product_id', 'supplier_id')
+    def onchange_product_vendor(self):
+        result = {}
+        bo_transfer = self.check_bo_transfer()
+        if self.product_id and bo_transfer:
+            message = _('"%s" Product is already in back order. you can check this backorder. %s')\
+                 %(self.product_id.display_name, bo_transfer)
+            warning_mess = {
+                'title': _('WARNING!'),
+                'message': message
+            }
+            result = {'warning': warning_mess}
+            return result
+
+
+class SaleMultiShipQtyLines(models.Model):
+    _inherit = "sale.multi.ship.qty.lines"
+    _description = 'Sale Multi Ship Qty Lines model details.'
+
+    def check_bo_transfer(self):
+        name = ''
+        if self.so_line_id:
+            domain = [('picking_type_code', '=', 'incoming'),\
+                    ('partner_id', '=', self.so_line_id.product_id.seller_ids[0].name.id\
+                        if not self.supplier_id else self.supplier_id.id),\
+                    ('backorder_id', '!=', False),
+                    ('state', 'not in', ['done', 'cancel'])]
+            picking_ids = self.env['stock.picking'].search(domain)
+            pick_id = picking_ids.move_ids_without_package.filtered(lambda x: x.product_id == self.so_line_id.product_id)
+            if pick_id:
+                for ref in pick_id:
+                    name += '\n' + ref.picking_id.name
+        return name
+
+    @api.onchange('so_line_id', 'supplier_id')
+    def onchange_product_vendor(self):
+        result = {}
+        bo_transfer = self.check_bo_transfer()
+        if self.so_line_id and bo_transfer:
+            message = _('"%s" Product is already in back order. you can check this backorder. %s')\
+                 %(self.so_line_id.product_id.display_name, bo_transfer)
+            warning_mess = {
+                'title': _('WARNING!'),
+                'message': message
+            }
+            result = {'warning': warning_mess}
+            return result
