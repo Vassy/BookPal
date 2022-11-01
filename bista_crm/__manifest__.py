@@ -7,7 +7,7 @@
     'summary': 'Manage CRM',
     'website': 'http://www.bistasolutions.com',
     'license': 'AGPL-3',
-    'depends': ['sale_crm'],
+    'depends': ['sale_crm', 'bista_sale'],
     'data': [
         # Views
         'security/ir.model.access.csv',
