@@ -50,7 +50,11 @@ class PurchaseOrder(models.Model):
     special_pick_note = fields.Html('Special Instructions and Notes')
     num_of_need_by_days = fields.Text(string='Num of Need By Days')
     sale_order_ids = fields.Many2many('sale.order', compute="compute_sale_order_ids")
-    purchase_tracking_ids = fields.One2many('purchase.tracking', 'order_id', string="Purchase Tracking")
+
+
+    def compute_sale_order_ids(self):
+        for order_id in self:
+            order_id.sale_order_ids = order_id._get_sale_orders()
 
     def compute_sale_order_ids(self):
         for order_id in self:
@@ -70,7 +74,6 @@ class PurchaseOrder(models.Model):
             'domain': (['id', 'in', po_lines.ids]),
         }
 
-
     @api.onchange('partner_id')
     def onchange_partner_id_cc_email(self):
         self.cc_email = self.partner_id.cc_email
@@ -88,8 +91,6 @@ class RushStatus(models.Model):
 
 class UpdateStatus(models.Model):
     _name = "update.status"
-
-
 
 class PurchaseOrderLine(models.Model):
     _inherit = ['purchase.order.line', 'mail.thread', 'mail.activity.mixin']
@@ -109,21 +110,28 @@ class PurchaseOrderLine(models.Model):
                                ('invoiced', 'Invoiced'),
                                ('partially_received', 'Partially Received')], default='draft', tracking=True)
 
-    # def write(self, vals):
-    #     res = super(PurchaseOrderLine, self).write(vals)
-    #     print('self', self)
-    #     for line in self:
-    #         print('line', line.name, line.status, line.order_id)
-    #         status_flag = True
-    #         for all_poline in line.order_id.order_line:
-    #             print("all order id", all_poline)
-    #             if all_poline.status != 'ordered':
-    #                 status_flag = False
-    #         if status_flag:
-    #             line.order_id.write({
-    #                 'state': 'purchase'
-    #             })
-    #     return res
+
+    def write(self, vals):
+        res = super(PurchaseOrderLine, self).write(vals)
+        print('self', self)
+        for line in self:
+            print('line', line.name, line.status, line.order_id)
+            status_flag = True
+            for all_poline in line.order_id.order_line:
+                print("all order id", all_poline)
+                if all_poline.status != 'ordered':
+                    status_flag = False
+            if status_flag:
+                line.order_id.write({
+                    'state': 'purchase'
+                })
+            # lines = self.env['update.shipping'].sudo().search([('po_lines', 'in', self.id)])
+            # print('-----po-----lines',lines,lines.po_lines.order_id,self.order_id,self.status,self)
+            # if line.status == 'ordered':
+            #     line.order_id.write({
+            #         'state': 'purchase'
+            #     })
+        return res
 
     def open_po_line(self):
         self.ensure_one()
@@ -139,6 +147,7 @@ class PurchaseOrderLine(models.Model):
             'context': {'create': False, 'edit': False},
             'flags': {'mode': 'readonly'},
         }
+
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
@@ -163,28 +172,10 @@ class PurchaseOrderLine(models.Model):
         if self.product_id and bo_transfer:
             message = _('"%s" Product is already in back order. you can check this backorder. %s') \
                 (self.product_id.display_name, bo_transfer)
-            warning_mess = {
-                'title': _('WARNING!'),
-                'message': message
-            }
-            result = {'warning': warning_mess}
+
+        warning_mess = {
+            'title': _('WARNING!'),
+            'message': message
+        }
+        result = {'warning': warning_mess}
         return result
-
-# class PurchaseOrderLine(models.Model):
-#     _inherit = 'purchase.order.line'
-#
-#     tracking_ref = fields.Char('Tracking Refrence')
-
-
-# class StockPicking(models.Model):
-#     _inherit = 'stock.picking'
-#
-#     @api.onchange('carrier_tracking_ref')
-#     def trackig_reference(self):
-#         print("bista",self)
-#         for order in self:
-#             for purchase in order.purchase_id:
-#                 for line in purchase.order_line:
-#                     print('order line', line)
-#                     line.tracking_ref = self.carrier_tracking_ref
-
