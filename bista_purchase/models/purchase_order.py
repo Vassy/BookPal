@@ -13,6 +13,7 @@ class PurchaseOrder(models.Model):
     # Review Order Notes and Requirements
     order_notes = fields.Text(string='Order Notes')
     fulfilment_project = fields.Boolean(string="Fulfilment Project")
+    ordered_by = fields.Many2one(related="sale_order_ids.partner_id", string="Ordered By")
     ops_project_owner_id = fields.Many2one('res.users', string='Ops Project Owner')
     payment_receive_date = fields.Date(string='Payment Received Date')
     billing_notes = fields.Text(string="Billing Notes")
@@ -45,9 +46,14 @@ class PurchaseOrder(models.Model):
     opening_text_nuances = fields.Text(string="Opening Text Nuances", related="partner_id.opening_text_nuances")
     note_to_vendor_nuances = fields.Text(string="Note to Vendor Nuances", related="partner_id.note_to_vendor_nuances")
     memo = fields.Text(string="Memo")
-    gorgias_ticket = fields.Text(string="Gorgias Ticket")
     supplier_order_number = fields.Char(string="Supplier Order Number")
     special_pick_note = fields.Html('Special Instructions and Notes')
+    num_of_need_by_days = fields.Text(string='Num of Need By Days')
+    sale_order_ids = fields.Many2many('sale.order', compute="compute_sale_order_ids")
+
+    def compute_sale_order_ids(self):
+        for order_id in self:
+            order_id.sale_order_ids = order_id._get_sale_orders()
 
     def update_shipping(self):
         po_lines = self.env['purchase.order.line'].search([('id', 'in', self.order_line.ids)])
@@ -59,21 +65,17 @@ class PurchaseOrder(models.Model):
             'view_mode': 'form',
             'view_type': 'form',
             'target': 'new',
-            'context': {'default_po_lines': po_lines.ids,'default_order_id': self.id},
+            'context': {'default_po_lines': po_lines.ids, 'default_order_id': self.id},
 
             'domain': (['id', 'in', po_lines.ids]),
         }
-
-
-
-
 
     @api.onchange('partner_id')
     def onchange_partner_id_cc_email(self):
         self.cc_email = self.partner_id.cc_email
 
     def _prepare_picking(self):
-        res = super(PurchaseOrder , self)._prepare_picking()
+        res = super(PurchaseOrder, self)._prepare_picking()
         res.update({'note': self.special_pick_note})
         return res
 
@@ -82,9 +84,10 @@ class RushStatus(models.Model):
     _name = "rush.status"
     _description = 'Rush Status model details.'
 
+
 class UpdateStatus(models.Model):
     _name = "update.status"
-   
+
 
 class PurchaseOrderLine(models.Model):
     _inherit = ['purchase.order.line', 'mail.thread', 'mail.activity.mixin']
@@ -106,12 +109,12 @@ class PurchaseOrderLine(models.Model):
 
     def write(self, vals):
         res = super(PurchaseOrderLine, self).write(vals)
-        print('self',self)
+        print('self', self)
         for line in self:
-            print('line',line.name,line.status,line.order_id)
+            print('line', line.name, line.status, line.order_id)
             status_flag = True
             for all_poline in line.order_id.order_line:
-                print("all order id",all_poline)
+                print("all order id", all_poline)
                 if all_poline.status != 'ordered':
                     status_flag = False
             if status_flag:
@@ -140,16 +143,17 @@ class PurchaseOrderLine(models.Model):
             'context': {'create': False, 'edit': False},
         }
 
+
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
     _description = 'Purchase Order Line model details.'
 
     def check_bo_transfer(self):
         name = ''
-        picking_ids = self.env['stock.picking'].search([('picking_type_code', '=', 'incoming'),\
-            ('partner_id', '=', self.order_id.partner_id.id),\
-            ('backorder_id', '!=', False),
-            ('state', 'not in', ['done', 'cancel'])])
+        picking_ids = self.env['stock.picking'].search([('picking_type_code', '=', 'incoming'),
+                                                        ('partner_id', '=', self.order_id.partner_id.id),
+                                                        ('backorder_id', '!=', False),
+                                                        ('state', 'not in', ['done', 'cancel'])])
         pick_id = picking_ids.move_ids_without_package.filtered(lambda x: x.product_id == self.product_id)
         if pick_id:
             for ref in pick_id:
@@ -161,11 +165,11 @@ class PurchaseOrderLine(models.Model):
         result = {}
         bo_transfer = self.check_bo_transfer()
         if self.product_id and bo_transfer:
-            message = _('"%s" Product is already in back order. you can check this backorder. %s')\
-                 %(self.product_id.display_name, bo_transfer)
-            warning_mess = {
-                'title': _('WARNING!'),
-                'message': message
-            }
-            result = {'warning': warning_mess}
-            return result
+            message = _('"%s" Product is already in back order. you can check this backorder. %s') \
+                (self.product_id.display_name, bo_transfer)
+        warning_mess = {
+            'title': _('WARNING!'),
+            'message': message
+        }
+        result = {'warning': warning_mess}
+        return result
