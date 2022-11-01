@@ -5,6 +5,16 @@
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']//tree" position="inside">
+                <button name="open_po_line" type="object" icon="fa-eye" class="btn btn-link" style="float:right"/>
+            </xpath>
+            <xpath expr="//page[@name='products']/field[@name='order_line']" position="before">
+                <button name="update_shipping" string="Update Status" type="object" class="btn-primary"/>
+            </xpath>
+
+            <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
+                <field name="status"/>
+            </xpath>
             <xpath expr="//div[hasclass('oe_clear')]" position="before">
                 <group name="special_pick_note" col="6" class="mt-2 mt-md-0">
                     <group colspan="4">
@@ -113,6 +123,50 @@
                     </group>
                 </page>
             </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_order_line_form" model="ir.ui.view">
+        <field name="name">purchase.order.line.form</field>
+        <field name="model">purchase.order.line</field>
+        <field name="arch" type="xml">
+            <form name="purchase_order_line" string="PO Line" create="false" edit="false">
+                <header>
+                    <field name="status" widget="statusbar" statusbar_visible="draft,ready_for_preview,ordered,pending,completed" readonly="1"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="order_id"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="product_qty"/>
+                            <field name="qty_received"/>
+                            <field name="qty_invoiced"/>
+<!--                            <field name="product_uom"/>-->
+                            <field name="price_unit"/>
+                            <field name="discount"/>
+                            <field name="taxes_id" widget="many2many_tags"/>
+                            <field name="price_subtotal"/>
+                        </group>
+                        <group>
+                            <field name="date_planned"/>
+                            <field name="disc_price_unit"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
         </field>
     </record>
 </odoo>
