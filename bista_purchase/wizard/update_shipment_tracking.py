@@ -1,28 +1,26 @@
 from odoo import fields, models, api, _, Command
 
-# class UpdateShipping(models.TransientModel):
-#     _name = 'update.shipping'
-#
-# class UpdatePOLine(models.TransientModel):
-#     _name = 'update.po.line'
+
+class UpdateShipping(models.TransientModel):
+    _name = 'update.shipping'
+
+class UpdatePOLine(models.TransientModel):
+    _name = 'update.po.line'
 
 class UpdateShipmentTracking(models.TransientModel):
     _name = 'update.shipment.tracking'
     _description = 'Update Shipment Tracking'
 
     order_id = fields.Many2one('purchase.order')
-    partner_id = fields.Many2one(related='order_id.partner_id')
-    date_approve = fields.Datetime(related='order_id.date_approve')
-    date_order = fields.Datetime(related='order_id.date_order')
-    picking_type_id = fields.Many2one(related="order_id.picking_type_id")
+
     tracking_lines = fields.One2many('update.shipment.tracking.line', 'update_shipping_id', string="Tracking Lines")
     # po_lines = fields.Many2many('purchase.order.line',string='Purchase Line')
-    # tracking_ref = fields.Char('Tracking Ref.')
-    # shipment_date = fields.Date(string="Shipment Date")
-    # shipment_name = fields.Char('Shipment Name')
+    tracking_ref = fields.Char('Tracking Ref.')
+    shipment_date = fields.Date(string="Shipment Date")
+    shipment_name = fields.Char('Shipment Name')
     status = fields.Selection([('draft', 'Draft'),
                                ('ready_for_preview', 'Ready For Preview '),
-                               # ('ordered', 'Ordered '),
+                               ('ordered', 'Ordered '),
                                ('pending', 'Pending/In Transint'),
                                ('received', 'Received'),
                                ('stocked', 'Stocked'),
@@ -50,21 +48,19 @@ class UpdateShipmentTracking(models.TransientModel):
 
     def update(self):
         po_lines = self.tracking_lines.filtered(lambda x:x.checkbox)
-        po_lines.po_line.write({
-            'status': self.status
-        })
-        # tracking_id = self.env['purchase.tracking'].create({
-        #         'tracking_ref': self.tracking_ref,
-        #         'shipment_date': self.shipment_date,
-        #         'shipment_name': self.shipment_name,
-        #         'order_id': self.order_id.id,
-        #     })
-        # for tracking_line in po_lines:
-        #     self.env['purchase.tracking.line'].create({
-        #         'tracking_id': tracking_id.id,
-        #         'po_line_id': tracking_line.po_line.id,
-        #         'ship_qty': tracking_line.ship_qty,
-        #     })
+
+        tracking_id = self.env['purchase.tracking'].create({
+                'tracking_ref': self.tracking_ref,
+                'shipment_date': self.shipment_date,
+                'shipment_name': self.shipment_name,
+                'order_id': self.order_id.id,
+            })
+        for tracking_line in po_lines:
+            self.env['purchase.tracking.line'].create({
+                'tracking_id': tracking_id.id,
+                'po_line_id': tracking_line.po_line.id,
+                'ship_qty': tracking_line.ship_qty,
+            })
 
     #     for line in self.po_lines:
     #         for purchase in line.order_id.order_line:
@@ -79,6 +75,4 @@ class UpdateShipmentTrackingLine(models.TransientModel):
     checkbox = fields.Boolean(string="CheckBox")
     update_shipping_id = fields.Many2one('update.shipment.tracking', "Update Shipping")
     po_line = fields.Many2one('purchase.order.line', 'PO Line')
-    status = fields.Selection(related="po_line.status")
-    product_qty = fields.Float(related='po_line.product_qty')
-    # ship_qty = fields.Float(string="Ship Quantity")
+    ship_qty = fields.Float(string="Ship Quantity")

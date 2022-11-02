@@ -50,6 +50,7 @@ class PurchaseOrder(models.Model):
     special_pick_note = fields.Html('Special Instructions and Notes')
     num_of_need_by_days = fields.Text(string='Num of Need By Days')
     sale_order_ids = fields.Many2many('sale.order', compute="compute_sale_order_ids")
+    purchase_tracking_ids = fields.One2many('purchase.tracking', 'order_id', string="Purchase Tracking")
 
 
     def compute_sale_order_ids(self):
@@ -125,12 +126,6 @@ class PurchaseOrderLine(models.Model):
                 line.order_id.write({
                     'state': 'purchase'
                 })
-            # lines = self.env['update.shipping'].sudo().search([('po_lines', 'in', self.id)])
-            # print('-----po-----lines',lines,lines.po_lines.order_id,self.order_id,self.status,self)
-            # if line.status == 'ordered':
-            #     line.order_id.write({
-            #         'state': 'purchase'
-            #     })
         return res
 
     def open_po_line(self):
@@ -147,7 +142,6 @@ class PurchaseOrderLine(models.Model):
             'context': {'create': False, 'edit': False},
             'flags': {'mode': 'readonly'},
         }
-
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
