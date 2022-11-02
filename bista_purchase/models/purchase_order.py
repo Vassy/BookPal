@@ -112,21 +112,21 @@ class PurchaseOrderLine(models.Model):
                                ('partially_received', 'Partially Received')], default='draft', tracking=True)
 
 
-    def write(self, vals):
-        res = super(PurchaseOrderLine, self).write(vals)
-        print('self', self)
-        for line in self:
-            print('line', line.name, line.status, line.order_id)
-            status_flag = True
-            for all_poline in line.order_id.order_line:
-                print("all order id", all_poline)
-                if all_poline.status != 'ordered':
-                    status_flag = False
-            if status_flag:
-                line.order_id.write({
-                    'state': 'purchase'
-                })
-        return res
+    # def write(self, vals):
+    #     res = super(PurchaseOrderLine, self).write(vals)
+    #     print('self', self)
+    #     for line in self:
+    #         print('line', line.name, line.status, line.order_id)
+    #         status_flag = True
+    #         for all_poline in line.order_id.order_line:
+    #             print("all order id", all_poline)
+    #             if all_poline.status != 'ordered':
+    #                 status_flag = False
+    #         if status_flag:
+    #             line.order_id.write({
+    #                 'state': 'purchase'
+    #             })
+    #     return res
 
     def open_po_line(self):
         self.ensure_one()
