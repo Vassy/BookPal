@@ -35,8 +35,8 @@
                     <field name="tracking_line_ids" nolabel="1" context="{'active_id':active_id}">
                         <tree editable="top" create="0">
                             <field name="po_line_id" readonly="0" force_save="1" invisible="1"/>
-                            <field name="product_id" readonly="0" force_save="1"/>
-                            <field name="ship_qty"/>
+                            <field name="product_id" readonly="1" force_save="1"/>
+                            <field name="ship_qty" string="Shipped Quantity"/>
                         </tree>
                     </field>
                 </sheet>
