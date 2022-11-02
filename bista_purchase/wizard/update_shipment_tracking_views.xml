@@ -13,23 +13,24 @@
 <!--                        <field name="status"/>-->
 <!--                    </tree>-->
 <!--                </field>-->
-                <group>
-                    <group>
-                        <field name="status" required="1"/>
-                        <field name="tracking_ref" required="1"/>
-                    </group>
-                    <group>
-                        <field name="shipment_date" required="0"/>
-                        <field name="shipment_name" required="0"/>
-                    </group>
-                </group>
                 <field name="tracking_lines">
                     <tree editable="bottom" create="0">
                         <field name="checkbox"/>
                         <field name="po_line" readonly="1" force_save="1"/>
-                        <field name="ship_qty"/>
+<!--                        <field name="ship_qty"/>-->
+                        <field name="status"/>
                     </tree>
                 </field>
+                <group>
+                    <group>
+                        <field name="status" required="1"/>
+<!--                        <field name="tracking_ref" required="1"/>-->
+                    </group>
+                    <group>
+<!--                        <field name="shipment_date" required="0"/>-->
+<!--                        <field name="shipment_name" required="0"/>-->
+                    </group>
+                </group>
                 <footer>
                     <button name="update" string="Update" type="object" class="btn-primary"/>
                     <button string="Cancel" special="cancel" class="btn btn-primary"/>
