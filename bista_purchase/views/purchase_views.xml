@@ -24,6 +24,10 @@
                     </group>
                 </group>
             </xpath>
+
+<!--            <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">-->
+<!--                <field name="tracking_ref"/>-->
+<!--            </xpath>-->
             <xpath expr="//page[@name='purchase_delivery_invoice']" position="after">
                 <page name="po_details" string="PO Details">
                     <field name="sale_order_ids" nolabel="1" readonly="1">

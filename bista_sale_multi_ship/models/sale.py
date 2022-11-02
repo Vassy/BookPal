@@ -30,6 +30,8 @@ class SaleOrder(models.Model):
     customer_drop_ship_file = fields.Binary(
         'Customer Drop Ship File', attachment=True)
 
+
+
     # partner_ids = fields.One2many(
     #     'res.partner', 'sale_id',
     #     domain=[('split_so_lines', '!=', False)],

@@ -350,6 +350,8 @@ class SaleMultiShipQtyLines(models.Model):
              "or when the quantity was increased.")
     supplier_id = fields.Many2one('res.partner', 'Vendor')
     is_expense = fields.Boolean()
+    tracking_ref = fields.Char('Tracking Refrence')
+
 
     @api.depends('product_id', 'route_id',
                  'order_id.warehouse_id',
