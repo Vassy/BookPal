@@ -13,6 +13,10 @@ class UpdateShipmentTracking(models.TransientModel):
 
     order_id = fields.Many2one('purchase.order')
 
+    partner_id = fields.Many2one(related='order_id.partner_id')
+    date_approve = fields.Datetime(related='order_id.date_approve')
+    date_order = fields.Datetime(related='order_id.date_order')
+    picking_type_id = fields.Many2one(related="order_id.picking_type_id")
     tracking_lines = fields.One2many('update.shipment.tracking.line', 'update_shipping_id', string="Tracking Lines")
     # po_lines = fields.Many2many('purchase.order.line',string='Purchase Line')
     # tracking_ref = fields.Char('Tracking Ref.')
@@ -78,4 +82,5 @@ class UpdateShipmentTrackingLine(models.TransientModel):
     update_shipping_id = fields.Many2one('update.shipment.tracking', "Update Shipping")
     po_line = fields.Many2one('purchase.order.line', 'PO Line')
     status = fields.Selection(related="po_line.status")
+    product_qty = fields.Float(related='po_line.product_qty')
     # ship_qty = fields.Float(string="Ship Quantity")
