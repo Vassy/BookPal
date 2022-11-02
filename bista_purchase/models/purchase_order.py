@@ -162,9 +162,9 @@ class PurchaseOrderLine(models.Model):
         if self.product_id and bo_transfer:
             message = _('"%s" Product is already in back order. you can check this backorder. %s') \
                 (self.product_id.display_name, bo_transfer)
-        warning_mess = {
-            'title': _('WARNING!'),
-            'message': message
-        }
-        result = {'warning': warning_mess}
+            warning_mess = {
+                'title': _('WARNING!'),
+                'message': message
+            }
+            result = {'warning': warning_mess}
         return result
