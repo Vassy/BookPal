@@ -75,6 +75,7 @@ class PurchaseOrder(models.Model):
             'domain': (['id', 'in', po_lines.ids]),
         }
 
+
     @api.onchange('partner_id')
     def onchange_partner_id_cc_email(self):
         self.cc_email = self.partner_id.cc_email
@@ -173,3 +174,22 @@ class PurchaseOrderLine(models.Model):
             }
             result = {'warning': warning_mess}
         return result
+
+# class PurchaseOrderLine(models.Model):
+#     _inherit = 'purchase.order.line'
+#
+#     tracking_ref = fields.Char('Tracking Refrence')
+
+
+# class StockPicking(models.Model):
+#     _inherit = 'stock.picking'
+#
+#     @api.onchange('carrier_tracking_ref')
+#     def trackig_reference(self):
+#         print("bista",self)
+#         for order in self:
+#             for purchase in order.purchase_id:
+#                 for line in purchase.order_line:
+#                     print('order line', line)
+#                     line.tracking_ref = self.carrier_tracking_ref
+
