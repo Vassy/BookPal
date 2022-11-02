@@ -50,23 +50,23 @@ class PurchaseOrder(models.Model):
     special_pick_note = fields.Html('Special Instructions and Notes')
     num_of_need_by_days = fields.Text(string='Num of Need By Days')
     sale_order_ids = fields.Many2many('sale.order', compute="compute_sale_order_ids")
+    purchase_tracking_ids = fields.One2many('purchase.tracking', 'order_id', string="Purchase Tracking")
 
     def compute_sale_order_ids(self):
         for order_id in self:
             order_id.sale_order_ids = order_id._get_sale_orders()
 
-    def update_shipping(self):
+    def update_po_lines(self):
         po_lines = self.env['purchase.order.line'].search([('id', 'in', self.order_line.ids)])
 
         return {
-            'name': _('Update Status'),
+            'name': _('Update PO Lines'),
             'type': 'ir.actions.act_window',
-            'res_model': 'update.shipping',
+            'res_model': 'update.po.line',
             'view_mode': 'form',
             'view_type': 'form',
             'target': 'new',
             'context': {'default_po_lines': po_lines.ids, 'default_order_id': self.id},
-
             'domain': (['id', 'in', po_lines.ids]),
         }
 
@@ -87,6 +87,7 @@ class RushStatus(models.Model):
 
 class UpdateStatus(models.Model):
     _name = "update.status"
+
 
 
 class PurchaseOrderLine(models.Model):
@@ -121,12 +122,6 @@ class PurchaseOrderLine(models.Model):
                 line.order_id.write({
                     'state': 'purchase'
                 })
-            # lines = self.env['update.shipping'].sudo().search([('po_lines', 'in', self.id)])
-            # print('-----po-----lines',lines,lines.po_lines.order_id,self.order_id,self.status,self)
-            # if line.status == 'ordered':
-            #     line.order_id.write({
-            #         'state': 'purchase'
-            #     })
         return res
 
     def open_po_line(self):
@@ -137,12 +132,12 @@ class PurchaseOrderLine(models.Model):
             'res_model': 'purchase.order.line',
             'view_mode': 'form',
             'view_type': 'form',
-            'target': 'current',
+            'target': 'new',
             'res_id': self.id,
             'view_id': self.env.ref('bista_purchase.purchase_order_line_form').id,
             'context': {'create': False, 'edit': False},
+            'flags': {'mode': 'readonly'},
         }
-
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'

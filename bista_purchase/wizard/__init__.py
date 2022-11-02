@@ -1,2 +1,2 @@
 # -*- coding: utf-8 -*-
-from. import update_shipping
+from . import update_shipment_tracking
