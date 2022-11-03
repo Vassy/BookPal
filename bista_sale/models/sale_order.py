@@ -46,35 +46,7 @@ class SaleOrder(models.Model):
     individual_mailer_return_address = fields.Char(string="Individual Mailer Return Address")
     book_status = fields.Char(string="Book Status")
     on_hold_reason = fields.Text(string='On Hold Reason(s)')
-    valid_until = fields.Date('Valid Until')
     due_amount = fields.Monetary('Due Amount', related='partner_id.total_due')
-
-
-# class StockPicking(models.Model):
-#     _inherit = 'stock.picking'
-#
-#     @api.onchange('carrier_tracking_ref')
-#     def trackig_ref(self):
-#         for order in self.filtered(lambda p: p.picking_type_id.code == 'outgoing'):
-#              for sale in order.sale_id:
-#                 print('backorder',sale.sale_multi_ship_qty_lines,sale.sale_multi_ship_qty_lines.move_ids)
-#                 for move_id in sale.sale_multi_ship_qty_lines.move_ids:
-#                     print('move',move_id,move_id.picking_code,move_id
-#                           ,move_id.picking_id,move_id.picking_id.carrier_tracking_ref,move_id.picking_id.backorder_id)
-#                 if not sale.split_shipment:
-#                     for line in sale.order_line:
-#                       for move_line in order.move_ids_without_package:
-#                           if move_line.product_id == line.product_id:
-#                             print('order line', line)
-#                             line.tracking_ref = self.carrier_tracking_ref
-#                 else:
-#                     for shipping_line in sale.sale_multi_ship_qty_lines:
-#                         for move_line in order.move_ids_without_package:
-#                             if move_line.product_id == shipping_line.product_id:
-#                                shipping_line.tracking_ref = self.carrier_tracking_ref
-
-
-
 
 
 
