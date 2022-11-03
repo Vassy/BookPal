@@ -30,6 +30,7 @@
         'report/stock_picking.xml',
         'data/email_schdule_activity.xml',
         'data/email_template.xml'
+
     ],
     'auto_install': False,
     'installable': True,
