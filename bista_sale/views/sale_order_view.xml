@@ -9,9 +9,17 @@
             <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
                 <field name="picking_note"/>
             </xpath>
-             <xpath expr="//field[@name='payment_term_id']" position="after">
-                <field name="valid_until"/>
+
+
+             <xpath expr="//field[@name='order_line']/tree/field[@name='qty_delivered']" position="after">
+                <field name="tracking_ref"/>
             </xpath>
+
+           <xpath expr="//field[@name='validity_date']" position="attributes">
+                <attribute name="string">Valid Until</attribute>
+                <attribute name="attrs">{'invisible': 0 }</attribute>
+           </xpath>
+
              <xpath expr="//field[@name='payment_term_id']" position="after">
                 <field name="client_order_ref"/>
             </xpath>
@@ -34,55 +42,6 @@
                     </group>
                 </group>
             </xpath>
-<!--             <xpath expr="//page[@name='other_information']/group[2]" position="after">-->
-<!--                <group>-->
-<!--                    <group name="order_notes" string="Order Notes">-->
-<!--                        <field name="event_date" />-->
-<!--                        <field name="order_notes" />-->
-<!--                        <field name="gorgias_ticket" />-->
-<!--                        <field name="product_status_notes" />-->
-<!--                        <field name="white_glove_id"/>-->
-<!--                        <field name="ce_notes" />-->
-<!--                        <field name="payment_notes" />-->
-<!--                        <field name="am_notes" />-->
-<!--                        <field name="ce_ops_acct_notes" />-->
-<!--                    </group>-->
-<!--                    <group name="journal_details" string="Journal Details">-->
-<!--                        <field name="journal_customization_id" />-->
-<!--                        <field name="customization_cost" />-->
-<!--                        <field name="link_to_art_files" />-->
-<!--                        <field name="artwork_status_id" />-->
-<!--                        <field name="journal_notes" />-->
-<!--                        <field name="journal_setup_fee" />-->
-<!--                        <field name="shipping_account" />-->
-<!--                        <field name="shipping_cost" />-->
-<!--                        <field name="death_type_id" />-->
-<!--                        <field name="existing_death_order" />-->
-<!--                    </group>-->
-<!--                    <group name="project_fulfilment_tracking" string="Project and Fulfilment Tracking">-->
-<!--                        <field name="fulfilment_project" />-->
-<!--                        <field name="am_owner" />-->
-<!--                        <field name="project_description" />-->
-<!--                        <field name="status_notes" />-->
-<!--                        <field name="delivery_location" />-->
-<!--                        <field name="shipping_instruction" />-->
-<!--                        <field name="customization_type_ids" widget="many2many_tags"/>-->
-<!--                        <field name="special_insert_note" />-->
-<!--                        <field name="attachment_note" />-->
-<!--                        <field name="individual_mailer_return_receiver" />-->
-<!--                        <field name="recipient_list_status" />-->
-<!--                        <field name="recipient_list_expected" />-->
-<!--                        <field name="individual_mailer_return_address" />-->
-<!--                        <field name="book_status" />-->
-<!--                        <field name="on_hold_reason" />-->
-<!--                    </group>-->
-<!--                    <group name="payment_info" string="Payment Information">-->
-<!--                        <field name="billing_notes" />-->
-<!--                        <field name="placed_from_ip" />-->
-<!--                    </group>-->
-<!--                </group>-->
-<!--            </xpath>-->
-<!--        </field>-->
 
             <xpath expr="//notebook/page[@name='other_information']" position="after">
                 <page string="Order Notes" name="order_notes">

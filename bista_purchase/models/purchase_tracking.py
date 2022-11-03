@@ -9,6 +9,7 @@ class PurchaseTracking(models.Model):
     _order = 'tracking_ref'
 
     order_id = fields.Many2one('purchase.order', string="Order")
+
     partner_id = fields.Many2one(related='order_id.partner_id')
     date_approve = fields.Datetime(related='order_id.date_approve')
     date_order = fields.Datetime(related='order_id.date_order')
@@ -43,6 +44,7 @@ class PurchaseTracking(models.Model):
                 defaults['tracking_line_ids'] = po_line_vals
                 defaults['order_id'] = po_ids[0].id
         return defaults
+
 
 class PurchaseTrackingLine(models.Model):
     _name = 'purchase.tracking.line'

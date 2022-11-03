@@ -1,5 +1,6 @@
 from odoo import fields, models, api, _, Command
 
+
 # class UpdateShipping(models.TransientModel):
 #     _name = 'update.shipping'
 #
@@ -11,6 +12,7 @@ class UpdateShipmentTracking(models.TransientModel):
     _description = 'Update Shipment Tracking'
 
     order_id = fields.Many2one('purchase.order')
+
     partner_id = fields.Many2one(related='order_id.partner_id')
     date_approve = fields.Datetime(related='order_id.date_approve')
     date_order = fields.Datetime(related='order_id.date_order')

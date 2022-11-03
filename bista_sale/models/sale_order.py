@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-from odoo import  _,api,fields, models
+from odoo import _, api, fields, models
 
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-
-    common_pick_note = fields.Html('Common Notes',)
+    common_pick_note = fields.Html('Common Notes', )
     white_glove_id = fields.Many2one('white.glove.type', string='White Glove Type')
     event_date = fields.Date(string="Event Date")
     order_notes = fields.Text(string="Order Notes")
@@ -47,23 +46,16 @@ class SaleOrder(models.Model):
     individual_mailer_return_address = fields.Char(string="Individual Mailer Return Address")
     book_status = fields.Char(string="Book Status")
     on_hold_reason = fields.Text(string='On Hold Reason(s)')
-    valid_until=fields.Date('Valid Until')
-    due_amount=fields.Monetary('Due Amount' ,related='partner_id.total_due')
+    due_amount = fields.Monetary('Due Amount', related='partner_id.total_due')
 
-
-     # due amount of customer
-    # def create(self, vals):
-    #     sale_order = super(SaleOrder, self).create(vals)
-    #     for order in sale_order:
-    #         if order.partner_id.total_due:
-    #            order.due_amount = order.partner_id.total_due
-    #     return sale_order
 
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     picking_note = fields.Text('Picking Note')
+    tracking_ref = fields.Char('Tracking Refrence')
+
 
     def _prepare_procurement_values(self, group_id=False):
         values = super(SaleOrderLine, self)._prepare_procurement_values(group_id)
@@ -138,3 +130,8 @@ class SaleMultiShipQtyLines(models.Model):
             }
             result = {'warning': warning_mess}
             return result
+
+
+
+
+

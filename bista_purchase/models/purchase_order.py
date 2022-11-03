@@ -52,6 +52,11 @@ class PurchaseOrder(models.Model):
     sale_order_ids = fields.Many2many('sale.order', compute="compute_sale_order_ids")
     purchase_tracking_ids = fields.One2many('purchase.tracking', 'order_id', string="Purchase Tracking")
 
+
+    def compute_sale_order_ids(self):
+        for order_id in self:
+            order_id.sale_order_ids = order_id._get_sale_orders()
+
     def compute_sale_order_ids(self):
         for order_id in self:
             order_id.sale_order_ids = order_id._get_sale_orders()
@@ -69,6 +74,7 @@ class PurchaseOrder(models.Model):
             'context': {'default_po_lines': po_lines.ids, 'default_order_id': self.id},
             'domain': (['id', 'in', po_lines.ids]),
         }
+
 
     @api.onchange('partner_id')
     def onchange_partner_id_cc_email(self):
@@ -88,8 +94,6 @@ class RushStatus(models.Model):
 class UpdateStatus(models.Model):
     _name = "update.status"
 
-
-
 class PurchaseOrderLine(models.Model):
     _inherit = ['purchase.order.line', 'mail.thread', 'mail.activity.mixin']
     _name = 'purchase.order.line'
@@ -107,6 +111,7 @@ class PurchaseOrderLine(models.Model):
                                ('canceled', 'Canceled'),
                                ('invoiced', 'Invoiced'),
                                ('partially_received', 'Partially Received')], default='draft', tracking=True)
+
 
     # def write(self, vals):
     #     res = super(PurchaseOrderLine, self).write(vals)
@@ -162,9 +167,29 @@ class PurchaseOrderLine(models.Model):
         if self.product_id and bo_transfer:
             message = _('"%s" Product is already in back order. you can check this backorder. %s') \
                 (self.product_id.display_name, bo_transfer)
+
             warning_mess = {
                 'title': _('WARNING!'),
                 'message': message
             }
             result = {'warning': warning_mess}
         return result
+
+# class PurchaseOrderLine(models.Model):
+#     _inherit = 'purchase.order.line'
+#
+#     tracking_ref = fields.Char('Tracking Refrence')
+
+
+# class StockPicking(models.Model):
+#     _inherit = 'stock.picking'
+#
+#     @api.onchange('carrier_tracking_ref')
+#     def trackig_reference(self):
+#         print("bista",self)
+#         for order in self:
+#             for purchase in order.purchase_id:
+#                 for line in purchase.order_line:
+#                     print('order line', line)
+#                     line.tracking_ref = self.carrier_tracking_ref
+

@@ -29,6 +29,7 @@
                         </group>
                         <group>
                             <field name="shipment_name"/>
+
                             <field name="status"/>
                         </group>
                     </group>

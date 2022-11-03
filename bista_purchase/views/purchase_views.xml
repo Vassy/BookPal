@@ -144,6 +144,7 @@
         <field name="model">purchase.order.line</field>
         <field name="arch" type="xml">
             <form name="purchase_order_line" string="PO Line" create="false" edit="false">
+
 <!--                <header>-->
 <!--                    <field name="status" widget="statusbar"-->
 <!--                           statusbar_visible="draft,ready_for_preview,ordered,pending,completed" readonly="1"/>-->

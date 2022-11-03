@@ -53,6 +53,7 @@
         </field>
     </record>
     <record id="update_shipment_tracking_action" model="ir.actions.act_window">
+
         <field name="name">Update PO Line Status</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">update.shipment.tracking</field>
