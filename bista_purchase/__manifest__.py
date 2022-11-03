@@ -17,12 +17,10 @@
         'report/purchase.xml',
         'report/purchase_quotation_templates.xml',
         'report/report_templates.xml',
-        'wizard/update_shipment_tracking_views.xml',
-        'views/purchase_tracking_views.xml',
+
         # 'report/purchase_order.xml',
         'report/stock_picking.xml',
         'data/email_schdule_activity.xml',
-
         'data/email_template.xml',
         'wizard/update_shipping_views.xml',
 
@@ -31,7 +29,8 @@
         # 'report/purchase_order.xml',
         'report/stock_picking.xml',
         'data/email_schdule_activity.xml',
-        'data/email_template.xml'
+
+        
     ],
     'auto_install': False,
     'installable': True,
