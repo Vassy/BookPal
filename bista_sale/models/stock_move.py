@@ -1,10 +1,18 @@
 # -*- coding: utf-8 -*-
-from odoo import  _,api,fields, models
+from odoo import _, api, fields, models
+
+
+class StockPicking(models.Model):
+    _inherit = "stock.picking"
+
+    sequence_code = fields.Char(related="picking_type_id.sequence_code", string="Sequence Code")
+
 
 class StockMove(models.Model):
     _inherit = "stock.move"
 
     picking_note = fields.Char(string="Picking Note", copy=False)
+    publisher_id = fields.Many2one(related="product_tmpl_id.publisher_id", string="Publisher")
 
     @api.model
     def _prepare_merge_moves_distinct_fields(self):
@@ -22,3 +30,7 @@ class StockMove(models.Model):
                 vals['note'] = purchase_id.special_pick_note
         return vals
 
+    class StockMove(models.Model):
+        _inherit = "stock.move.line"
+
+        publisher_id = fields.Many2one(related="product_id.publisher_id", string="Publisher")
