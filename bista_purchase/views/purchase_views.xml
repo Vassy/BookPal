@@ -24,6 +24,11 @@
                     </group>
                 </group>
             </xpath>
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-danger mb-0" role="alert">
+                    <span>Before Doing Any Opertions, Please Check The Nuances.</span>
+                </div>
+            </xpath>
             <xpath expr="//page[@name='purchase_delivery_invoice']" position="after">
                 <page name="po_details" string="PO Details">
                     <field name="sale_order_ids" nolabel="1" readonly="1">
