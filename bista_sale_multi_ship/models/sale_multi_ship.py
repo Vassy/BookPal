@@ -350,8 +350,21 @@ class SaleMultiShipQtyLines(models.Model):
              "or when the quantity was increased.")
     supplier_id = fields.Many2one('res.partner', 'Vendor')
     is_expense = fields.Boolean()
-    tracking_ref = fields.Char('Tracking Refrence')
+    tracking_ref = fields.Char(
+        'Tracking Refrence', compute="get_tracking_ref")
 
+    @api.depends('move_ids.state')
+    def get_tracking_ref(self):
+        """Get the tracking reference."""
+        for line in self:
+            tracking_ref = line.move_ids.filtered(
+                lambda x: x.picking_type_id.code in
+                ['outgoing', 'incoming'] and
+                x.quantity_done).mapped(
+                'picking_id').mapped('carrier_tracking_ref')
+            tracking_ref = ','.join([str(elem)
+                                     for elem in tracking_ref if elem])
+            line.tracking_ref = tracking_ref
 
     @api.depends('product_id', 'route_id',
                  'order_id.warehouse_id',

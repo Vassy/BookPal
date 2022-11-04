@@ -10,7 +10,6 @@
                 <field name="picking_note"/>
             </xpath>
 
-
              <xpath expr="//field[@name='order_line']/tree/field[@name='qty_delivered']" position="after">
                 <field name="tracking_ref"/>
             </xpath>
