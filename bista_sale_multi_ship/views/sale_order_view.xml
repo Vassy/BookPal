@@ -108,6 +108,7 @@
                                 <field name="supplier_id" context="{'product_id': product_id}" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="state" optional="hide" readonly="1" force_save="1"/>
                                 <field name="attention" optional="hide" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="confirm_date" readonly="1"/>
                                 <field name="tracking_ref" optional="show"/>
                                 <field name="partner_state" invisible="1"/>
                                 <field name="order_id" invisible="1"/>

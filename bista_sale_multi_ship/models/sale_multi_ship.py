@@ -352,6 +352,7 @@ class SaleMultiShipQtyLines(models.Model):
     is_expense = fields.Boolean()
     tracking_ref = fields.Char(
         'Tracking Refrence', compute="get_tracking_ref")
+    confirm_date = fields.Datetime('Confirmed Date')
 
     @api.depends('move_ids.state')
     def get_tracking_ref(self):
@@ -689,3 +690,9 @@ class SaleMultiShipQtyLines(models.Model):
                     lambda x: x.state == 'done'):
                 raise ValidationError("This shipment has some done move")
         return super(SaleMultiShipQtyLines, self).unlink()
+
+    def write(self, vals):
+        """Update the confirmation date."""
+        if 'state' in vals and vals.get('state') == 'sale':
+            vals.update({'confirm_date': fields.Datetime.now()})
+        return super(SaleMultiShipQtyLines, self).write(vals)
