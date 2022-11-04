@@ -6,7 +6,8 @@ class SaleOrder(models.Model):
     _inherit = "sale.order"
 
     common_pick_note = fields.Html('Common Notes', )
-    white_glove_id = fields.Many2one('white.glove.type', string='White Glove Type')
+    white_glove_id = fields.Many2one(
+        'white.glove.type', string='White Glove Type')
     event_date = fields.Date(string="Event Date")
     order_notes = fields.Text(string="Order Notes")
     product_status_notes = fields.Text(string="Product Status Notes")
@@ -18,10 +19,12 @@ class SaleOrder(models.Model):
     billing_notes = fields.Text(string="Billing Notes")
     placed_from_ip = fields.Char(string="Placed from IP")
     # journal or promotional product fields
-    journal_customization_id = fields.Many2one('journal.customization', string='Journal Customization')
+    journal_customization_id = fields.Many2one(
+        'journal.customization', string='Journal Customization')
     customization_cost = fields.Float('Our Customization Cost')
     link_to_art_files = fields.Text(string='Link to Art Files')
-    artwork_status_id = fields.Many2one('artwork.status', string='Artwork Status')
+    artwork_status_id = fields.Many2one(
+        'artwork.status', string='Artwork Status')
     journal_notes = fields.Text(string='Journal Notes')
     journal_setup_fee = fields.Char(string="Journal Set Up Fee")
     journal_setup_fee_waived = fields.Char(string="Journal Set Up Fee Waived")
@@ -37,31 +40,47 @@ class SaleOrder(models.Model):
     status_notes = fields.Text(string='Status Notes')
     delivery_location = fields.Char(string="Delivery Location")
     shipping_instruction = fields.Text(string='Shipping Instruction')
-    customization_type_ids = fields.Many2many('customization.type', string="Customization Type")
+    customization_type_ids = fields.Many2many(
+        'customization.type', string="Customization Type")
     special_insert_note = fields.Text(string='Special Insert Notes')
     attachment_note = fields.Text(string='Attachment Notes')
-    individual_mailer_return_receiver = fields.Char(string="Individual Mailer Return Receiver")
+    individual_mailer_return_receiver = fields.Char(
+        string="Individual Mailer Return Receiver")
     recipient_list_status = fields.Char(string="Recipient List Status")
     recipient_list_expected = fields.Char(string="Recipient List Expected")
-    individual_mailer_return_address = fields.Char(string="Individual Mailer Return Address")
+    individual_mailer_return_address = fields.Char(
+        string="Individual Mailer Return Address")
     book_status = fields.Char(string="Book Status")
     on_hold_reason = fields.Text(string='On Hold Reason(s)')
     due_amount = fields.Monetary('Due Amount', related='partner_id.total_due')
-
 
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     picking_note = fields.Text('Picking Note')
-    tracking_ref = fields.Char('Tracking Refrence')
+    tracking_ref = fields.Char(
+        'Tracking Refrence', compute="get_tracking_ref")
 
+    @api.depends('move_ids.state')
+    def get_tracking_ref(self):
+        """Get the tracking reference."""
+        for line in self:
+            tracking_ref = line.move_ids.filtered(
+                lambda x: x.picking_type_id.code in
+                ['outgoing', 'incoming'] and
+                x.quantity_done).mapped(
+                'picking_id').mapped('carrier_tracking_ref')
+            tracking_ref = ','.join([str(elem)
+                                     for elem in tracking_ref if elem])
+            line.tracking_ref = tracking_ref
 
     def _prepare_procurement_values(self, group_id=False):
-        values = super(SaleOrderLine, self)._prepare_procurement_values(group_id)
+        values = super(
+            SaleOrderLine, self)._prepare_procurement_values(group_id)
         pick_note = {
             'picking_note': self.picking_note
-            }
+        }
         if values and type(values) is list:
             values[0].update(pick_note)
         elif values and type(values) is dict:
@@ -71,13 +90,14 @@ class SaleOrderLine(models.Model):
     def check_bo_transfer(self):
         name = ''
         if self.product_id:
-            domain = [('picking_type_code', '=', 'incoming'),\
-                    ('partner_id', '=', self.product_id.seller_ids[0].name.id\
-                        if not self.supplier_id else self.supplier_id.id),\
-                    ('backorder_id', '!=', False),
-                    ('state', 'not in', ['done', 'cancel'])]
+            domain = [('picking_type_code', '=', 'incoming'),
+                      ('partner_id', '=', self.product_id.seller_ids[0].name.id
+                       if not self.supplier_id else self.supplier_id.id),
+                      ('backorder_id', '!=', False),
+                      ('state', 'not in', ['done', 'cancel'])]
             picking_ids = self.env['stock.picking'].search(domain)
-            pick_id = picking_ids.move_ids_without_package.filtered(lambda x: x.product_id == self.product_id)
+            pick_id = picking_ids.move_ids_without_package.filtered(
+                lambda x: x.product_id == self.product_id)
             if pick_id:
                 for ref in pick_id:
                     name += '\n' + ref.picking_id.name
@@ -89,7 +109,7 @@ class SaleOrderLine(models.Model):
         bo_transfer = self.check_bo_transfer()
         if self.product_id and bo_transfer:
             message = _('"%s" Product is already in back order. you can check this backorder. %s')\
-                 %(self.product_id.display_name, bo_transfer)
+                % (self.product_id.display_name, bo_transfer)
             warning_mess = {
                 'title': _('WARNING!'),
                 'message': message
@@ -105,13 +125,14 @@ class SaleMultiShipQtyLines(models.Model):
     def check_bo_transfer(self):
         name = ''
         if self.so_line_id:
-            domain = [('picking_type_code', '=', 'incoming'),\
-                    ('partner_id', '=', self.so_line_id.product_id.seller_ids[0].name.id\
-                        if not self.supplier_id else self.supplier_id.id),\
-                    ('backorder_id', '!=', False),
-                    ('state', 'not in', ['done', 'cancel'])]
+            domain = [('picking_type_code', '=', 'incoming'),
+                      ('partner_id', '=', self.so_line_id.product_id.seller_ids[0].name.id
+                       if not self.supplier_id else self.supplier_id.id),
+                      ('backorder_id', '!=', False),
+                      ('state', 'not in', ['done', 'cancel'])]
             picking_ids = self.env['stock.picking'].search(domain)
-            pick_id = picking_ids.move_ids_without_package.filtered(lambda x: x.product_id == self.so_line_id.product_id)
+            pick_id = picking_ids.move_ids_without_package.filtered(
+                lambda x: x.product_id == self.so_line_id.product_id)
             if pick_id:
                 for ref in pick_id:
                     name += '\n' + ref.picking_id.name
@@ -123,15 +144,10 @@ class SaleMultiShipQtyLines(models.Model):
         bo_transfer = self.check_bo_transfer()
         if self.so_line_id and bo_transfer:
             message = _('"%s" Product is already in back order. you can check this backorder. %s')\
-                 %(self.so_line_id.product_id.display_name, bo_transfer)
+                % (self.so_line_id.product_id.display_name, bo_transfer)
             warning_mess = {
                 'title': _('WARNING!'),
                 'message': message
             }
             result = {'warning': warning_mess}
             return result
-
-
-
-
-

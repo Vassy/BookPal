@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="product.product_template_only_form_view" />
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='x_studio_manufacturer']" position="attributes">
-                    <attribute name="string">Brand </attribute>
+                    <attribute name="string">Imprints</attribute>
                 </xpath>
                 <xpath expr="//field[@name='x_studio_manufacturer']" position="after">
                     <field name="product_format"/>

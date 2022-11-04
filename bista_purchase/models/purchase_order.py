@@ -13,26 +13,36 @@ class PurchaseOrder(models.Model):
     # Review Order Notes and Requirements
     order_notes = fields.Text(string='Order Notes')
     fulfilment_project = fields.Boolean(string="Fulfilment Project")
-    ordered_by = fields.Many2one(related="sale_order_ids.partner_id", string="Ordered By")
-    ops_project_owner_id = fields.Many2one('res.users', string='Ops Project Owner')
+    ordered_by = fields.Many2one(
+        related="sale_order_ids.partner_id", string="Ordered By")
+    ops_project_owner_id = fields.Many2one(
+        'res.users', string='Ops Project Owner')
     payment_receive_date = fields.Date(string='Payment Received Date')
     billing_notes = fields.Text(string="Billing Notes")
     cc_email = fields.Char(string="CC Email")
-    supplier_nuances = fields.Text(string="Supplier Nuances", related="partner_id.supplier_nuances")
-    minimum_nuances = fields.Text(string="Minimums Nuances", related="partner_id.minimums_nuances")
-    pre_approval_nuances = fields.Text(string="Pre Approval Nuances", related="partner_id.pre_approval_nuances")
-    transfer_to_bookpal_warehouse = fields.Boolean(string="Transfer to BookPal Warehouse")
+    supplier_nuances = fields.Text(
+        string="Supplier Nuances", related="partner_id.supplier_nuances")
+    minimum_nuances = fields.Text(
+        string="Minimums Nuances", related="partner_id.minimums_nuances")
+    pre_approval_nuances = fields.Text(
+        string="Pre Approval Nuances", related="partner_id.pre_approval_nuances")
+    transfer_to_bookpal_warehouse = fields.Boolean(
+        string="Transfer to BookPal Warehouse")
     type = fields.Selection([('customer', 'Customer'),
                              ('supplier', 'Supplier'),
                              ('credit', 'Credit'),
                              ], string="Type")
-    supplier_warehouse = fields.Many2one('stock.warehouse', string='Supplier Warehouse')
+    supplier_warehouse = fields.Many2one(
+        'stock.warehouse', string='Supplier Warehouse')
 
-    future_ship_nuances = fields.Text(string="Future Ship Nuances", related="partner_id.future_ship_nuances")
-    shipping_nuances = fields.Text(string="Shipping Nuances", related="partner_id.shipping_nuances")
+    future_ship_nuances = fields.Text(
+        string="Future Ship Nuances", related="partner_id.future_ship_nuances")
+    shipping_nuances = fields.Text(
+        string="Shipping Nuances", related="partner_id.shipping_nuances")
     processing_time_nuances = fields.Text(string="Processing Time Nuances",
                                           related="partner_id.processing_time_nuances")
-    author_event_naunces = fields.Text(string="Author Event Nuances", related="partner_id.author_event_naunces")
+    author_event_naunces = fields.Text(
+        string="Author Event Nuances", related="partner_id.author_event_naunces")
     author_event_shipping_naunces = fields.Text(string="Author Event Shipping Nuances",
                                                 related="partner_id.author_event_shipping_naunces")
     rush_status_id = fields.Many2one('rush.status', string='Rush Status')
@@ -40,17 +50,24 @@ class PurchaseOrder(models.Model):
     order_shipping_desc = fields.Char(string='Order Shipping Description')
     default_supplier_shipping = fields.Char(string='Default Supplier Shipping')
     freight_charges = fields.Text(string='Freight Charges')
-    rush_shipping_nuances = fields.Text(string="Rush Shipping Nuances", related="partner_id.rush_processing_nuances")
-    shipping_acct_nuances = fields.Text(string="Shipping Acct Nuances", related="partner_id.shipping_acct_nuances")
-    freight_nuances = fields.Text(string="Freight Nuances", related="partner_id.frieght_nuances")
-    opening_text_nuances = fields.Text(string="Opening Text Nuances", related="partner_id.opening_text_nuances")
-    note_to_vendor_nuances = fields.Text(string="Note to Vendor Nuances", related="partner_id.note_to_vendor_nuances")
+    rush_shipping_nuances = fields.Text(
+        string="Rush Shipping Nuances", related="partner_id.rush_processing_nuances")
+    shipping_acct_nuances = fields.Text(
+        string="Shipping Acct Nuances", related="partner_id.shipping_acct_nuances")
+    freight_nuances = fields.Text(
+        string="Freight Nuances", related="partner_id.frieght_nuances")
+    opening_text_nuances = fields.Text(
+        string="Opening Text Nuances", related="partner_id.opening_text_nuances")
+    note_to_vendor_nuances = fields.Text(
+        string="Note to Vendor Nuances", related="partner_id.note_to_vendor_nuances")
     memo = fields.Text(string="Memo")
     supplier_order_number = fields.Char(string="Supplier Order Number")
     special_pick_note = fields.Html('Special Instructions and Notes')
     num_of_need_by_days = fields.Text(string='Num of Need By Days')
-    sale_order_ids = fields.Many2many('sale.order', compute="compute_sale_order_ids")
-    purchase_tracking_ids = fields.One2many('purchase.tracking', 'order_id', string="Purchase Tracking")
+    sale_order_ids = fields.Many2many(
+        'sale.order', compute="compute_sale_order_ids")
+    purchase_tracking_ids = fields.One2many(
+        'purchase.tracking', 'order_id', string="Purchase Tracking")
 
     def compute_sale_order_ids(self):
         for order_id in self:
@@ -61,7 +78,8 @@ class PurchaseOrder(models.Model):
             order_id.sale_order_ids = order_id._get_sale_orders()
 
     def update_po_lines(self):
-        po_lines = self.env['purchase.order.line'].search([('id', 'in', self.order_line.ids)])
+        po_lines = self.env['purchase.order.line'].search(
+            [('id', 'in', self.order_line.ids)])
 
         return {
             'name': _('Update PO Lines'),
@@ -111,6 +129,20 @@ class PurchaseOrderLine(models.Model):
     #                            ('invoiced', 'Invoiced'),
     #                            ('partially_received', 'Partially Received')], default='draft', tracking=True)
     status_id = fields.Many2one('po.status.line', string="Status")
+    tracking_ref = fields.Char(
+        'Tracking Refrence', compute="get_tracking_ref")
+
+    @api.depends('move_ids.state')
+    def get_tracking_ref(self):
+        """Get the tracking reference."""
+        for line in self:
+            tracking_ref = line.move_ids.filtered(
+                lambda x: x.picking_type_id.code == 'incoming' and
+                x.quantity_done).mapped(
+                'picking_id').mapped('carrier_tracking_ref')
+            tracking_ref = ','.join([str(elem)
+                                     for elem in tracking_ref if elem])
+            line.tracking_ref = tracking_ref
 
     # def write(self, vals):
     #     res = super(PurchaseOrderLine, self).write(vals)
@@ -143,18 +175,16 @@ class PurchaseOrderLine(models.Model):
             'flags': {'mode': 'readonly'},
         }
 
-
-class PurchaseOrderLine(models.Model):
-    _inherit = 'purchase.order.line'
-    _description = 'Purchase Order Line model details.'
-
     def check_bo_transfer(self):
         name = ''
         picking_ids = self.env['stock.picking'].search([('picking_type_code', '=', 'incoming'),
-                                                        ('partner_id', '=', self.order_id.partner_id.id),
-                                                        ('backorder_id', '!=', False),
+                                                        ('partner_id', '=',
+                                                         self.order_id.partner_id.id),
+                                                        ('backorder_id',
+                                                         '!=', False),
                                                         ('state', 'not in', ['done', 'cancel'])])
-        pick_id = picking_ids.move_ids_without_package.filtered(lambda x: x.product_id == self.product_id)
+        pick_id = picking_ids.move_ids_without_package.filtered(
+            lambda x: x.product_id == self.product_id)
         if pick_id:
             for ref in pick_id:
                 name += '\n' + ref.picking_id.name
@@ -165,8 +195,8 @@ class PurchaseOrderLine(models.Model):
         result = {}
         bo_transfer = self.check_bo_transfer()
         if self.product_id and bo_transfer:
-            message = _('"%s" Product is already in back order. you can check this backorder. %s') \
-                (self.product_id.display_name, bo_transfer)
+            message = _('"%s" Product is already in back order. you can check this backorder. %s')(
+                self.product_id.display_name, bo_transfer)
 
             warning_mess = {
                 'title': _('WARNING!'),
@@ -174,25 +204,6 @@ class PurchaseOrderLine(models.Model):
             }
             result = {'warning': warning_mess}
         return result
-
-
-# class PurchaseOrderLine(models.Model):
-#     _inherit = 'purchase.order.line'
-#
-#     tracking_ref = fields.Char('Tracking Refrence')
-
-
-# class StockPicking(models.Model):
-#     _inherit = 'stock.picking'
-#
-#     @api.onchange('carrier_tracking_ref')
-#     def trackig_reference(self):
-#         print("bista",self)
-#         for order in self:
-#             for purchase in order.purchase_id:
-#                 for line in purchase.order_line:
-#                     print('order line', line)
-#                     line.tracking_ref = self.carrier_tracking_ref
 
 
 class PoStatus(models.Model):

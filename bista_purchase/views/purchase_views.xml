@@ -6,6 +6,7 @@
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='order_line']//tree" position="inside">
+                <field name="tracking_ref" optional="show"/>
                 <field name="status_id"/>
                 <button name="open_po_line" type="object" icon="fa-eye" class="btn btn-link" style="float:right"/>
             </xpath>
