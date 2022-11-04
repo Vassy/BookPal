@@ -22,6 +22,7 @@
         'report/stock_picking.xml',
         'data/email_schdule_activity.xml',
         'data/email_template.xml',
+        'data/po_status_line_data.xml',
         # 'wizard/update_shipping_views.xml',
 
         'wizard/update_shipment_tracking_views.xml',
@@ -30,7 +31,6 @@
         'report/stock_picking.xml',
         'data/email_schdule_activity.xml',
 
-        
     ],
     'auto_install': False,
     'installable': True,

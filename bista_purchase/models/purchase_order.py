@@ -115,19 +115,20 @@ class PurchaseOrderLine(models.Model):
     _inherit = ['purchase.order.line', 'mail.thread', 'mail.activity.mixin']
     _name = 'purchase.order.line'
 
-    status = fields.Selection([('draft', 'Draft'),
-                               ('ready_for_preview', 'Ready For Preview '),
-                               ('ordered', 'Ordered '),
-                               ('pending', 'Pending/In Transint'),
-                               ('received', 'Received'),
-                               ('stocked', 'Stocked'),
-                               ('completed', 'Completed'),
-                               ('return_created', 'Return created'),
-                               ('rush_ordered', 'Rush Ordered'),
-                               ('on_hold', 'On Hold'),
-                               ('canceled', 'Canceled'),
-                               ('invoiced', 'Invoiced'),
-                               ('partially_received', 'Partially Received')], default='draft', tracking=True)
+    # status = fields.Selection([('draft', 'Draft'),
+    #                            ('ready_for_preview', 'Ready For Preview '),
+    #                            ('ordered', 'Ordered '),
+    #                            ('pending', 'Pending/In Transint'),
+    #                            ('received', 'Received'),
+    #                            ('stocked', 'Stocked'),
+    #                            ('completed', 'Completed'),
+    #                            ('return_created', 'Return created'),
+    #                            ('rush_ordered', 'Rush Ordered'),
+    #                            ('on_hold', 'On Hold'),
+    #                            ('canceled', 'Canceled'),
+    #                            ('invoiced', 'Invoiced'),
+    #                            ('partially_received', 'Partially Received')], default='draft', tracking=True)
+    status_id = fields.Many2one('po.status.line', string="Status")
     tracking_ref = fields.Char(
         'Tracking Refrence', compute="get_tracking_ref")
 
@@ -203,3 +204,14 @@ class PurchaseOrderLine(models.Model):
             }
             result = {'warning': warning_mess}
         return result
+
+
+class PoStatus(models.Model):
+    _name = 'po.status.line'
+    _description = 'Status Line'
+    _order = 'sequence'
+
+    name = fields.Char('Status Name')
+    sequence = fields.Integer(string='Sequences', default=0)
+    manual_update = fields.Boolean(default=True)
+    active = fields.Boolean(string="Archived", default=True)
