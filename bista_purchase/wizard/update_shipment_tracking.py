@@ -22,19 +22,20 @@ class UpdateShipmentTracking(models.TransientModel):
     # tracking_ref = fields.Char('Tracking Ref.')
     # shipment_date = fields.Date(string="Shipment Date")
     # shipment_name = fields.Char('Shipment Name')
-    status = fields.Selection([('draft', 'Draft'),
-                               ('ready_for_preview', 'Ready For Preview '),
-                               # ('ordered', 'Ordered '),
-                               ('pending', 'Pending/In Transint'),
-                               ('received', 'Received'),
-                               ('stocked', 'Stocked'),
-                               ('completed', 'Completed'),
-                               ('return_created', 'Return created'),
-                               ('rush_ordered', 'Rush Ordered'),
-                               ('on_hold', 'On Hold'),
-                               ('canceled', 'Canceled'),
-                               ('invoiced', 'Invoiced'),
-                               ('partially_received', 'Partially Received')], force_save="1")
+    # status = fields.Selection([('draft', 'Draft'),
+    #                            ('ready_for_preview', 'Ready For Preview '),
+    #                            # ('ordered', 'Ordered '),
+    #                            ('pending', 'Pending/In Transint'),
+    #                            ('received', 'Received'),
+    #                            ('stocked', 'Stocked'),
+    #                            ('completed', 'Completed'),
+    #                            ('return_created', 'Return created'),
+    #                            ('rush_ordered', 'Rush Ordered'),
+    #                            ('on_hold', 'On Hold'),
+    #                            ('canceled', 'Canceled'),
+    #                            ('invoiced', 'Invoiced'),
+    #                            ('partially_received', 'Partially Received')], force_save="1")
+    status_id = fields.Many2one('po.status.line', string="Status")
 
     @api.model
     def default_get(self, fields_list):
@@ -45,15 +46,15 @@ class UpdateShipmentTracking(models.TransientModel):
                 po_ids = self.env['purchase.order'].browse(active_ids)
                 po_line_vals = []
                 for line in po_ids.order_line:
-                    po_line_vals.append((0,0, {'po_line':line.id}))
+                    po_line_vals.append((0, 0, {'po_line': line.id}))
                 defaults['tracking_lines'] = po_line_vals
                 defaults['order_id'] = po_ids[0].id
         return defaults
 
     def update(self):
-        po_lines = self.tracking_lines.filtered(lambda x:x.checkbox)
+        po_lines = self.tracking_lines.filtered(lambda x: x.checkbox)
         po_lines.po_line.write({
-            'status': self.status
+            'status_id': self.status_id.id
         })
         # tracking_id = self.env['purchase.tracking'].create({
         #         'tracking_ref': self.tracking_ref,
@@ -81,6 +82,6 @@ class UpdateShipmentTrackingLine(models.TransientModel):
     checkbox = fields.Boolean(string="CheckBox")
     update_shipping_id = fields.Many2one('update.shipment.tracking', "Update Shipping")
     po_line = fields.Many2one('purchase.order.line', 'PO Line')
-    status = fields.Selection(related="po_line.status")
+    status_id = fields.Many2one(related="po_line.status_id")
     product_qty = fields.Float(related='po_line.product_qty')
     # ship_qty = fields.Float(string="Ship Quantity")

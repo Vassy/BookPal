@@ -52,7 +52,6 @@ class PurchaseOrder(models.Model):
     sale_order_ids = fields.Many2many('sale.order', compute="compute_sale_order_ids")
     purchase_tracking_ids = fields.One2many('purchase.tracking', 'order_id', string="Purchase Tracking")
 
-
     def compute_sale_order_ids(self):
         for order_id in self:
             order_id.sale_order_ids = order_id._get_sale_orders()
@@ -75,7 +74,6 @@ class PurchaseOrder(models.Model):
             'domain': (['id', 'in', po_lines.ids]),
         }
 
-
     @api.onchange('partner_id')
     def onchange_partner_id_cc_email(self):
         self.cc_email = self.partner_id.cc_email
@@ -94,24 +92,25 @@ class RushStatus(models.Model):
 class UpdateStatus(models.Model):
     _name = "update.status"
 
+
 class PurchaseOrderLine(models.Model):
     _inherit = ['purchase.order.line', 'mail.thread', 'mail.activity.mixin']
     _name = 'purchase.order.line'
 
-    status = fields.Selection([('draft', 'Draft'),
-                               ('ready_for_preview', 'Ready For Preview '),
-                               ('ordered', 'Ordered '),
-                               ('pending', 'Pending/In Transint'),
-                               ('received', 'Received'),
-                               ('stocked', 'Stocked'),
-                               ('completed', 'Completed'),
-                               ('return_created', 'Return created'),
-                               ('rush_ordered', 'Rush Ordered'),
-                               ('on_hold', 'On Hold'),
-                               ('canceled', 'Canceled'),
-                               ('invoiced', 'Invoiced'),
-                               ('partially_received', 'Partially Received')], default='draft', tracking=True)
-
+    # status = fields.Selection([('draft', 'Draft'),
+    #                            ('ready_for_preview', 'Ready For Preview '),
+    #                            ('ordered', 'Ordered '),
+    #                            ('pending', 'Pending/In Transint'),
+    #                            ('received', 'Received'),
+    #                            ('stocked', 'Stocked'),
+    #                            ('completed', 'Completed'),
+    #                            ('return_created', 'Return created'),
+    #                            ('rush_ordered', 'Rush Ordered'),
+    #                            ('on_hold', 'On Hold'),
+    #                            ('canceled', 'Canceled'),
+    #                            ('invoiced', 'Invoiced'),
+    #                            ('partially_received', 'Partially Received')], default='draft', tracking=True)
+    status_id = fields.Many2one('po.status.line', string="Status")
 
     # def write(self, vals):
     #     res = super(PurchaseOrderLine, self).write(vals)
@@ -144,6 +143,7 @@ class PurchaseOrderLine(models.Model):
             'flags': {'mode': 'readonly'},
         }
 
+
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'
     _description = 'Purchase Order Line model details.'
@@ -175,6 +175,7 @@ class PurchaseOrderLine(models.Model):
             result = {'warning': warning_mess}
         return result
 
+
 # class PurchaseOrderLine(models.Model):
 #     _inherit = 'purchase.order.line'
 #
@@ -193,3 +194,13 @@ class PurchaseOrderLine(models.Model):
 #                     print('order line', line)
 #                     line.tracking_ref = self.carrier_tracking_ref
 
+
+class PoStatus(models.Model):
+    _name = 'po.status.line'
+    _description = 'Status Line'
+    _order = 'sequence'
+
+    name = fields.Char('Status Name')
+    sequence = fields.Integer(string='Sequences', default=0)
+    manual_update = fields.Boolean(default=True)
+    active = fields.Boolean(string="Archived", default=True)
