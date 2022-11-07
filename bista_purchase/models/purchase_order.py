@@ -62,7 +62,7 @@ class PurchaseOrder(models.Model):
         string="Note to Vendor Nuances", related="partner_id.note_to_vendor_nuances")
     memo = fields.Text(string="Memo")
     supplier_order_number = fields.Char(string="Supplier Order Number")
-    special_pick_note = fields.Html('Special Instructions and Notes')
+    # special_pick_note = fields.Html('Special Instructions and Notes')
     num_of_need_by_days = fields.Text(string='Num of Need By Days')
     sale_order_ids = fields.Many2many(
         'sale.order', compute="compute_sale_order_ids")
@@ -110,10 +110,10 @@ class PurchaseOrder(models.Model):
     def onchange_partner_id_cc_email(self):
         self.cc_email = self.partner_id.cc_email
 
-    def _prepare_picking(self):
-        res = super(PurchaseOrder, self)._prepare_picking()
-        res.update({'note': self.special_pick_note})
-        return res
+    # def _prepare_picking(self):
+    #     res = super(PurchaseOrder, self)._prepare_picking()
+    #     res.update({'note': self.special_pick_note})
+    #     return res
 
 
 class RushStatus(models.Model):
