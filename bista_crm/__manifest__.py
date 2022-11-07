@@ -12,6 +12,7 @@
         # Views
         'security/ir.model.access.csv',
         'views/crm_lead_views.xml',
+        'views/configuration_view.xml',
     ],
     'installable': True,
     'auto_install': False
