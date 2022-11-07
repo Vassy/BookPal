@@ -20,6 +20,10 @@
                     </group>
                 </group>
             </xpath>
+
+            <xpath expr="//field[@name='sale_multi_ship_qty_lines']/tree/field[@name='so_line_id']" position="after">
+                <field name="picking_note"/>
+            </xpath>
         </field>
     </record>
 </odoo>

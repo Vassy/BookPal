@@ -21,7 +21,26 @@ class SaleOrderLine(models.Model):
             'picking_note': self.picking_note
             }
         if values and type(values) is list:
-            values[0].update(pick_note)
+            for rec in values:
+                pick = rec['ship_line']
+                if pick:
+                    pick_note = {
+                        'picking_note': pick.picking_note
+                        }
+                rec.update(pick_note)
         elif values and type(values) is dict:
             values.update(pick_note)
         return values
+
+
+class SaleMultiShipQtyLines(models.Model):
+    _inherit = "sale.multi.ship.qty.lines"
+    _description = 'Sale Multi Ship Qty Lines model details.'
+
+
+    picking_note = fields.Text('Picking Note')
+
+    @api.onchange('so_line_id')
+    def onchange_product_vendor(self):
+        if self.so_line_id:
+            self.picking_note = self.so_line_id.picking_note
