@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <menuitem id="bookpal_menu_crm" name="Generalization" parent="crm.crm_menu_config" sequence="100"/>
+    <menuitem id="crm_config_settings_menu_crm"
+                name="Customization"
+                parent="bookpal_menu_crm"
+                action="bista_sale.customization_type_action"
+                groups="base.group_system"
+                sequence="20"/>
+   <menuitem
+                id="artwork_status_menu_crm"
+                name="Artwork Status"
+                parent="bookpal_menu_crm"
+                action="bista_sale.artwork_status_action"
+                groups="base.group_system"
+                sequence="20"/>
+   <menuitem
+                id="death_type_action_crm"
+                name="Death Type"
+                parent="bookpal_menu_crm"
+                action="bista_sale.death_type_action"
+                groups="base.group_system"
+                sequence="20"/>
+   <menuitem
+                id="journal_customization_action_crm"
+                name="Journal Customization"
+                parent="bookpal_menu_crm"
+                action="bista_sale.journal_customization_action"
+                groups="base.group_system"
+                sequence="20"/>
+   <menuitem
+                id="white_glove_type_action_crm"
+                name="White Glove Type"
+                parent="bookpal_menu_crm"
+                action="bista_sale.white_glove_type_action"
+                groups="base.group_system"
+                sequence="20"/>
+
+
+
+</odoo>
