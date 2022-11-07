@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_picking_custom" inherit_id="stock.report_picking">
+        <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
+            <attribute name="t-call">bista_report_header_footer.shipment_custom_header</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('page')]" position="inside">
+            <div class="page">
+                <!-- Report Header Section -->
+                <t t-set="report_info"
+                   class="col-6 text-right mb4">
+                    <h3 t-if="o.picking_type_id.name =='Internal Transfers'">Transfer List</h3>
+                    <h3 t-if="o.picking_type_id.name =='Receipts'">Receipt List</h3>
+                    <h3 t-if="o.picking_type_id.name =='Pick'">Picking List</h3>
+                    <h3 t-if="o.picking_type_id.name =='Pack'">Packing List</h3>
+                    <h3 t-if="o.picking_type_id.name =='Delivery Orders'">Delivery List</h3>
+                </t>
+
+                <!-- Report Main Body Address Section -->
+                <t t-if="o.picking_type_id.name =='Internal Transfers'">
+                    <div t-set="address">  
+                            <t t-set="aa" t-value="value"/>                  
+                            <span>
+                                <strong>Vendor Details:</strong>
+                            </span><br/>
+                            <t t-esc="o.get_po_ref_from_transfer()['vendor_id']" t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                    </div>
+                    <div t-set="information_block">
+                        <span>
+                            <strong>Order Details:</strong>
+                        </span><br/>
+                        <strong> PO #: </strong> <t t-esc="o.get_po_ref_from_transfer()['name']"/><br/>
+                    </div>
+                    <div t-set="custom_information_block">
+                        <span>
+                            <strong> Warehouse Address:</strong>
+                        </span><br/>
+                        <div t-field="o.picking_type_id.warehouse_id.partner_id"
+                            t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                    </div>
+                </t>
+            </div>
+        </xpath>
+        <xpath expr="//div[@class='row']" position="replace">
+        </xpath>
+        <xpath expr="//div[hasclass('row', 'justify-content-end', 'mb16')]" position="replace">
+        </xpath>
+        <xpath expr="//h1" position="replace">
+        </xpath>
+        <xpath expr="//div[hasclass('row', 'mt48', 'mb32')]" position="replace">
+        </xpath>
+    </template>
+
+</odoo>

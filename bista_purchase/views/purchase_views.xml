@@ -16,7 +16,7 @@
 
             <!--            <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">-->
             <!--            </xpath>-->
-            <xpath expr="//div[hasclass('oe_clear')]" position="before">
+            <!-- <xpath expr="//div[hasclass('oe_clear')]" position="before">
                 <group name="special_pick_note" col="6" class="mt-2 mt-md-0">
                     <group colspan="4">
                         <field name="special_pick_note"
@@ -24,7 +24,7 @@
                                placeholder="Special Picking Notes..."/>
                     </group>
                 </group>
-            </xpath>
+            </xpath> -->
             <xpath expr="//sheet" position="before">
                 <div class="alert alert-danger mb-0" role="alert">
                     <span>Before Doing Any Opertions, Please Check The Nuances.</span>

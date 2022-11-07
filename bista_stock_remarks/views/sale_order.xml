@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sale_order_view_inherit_bista_remark" model="ir.ui.view">
+        <field name="name">sale.order.view.inherit.bista.remarks</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!--Picking notes-->
+            <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
+                <field name="picking_note"/>
+            </xpath>
+            
+            <!--Common Picking Note-->
+            <xpath expr="//group[@name='note_group']" position="after">
+                <group name="common_note" col="6" class="mt-2 mt-md-0">
+                    <group colspan="4">
+                        <field name="common_pick_note"
+                               class="oe-bordered-editor" nolabel="1"
+                               placeholder="Special Instructions and Notes..."/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
