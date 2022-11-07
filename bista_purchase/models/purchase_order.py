@@ -69,6 +69,20 @@ class PurchaseOrder(models.Model):
     purchase_tracking_ids = fields.One2many(
         'purchase.tracking', 'order_id', string="Purchase Tracking")
 
+    def open_tracking(self):
+        # active_id = self.env.context.get('active_id')
+        # po_id = self.env['purchase.order'].browse(active_id)
+
+        return {
+            'name': _('Shipment Tracking'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'purchase.tracking',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'new',
+            'context': {'default_order_id': self.id},
+        }
+
     def compute_sale_order_ids(self):
         for order_id in self:
             order_id.sale_order_ids = order_id._get_sale_orders()

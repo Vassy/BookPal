@@ -134,6 +134,7 @@
                     </group>
                 </page>
                 <page name="shipment_tracking" string="Shipment Tracking">
+                    <button name="open_tracking" type="object" string="Create Tracking" class="btn btn-primary" context="{'new':1}"/>
                     <field name="purchase_tracking_ids"/>
                 </page>
             </xpath>
