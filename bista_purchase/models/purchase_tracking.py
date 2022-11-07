@@ -17,7 +17,7 @@ class PurchaseTracking(models.Model):
     carrier_id = fields.Many2one('delivery.carrier', "Carrier")
     tracking_ref = fields.Char('Tracking Ref.', tracking=True)
     shipment_date = fields.Date(string="Shipment Date", tracking=True)
-    pro_number = fields.Char('Pro Number', tracking=True)
+    pro_number = fields.Char('PRO No.', tracking=True)
     tracking_line_ids = fields.One2many('purchase.tracking.line', 'tracking_id', string="Tracking Lines")
     status = fields.Selection([('draft', 'Draft'),
                                ('pending', 'Pending/In Transint'),
