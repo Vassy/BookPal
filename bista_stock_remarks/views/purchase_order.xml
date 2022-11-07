@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="purchase_order_form_inherit_bista_remarks" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit.bista.remarks</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <!--Special Picking Note-->
+            <xpath expr="//div[hasclass('oe_clear')]" position="before">
+                <group name="special_pick_note" col="6" class="mt-2 mt-md-0">
+                    <group colspan="4">
+                        <field name="special_pick_note"
+                               class="oe-bordered-editor" nolabel="1"
+                               placeholder="Special Picking Notes..."/>
+                    </group>
+                </group>
+            </xpath>
+
+            <!--Receipt Note-->
+            <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">           
+                <field name="receipt_note"/>             
+            </xpath>
+        </field>
+    </record>
+</odoo>
