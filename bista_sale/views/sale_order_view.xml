@@ -6,41 +6,53 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <!--Picking notes-->
-            <!-- <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
-                <field name="picking_note"/>
-            </xpath> -->
-
-             <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
+<!--             <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">-->
+<!--                <field name="picking_note"/>-->
+<!--            </xpath>-->
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
                 <field name="tracking_ref"/>
             </xpath>
-
-           <xpath expr="//field[@name='validity_date']" position="attributes">
+            <xpath expr="//field[@name='validity_date']" position="attributes">
                 <attribute name="string">Valid Until</attribute>
                 <attribute name="attrs">{'invisible': 0 }</attribute>
            </xpath>
+             <xpath expr="//group[@name='order_details']/div[@class='o_td_label']" position="replace">
+                <div class="o_td_label"  attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}">
+                    <label for="date_order" string="Quotation Date"/>
+                </div>
+             </xpath>
+             <xpath expr="//group[@name='order_details']/field[@name='date_order']" position="replace">
+                <field name="date_order" nolabel="1" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
+             </xpath>
 
-             <xpath expr="//field[@name='payment_term_id']" position="after">
+             <xpath expr="//field[@name='payment_term_id']" position="before">
+                <field name="commitment_date"/>
+<!--                 <span name="expected_date_span" class="text-muted">Expected: <field name="expected_date" widget="date"/></span>-->
+
+            </xpath>
+              <xpath expr="//field[@name='payment_term_id']" position="after">
                 <field name="client_order_ref"/>
             </xpath>
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="due_amount"/>
             </xpath>
-
-
             <xpath expr="//group/group[@name='sales_person']/field[@name='client_order_ref']" position="replace">
             </xpath>
 
+            <xpath expr="//group[@name='sale_shipping']" position="replace">
+                <span name="expected_date_span" class="text-muted">Expected: <field name="expected_date" widget="date"/></span>
+            </xpath>
 
             <!--Common Picking Note-->
-            <!-- <xpath expr="//group[@name='note_group']" position="after">
-                <group name="common_note" col="6" class="mt-2 mt-md-0">
-                    <group colspan="4">
-                        <field name="common_pick_note"
-                               class="oe-bordered-editor" nolabel="1"
-                               placeholder="Special Instructions and Notes..."/>
-                    </group>
-                </group>
-            </xpath> -->
+<!--             <xpath expr="//group[@name='note_group']" position="after">-->
+<!--                <group name="common_note" col="6" class="mt-2 mt-md-0">-->
+<!--                    <group colspan="4">-->
+<!--                        <field name="common_pick_note"-->
+<!--                               class="oe-bordered-editor" nolabel="1"-->
+<!--                               placeholder="Special Instructions and Notes..."/>-->
+<!--                    </group>-->
+<!--                </group>-->
+<!--            </xpath>-->
 
             <xpath expr="//notebook/page[@name='other_information']" position="after">
                 <page string="Order Notes" name="order_notes">
