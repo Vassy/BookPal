@@ -240,15 +240,30 @@ class SaleMultiShip(models.Model):
 class SaleMultiShipQtyLines(models.Model):
     _name = 'sale.multi.ship.qty.lines'
     _description = 'Sale Order Line Split Qty'
-    _rec_name = 'so_line_id'
+    _rec_name = 'product_id'
+
+    def get_default_shipping_date(self):
+        """Get default shipping date."""
+        for line in self:
+            if line.order_id.commitment_date:
+                return line.order_id.commitment_date
+            else:
+                order_date = fields.Datetime.from_string(
+                    self.order_id.date_order)
+                return order_date + timedelta(
+                    days=line.so_line_id.customer_lead or 0.0)
 
     def _get_schedule_date(self):
         for line in self:
-            date_deadline = line.shipping_date
-            if not line.shipping_date:
-                date_deadline = line.order_id.date_order + \
-                    timedelta(days=line.so_line_id.customer_lead or 0.0)
-        return date_deadline
+            if line.order_id.commitment_date:
+                return line.order_id.commitment_date
+            elif line.shipping_date:
+                order_date = fields.Datetime.from_string(
+                    line.shipping_date
+                    if line.shipping_date and
+                    line.order_id.state in ['sale', 'done'] else
+                    fields.Datetime.now())
+                return order_date
 
     so_line_dom = fields.Char('Sale order line domain')
     so_line_id = fields.Many2one(
@@ -290,7 +305,8 @@ class SaleMultiShipQtyLines(models.Model):
         'res.country', related='partner_id.country_id',
         help="Country to Ship")
     zip = fields.Char(related='partner_id.zip', help="Zip Code to Ship")
-    shipping_date = fields.Date('Need By Date')
+    shipping_date = fields.Datetime(
+        'Need By Date', default=lambda line: line.get_default_shipping_date())
     route_id = fields.Many2one('stock.location.route', 'Routes')
     remain_qty = fields.Float(
         'Unplanned Qty')
@@ -330,7 +346,7 @@ class SaleMultiShipQtyLines(models.Model):
     product_type = fields.Selection(related='product_id.detailed_type')
     virtual_available_at_date = fields.Float(
         compute='_compute_qty_at_date', digits='Product Unit of Measure')
-    scheduled_date = fields.Date(compute='_compute_qty_at_date')
+    scheduled_date = fields.Datetime(compute='_compute_qty_at_date')
     forecast_expected_date = fields.Datetime(compute='_compute_qty_at_date')
     free_qty_today = fields.Float(
         compute='_compute_qty_at_date', digits='Product Unit of Measure')
@@ -363,7 +379,7 @@ class SaleMultiShipQtyLines(models.Model):
                 ['outgoing', 'incoming'] and
                 x.quantity_done).mapped(
                 'picking_id').mapped('carrier_tracking_ref')
-            tracking_ref = ','.join([str(elem)
+            tracking_ref = ', '.join([str(elem)
                                      for elem in tracking_ref if elem])
             line.tracking_ref = tracking_ref
 
@@ -486,7 +502,7 @@ class SaleMultiShipQtyLines(models.Model):
                                 product['virtual_available'])
                 for product in product_qties
             }
-            for line in lines:
+            for line in lines.sorted(key=lambda s: s.shipping_date):
                 qty_available_today, free_qty_today, \
                     virtual_available_at_date = qties_per_product[
                         line.product_id.id]
@@ -497,7 +513,7 @@ class SaleMultiShipQtyLines(models.Model):
                 line.virtual_available_at_date = virtual_available_at_date - \
                     qty_processed_per_product[line.product_id.id]
                 line.forecast_expected_date = False
-                product_qty = line.product_uom_qty
+                product_qty = line.product_qty
                 if line.product_uom and line.product_id.uom_id and \
                         line.product_uom != line.product_id.uom_id:
                     line.qty_available_today = line.product_id.uom_id.\
@@ -612,22 +628,22 @@ class SaleMultiShipQtyLines(models.Model):
     def onchange_so_line_id(self):
         """Set default schedule date."""
         if self.so_line_id:
-            self.shipping_date = self._get_schedule_date()
+            self.shipping_date = self.get_default_shipping_date()
 
-    def name_get(self):
-        """Updated the display name."""
-        res = []
-        for rec in self:
-            if rec.product_id:
-                if rec.product_id.product_template_attribute_value_ids:
-                    name = rec.product_id.name + "(" + ','.join(
-                        rec.product_id.product_template_attribute_value_ids.
-                        mapped('name')) + ")" + " - " + str(
-                        rec.product_qty)
-                else:
-                    name = rec.product_id.name + " - " + str(rec.product_qty)
-                res.append((rec.id, name))
-        return res
+    # def name_get(self):
+    #     """Updated the display name."""
+    #     res = []
+    #     for rec in self:
+    #         if rec.product_id:
+    #             if rec.product_id.product_template_attribute_value_ids:
+    #                 name = rec.product_id.name + "(" + ','.join(
+    #                     rec.product_id.product_template_attribute_value_ids.
+    #                     mapped('name')) + ")" + " - " + str(
+    #                     rec.product_qty)
+    #             else:
+    #                 name = rec.product_id.name + " - " + str(rec.product_qty)
+    #             res.append((rec.id, name))
+    #     return res
 
     def _get_qty_procurement(self, previous_product_uom_qty=False):
         self.ensure_one()

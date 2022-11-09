@@ -67,7 +67,7 @@
                 </div>
                 <sheet>
                     <group>
-                        <group string="Personal Information">
+                        <group string="Baisc Information">
                             <field name="multi_ship_id" invisible="1"
                                    attrs="{'readonly':[('state', '=', 'verified')]}"/>
                             <field name="company_type" invisible="1"/>
