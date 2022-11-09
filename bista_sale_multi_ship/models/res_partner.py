@@ -206,6 +206,7 @@ class ResPartner(models.Model):
     @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):
         """User can serach tax based on name and description."""
+        vendors = []
         if not args:
             args = []
         if not self.env.context.get('default_is_multi_ship'):
@@ -223,7 +224,9 @@ class ResPartner(models.Model):
                 self.env.context.get('product_id')).product_tmpl_id
             vendors = prod_tmpl.seller_ids.mapped('name')
             vendors |= vendors.mapped('child_ids')
-            args += [('id', 'in', vendors.ids)]
+            vendors = list(set(vendors.ids))
+            self = self.with_context(vendor_ids=vendors)
+            args += [('id', 'in', vendors)]
         ids = self._name_search(name, args, operator, limit=limit)
         return self.browse(ids).sudo().name_get()
 
