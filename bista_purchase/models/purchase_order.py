@@ -154,7 +154,7 @@ class PurchaseOrderLine(models.Model):
                 lambda x: x.picking_type_id.code == 'incoming' and
                 x.quantity_done).mapped(
                 'picking_id').mapped('carrier_tracking_ref')
-            tracking_ref = ','.join([str(elem)
+            tracking_ref = ', '.join([str(elem)
                                      for elem in tracking_ref if elem])
             line.tracking_ref = tracking_ref
 
