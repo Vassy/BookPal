@@ -222,6 +222,7 @@ class ResPartner(models.Model):
             prod_tmpl = self.env['product.product'].browse(
                 self.env.context.get('product_id')).product_tmpl_id
             vendors = prod_tmpl.seller_ids.mapped('name')
+            vendors |= vendors.mapped('child_ids')
             args += [('id', 'in', vendors.ids)]
         ids = self._name_search(name, args, operator, limit=limit)
         return self.browse(ids).sudo().name_get()
@@ -231,7 +232,7 @@ class ResPartner(models.Model):
         res = []
         if self.env.context.get('default_is_multi_ship'):
             for partner in self:
-                if partner.is_multi_ship and partner.parent_id:
+                if partner.is_multi_ship:
                     # name = partner._get_name()
                     res.append((partner.id, partner.name))
                 else:
