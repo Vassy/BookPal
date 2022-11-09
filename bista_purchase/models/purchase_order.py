@@ -179,7 +179,7 @@ class PurchaseOrderLine(models.Model):
     #                            ('canceled', 'Canceled'),
     #                            ('invoiced', 'Invoiced'),
     #                            ('partially_received', 'Partially Received')], default='draft', tracking=True)
-    status_id = fields.Many2one('po.status.line', string="Status", default=_default_po_line_status, copy=False)
+    status_id = fields.Many2one('po.status.line', string="Status", default=_default_po_line_status, copy=False, ondelete="restrict", tracking=True)
     tracking_ref = fields.Char(
         'Tracking Refrence', compute="get_tracking_ref")
 
