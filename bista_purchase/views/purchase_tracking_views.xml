@@ -8,11 +8,15 @@
                 <sheet>
                     <div class="oe_title">
                         <h1>
+                            <field name="name" readonly="1" force_save="1"/>
+                        </h1>
+                        <h1>
                             <field name="order_id" readonly="1" force_save="1"/>
                         </h1>
                     </div>
                     <group>
                         <group>
+                            <field name="is_read_only" invisible="1"/>
                             <field name="partner_id"/>
                             <field name="picking_type_id"/>
                         </group>
@@ -23,18 +27,18 @@
                     </group>
                     <group>
                         <group>
-                            <field name="carrier_id"/>
-                            <field name="tracking_ref" required="1"/>
-                            <field name="shipment_date" required="1"/>
+                            <field name="carrier_id" attrs="{'readonly':[('is_read_only','=',True)]}"/>
+                            <field name="tracking_ref" required="1" attrs="{'readonly':[('is_read_only','=',True)]}"/>
+                            <field name="shipment_date" required="1" attrs="{'readonly':[('is_read_only','=',True)]}"/>
                         </group>
                         <group>
-                            <field name="pro_number" string="PRO No."/>
-                            <field name="status"/>
+                            <field name="pro_number" string="PRO No." attrs="{'readonly':[('is_read_only','=',True)]}"/>
+                            <field name="status" attrs="{'readonly':[('is_read_only','=',True)]}"/>
                         </group>
                     </group>
                     <notebook>
                         <page name="trackings" string="Trackings">
-                            <field name="tracking_ref_ids" nolabel="1">
+                            <field name="tracking_ref_ids" nolabel="1" attrs="{'readonly':[('is_read_only','=',True)]}">
                                 <tree editable="bottom" create="1">
                                     <field name="name"/>
                                     <field name="link" widget="url"/>
@@ -42,7 +46,7 @@
                             </field>
                         </page>
                         <page name="products" string="Products">
-                            <field name="tracking_line_ids" nolabel="1" context="{'active_id':active_id}">
+                            <field name="tracking_line_ids" nolabel="1" context="{'active_id':active_id}" attrs="{'readonly':[('is_read_only','=',True)]}">
                                 <tree editable="bottom" create="0" delete="0" default_order="ship_qty desc">
                                     <field name="checkbox" readonly="0" nolabel="1"/>
                                     <field name="po_line_id" readonly="1" force_save="1" invisible="0"/>
@@ -72,6 +76,7 @@
         <field name="model">purchase.tracking</field>
         <field name="arch" type="xml">
             <tree string="Purchase Tracking Tree" create="0">
+                <field name="name"/>
                 <field name="tracking_ref" required="1"/>
                 <field name="shipment_date" required="1" optional="show"/>
                 <field name="carrier_id" optional="show"/>

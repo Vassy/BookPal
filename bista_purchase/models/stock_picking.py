@@ -18,6 +18,12 @@ class StockPicking(models.Model):
     pre_approval_nuances = fields.Text(string="Pre Approval Nuances", related="partner_id.pre_approval_nuances")
     author_event_shipping_naunces = fields.Text(string="Author Event Shipping Nuances",
                                                 related="partner_id.author_event_shipping_naunces")
+    applicable_tracking_ids = fields.Many2many('purchase.tracking', compute="_compute_applicable_tracking_ids")
+    purchase_tracking_id = fields.Many2one('purchase.tracking', "Purchase Tracking")
+
+    def _compute_applicable_tracking_ids(self):
+        for picking in self:
+            picking.applicable_tracking_ids = picking.move_lines.mapped('purchase_line_id').mapped('order_id').purchase_tracking_ids
 
     def backorder_run_scheduler(self):
 
