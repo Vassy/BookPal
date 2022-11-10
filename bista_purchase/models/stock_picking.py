@@ -19,7 +19,7 @@ class StockPicking(models.Model):
     author_event_shipping_naunces = fields.Text(string="Author Event Shipping Nuances",
                                                 related="partner_id.author_event_shipping_naunces")
     applicable_tracking_ids = fields.Many2many('purchase.tracking', compute="_compute_applicable_tracking_ids")
-    purchase_tracking_id = fields.Many2one('purchase.tracking', "Purchase Tracking")
+    purchase_tracking_id = fields.Many2one('purchase.tracking', "Purchase Tracking", copy=False)
 
     def _compute_applicable_tracking_ids(self):
         for picking in self:
