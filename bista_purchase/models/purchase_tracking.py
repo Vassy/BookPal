@@ -56,26 +56,26 @@ class PurchaseTracking(models.Model):
     def save(self):
         return self
 
-    @api.onchange('status')
-    def onchange_status(self):
+    @api.onchange('order_id')
+    def onchange_order_id(self):
         po_line_vals = []
         for line in self.order_id.order_line:
             po_line_vals.append((0, 0, {'po_line_id': line.id, 'product_id':line.product_id}))
         self.tracking_line_ids = po_line_vals
 
-    @api.model
-    def default_get(self, fields_list):
-        defaults = super().default_get(fields_list)
-        if self.env.context.get('active_ids'):
-            active_ids = self.env.context.get('active_ids')
-            if active_ids:
-                po_ids = self.env['purchase.order'].browse(active_ids)
-                po_line_vals = []
-                for line in po_ids.order_line:
-                    po_line_vals.append((0, 0, {'po_line_id': line.id, 'product_id': line.product_id}))
-                defaults['tracking_line_ids'] = po_line_vals
-                defaults['order_id'] = po_ids[0].id
-        return defaults
+    # @api.model
+    # def default_get(self, fields_list):
+    #     defaults = super().default_get(fields_list)
+    #     if self.env.context.get('active_ids'):
+    #         active_ids = self.env.context.get('active_ids')
+    #         if active_ids:
+    #             po_ids = self.env['purchase.order'].browse(active_ids)
+    #             po_line_vals = []
+    #             for line in po_ids.order_line:
+    #                 po_line_vals.append((0, 0, {'po_line_id': line.id, 'product_id': line.product_id}))
+    #             defaults['tracking_line_ids'] = po_line_vals
+    #             defaults['order_id'] = po_ids[0].id
+    #     return defaults
 
 
 class PurchaseTrackingRef(models.Model):
