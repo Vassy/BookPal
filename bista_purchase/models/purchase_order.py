@@ -69,6 +69,39 @@ class PurchaseOrder(models.Model):
     purchase_tracking_ids = fields.One2many(
         'purchase.tracking', 'order_id', string="Purchase Tracking")
 
+    def button_cancel(self):
+        # Chanage orderline status on cancel order
+        res = super(PurchaseOrder, self).button_cancel()
+        cancel_status_id = self.env.ref('bista_purchase.status_line_canceled')
+        for order in self:
+            order.order_line.write({'status_id': cancel_status_id.id})
+        return res
+
+    def button_draft(self):
+        # change order line status on create and reset to draft order
+        res = super(PurchaseOrder, self).button_draft()
+        draft_status_id = self.env.ref('bista_purchase.status_line_draft')
+        for order in self:
+            order.order_line.write({'status_id': draft_status_id.id})
+        return res
+
+    def button_approve(self, force=False):
+        # change order line status on confirm order
+        ordered_status_id = self.env.ref('bista_purchase.status_line_ordered')
+        self = self.filtered(lambda order: order._approval_allowed())
+        self.order_line.write({'status_id': ordered_status_id.id})
+        return super(PurchaseOrder, self).button_approve(force)
+
+    def button_confirm(self):
+        # change order line status on confirm order
+        res = super(PurchaseOrder, self).button_confirm()
+        ready_status_id = self.env.ref('bista_purchase.status_line_ready')
+        if ready_status_id:
+            for order in self:
+                if not order._approval_allowed():
+                    order.order_line.write({'status_id': ready_status_id.id})
+        return res
+
     def open_tracking(self):
         # active_id = self.env.context.get('active_id')
         # po_id = self.env['purchase.order'].browse(active_id)
@@ -129,6 +162,10 @@ class PurchaseOrderLine(models.Model):
     _inherit = ['purchase.order.line', 'mail.thread', 'mail.activity.mixin']
     _name = 'purchase.order.line'
 
+    def _default_po_line_status(self):
+        draft_status_id = self.env.ref('bista_purchase.status_line_draft')
+        return draft_status_id.id
+
     # status = fields.Selection([('draft', 'Draft'),
     #                            ('ready_for_preview', 'Ready For Preview '),
     #                            ('ordered', 'Ordered '),
@@ -142,7 +179,7 @@ class PurchaseOrderLine(models.Model):
     #                            ('canceled', 'Canceled'),
     #                            ('invoiced', 'Invoiced'),
     #                            ('partially_received', 'Partially Received')], default='draft', tracking=True)
-    status_id = fields.Many2one('po.status.line', string="Status")
+    status_id = fields.Many2one('po.status.line', string="Status", default=_default_po_line_status, copy=False, ondelete="restrict", tracking=True)
     tracking_ref = fields.Char(
         'Tracking Refrence', compute="get_tracking_ref")
 

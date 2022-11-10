@@ -6,10 +6,10 @@ class PurchaseTracking(models.Model):
     _name = 'purchase.tracking'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Purchase Tracking'
-    _order = 'tracking_ref'
+    _order = 'name'
 
     order_id = fields.Many2one('purchase.order', string="Order")
-
+    name = fields.Char(string='Number', required=True, copy=False, default=lambda self: _('New'))
     partner_id = fields.Many2one(related='order_id.partner_id')
     date_approve = fields.Datetime(related='order_id.date_approve')
     date_order = fields.Datetime(related='order_id.date_order')
@@ -17,13 +17,28 @@ class PurchaseTracking(models.Model):
     carrier_id = fields.Many2one('delivery.carrier', "Carrier")
     tracking_ref = fields.Char('Tracking Ref.', tracking=True)
     shipment_date = fields.Date(string="Shipment Date", tracking=True)
-    pro_number = fields.Char('Pro Number', tracking=True)
+    pro_number = fields.Char('PRO No.', tracking=True)
     tracking_line_ids = fields.One2many('purchase.tracking.line', 'tracking_id', string="Tracking Lines")
     status = fields.Selection([('draft', 'Draft'),
                                ('pending', 'Pending/In Transint'),
                                ('received', 'Received'),
                                ('on_hold', 'On Hold')], default='draft', tracking=True)
     tracking_ref_ids = fields.One2many('purchase.tracking.ref', 'purchase_tracking_id', string="Tracking Refs")
+    picking_ids = fields.One2many('stock.picking', 'purchase_tracking_id', "Pickings")
+    is_read_only = fields.Boolean(compute="_compute_is_read_only", string="Is Read Only")
+
+    def _compute_is_read_only(self):
+        for tracking in self:
+            if tracking.picking_ids.mapped('state'):
+                tracking.is_read_only = tracking.picking_ids and tracking.picking_ids[0].state == 'done'
+            else:
+                tracking.is_read_only = False
+
+    @api.model
+    def create(self, vals):
+        if vals.get('name', _('New')) == _('New'):
+            vals['name'] = self.env['ir.sequence'].next_by_code('purchase.tracking') or _('New')
+        return super(PurchaseTracking, self).create(vals)
 
     def save(self):
         return self

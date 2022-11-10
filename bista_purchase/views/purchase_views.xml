@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='order_line']//tree" position="inside">
                 <field name="tracking_ref" optional="show"/>
-                <field name="status_id"/>
+                <field name="status_id" readonly="1"/>
                 <button name="open_po_line" type="object" icon="fa-eye" class="btn btn-link" style="float:right"/>
             </xpath>
             <!--            <xpath expr="//page[@name='products']/field[@name='order_line']" position="before">-->

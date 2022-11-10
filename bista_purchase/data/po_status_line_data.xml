@@ -50,7 +50,7 @@
         <field name="name">Invoiced</field>
         <field name="sequence">12</field>
     </record>
-    <record model="po.status.line" id="status_line_partially">
+    <record model="po.status.line" id="status_line_partially_received">
         <field name="name">Partially Received</field>
         <field name="sequence">13</field>
     </record>

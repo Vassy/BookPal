@@ -23,6 +23,7 @@
         'data/email_schdule_activity.xml',
         'data/email_template.xml',
         'data/po_status_line_data.xml',
+        'data/ir_sequence_data.xml',
         # 'wizard/update_shipping_views.xml',
 
         'wizard/update_shipment_tracking_views.xml',
