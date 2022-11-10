@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View of Template Import -->
+    <record id="view_sale_order_status_report_wizard_form" model="ir.ui.view">
+        <field name="name">sale.order.status.report.wiz.form.view</field>
+        <field name="model">sale.order.status.report.wiz</field>
+        <field name="arch" type="xml">
+            <form string="Sale Order Status Report">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="from_date"/>
+                            <field name="to_date"/>
+
+                            <field name="product_ids"
+                                   widget="many2many_tags"
+                                   domain="[('detailed_type', 'in', ('product', 'consu'))]"/>
+                        </group>
+                        <!-- <group>
+                            <field name="amazon_orders" widget="boolean"/>
+                        </group> -->
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Generate Report"
+                        name="action_generate_order_status_report"
+                        type="object" class="btn-primary" />
+                    <button string="Cancel" class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

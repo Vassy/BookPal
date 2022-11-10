@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access.sale.order.status.report.wiz,access_sale_order_status_report_wiz,model_sale_order_status_report_wiz,base.group_user,1,1,1,1
