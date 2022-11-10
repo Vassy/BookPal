@@ -7,9 +7,7 @@
             <t t-set="o" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
             <div class="page">
                 <div t-set="address">
-                    <span>
-                        <strong>Customer Detail:</strong>
-                    </span>
+                    <strong>Customer Detail:</strong>
                     <div t-field="doc.partner_id"
                          t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
                 </div>
@@ -17,6 +15,7 @@
                    class="col-6 text-right mb4">
                     <h3 t-if="o.state != 'draft'">Sale Order</h3>
                     <h3 t-if="o.state == 'draft'">Quotation</h3>
+                    <h3 t-if="o.state == 'cancel'">Cancelled Sale Quotation/Order</h3>
                     <h4>
                         <strong>
                             <t t-esc="o.name"/>
@@ -29,7 +28,7 @@
                 </t>
                 <t t-set="information_block">
                     <t t-if="doc.state not in ['draft', 'sent']">
-                        <strong t-if="doc.partner_shipping_id != doc.partner_invoice_id">Invoicing Address:</strong>
+                        <strong>Invoicing Address:</strong>
                         <div t-field="doc.partner_invoice_id"
                              t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
                     </t>
@@ -62,7 +61,7 @@
                         <br/>
                         <strong>Valid Until:</strong>
                         <t t-if="doc.state in ['draft','sent']">
-                            <t t-esc="doc.valid_until"/>
+                            <t t-esc="doc.validity_date"/>
                         </t>
                         <br/>
                         <strong>Salesperson:</strong>
@@ -70,62 +69,80 @@
                         <br/>
                     </div>
                 </t>
-
-                <table class="table table-sm o_main_table">
+                <table class="table table-sm o_main_table mt-5">
                     <!-- In case we want to repeat the header, remove "display: table-row-group" -->
                     <thead style="display: table-row-group">
-                        <tr>
-                            <th>Need By Date</th>
-                            <th>Shipment Address</th>
-                            <th name="th_description" class="text-left">Description</th>
-                            <th name="th_quantity" class="text-right">Quantity</th>
-                            <th class="text-right">UOM</th>
-                            <th name="th_priceunit" class="text-right">Unit Price</th>
-                            <th name="th_subtotal" class="text-right">
+                        <tr style="border-top: 1px solid black;">
+                            <th style="border: none;" name="th_nd" class="text-center">
+                                <strong>Need By Date</strong>
+                            </th>
+                            <th style=" border-collapse: collapse;border: none;" name="shipment_add"
+                                class="text-center">
+                                <span>Shipment Address</span>
+                            </th>
+                            <th style=" border-collapse: collapse;border: none;" name="th_description"
+                                class="text-center">
+                                <span>Description</span>
+                            </th>
+                            <th style=" border-collapse: collapse;border: none;" name="th_quantity" class="text-center">
+                                <span>Quantity</span>
+                            </th>
+                            <th style=" border-collapse: collapse;border: none;" name="th_uom" class="text-center">
+                                <span>UOM</span>
+                            </th>
+                            <th style=" border-collapse: collapse;border: none;" name="th_priceunit"
+                                class="text-center">
+                                <span>Unit Price</span>
+                            </th>
+                            <th style=" border-collapse: collapse;border: none;padding-left:15px;" name="th_subtotal"
+                                class="text-center">
                                 <span>Amount</span>
                             </th>
                         </tr>
                     </thead>
                     <tbody class="sale_tbody">
-<!--                        <t t-set="current_subtotal" t-value="0"/>-->
                         <t t-foreach="doc.sale_multi_ship_qty_lines" t-as="line">
-<!--                            <t t-set="current_subtotal"-->
-<!--                               t-value="current_subtotal + (line.product_qty* line.so_line_id.price_unit)"-->
-<!--                               />-->
                             <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.so_line_id.display_type == 'line_section' else 'font-italic o_line_note' if line.so_line_id.display_type == 'line_note' else ''">
                                 <t t-if="not line.so_line_id.display_type">
-                                    <td>
+                                    <td name="td_nd"
+                                        style="border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
+                                        class="text-center">
                                         <span t-field="line.shipping_date"/>
                                     </td>
-                                    <td>
+                                    <td name="shipment_add"
+                                        style="border-top: 1px solid black; border-left: none; border-right: none; border-bottom: 1px solid black;"
+                                        class="text-center">
                                         <span t-field="line.partner_id"/>
                                     </td>
-                                    <td name="td_name">
+                                    <td name="td_name"
+                                        style="width:30%; border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
+                                        class="text-center">
                                         <span t-field="line.product_id"/>
                                     </td>
-                                    <td name="td_quantity" class="text-right">
-                                        <span t-field="line.product_qty"/>
+                                    <td name="td_quantity"
+                                        style="border-top: 1px solid black; border-left: none;border-right: none;border-bottom: 1px solid black;"
+                                        class="text-center">
+                                        <span t-if="float(line.product_uom_qty).is_integer()"
+                                              t-esc="int(line.product_uom_qty)"/>
+                                        <span t-if="not float(line.product_uom_qty).is_integer()"
+                                              t-field="line.product_uom_qty"/>
                                     </td>
-                                    <td name="td_quantity" class="text-right">
+                                    <td name="td_uom"
+                                        style="border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
+                                        class="text-center">
                                         <span t-field="line.product_uom"/>
                                     </td>
-                                    <td name="td_priceunit" class="text-right">
-                                        <span t-field="line.so_line_id.price_unit"/>
+                                    <td name="td_price_unit"
+                                        style=" border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
+                                        class="text-center">
+                                        <span t-field="line.so_line_id.price_unit"
+                                              t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
                                     </td>
-                                    <td name="td_subtotal" class="text-right o_price_total">
-                                        <span t-esc="line.product_qty * line.so_line_id.price_unit"/>
-                                    </td>
-                                </t>
-                                <t t-if="line.so_line_id.display_type == 'line_section'">
-                                    <td name="td_section_line" colspan="99">
-                                        <span t-field="line.so_line_id.name"/>
-                                    </td>
-                                    <t t-set="current_section" t-value="line"/>
-<!--                                    <t t-set="current_subtotal" t-value="0"/>-->
-                                </t>
-                                <t t-if="line.so_line_id.display_type == 'line_note'">
-                                    <td name="td_note_line" colspan="99">
-                                        <span t-field="line.so_line_id.name"/>
+                                    <td name="td_subtotal"
+                                        style="border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
+                                        class="text-right">
+                                        <span t-esc="line.product_qty * line.so_line_id.price_unit"
+                                              t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
                                     </td>
                                 </t>
                             </tr>
@@ -135,25 +152,25 @@
                 <div class="text-right">
                     <t t-set="current_sub" t-value="0"/>
                     <t t-foreach="doc.sale_multi_ship_qty_lines" t-as="line">
-                        <t t-set="current_sub"
-                       t-value= "current_sub + (line.product_qty* line.so_line_id.price_unit)"/>
+                        <t t-set="current_sub" t-value="current_sub + (line.product_qty* line.so_line_id.price_unit)"/>
                     </t>
-                    <t>
-                        <tr class="is-subtotal text-right">
-                            <td name="td_section_subtotal" colspan="99">
-                                <strong class="mr16">Subtotal </strong>
-                                <span
-                                        t-esc="current_sub"
-                                        t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'
-                                />
+                    <table style="border: 1px solid black; width: 26%; margin-left:74%;" class="text-right">
+                        <tr>
+                            <td class="text-left"
+                                style="height:1px; border-left: 1px solid black; border-right: 1px solid black; width:180px; border-top: 1px solid black; color: black; padding-left:10px;">
+                                <strong>Subtotal</strong>
+                            </td>
+                            <td class="text-right"
+                                style="padding-right:8px; border-left: 1px solid black; border-right: 1px solid black; height:1px; border-top: 1px solid black; padding-left:10px; background-color: white;">
+                                <span t-esc="current_sub"
+                                      t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
                             </td>
                         </tr>
-                    </t>
+                    </table>
                 </div>
             </div>
         </t>
     </template>
-
     <template id="report_shipment">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="doc">
