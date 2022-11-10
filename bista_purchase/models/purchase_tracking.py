@@ -15,17 +15,30 @@ class PurchaseTracking(models.Model):
     date_order = fields.Datetime(related='order_id.date_order')
     picking_type_id = fields.Many2one(related="order_id.picking_type_id")
     carrier_id = fields.Many2one('delivery.carrier', "Carrier")
-    tracking_ref = fields.Char('Tracking Ref.', tracking=True)
+    # tracking_ref = fields.Char('Tracking Ref.', tracking=True)
     shipment_date = fields.Date(string="Shipment Date", tracking=True)
     pro_number = fields.Char('PRO No.', tracking=True)
     tracking_line_ids = fields.One2many('purchase.tracking.line', 'tracking_id', string="Tracking Lines")
     status = fields.Selection([('draft', 'Draft'),
                                ('pending', 'Pending/In Transint'),
                                ('received', 'Received'),
-                               ('on_hold', 'On Hold')], default='draft', tracking=True)
+                               ('on_hold', 'On Hold')], default='pending', tracking=True)
     tracking_ref_ids = fields.One2many('purchase.tracking.ref', 'purchase_tracking_id', string="Tracking Refs")
     picking_ids = fields.One2many('stock.picking', 'purchase_tracking_id', "Pickings")
     is_read_only = fields.Boolean(compute="_compute_is_read_only", string="Is Read Only")
+
+    def name_get(self):
+        if not self._context.get('shipping_selection'):
+            return super(PurchaseTracking, self).name_get()
+        res = []
+        for purchase_tracking in self:
+            tracking_names = purchase_tracking.tracking_ref_ids.mapped('name')
+            if tracking_names:
+                name = "{} [{}]".format(purchase_tracking.name, ",".join(tracking_names))
+            else:
+                name = purchase_tracking.name
+            res.append((purchase_tracking.id, name))
+        return res
 
     def _compute_is_read_only(self):
         for tracking in self:
@@ -43,26 +56,26 @@ class PurchaseTracking(models.Model):
     def save(self):
         return self
 
-    @api.onchange('status')
-    def onchange_status(self):
+    @api.onchange('order_id')
+    def onchange_order_id(self):
         po_line_vals = []
         for line in self.order_id.order_line:
             po_line_vals.append((0, 0, {'po_line_id': line.id, 'product_id':line.product_id}))
         self.tracking_line_ids = po_line_vals
 
-    @api.model
-    def default_get(self, fields_list):
-        defaults = super().default_get(fields_list)
-        if self.env.context.get('active_ids'):
-            active_ids = self.env.context.get('active_ids')
-            if active_ids:
-                po_ids = self.env['purchase.order'].browse(active_ids)
-                po_line_vals = []
-                for line in po_ids.order_line:
-                    po_line_vals.append((0, 0, {'po_line_id': line.id, 'product_id': line.product_id}))
-                defaults['tracking_line_ids'] = po_line_vals
-                defaults['order_id'] = po_ids[0].id
-        return defaults
+    # @api.model
+    # def default_get(self, fields_list):
+    #     defaults = super().default_get(fields_list)
+    #     if self.env.context.get('active_ids'):
+    #         active_ids = self.env.context.get('active_ids')
+    #         if active_ids:
+    #             po_ids = self.env['purchase.order'].browse(active_ids)
+    #             po_line_vals = []
+    #             for line in po_ids.order_line:
+    #                 po_line_vals.append((0, 0, {'po_line_id': line.id, 'product_id': line.product_id}))
+    #             defaults['tracking_line_ids'] = po_line_vals
+    #             defaults['order_id'] = po_ids[0].id
+    #     return defaults
 
 
 class PurchaseTrackingRef(models.Model):
