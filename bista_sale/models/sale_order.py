@@ -52,7 +52,7 @@ class SaleOrder(models.Model):
         string="Individual Mailer Return Address")
     book_status = fields.Char(string="Book Status")
     on_hold_reason = fields.Text(string='On Hold Reason(s)')
-    due_amount = fields.Monetary('Due Amount', related='partner_id.total_due')
+    # due_amount = fields.Monetary('Due Amount', related='partner_id.total_due')
 
 
 class SaleOrderLine(models.Model):

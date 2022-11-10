@@ -27,15 +27,20 @@
 
              <xpath expr="//field[@name='payment_term_id']" position="before">
                 <field name="commitment_date"/>
-<!--                 <span name="expected_date_span" class="text-muted">Expected: <field name="expected_date" widget="date"/></span>-->
+             </xpath>
 
-            </xpath>
+             <xpath expr="//field[@name='commitment_date']" position="attributes">
+                <attribute name="string">Need By Date</attribute>
+             </xpath>
+
               <xpath expr="//field[@name='payment_term_id']" position="after">
                 <field name="client_order_ref"/>
             </xpath>
-            <xpath expr="//field[@name='partner_id']" position="after">
-                <field name="due_amount"/>
-            </xpath>
+
+<!--            <xpath expr="//field[@name='partner_id']" position="after">-->
+<!--                <field name="due_amount"/>-->
+<!--            </xpath>-->
+
             <xpath expr="//group/group[@name='sales_person']/field[@name='client_order_ref']" position="replace">
             </xpath>
 
