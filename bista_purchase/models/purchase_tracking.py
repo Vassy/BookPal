@@ -98,9 +98,18 @@ class PurchaseTrackingLine(models.Model):
     checkbox = fields.Boolean(string="Checkbox", compute="compute_checkbox")
     tracking_id = fields.Many2one('purchase.tracking', string="Tracking")
     po_line_id = fields.Many2one('purchase.order.line', 'PO Line')
-    order_qty = fields.Float(related='po_line_id.product_qty', string="Ordered Quantity")
+    ordered_qty = fields.Float(compute="_compute_quantities", string="Ordered Quantity", store=True)
+    received_qty = fields.Float(compute="_compute_quantities", string="Received Quantity", store=True)
+    remaining_qty = fields.Float(compute="_compute_quantities", string="Remaining Quantity", store=True)
     product_id = fields.Many2one('product.product', 'Product')
     ship_qty = fields.Float(string="Shipped Quantity")
+
+    @api.depends('po_line_id')
+    def _compute_quantities(self):
+        for tracking_line in self:
+            tracking_line.ordered_qty = tracking_line.po_line_id.product_qty
+            tracking_line.received_qty = tracking_line.po_line_id.qty_received
+            tracking_line.remaining_qty = tracking_line.ordered_qty - tracking_line.received_qty
 
     def compute_checkbox(self):
         for each in self:
@@ -108,4 +117,4 @@ class PurchaseTrackingLine(models.Model):
 
     @api.onchange('checkbox')
     def _onchange_checkbox(self):
-        self.ship_qty = self.order_qty
+        self.ship_qty = self.remaining_qty
