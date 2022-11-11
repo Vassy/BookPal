@@ -31,7 +31,8 @@ class StockPicking(models.Model):
 
     def _compute_applicable_tracking_ids(self):
         for picking in self:
-            picking.applicable_tracking_ids = picking.move_lines.mapped('purchase_line_id').mapped('order_id').purchase_tracking_ids
+            applicable_tracking_ids = picking.move_lines.mapped('purchase_line_id').mapped('order_id').purchase_tracking_ids
+            picking.applicable_tracking_ids =applicable_tracking_ids.filtered(lambda x:x.status != 'received')
 
     def backorder_run_scheduler(self):
 
