@@ -52,9 +52,16 @@ class SaleOrder(models.Model):
         string="Individual Mailer Return Address")
     book_status = fields.Char(string="Book Status")
     on_hold_reason = fields.Text(string='On Hold Reason(s)')
-    due_amount = fields.Monetary('Due Amount', related='partner_id.total_due')
+    due_amount = fields.Monetary('Due Amount', related='partner_id.total_invoiced')
 
+    refer_by_company=fields.Char('Referring Organization')
+    refer_by_person=fields.Char('Referring Person')
+    account_order_standing=fields.Selection([
+                                    ('high', 'High'),
+                                    ('medium', 'Medium'),
+                                    ('low', 'Low')],string='Account Order Standing')
 
+    customer_email_add=fields.Char('Customer Email Address',related='partner_id.email')
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 

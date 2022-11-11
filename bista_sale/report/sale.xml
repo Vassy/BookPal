@@ -19,7 +19,7 @@
                 </div>
                 <t t-set="report_info"
                    class="col-6 text-right mb4">
-                    <h3 t-if="o.state != 'draft'">Sale Order</h3>
+                  <h3 t-if="o.state != 'draft'">Sale Order</h3>
                     <h3 t-if="o.state == 'draft'">Quotation</h3>
                     <h3 t-if="o.state == 'cancel'">Cancelled Sale Quotation/Order</h3>
                     <h4>
@@ -27,9 +27,16 @@
                             <t t-esc="o.name"/>
                         </strong>
                     </h4>
-                    <strong>Order Date:
-                        <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
-                    </strong>
+                       <t t-if="doc.state in ['draft','sent']">
+                            <strong>Quotation Date:</strong>
+                             <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                            <br/>
+                        </t>
+                      <t t-if="doc.state not in ['draft','sent']">
+                        <strong>Order Date:
+                            <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                        </strong>
+                      </t>
                     <br/>
                 </t>
                 <t t-set="information_block">
@@ -52,6 +59,12 @@
                             <t t-esc="doc.name"/>
                             <br/>
                         </t>
+                        <t t-if="doc.state in ['draft','sent','confirm']">
+                            <strong>Need  By Date:</strong>
+                            <t t-esc="doc.commitment_date" t-options='{"widget": "date"}'/>
+                            <br/>
+                        </t>
+
                         <t t-if="doc.state not in ['draft','sent']">
                             <strong>Sale Order:</strong>
                             <t t-esc="doc.name"/>
@@ -73,7 +86,7 @@
                         <br/>
                         <strong>Valid Until:</strong>
                         <t t-if="doc.state in ['draft','sent']">
-                            <t t-esc="doc.validity_date"/>
+                            <t t-esc="doc.validity_date" t-options='{"widget": "date"}'/>
                         </t>
                         <br/>
                         <strong>Salesperson:</strong>

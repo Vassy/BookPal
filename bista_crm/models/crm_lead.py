@@ -46,7 +46,7 @@ class CrmLead(models.Model):
     artwork_status_id = fields.Many2one('artwork.status', string='Artwork Status')
     journal_notes = fields.Text(string='Journal Notes')
     journal_setup_fee = fields.Char(string="Journal Set Up Fee")
-    death_type_id = fields.Many2one('death.type', string='Death Type')
+    death_type_id = fields.Many2one('death.type', string='Die Type')
     existing_death_order = fields.Char(string="Existing Death Order #")
 
     # Fulfillment Fields
@@ -75,6 +75,27 @@ class CrmLead(models.Model):
     split_order_number = fields.Char(string='Split Orders Number')
     # sale_order_count = fields.Char(string="Orders Count", compute="compute_sale_order_ids")
 
+    def action_new_quotation(self):
+        res = super(CrmLead,self).action_new_quotation()
+        res['context'].update({
+            'default_link_to_art_files': self.link_to_art_files,
+            'default_journal_notes': self.journal_notes,
+            'default_journal_customization_id': self.journal_customization_id.id,
+            'default_customization_cost': self.customization_cost,
+            'default_artwork_status_id': self.artwork_status_id.id,
+            'default_journal_setup_fee': self.journal_setup_fee,
+            'default_existing_death_order': self.existing_death_order,
+            'default_death_type_id': self.death_type_id.id,
+            'default_shipping_instruction': self.shipping_instructions,
+            'default_customization_type_ids': self.customization_type_ids.ids,
+            'default_fulfilment_project': self.fulfilment_project,
+            'default_special_insert_note':self.special_insert_note,
+            'default_individual_mailer_return_receiver':self.ind_mailer_return_address,
+            'default_attachment_note':self.attachment_note,
+            
+             })
+
+        return res
 
 class SpecialPricingType(models.Model):
     _name = "special.pricing.type"
