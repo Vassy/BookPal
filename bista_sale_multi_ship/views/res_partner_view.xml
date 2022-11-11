@@ -26,6 +26,7 @@
                 </xpath>
                 <xpath expr="//field[@name='property_delivery_carrier_id']" position="after">
                         <field name="is_multi_ship"/>
+                        <!-- <field name="ship_line_ids" context="{'shipment_contact': True}"/> -->
                 </xpath>
                 <xpath expr="//field[@name='vat']" position="after">
                     <field name="state" attrs="{'invisible': [('is_multi_ship', '=', False)]}"/>
@@ -33,7 +34,7 @@
         </field>
     </record>
 
-    <!-- <record id="res_partner_search_all_multi_ship" model="ir.ui.view">
+    <record id="res_partner_search_all_multi_ship" model="ir.ui.view">
         <field name="name">res.partner.</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_res_partner_filter"/>
@@ -42,7 +43,7 @@
                 <filter string="Multi Shipment Contact" name="multi_ship_contact" domain="[('is_multi_ship', '=', True)]" context="{'is_multi_ship': True}"/>
             </xpath>
         </field>
-    </record> -->
+    </record>
 
     <record id="res_partner_custom_multi_shipment_form_view" model="ir.ui.view">
         <field name="name">res.partner.custom.multi.shipment.view</field>

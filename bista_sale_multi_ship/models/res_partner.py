@@ -155,10 +155,11 @@ class ResPartner(models.Model):
         string='Status',
         default='draft')
     error_msg = fields.Text(string='Error Message')
-
     carrier_ids = fields.Many2many(
         "delivery.carrier", compute='_get_delivery_type',
         string="Available Carriers")
+    ship_line_ids = fields.One2many(
+        'sale.multi.ship.qty.lines', 'partner_id', 'Shipping Lines')
 
     def _match_address(self, carrier):
         self.ensure_one()
@@ -203,40 +204,24 @@ class ResPartner(models.Model):
             vals['phone'] = company_phone
         return super(ResPartner, self).create(vals)
 
-    @api.model
-    def name_search(self, name='', args=None, operator='ilike', limit=100):
-        """User can serach tax based on name and description."""
-        vendors = []
-        if not args:
-            args = []
-        if not self.env.context.get('default_is_multi_ship'):
-            args += [('is_multi_ship', '=', False)]
-        if self.env.context.get('order_id'):
-            order = self.env['sale.order'].browse(
-                self.env.context.get('order_id'))
-            if order and order.warehouse_id:
-                args = expression.OR(
-                    [args, [('id', '=', order.warehouse_id.partner_id.id)]]
-                )
-
-        if self.env.context.get('product_id'):
-            prod_tmpl = self.env['product.product'].browse(
-                self.env.context.get('product_id')).product_tmpl_id
-            vendors = prod_tmpl.seller_ids.mapped('name')
-            vendors |= vendors.mapped('child_ids')
-            vendors = list(set(vendors.ids))
-            self = self.with_context(vendor_ids=vendors)
-            args += [('id', 'in', vendors)]
-        ids = self._name_search(name, args, operator, limit=limit)
-        return self.browse(ids).sudo().name_get()
+    # @api.model
+    # def name_search(self, name='', args=None, operator='ilike', limit=100):
+    #     """User can serach tax based on name and description."""
+    #     print ("\n name search >>>", self.env.context)
+    #     print ("\n if >>>>>>")
+    #     if not args:
+    #         args = []
+    #     if not self.env.context.get('shipment_contact'):
+    #         args += [('is_multi_ship', '=', False)]
+    #     ids = self._name_search(name, args, operator, limit=limit)
+    #     return self.browse(ids).sudo().name_get()
 
     def name_get(self):
         """Updated display name."""
         res = []
-        if self.env.context.get('default_is_multi_ship'):
+        if self.env.context.get('shipment_contact'):
             for partner in self:
                 if partner.is_multi_ship:
-                    # name = partner._get_name()
                     res.append((partner.id, partner.name))
                 else:
                     name = partner._get_name()
@@ -244,3 +229,56 @@ class ResPartner(models.Model):
             return res
         else:
             return super(ResPartner, self).name_get()
+
+    # @api.depends('is_company', 'name', 'parent_id.display_name',
+    #              'type', 'company_name', 'ship_line_ids.partner_id')
+    # def _compute_display_name(self):
+    #     print ("\n self.env.context >>_compute_display_name>>>>", self, self.env.context)
+    #     # diff = dict(show_address=None, show_address_only=None, show_email=None, html_format=None, show_vat=None)
+    #     # print ('\n self >>>.', self)
+    #     # print ("\n diff >>>", diff)
+    #     # names = dict(self.with_context(**diff).name_get())
+    #     # print ("\n names >>>.", names)
+    #     # for partner in self:
+    #     #     print ("\n partner >>>>", partner)
+    #     #     partner.display_name = names.get(partner.id)
+    #     return super(ResPartner, self)._compute_display_name()
+
+    def get_vendors(self):
+        """Get vendors."""
+        if self.env.context.get('vendor_multi_ship'):
+            prod_tmpl = self.env['product.product'].browse(
+                self.env.context.get('product_id')).product_tmpl_id
+            vendors = prod_tmpl.seller_ids.mapped('name').ids
+        return vendors
+
+    @api.model
+    def _search(self, args, offset=0, limit=None,
+                order=None, count=False, access_rights_uid=None):
+        context = self._context or {}
+        if context.get('vendor_multi_ship'):
+            vendors = self.get_vendors()
+            args += ['|', ('id', 'in', vendors), ('parent_id', 'in', vendors)]
+        return super(ResPartner, self)._search(
+            args, offset, limit, order, count=count,
+            access_rights_uid=access_rights_uid)
+
+    @api.model
+    def read_group(self, domain, fields, groupby,
+                   offset=0, limit=None, orderby=False, lazy=True):
+        """Updated search more domain when open vendors in shipping line."""
+        if not domain:
+            domain = []
+        if self.env.context.get('vendor_multi_ship'):
+            vendors = self.get_vendors()
+            domain += ['|', ('id', 'in', vendors),
+                       ('parent_id', 'in', vendors)]
+        return super(ResPartner, self).read_group(
+            domain, fields, groupby, offset=offset,
+            limit=limit, orderby=orderby, lazy=lazy)
+
+    # def read(self, fields=None, load='_classic_read'):
+    #     """When reading specific fields, read."""
+
+    #     print("\n read self.env.context >>partner>>", self.env.context)
+    #     return super(ResPartner, self).read(fields=fields, load=load)

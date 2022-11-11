@@ -100,8 +100,14 @@ class StockRule(models.Model):
         """Override method to update partner as per sale or shipment."""
         if values.get('supplier_id'):
             partner = values.get('supplier_id')
-        return super(StockRule, self)._make_po_get_domain(
+        dom = super(StockRule, self)._make_po_get_domain(
             company_id, values, partner)
+        if values.get('ship_line') and \
+           values.get('ship_line').route_id.name == 'Dropship':
+            shipping_date = fields.Datetime.to_string(
+                values.get('ship_line').shipping_date)
+            dom += (('date_order', '=', shipping_date),)
+        return dom
 
 
 class StockPicking(models.Model):
@@ -329,20 +335,20 @@ class StockBackorderConfirmation(models.TransientModel):
         return res
 
 
-class StockLocationRoute(models.Model):
-    _inherit = "stock.location.route"
+# class StockLocationRoute(models.Model):
+#     _inherit = "stock.location.route"
 
-    @api.model
-    def name_search(self, name='', args=None, operator='ilike', limit=100):
-        """Overide name_search for sale order line domain."""
-        if not args:
-            args = []
-        if self.env.context.get('partner_id'):
-            shipment_contact = self.env['res.partner'].sudo().browse(
-                self.env.context.get('partner_id'))
-            warehouse_partner = self.env['stock.warehouse'].sudo().search(
-                []).mapped('partner_id')
-            if shipment_contact.id in warehouse_partner.ids:
-                args += [('name', '!=', 'Dropship')]
-        return super(StockLocationRoute, self).name_search(
-            name, args, operator, limit)
+#     @api.model
+#     def name_search(self, name='', args=None, operator='ilike', limit=100):
+#         """Overide name_search for sale order line domain."""
+#         if not args:
+#             args = []
+#         if self.env.context.get('partner_id'):
+#             shipment_contact = self.env['res.partner'].sudo().browse(
+#                 self.env.context.get('partner_id'))
+#             warehouse_partner = self.env['stock.warehouse'].sudo().search(
+#                 []).mapped('partner_id')
+#             if shipment_contact.id in warehouse_partner.ids:
+#                 args += [('name', '!=', 'Dropship')]
+#         return super(StockLocationRoute, self).name_search(
+#             name, args, operator, limit)

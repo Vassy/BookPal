@@ -2,7 +2,7 @@
 <odoo>
     <data>
         <record id="view_order_form_inherit_delivery_ups_inherit_multi_ship" model="ir.ui.view">
-            <field name="name">sale.order.form.inherit.multu.ship</field>
+            <field name="name">sale.order.form.inherit.multi.ship</field>
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="delivery_ups.view_order_form_inherit_delivery_ups"/>
             <field name="arch" type="xml">
@@ -79,11 +79,11 @@
                         <!-- <button name="open_sale_multi_ship_wizard" type="object"
                                 icon="fa-truck" string="Import Shipping Data" class="btn-primary" style="float:right"/> -->
                         <field name="sale_multi_ship_qty_lines" context="{'multi_ship': True}">
-                            <tree decoration-danger="partner_state =='error' and state=='draft'" decoration-success="partner_state =='verified' and state=='draft'" decoration-muted="state == 'cancel' or state == 'short_close'" decoration-warning="qty_delivered and product_qty != qty_delivered" editable="top">
+                            <tree context="{'multi_ship': True}" decoration-danger="partner_state =='error' and state=='draft'" decoration-success="partner_state =='verified' and state=='draft'" decoration-muted="state == 'cancel' or state == 'short_close'" decoration-warning="qty_delivered and product_qty != qty_delivered" editable="top">
                                 <field name="id" invisible="1"/>
                                 <field name="so_line_id" optional="show" context="{'so_lines': parent.so_lines}" domain="[('order_id', '=', parent.id)]" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="shipping_date" optional="show" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                                <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id, 'order_id': parent.id}" domain="['|', ('id', 'child_of', parent.partner_id), ('id', '=', parent.partner_id)]" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}" options="{'always_reload':1}"/>
+                                <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id, 'order_id': parent.id, 'shipment_contact': True}" domain="['|', ('id', 'child_of', parent.partner_id), ('id', '=', parent.partner_id)]" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}" options="{'always_reload':1}"/>
                                 
                                 <field name="product_id" invisible="1"/>
                                 <field name="product_uom_qty" optional="show"/>
@@ -106,13 +106,14 @@
                                 <field name="qty_delivered" optional="hide" readonly="1" force_save="1"/>
                                 <field name="qty_short_close" optional="hide"/>
                                 <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]" attrs="{'readonly': [('state', '!=', 'draft')]}" context="{'partner_id': partner_id}" options="{'no_open': 1, 'no_create':1}"/>
-                                <field name="supplier_id" context="{'product_id': product_id}" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="supplier_id" context="{'product_id': product_id, 'vendor_multi_ship': True}" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="state" optional="hide" readonly="1" force_save="1"/>
                                 <field name="attention" optional="hide" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="confirm_date" readonly="1" optional="hide"/>
                                 <field name="tracking_ref" optional="show"/>
                                 <field name="partner_state" invisible="1"/>
                                 <field name="order_id" invisible="1"/>
+                                
                                 <button name="cancel_shipment"
                                     type="object"
                                     icon="fa-close"
@@ -128,6 +129,7 @@
             </field>
         </record>
 
+        <!-- From sale order line open shipping line -->
         <record id="sale_order_multi_ship_qty_form_wizard" model="ir.ui.view">
             <field name="name">bista_sale_order_line_wizard_multi_ship_qty</field>
             <field name="model">sale.order.line</field>
@@ -148,6 +150,17 @@
                         </field>
                     </group>
                 </form>
+            </field>
+        </record>
+
+        <record id="multi_shipment_filter_extend" model="ir.ui.view">
+            <field name="name">multi.shipment.filter.extend</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
+                    <filter string="Multi Shipment Orders" domain="[('split_shipment', '=', True)]" name="multi_ship_order"/>
+                </xpath>
             </field>
         </record>
     </data>
