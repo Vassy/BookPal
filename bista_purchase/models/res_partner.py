@@ -98,6 +98,10 @@ class ResPartner(models.Model):
             res.append((partner.id, name))
         return res
 
+    @api.onchange('type')
+    def _onchange_contact_type(self):
+        if self.type != 'contact':
+            self.is_primary = False
 
 class ResPartnerShipping(models.Model):
     _name = 'res.partner.shipping'
