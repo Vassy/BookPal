@@ -21,6 +21,14 @@ class StockPicking(models.Model):
     applicable_tracking_ids = fields.Many2many('purchase.tracking', compute="_compute_applicable_tracking_ids")
     purchase_tracking_id = fields.Many2one('purchase.tracking', "Purchase Tracking", copy=False)
 
+    def write(self, vals):
+        res = super(StockPicking, self).write(vals)
+        for picking_id in self:
+            # Update status as 'received' if shipment  is done
+            if vals.get('date_done') and picking_id.purchase_tracking_id:
+                picking_id.purchase_tracking_id.status = 'received'
+        return res
+
     def _compute_applicable_tracking_ids(self):
         for picking in self:
             picking.applicable_tracking_ids = picking.move_lines.mapped('purchase_line_id').mapped('order_id').purchase_tracking_ids
