@@ -51,7 +51,9 @@
                                     <field name="checkbox" readonly="0" nolabel="1"/>
                                     <field name="po_line_id" readonly="1" force_save="1" invisible="0"/>
                                     <field name="product_id" readonly="1" force_save="1" invisible="1"/>
-                                    <field name="order_qty"/>
+                                    <field name="ordered_qty" force_save="1"/>
+                                    <field name="received_qty" force_save="1" optional="hide"/>
+                                    <field name="remaining_qty" force_save="1"/>
                                     <field name="ship_qty" string="Shipped Quantity"/>
                                 </tree>
                             </field>
