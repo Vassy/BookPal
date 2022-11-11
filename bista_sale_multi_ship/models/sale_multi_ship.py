@@ -630,21 +630,6 @@ class SaleMultiShipQtyLines(models.Model):
         if self.so_line_id:
             self.shipping_date = self.get_default_shipping_date()
 
-    # def name_get(self):
-    #     """Updated the display name."""
-    #     res = []
-    #     for rec in self:
-    #         if rec.product_id:
-    #             if rec.product_id.product_template_attribute_value_ids:
-    #                 name = rec.product_id.name + "(" + ','.join(
-    #                     rec.product_id.product_template_attribute_value_ids.
-    #                     mapped('name')) + ")" + " - " + str(
-    #                     rec.product_qty)
-    #             else:
-    #                 name = rec.product_id.name + " - " + str(rec.product_qty)
-    #             res.append((rec.id, name))
-    #     return res
-
     def _get_qty_procurement(self, previous_product_uom_qty=False):
         self.ensure_one()
         # People without purchase rights should be able to do this operation
@@ -712,3 +697,13 @@ class SaleMultiShipQtyLines(models.Model):
         if 'state' in vals and vals.get('state') == 'sale':
             vals.update({'confirm_date': fields.Datetime.now()})
         return super(SaleMultiShipQtyLines, self).write(vals)
+
+    # def read(self, fields=None, load='_classic_read'):
+    #     """When reading specific fields, read."""
+    #     res = super(SaleMultiShipQtyLines, self).read(
+    #         fields=fields, load=load)
+    #     if self.env.context.get('multi_ship'):
+    #         partners = self.mapped('partner_id')
+    #         if partners:
+    #             partners.with_context(shipment_contact=True).name_get()
+    #     return res
