@@ -229,7 +229,8 @@ class ResPartner(models.Model):
             return super(ResPartner, self).name_get()
 
     @api.depends('is_company', 'name', 'parent_id.display_name',
-                 'type', 'company_name', 'ship_line_ids.partner_id')
+                 'type', 'company_name', 'ship_line_ids.partner_id',
+                 'is_multi_ship')
     def _compute_display_name(self):
         res = super(ResPartner, self)._compute_display_name()
         for partner in self:
