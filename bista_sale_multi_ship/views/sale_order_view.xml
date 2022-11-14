@@ -44,7 +44,7 @@
                     <field name="remain_so_qty" optional="hide" readonly="1" force_save="1"/>
                 </xpath>
                  <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom']" position="after">
-                    <field name="supplier_id" context="{'product_id': product_id}" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="supplier_id" context="{'product_id': product_id, 'vendor_multi_ship': True}" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                  </xpath>
                 <xpath expr="//page[last()]" position="after">
                     <page name="shipping_lines" string="Shipping"
