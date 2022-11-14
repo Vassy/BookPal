@@ -17,7 +17,7 @@
                                    domain="[('detailed_type', 'in', ('product', 'consu'))]"/>
                         </group>
                         <group>
-                            <field name="warehouse_id"/>
+                            <!-- <field name="warehouse_id"/> -->
                             <field name="supplier_ids" widget="many2many_tags"/>
                         </group>
                     </group>
@@ -41,7 +41,7 @@
                 <field name="partner_id" string="Vendor"/>
                 <field name="order_id" optional="show"/>
                 <field name="date_order"/>
-                <field name="warehouse_id" optional="show"/>
+                <!-- <field name="warehouse_id" optional="show"/> -->
                 <field name="date_planned" string="Expected Receipt Date" optional="show"/>
                 <field name="product_id"/>
                 <field name="price_unit" optional="show" widget="monetary"/>

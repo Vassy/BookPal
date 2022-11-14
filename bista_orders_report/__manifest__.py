@@ -23,7 +23,7 @@
     'data': [
         'security/ir.model.access.csv',
         'wizard/order_status_report_wiz.xml',
-        # 'wizard/purchase_order_status_report_view.xml',
+        'wizard/purchase_order_status_report_view.xml',
         'views/views.xml',
     ],
     'demo': [

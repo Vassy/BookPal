@@ -16,7 +16,7 @@ class PurchaseOrderReportWiz(models.TransientModel):
     supplier_ids = fields.Many2many(
         'res.partner', string='Vendors',
         domain="[('supplier_rank', '>', 0)]")
-    warehouse_id = fields.Many2one('stock.warehouse', 'Warehouse')
+    # warehouse_id = fields.Many2one('stock.warehouse', 'Warehouse')
 
     def generate_purchase_order_status(self):
         """Based on configuration generate the PO status report."""
@@ -34,9 +34,9 @@ class PurchaseOrderReportWiz(models.TransientModel):
             if self.product_ids:
                 domain.append(
                     ('product_id', 'in', self.product_ids.ids))
-            if self.warehouse_id:
-                domain.append(
-                    ('order_id.warehouse_id', '=', self.warehouse_id.id))
+            # if self.warehouse_id:
+            #     domain.append(
+            #         ('order_id.warehouse_id', '=', self.warehouse_id.id))
             if self.supplier_ids:
                 domain.append(
                     ('order_id.partner_id', 'in', self.supplier_ids.ids))
@@ -54,7 +54,7 @@ class PurchaseOrderLine(models.Model):
     _inherit = "purchase.order.line"
 
     origin = fields.Char(related="order_id.origin")
-    warehouse_id = fields.Many2one(related="order_id.warehouse_id")
+    # warehouse_id = fields.Many2one(related="order_id.warehouse_id")
     uom_id = fields.Many2one(related="product_id.uom_id")
     qty_remain_receive = fields.Float(
         "Remaining Qty", compute="compute_remain_qty")
