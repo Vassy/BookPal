@@ -17,8 +17,9 @@
                         Dear
                         <t t-out="object.partner_id.name" data-oe-t-inline="true" contenteditable="false"></t>
                         I hope you are well.
-                        This is Your First Reminder You are requested to accept this purchase order for the below mentioned items. Schduled Date is to be made by On
-                       <t t-out="object.scheduled_date"/>
+                        This is Your First Reminder You are requested to accept this purchase order for the below
+                        mentioned items. Schduled Date is to be made by On
+                        <t t-out="object.scheduled_date"/>
                         Payment: Immediately on receipt of the materials in good condition.
                         Best regards,
 
@@ -39,16 +40,50 @@
                     <p style="margin: 0px; padding: 0px; font-size: 13px;">
                         Dear
                         <p style="margin: 0px; padding: 0px; font-size: 13px;">
-                        Dear
-                        <t t-out="object.partner_id.name" data-oe-t-inline="true" contenteditable="false"></t>
-                        I hope you are well.
-                        This is Your Second Reminder You are requested to accept this purchase order for the below mentioned items. Schduled Date is to be made by On
-                       <t t-out="object.scheduled_date"/>
-                        Payment: Immediately on receipt of the materials in good condition.
-                        Best regards,
+                            Dear
+                            <t t-out="object.partner_id.name" data-oe-t-inline="true" contenteditable="false"></t>
+                            I hope you are well.
+                            This is Your Second Reminder You are requested to accept this purchase order for the below
+                            mentioned items. Schduled Date is to be made by On
+                            <t t-out="object.scheduled_date"/>
+                            Payment: Immediately on receipt of the materials in good condition.
+                            Best regards,
+
+                        </p>
 
                     </p>
+                </body>
+            </field>
+        </record>
+        <record id="email_template_purchase_reciept_deadline_reminder" model="mail.template">
+            <field name="name">Purchase Backorder Deadline Receipt: Send by Email</field>
+            <field name="model_id" ref="model_stock_picking"/>
+            <field name="email_to">{{ (object.partner_id.email)}}</field>
+            <field name="email_from">{{ object.user_id.email_formatted or user.email_formatted or ''}}</field>
+            <field name="email_cc">{{object.partner_id.cc_email}}</field>
+            <!--            <field name="partner_to">{{ object.cc_email}}</field>-->
+            <field name="subject">Purchase Backorder Deadline Reminder {{object.partner_id.name}}</field>
+            <field name="body_html" type="html">
+                <body>
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Dear
+                        <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                            Dear
+                            <t t-out="object.partner_id.name" data-oe-t-inline="true" contenteditable="false"></t>
+                            I hope you are well.
+                            This is Your Deadline Reminder You are requested to accept this purchase order for the below
+                            mentioned items. Schduled Date is to be made by On
+                            <t t-out="object.scheduled_date"/>
+                            Payment: Immediately on receipt of the materials in good condition.
+                            Best regards,
 
+                        </p>
+                        <div style="margin: 16px 0px 16px 0px;">
+                            <a t-att-href="object.backorder_url"
+                               style="background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;">
+                                BackOrder
+                            </a>
+                        </div>
                     </p>
                 </body>
             </field>

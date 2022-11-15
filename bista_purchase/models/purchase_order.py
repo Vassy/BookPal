@@ -179,7 +179,8 @@ class PurchaseOrderLine(models.Model):
     #                            ('canceled', 'Canceled'),
     #                            ('invoiced', 'Invoiced'),
     #                            ('partially_received', 'Partially Received')], default='draft', tracking=True)
-    status_id = fields.Many2one('po.status.line', string="Status", default=_default_po_line_status, copy=False, ondelete="restrict", tracking=True)
+    status_id = fields.Many2one('po.status.line', string="Status", default=_default_po_line_status, copy=False,
+                                ondelete="restrict", tracking=True)
     tracking_ref = fields.Char(
         'Tracking Refrence', compute="get_tracking_ref")
 
@@ -189,10 +190,10 @@ class PurchaseOrderLine(models.Model):
         for line in self:
             tracking_ref = line.move_ids.filtered(
                 lambda x: x.picking_type_id.code == 'incoming' and
-                x.quantity_done).mapped(
+                          x.quantity_done).mapped(
                 'picking_id').mapped('carrier_tracking_ref')
             tracking_ref = ', '.join([str(elem)
-                                     for elem in tracking_ref if elem])
+                                      for elem in tracking_ref if elem])
             line.tracking_ref = tracking_ref
 
     # def write(self, vals):
