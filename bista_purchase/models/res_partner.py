@@ -5,10 +5,6 @@ from odoo import models, fields, _, api
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    type = fields.Selection(selection_add=[
-                            ('return', 'Return Address'),
-                            ('warehouse', 'Warehouse Address'),]
-                            )
     is_primary = fields.Boolean(string="Primary Contact")
 
     # Supplier Details
@@ -98,6 +94,10 @@ class ResPartner(models.Model):
             res.append((partner.id, name))
         return res
 
+    @api.onchange('type')
+    def _onchange_contact_type(self):
+        if self.type != 'contact':
+            self.is_primary = False
 
 class ResPartnerShipping(models.Model):
     _name = 'res.partner.shipping'

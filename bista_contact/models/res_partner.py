@@ -5,6 +5,11 @@ from odoo import _, api, fields, models
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
+    type = fields.Selection(selection_add=[
+                            ('return', 'Return Address'),
+                            ('warehouse', 'Warehouse Address'),]
+                            )
+
     # Contact Details
     customer_status = fields.Selection([('pending', 'Prospect'),
                                         ('active', 'Active'), ('idle', 'Idle'),
@@ -50,3 +55,10 @@ class ResPartner(models.Model):
            product_list = self.sale_order_ids.mapped('order_line').filtered(
                 lambda a: a.product_id.detailed_type != 'service').mapped('product_id')
            self.sale_product_ids=[(6,0,product_list.ids)]
+
+    def _avatar_get_placeholder_path(self):
+        if self.type == 'return':
+            return "bista_contact/static/img/return.jpg"
+        if self.type == 'warehouse':
+            return "bista_contact/static/img/warehouse.png"
+        return super()._avatar_get_placeholder_path()

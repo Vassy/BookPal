@@ -204,17 +204,15 @@ class ResPartner(models.Model):
             vals['phone'] = company_phone
         return super(ResPartner, self).create(vals)
 
-    # @api.model
-    # def name_search(self, name='', args=None, operator='ilike', limit=100):
-    #     """User can serach tax based on name and description."""
-    #     print ("\n name search >>>", self.env.context)
-    #     print ("\n if >>>>>>")
-    #     if not args:
-    #         args = []
-    #     if not self.env.context.get('shipment_contact'):
-    #         args += [('is_multi_ship', '=', False)]
-    #     ids = self._name_search(name, args, operator, limit=limit)
-    #     return self.browse(ids).sudo().name_get()
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        """User can serach tax based on name and description."""
+        if not args:
+            args = []
+        if not self.env.context.get('shipment_contact'):
+            args += [('is_multi_ship', '=', False)]
+        ids = self._name_search(name, args, operator, limit=limit)
+        return self.browse(ids).sudo().name_get()
 
     def name_get(self):
         """Updated display name."""
@@ -230,19 +228,15 @@ class ResPartner(models.Model):
         else:
             return super(ResPartner, self).name_get()
 
-    # @api.depends('is_company', 'name', 'parent_id.display_name',
-    #              'type', 'company_name', 'ship_line_ids.partner_id')
-    # def _compute_display_name(self):
-    #     print ("\n self.env.context >>_compute_display_name>>>>", self, self.env.context)
-    #     # diff = dict(show_address=None, show_address_only=None, show_email=None, html_format=None, show_vat=None)
-    #     # print ('\n self >>>.', self)
-    #     # print ("\n diff >>>", diff)
-    #     # names = dict(self.with_context(**diff).name_get())
-    #     # print ("\n names >>>.", names)
-    #     # for partner in self:
-    #     #     print ("\n partner >>>>", partner)
-    #     #     partner.display_name = names.get(partner.id)
-    #     return super(ResPartner, self)._compute_display_name()
+    @api.depends('is_company', 'name', 'parent_id.display_name',
+                 'type', 'company_name', 'ship_line_ids.partner_id',
+                 'is_multi_ship')
+    def _compute_display_name(self):
+        res = super(ResPartner, self)._compute_display_name()
+        for partner in self:
+            if partner.is_multi_ship:
+                partner.display_name = partner.name
+        return res
 
     def get_vendors(self):
         """Get vendors."""
@@ -276,9 +270,3 @@ class ResPartner(models.Model):
         return super(ResPartner, self).read_group(
             domain, fields, groupby, offset=offset,
             limit=limit, orderby=orderby, lazy=lazy)
-
-    # def read(self, fields=None, load='_classic_read'):
-    #     """When reading specific fields, read."""
-
-    #     print("\n read self.env.context >>partner>>", self.env.context)
-    #     return super(ResPartner, self).read(fields=fields, load=load)
