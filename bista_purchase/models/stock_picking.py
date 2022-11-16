@@ -31,8 +31,9 @@ class StockPicking(models.Model):
 
     def _compute_applicable_tracking_ids(self):
         for picking in self:
-            applicable_tracking_ids = picking.move_lines.mapped('purchase_line_id').mapped('order_id').purchase_tracking_ids
-            picking.applicable_tracking_ids =applicable_tracking_ids.filtered(lambda x:x.status != 'received')
+            applicable_tracking_ids = picking.move_lines.mapped('purchase_line_id').mapped(
+                'order_id').purchase_tracking_ids
+            picking.applicable_tracking_ids = applicable_tracking_ids.filtered(lambda x: x.status != 'received')
 
     def backorder_run_scheduler(self):
 
@@ -62,3 +63,20 @@ class StockPicking(models.Model):
         if week_backorder_ids:
             for record in week_backorder_ids:
                 template_second.send_mail(record.id, force_send=True)
+
+    def backorder_run_deadline(self):
+        current_datetime = datetime.now()
+        current_date = current_datetime.date()
+        one_day_bo_ids = self.env['stock.picking'].search([('backorder_id', '!=', False),
+                                                           ('picking_type_code', '=', 'incoming'),
+                                                           ('state', 'in', ('waiting', 'confirmed', 'assigned')),
+                                                           ('date_deadline', '<', current_date)])
+        template_deadline = self.env.ref('bista_purchase.email_template_purchase_reciept_deadline_reminder')
+        if one_day_bo_ids:
+            for temp in one_day_bo_ids:
+                template_deadline.send_mail(temp.id, force_send=True)
+
+    def compute_url(self):
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        url = base_url + '/web#id=' + str(self.id) + '&model=stock.picking&view_type=form'
+        return url

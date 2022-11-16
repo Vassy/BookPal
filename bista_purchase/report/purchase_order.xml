@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="report_purchaseorder_document_extended" inherit_id="purchase.report_purchaseorder_document">
+        <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
+            <attribute name="t-call">bista_report_header_footer.shipment_custom_header</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('page')]" position="inside">
+            <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang)"/>
+            <div class="page">
+                <div t-set="address">
+                    <span>
+                        <strong>SUPPLIER</strong>
+                    </span>
+                    <div t-field="o.partner_id"
+                         t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                </div>
+                <t t-set="report_info" class="col-6 text-right mb4">
+                    <h3 t-if="o.state in ['draft','sent','purchase','done']">Purchase Order</h3>
+                    <h3 t-if="o.state == 'cancel'">Cancelled Purchase Quotation/Order</h3>
+                    <h4>
+                        <strong>
+                            <t t-esc="o.name"/>
+                        </strong>
+                    </h4>
+                    <strong t-if="o.state in ['purchase','done']">Order Date:
+                        <t t-esc="o.date_approve" t-options='{"widget": "date"}'/>
+                    </strong>
+                    <strong t-if="o.state in ['draft','sent']">RFQ Date:
+                        <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                    </strong>
+                    <br/>
+                </t>
+                <t t-set="custom_information_block">
+                    <div>
+                        <t t-if="o.state in ['draft','sent']">
+                            <strong>RFQ #:</strong>
+                            <t t-esc="o.name"/>
+                            <br/>
+                        </t>
+                        <t t-if="o.state not in ['draft','sent']">
+                            <strong>Purchase Order:</strong>
+                            <t t-esc="o.name"/>
+                            <br/>
+                        </t>
+                        <t t-if="o.state in ['draft','sent']">
+                            <strong>RFQ Date:</strong>
+                            <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                            <br/>
+                        </t>
+                        <t t-if="xmlid == 'purchase.report_purchaseorder' and o.state not in ['draft','sent']">
+                            <strong>Order Arrive By Date:</strong>
+                            <t t-esc="o.date_approve" t-options='{"widget": "date"}'/>
+                            <br/>
+                        </t>
+                        <t t-elif="xmlid == 'purchase.report_purchasequotation' and o.state not in ['draft','sent']">
+                            <strong>RFQ Date:</strong>
+                            <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                            <br/>
+                        </t>
+
+                        <strong>BookPal Account # :</strong>
+                        <t t-esc="428475"/>
+                        <br/>
+                        <t t-if="o.payment_term_id">
+                            <strong>Supplier Terms :</strong>
+                            <t t-esc="o.payment_term_id.name"/>
+                            <br/>
+                        </t>
+
+                        <strong>Shipping Method :</strong>
+                        <span>Free Delivery Method</span>
+                        <br/>
+                        <t t-if="o.shipping_instructions">
+                            <strong>Shipping Instructions :</strong>
+                            <t t-esc="o.shipping_instructions"/>
+                            <br/>
+                        </t>
+                        <strong>Salesperson:</strong>
+                        <t t-esc="o.user_id.name"/>
+                    </div>
+                </t>
+            </div>
+            <t t-if="doc_model == 'purchase.order' and o.state in ['draft','sent'] and xmlid == 'purchase.report_purchaseorder'">
+                <div class="watermark"
+                     style="top:450px; left: 90px; border: 2px solid green; font-size:7em; position:fixed; text-align:center; width:70%; opacity:0.25; -webkit-transform: rotate(-30deg);">
+                    <p>Draft</p>
+                </div>
+            </t>
+        </xpath>
+        <xpath expr="//thead" position="replace">
+            <thead style="border: 1px solid black;">
+                <span style="color: black; font-weight: bold; margin-bottom: 0px; margin-left: 5px; margin-top: 30px">
+                    Product Details
+                </span>
+                <tr>
+                    <th name="th_default_code" class="text-center"
+                        style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;">
+                        <strong>ISBN</strong>
+                    </th>
+                    <th name="th_description" class="text-center"
+                        style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;">
+                        <strong>Description</strong>
+                    </th>
+                    <th name="th_format" class="text-center"
+                        style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;">
+                        <strong>Format</strong>
+                    </th>
+                    <!-- <th name="th_taxes" class="text-center"><strong>Taxes</strong></th> -->
+                    <th name="th_quantity" class="text-center"
+                        style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;">
+                        <strong>Qty</strong>
+                    </th>
+                    <th name="th_cover" class="text-center"
+                        style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;">
+                        <strong>Cover</strong>
+                    </th>
+                    <th name="th_discount" class="text-center"
+                        style="border-top: 1px solid black;border-bottom: 1px solid black; border-right: 1px solid black;">
+                        <strong>Discount</strong>
+                    </th>
+                    <th name="th_bp_price" class="text-center text-danger"
+                        style="border-top: 1px solid black;border-bottom: 1px solid black; border-right: 1px solid black;"
+                        width="93px;">
+                        <strong>BP Price</strong>
+                    </th>
+                    <th name="th_amount" class="text-center"
+                        style="border-top: 1px solid black;border-bottom: 1px solid black;  width: 100px;">
+                        <strong>Total</strong>
+                    </th>
+                </tr>
+            </thead>
+        </xpath>
+        <xpath expr="//t[@t-if='not line.display_type']" position="replace">
+            <t t-if="not line.display_type">
+                <td id="td_default_code" class="text-left"
+                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-left: 1px solid black;border-top: 1px solid black;">
+                    <span t-field="line.product_id.isbn"/>
+                </td>
+                <td id="product"
+                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
+                    <span t-field="line.name"/>
+                </td>
+                <td class="text-center" name="td_format"
+                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; ">
+                    <t t-set="format" t-value="MMP"/>
+                    <span>MMP</span>
+                </td>
+                <td class="text-center"
+                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
+                    <span t-if="float(line.product_qty).is_integer()"
+                          t-esc="int(line.product_qty)"/>
+                    <span t-if="not float(line.product_qty).is_integer()"
+                          t-field="line.product_qty"/>
+                </td>
+                <td class="text-right" name="td_cover"
+                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
+                    <span t-field="line.price_unit"/>
+                </td>
+                <td class="text-right" name="td_discount"
+                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
+                    <div>
+                        <span t-field="line.discount"/>%
+                    </div>
+                </td>
+                <td class="text-right text-danger" name="td_bp_price"
+                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
+                    <span t-field="line.disc_price_unit"/>
+                </td>
+
+                <td class="text-right"
+                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; margin: auto;width: 111px;">
+                    <span t-field="line.price_subtotal"
+                          t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                </td>
+            </t>
+        </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm', 'o_main_table')]" position="after">
+            <div>
+                <table style="border: 1px solid black; margin-left: auto; width:30%;">
+                    <tr class="border-black o_subtotal">
+                        <td>
+                            <strong>Total W/D</strong>
+                        </td>
+                        <td class="text-right" style="border-left: 1px solid black; margin: auto; width: 111px;">
+                            <span t-field="o.without_disc_amount_untaxed"/>
+                        </td>
+                    </tr>
+                    <tr class="border-black o_subtotal">
+                        <td>
+                            <strong>Discount</strong>
+                        </td>
+                        <td class="text-right" style="border-left: 1px solid black;">
+                            <span t-field="o.total_discount_amount"/>
+                        </td>
+                    </tr>
+                    <tr class="border-black o_subtotal">
+                        <td>
+                            <strong>Subtotal</strong>
+                        </td>
+                        <td class="text-right" style="border-left: 1px solid black;">
+                            <span t-field="o.amount_untaxed"/>
+                        </td>
+                    </tr>
+                    <tr class="border-black o_subtotal">
+                        <td>
+                            <strong class="text-right">Tax</strong>
+                        </td>
+                        <td class="text-right" style="border-left: 1px solid black;">
+                            <span t-field="o.amount_tax"/>
+                        </td>
+                    </tr>
+                    <tr class="border-black o_subtotal">
+                        <td>
+                            <strong class="text-right">Shipping</strong>
+                        </td>
+                        <td class="text-right" style="border-left: 1px solid black;">
+                            <span t-esc="0.0" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black; padding-top:10px; padding-left:10px;
+                                      background: black;color: white; height:1px ;">
+                            <strong class="border-black o_subtotal;text-right">Total</strong>
+                        </td>
+                        <td style="border-top: 1px solid black; padding-left:10px;padding-right:8px; height:1px ; padding-top:10px; background-color: black; color: white;"
+                            class="text-right">
+                            <span t-field="o.amount_total"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </xpath>
+        <xpath expr="//p[@t-field='o.notes']" position="before">
+            <div class="text-right text-danger">
+                <span style="font-size: 12px; margin-right: 10px;">DO NOT PROCESS IF PRICES ARE INCORRECT</span>
+            </div>
+        </xpath>
+        <xpath expr="//p[@t-field='o.notes']" position="replace">
+            <div class="mt-5 mx-3" t-if="o.notes">
+                <strong>Purchase Order Terms and
+                    Conditions
+                </strong>
+                <p class="mb-1" t-field="o.notes" style="margin-left: 50px;"/>
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='informations']" position="replace"/>
+        <xpath expr="//div[@id='total']" position="replace"/>
+        <xpath expr="//h2[1]" position="replace"/>
+        <xpath expr="//h2[2]" position="replace"/>
+        <xpath expr="//h2[last()]" position="replace"/>
+        <xpath expr="//table[hasclass('table', 'table-sm', 'o_main_table')]" position="attributes">
+            <attribute name="style">margin-bottom: 0px;</attribute>
+        </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm', 'o_main_table')]" position="before">
+            <t t-if="o.special_pick_note">
+                <div class='row mt-4'>
+                    <div class="col-12" style="margin-left: 5px; margin-bottom: 20px; ">
+                        <strong>Special Instructions and Notes</strong>
+                        <p t-field="o.special_pick_note"
+                           style="border-top: 1px solid black; margin-top: 1px;"/>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+</odoo>
