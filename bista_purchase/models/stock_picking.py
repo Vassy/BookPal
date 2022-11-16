@@ -20,7 +20,6 @@ class StockPicking(models.Model):
                                                 related="partner_id.author_event_shipping_naunces")
     applicable_tracking_ids = fields.Many2many('purchase.tracking', compute="_compute_applicable_tracking_ids")
     purchase_tracking_id = fields.Many2one('purchase.tracking', "Purchase Tracking", copy=False)
-    backorder_url = fields.Char('Url', compute='compute_url')
 
     def write(self, vals):
         res = super(StockPicking, self).write(vals)
@@ -80,5 +79,4 @@ class StockPicking(models.Model):
     def compute_url(self):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         url = base_url + '/web#id=' + str(self.id) + '&model=stock.picking&view_type=form'
-        self.backorder_url = url
         return url
