@@ -32,7 +32,7 @@
     </record>
 
 
-    <menuitem id="death_type_menu" name="Death Type" action="death_type_action"
+    <menuitem id="death_type_menu" name="Die Type" action="death_type_action"
               parent="bookpal_menu" sequence="3"/>
 
 
