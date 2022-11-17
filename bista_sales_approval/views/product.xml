@@ -1,0 +1,32 @@
+<odoo>
+    <data>
+        <record id="product_min_price_field_add" model="ir.ui.view">
+            <field name="name">Product Min Price</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='pricing']" position="after">
+                    <label for="minimum_sale_price" string="Minimum Sale Price"/>
+                    <div class="o_row col-5 pl-0">
+                        <field name="minimum_sale_price" widget='monetary'
+                               options="{'currency_field': 'currency_id', 'field_digits': True}" readonly="1"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="product_min_price_field_add_group_access" model="ir.ui.view">
+            <field name="name">Product Min Price group visible</field>
+            <field name="model">product.product</field>
+            <field name="groups_id" eval="[(4,ref('bista_sales_approval.group_approve_product_price'))]"/>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='minimum_sale_price']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
