@@ -24,9 +24,8 @@ class SaleOrder(models.Model):
 
     def action_override_and_send_for_approve(self):
         for rec in self:
-            context = self._context
             rec._create_sale_approval_log(
-                rec.id, context.get("uid"), "Overriden Credit Limit"
+                self._context.get("uid"), "Overriden Credit Limit"
             )
             action = rec.action_send_for_approval()
             if action:
@@ -44,10 +43,8 @@ class SaleOrder(models.Model):
     def action_check_credit_for_approval(self):
         for sale in self:
             sale.state = "credit_review"
-            context = self._context
             sale._create_sale_approval_log(
-                sale.id,
-                context.get("uid"),
+                self._context.get("uid"),
                 "Quote send for Review for Credit Limit Overriding",
             )
 
