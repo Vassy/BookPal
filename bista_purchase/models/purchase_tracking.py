@@ -22,7 +22,7 @@ class PurchaseTracking(models.Model):
     status = fields.Selection([('draft', 'Draft'),
                                ('pending', 'Pending/In Transint'),
                                ('received', 'Received'),
-                               ('on_hold', 'On Hold')], default='pending', tracking=True)
+                               ('on_hold', 'On Hold')], default='pending', tracking=True, string="Shipment Status")
     tracking_ref_ids = fields.One2many('purchase.tracking.ref', 'purchase_tracking_id', string="Tracking Refs")
     picking_ids = fields.One2many('stock.picking', 'purchase_tracking_id', "Pickings")
     is_read_only = fields.Boolean(compute="_compute_is_read_only", string="Is Read Only")
@@ -100,16 +100,17 @@ class PurchaseTrackingLine(models.Model):
     po_line_id = fields.Many2one('purchase.order.line', 'PO Line')
     ordered_qty = fields.Float(compute="_compute_quantities", string="Ordered Quantity", store=True)
     received_qty = fields.Float(compute="_compute_quantities", string="Received Quantity", store=True)
-    remaining_qty = fields.Float(compute="_compute_quantities", string="Remaining Quantity", store=True)
+    pending_shipment_qty = fields.Float(compute="_compute_quantities", string="Pending Shipment", store=False)
     product_id = fields.Many2one('product.product', 'Product')
     ship_qty = fields.Float(string="Shipped Quantity")
 
-    @api.depends('po_line_id')
+    @api.depends('po_line_id', 'ship_qty')
     def _compute_quantities(self):
         for tracking_line in self:
             tracking_line.ordered_qty = tracking_line.po_line_id.product_qty
             tracking_line.received_qty = tracking_line.po_line_id.qty_received
-            tracking_line.remaining_qty = tracking_line.ordered_qty - tracking_line.received_qty
+            purchase_tracking_line_ids = tracking_line.po_line_id.purchase_tracking_line_ids.filtered(lambda x:x.tracking_id.status!='cancel')
+            tracking_line.pending_shipment_qty = tracking_line.ordered_qty - sum(purchase_tracking_line_ids.mapped('ship_qty'))
 
     def compute_checkbox(self):
         for each in self:
