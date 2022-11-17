@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo noupdate="1">
+   <data>
+       <record model="special.pricing.type" id="price_match">
+           <field name="name">Price Match</field>
+       </record>
+       <record model="special.pricing.type" id="next_tier">
+           <field name="name">Next Tier</field>
+       </record>
+       <record model="special.pricing.type" id="combine">
+           <field name="name">Combine</field>
+       </record>
+       <record model="special.pricing.type" id="industry_discount">
+           <field name="name">Industry Discount</field>
+       </record>
+       <record model="special.pricing.type" id="other">
+           <field name="name">Other</field>
+       </record>
+   </data>
+</odoo>

@@ -18,10 +18,22 @@
             <xpath expr="//button[@name='action_view_sale_order']" position="attributes">
                 <attribute name="invisible">0</attribute>
             </xpath>
-            <xpath expr="//page[@name='lead']//field[@name='medium_id']" position="attributes">
+            <xpath expr="//label[@for='probability']" position="attributes">
+                <attribute name="string">Deal Scale</attribute>
+            </xpath>
+            <xpath expr="//page[@name='extra']//field[@name='source_id']" position="attributes">
                 <attribute name="string">Deal Source</attribute>
             </xpath>
+            <xpath expr="//page[@name='lead']//field[@name='source_id']" position="attributes">
+                <attribute name="string">Deal Source</attribute>
+            </xpath>
+            <xpath expr="//field[@name='date_deadline']" position="attributes">
+                <attribute name="string">Estimated Close Date</attribute>
+            </xpath>
             <xpath expr="//page[@name='lead']//field[@name='campaign_id']" position="attributes">
+                <attribute name="string">Sales Campaign</attribute>
+            </xpath>
+            <xpath expr="//page[@name='extra']//field[@name='campaign_id']" position="attributes">
                 <attribute name="string">Sales Campaign</attribute>
             </xpath>
             <xpath expr="//field[@name='user_id']" position="attributes">
@@ -79,7 +91,7 @@
                             <field name="artwork_status_id"/>
                         </group>
                         <group>
-                            <field name="journal_notes" style="max-height: 22px;"/>
+                            <field name="journal_notes" style="max-height: 25px;"/>
                             <field name="journal_setup_fee"/>
                             <!-- <field name="shipping_account" /> -->
                             <field name="death_type_id"/>
@@ -137,5 +149,69 @@
             </xpath>
         </field>
     </record>
+    <record id="special_pricing_type_form_view" model="ir.ui.view">
+        <field name="name">special.pricing.type.form.view</field>
+        <field name="model">special.pricing.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="special_pricing_type_tree_view" model="ir.ui.view">
+        <field name="name">special.pricing.type.tree.view</field>
+        <field name="model">special.pricing.type</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="special_pricing_type_action" model="ir.actions.act_window">
+        <field name="name">Special Pricing Type</field>
+        <field name="res_model">special.pricing.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <record id="fulfillment_warehouse__form_view" model="ir.ui.view">
+        <field name="name">fulfillment.warehouse.form.view</field>
+        <field name="model">fulfillment.warehouse</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="fulfillment_warehouse_tree_view" model="ir.ui.view">
+        <field name="name">fulfillment.warehouse.tree.view</field>
+        <field name="model">fulfillment.warehouse</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="fulfillment_warehouse_action" model="ir.actions.act_window">
+        <field name="name">Fulfillment Warehouse</field>
+        <field name="res_model">fulfillment.warehouse</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <menuitem id="special_pricing_type_menu" name="Special Pricing Type" action="special_pricing_type_action"
+              parent="bookpal_menu_crm" sequence="21"/>
+    <menuitem id="fulfillment_warehouse_menu" name="Fulfillment Warehouse" action="fulfillment_warehouse_action"
+              parent="bookpal_menu_crm" sequence="22"/>
 </odoo>
 

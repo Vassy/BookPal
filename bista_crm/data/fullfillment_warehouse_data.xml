@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo noupdate="1">
+   <data>
+       <record model="fulfillment.warehouse" id="book_pal">
+           <field name="name">Bookpal</field>
+       </record>
+       <record model="fulfillment.warehouse" id="the_dot">
+           <field name="name">The Dot</field>
+       </record>
+       <record model="fulfillment.warehouse" id="kd_mail">
+           <field name="name">KD Mailing</field>
+       </record>
+       <record model="fulfillment.warehouse" id="castelli">
+           <field name="name">Castelli</field>
+       </record>
+   </data>
+</odoo>

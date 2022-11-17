@@ -5,7 +5,7 @@ from odoo import api, _, fields, models
 class CrmLead(models.Model):
     _inherit = "crm.lead"
 
-    google_search_team = fields.Char(string='Google Search Team')
+    google_search_team = fields.Char(string='Google Search Term')
     estim_deal_size = fields.Char(string='Estimated Deal Size')
     estim_deal_close_date = fields.Char(string='Estimated Deal Closed Date')
 
@@ -47,7 +47,7 @@ class CrmLead(models.Model):
     journal_notes = fields.Text(string='Journal Notes')
     journal_setup_fee = fields.Char(string="Journal Set Up Fee")
     death_type_id = fields.Many2one('death.type', string='Die Type')
-    existing_death_order = fields.Char(string="Existing Death Order #")
+    existing_death_order = fields.Char(string="Existing Die Order #")
 
     # Fulfillment Fields
     fulfilment_project = fields.Boolean('Fulfilment Project')
@@ -56,7 +56,7 @@ class CrmLead(models.Model):
 
     shipping_instructions = fields.Char(string='Shipping Instructions')
     special_insert_note = fields.Text(string='Special Insert Notes')
-    fulfilment_warehouse = fields.Char(string='FullFilment WareHouse', )
+    fulfilment_warehouse = fields.Many2one('fulfillment.warehouse', string='FullFilment WareHouse')
     order_shipping_type = fields.Selection([('international', 'International'),
                                             ('domestic', 'Domestic'),
                                             ('both', 'Both'),
@@ -72,11 +72,12 @@ class CrmLead(models.Model):
     # created_by = fields.Char(string='Created By')
     # deal_close_lost_date = fields.Date(string='Close Lost Date')
     # deal_close_lost_reason = fields.Char(string='Close Lost Reason')
-    split_order_number = fields.Char(string='Split Orders Number')
+    split_order_number = fields.Char(string='Number of Orders Split On')
+
     # sale_order_count = fields.Char(string="Orders Count", compute="compute_sale_order_ids")
 
     def action_new_quotation(self):
-        res = super(CrmLead,self).action_new_quotation()
+        res = super(CrmLead, self).action_new_quotation()
         res['context'].update({
             'default_link_to_art_files': self.link_to_art_files,
             'default_journal_notes': self.journal_notes,
@@ -89,13 +90,24 @@ class CrmLead(models.Model):
             'default_shipping_instruction': self.shipping_instructions,
             'default_customization_type_ids': self.customization_type_ids.ids,
             'default_fulfilment_project': self.fulfilment_project,
-            'default_special_insert_note':self.special_insert_note,
-            'default_individual_mailer_return_receiver':self.ind_mailer_return_address,
-            'default_attachment_note':self.attachment_note,
-            
-             })
+            'default_special_insert_note': self.special_insert_note,
+            'default_individual_mailer_return_receiver': self.ind_mailer_return_address,
+            'default_attachment_note': self.attachment_note,
+
+        })
 
         return res
 
+
 class SpecialPricingType(models.Model):
     _name = "special.pricing.type"
+    _description = 'Special Pricing Type'
+
+    name = fields.Char('Name')
+
+
+class FulfillmentWarehouse(models.Model):
+    _name = "fulfillment.warehouse"
+    _description = 'fulfillment warehouse'
+
+    name = fields.Char('Name')
