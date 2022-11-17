@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
     <record id="view_min_price_wiz_form" model="ir.ui.view">
         <field name="name">min_price_wiz form view</field>
         <field name="model">min.price.wiz</field>
@@ -15,27 +14,17 @@
                 <group>
                     <field name="order_line_ids" nolabel="1" readonly="1">
                         <tree string="Lines">
-                            <field name="product_id"/>
-                            <field name="price_unit" string="Sale Price"/>
-                            <field name="minimum_sale_price"/>
+                            <field name="product_id" />
+                            <field name="price_unit" string="Sale Price" />
+                            <field name="minimum_sale_price" />
                         </tree>
                     </field>
                 </group>
                 <footer>
-                    <button string="Okay" name="send_order_for_review" type="object" class="oe_highlight"/>
-                    <button string="Cancel" special="cancel"/>
+                    <button string="Okay" name="send_order_for_review" type="object" class="oe_highlight" />
+                    <button string="Cancel" special="cancel" />
                 </footer>
             </form>
         </field>
-    </record>
-
-
-    <record id="action_min_price_wiz" model="ir.actions.act_window">
-        <field name="name">min_price_wiz</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">min.price.wiz</field>
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
-        <field name="view_id" ref="view_min_price_wiz_form"/>
     </record>
 </odoo>
