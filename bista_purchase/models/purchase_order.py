@@ -162,6 +162,8 @@ class PurchaseOrderLine(models.Model):
     _inherit = ['purchase.order.line', 'mail.thread', 'mail.activity.mixin']
     _name = 'purchase.order.line'
 
+    purchase_tracking_line_ids = fields.One2many('purchase.tracking.line', 'po_line_id', string="Tracking Lines")
+
     def _default_po_line_status(self):
         draft_status_id = self.env.ref('bista_purchase.status_line_draft')
         return draft_status_id.id
