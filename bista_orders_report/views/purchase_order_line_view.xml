@@ -1,38 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Purchase order status report form view. -->
-    <record id="view_purchase_order_status_report_wizard_form" model="ir.ui.view">
-        <field name="name">purchase.order.status.report.wiz.form.view</field>
-        <field name="model">purchase.order.status.report.wiz</field>
-        <field name="arch" type="xml">
-            <form string="Purchase Order Status Report">
-                <sheet>
-                    <group>
-                        <group>
-                            <field name="from_date" required="True"/>
-                            <field name="to_date" required="True"/>
 
-                            <field name="product_ids"
-                                   widget="many2many_tags"
-                                   domain="[('detailed_type', 'in', ('product', 'consu'))]"/>
-                        </group>
-                        <group>
-                            <!-- <field name="warehouse_id"/> -->
-                            <field name="supplier_ids" widget="many2many_tags"/>
-                        </group>
-                    </group>
-                </sheet>
-                <footer>
-                    <button string="Generate Report"
-                        name="generate_purchase_order_status"
-                        type="object" class="btn-primary" />
-                    <button string="Cancel" class="btn-default"
-                            special="cancel"/>
-                </footer>
-            </form>
-        </field>
-    </record>
-
+    <!-- Purchase order line report tree view. -->
     <record id="purchase_order_line_tree_view" model="ir.ui.view">
         <field name="name">purchase.order.line.tree.view</field>
         <field name="model">purchase.order.line</field>
@@ -41,7 +10,6 @@
                 <field name="partner_id" string="Vendor"/>
                 <field name="order_id" optional="show"/>
                 <field name="date_order"/>
-                <!-- <field name="warehouse_id" optional="show"/> -->
                 <field name="date_planned" string="Expected Receipt Date" optional="show"/>
                 <field name="product_id"/>
                 <field name="price_unit" optional="show" widget="monetary"/>
@@ -64,6 +32,7 @@
         </field>
     </record>
 
+     <!--Search View Of the Report-->
     <record id="purchase_order_line_search_view" model="ir.ui.view">
         <field name="name">purchase.order.line.search.view</field>
         <field name="model">purchase.order.line</field>
@@ -91,21 +60,6 @@
             </search>
         </field>
     </record>
-
-    <record model="ir.actions.act_window"
-        id="action_purchase_order_status_wizard">
-        <field name="name">Purchase Order Status Report</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">purchase.order.status.report.wiz</field>
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
-    </record>
-
-    <menuitem id="menu_pending_purchase_order_report_new"
-              name="Purchase Order Status Report"
-              parent="purchase.menu_procurement_management"
-              action="bista_orders_report.action_purchase_order_status_wizard"
-              sequence="20"/>
 
     <record id="action_purchase_order_line_status" model="ir.actions.act_window">
         <field name="name">Purchase Order Status Report</field>

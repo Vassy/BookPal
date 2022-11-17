@@ -4,6 +4,7 @@ from odoo import models, fields, api
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
+    _description = "Sale Order Line Description"
 
     remaining_qty = fields.Float('Remaining Qty',
                                  compute="_calculate_remain_order_status_qty",
@@ -71,7 +72,6 @@ class SaleOrderLine(models.Model):
     def current_product_onhand_qty(self):
         for prod in self:
             prod_qty_available = 0.0
-            # line_WH = prod.warehouses_id.id
             res = prod.product_id._compute_quantities_dict(
                 self._context.get('lot_id'),
                 self._context.get('owner_id'),

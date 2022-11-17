@@ -48,7 +48,6 @@
                     <field name="product_id" string="Product Name"/>    
                     <field name="price_unit"/>
                     <field name="product_uom"/>
-                    <!-- <field name="warehouses_id"/>     -->
                     <field name="product_onhand_qty" />           
                     <field name="product_uom_qty" string="Order Qty"/>           
                     <field name="qty_delivered" /> 
@@ -126,23 +125,6 @@
                 </p>
             </field>
         </record>
-
-        <!-- Action and menu define-->
-        <record model="ir.actions.act_window"
-            id="action_sale_order_status_wizard">
-            <field name="name">Sale Order Status Report</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">sale.order.status.report.wiz</field>
-            <field name="view_mode">form</field>
-            <field name="view_id"
-                   ref="bista_orders_report.view_sale_order_status_report_wizard_form"/>
-            <field name="target">new</field>
-        </record>
-
-        <menuitem id="menu_pending_order_report_new"
-                  parent="sale.sale_order_menu"
-                  action="bista_orders_report.action_sale_order_status_wizard"
-                  sequence="10"/><!--groups="sales_team.group_sale_salesman"-->
 
     </data>
 </odoo>
