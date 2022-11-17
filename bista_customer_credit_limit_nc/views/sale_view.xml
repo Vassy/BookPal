@@ -10,7 +10,7 @@
                 <field name="confirm_check" force_save="1" invisible="1" />
             </field>
             <button name="action_cancel" position="attributes">
-                <attribute name="states">{'invisible': [('state', 'in', ['done', 'cancel'])]}</attribute>
+                <attribute name="attrs">{"invisible": [("state", "in", ["done", "cancel"])]}</attribute>
             </button>
             <xpath expr="//header//button[@name='action_send_for_approval']" position="attributes">
                 <attribute name="attrs">{'invisible': ['|', ('confirm_check', '=', True), ('state', 'not in', ['draft', 'sent', 'customer_approved'])]}
