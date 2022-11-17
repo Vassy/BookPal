@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_for_credit_inherit" model="ir.ui.view">
+        <field name="name">sale.order.form.for.credit.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="confirm_check" force_save="1" invisible="1" />
+            </field>
+            <button name="action_cancel" position="attributes">
+                <attribute name="states">{'invisible': [('state', 'in', ['done', 'cancel'])]}</attribute>
+            </button>
+            <xpath expr="//header//button[@name='action_send_for_approval']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('confirm_check', '=', True), ('state', 'not in', ['draft', 'sent', 'customer_approved'])]}
+                </attribute>
+            </xpath>
+            <xpath expr="//header//button[@name='action_quotation_send'][1]" position="after">
+                <button
+                    name="action_check_credit_for_approval"
+                    string="Send For Approval"
+                    type="object"
+                    class="btn-primary"
+                    attrs="{'invisible': ['|', ('confirm_check', '=', False), ('state','not in', ['draft', 'sent', 'customer_approved'])]}"
+                    confirm="For This Customer Credit Limit is Over, Order will be placed for Review of Accounting Team." />
+                <button
+                    name="action_override_and_send_for_approve"
+                    class="btn-primary"
+                    confirm="Are you sure you want to Override the Credit Limit for this Contact?"
+                    type="object"
+                    attrs="{'invisible': [('state', '!=', 'credit_review')]}"
+                    string="Override Credit Limit"
+                    groups="bista_customer_credit_limit_nc.group_credit_limit" />
+                <button
+                    name="action_reject"
+                    string="Reject"
+                    type="object"
+                    states="credit_review"
+                    groups="bista_customer_credit_limit_nc.group_credit_limit"
+                    class="btn-primary" />
+            </xpath>
+            <field name="fiscal_position_id" position="after">
+                <field name="available_credit_limit" />
+            </field>
+        </field>
+    </record>
+    
+    <record id="sale.action_orders" model="ir.actions.act_window">
+        <field name="domain">[("state", "not in", ("draft", "credit_review", "sent", "cancel"))]
+        </field>
+    </record>
+    
+    <record id="action_orders_credit_review" model="ir.actions.act_window">
+        <field name="name">Credit Reviews</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
+        <field name="search_view_id" ref="sale.view_sales_order_filter" />
+        <field name="context">{}</field>
+        <field name="domain">[("state", "=", "credit_review")]</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Create a Quotation, the first step of a new sale.
+            </p>
+            <p>
+                Once the quotation is confirmed, it becomes a sales
+                order.
+                You'll be able to invoice it and collect payments.
+                From the
+                <i>Sales Orders</i>
+                menu, you can track delivery
+                orders or services.
+            </p>
+        </field>
+    </record>
+    
+    <menuitem
+        id="menu_so_credit_review"
+        name="Credit Review"
+        parent="account.menu_finance_reports"
+        action="bista_customer_credit_limit_nc.action_orders_credit_review" />
+</odoo>

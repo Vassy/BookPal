@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+partner_credit_review_log,Review Log Access,model_credit_review_log,base.group_user,1,1,1,0
