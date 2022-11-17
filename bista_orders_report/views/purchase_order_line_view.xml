@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Purchase order line report tree view. -->
+    <record id="purchase_order_line_tree_view" model="ir.ui.view">
+        <field name="name">purchase.order.line.tree.view</field>
+        <field name="model">purchase.order.line</field>
+        <field name="arch" type="xml">
+            <tree string="Purchase Order Line">
+                <field name="partner_id" string="Vendor"/>
+                <field name="order_id" optional="show"/>
+                <field name="date_order"/>
+                <field name="date_planned" string="Expected Receipt Date" optional="show"/>
+                <field name="product_id"/>
+                <field name="price_unit" optional="show" widget="monetary"/>
+                <field name="currency_id" optional="hide"/>
+                <field name="uom_id" optional="show"/>
+                <field name="origin" optional="show"/>
+                <field name="product_uom_qty" string="Order Qty" optional="show"/>
+                <field name="qty_received_uom" optional="show"/>
+                <field name="qty_received_value" optional="show" widget="monetary"/>
+                <field name="qty_remain_receive" optional="show"/>
+                <field name="qty_remain_receive_value" optional="show" widget="monetary"/>
+                <field name="qty_shortclose" optional="show"/>
+                <field name="short_close_price" optional="show" widget="monetary"/>
+                <field name="price_subtotal" string="Untaxed Amount" optional="show" widget="monetary"/>
+                <field name="line_status" optional="show"/>
+                <field name="taxes_id" widget="many2many_tags" optional="hide"/>
+                <field name="price_tax" optional="hide" widget="monetary"/>
+                <field name="price_total" optional="hide" widget="monetary"/>
+            </tree>
+        </field>
+    </record>
+
+     <!--Search View Of the Report-->
+    <record id="purchase_order_line_search_view" model="ir.ui.view">
+        <field name="name">purchase.order.line.search.view</field>
+        <field name="model">purchase.order.line</field>
+        <field name="arch" type="xml">
+            <search string="Purchase Order Line">
+                <field name="date_order"/>
+                <field name="order_id"/>
+                <field name="partner_id" string="Vendor"/>
+                <field name="product_id"/>
+                <field name="line_status"/>
+                <filter string="Purchased" name="purchase_filter" domain="[('line_status', '=', 'purchase')]"/>
+                <filter string="Received" name="receive_filter" domain="[('line_status', '=', 'received')]"/>
+                <filter string="Partially Received" name="partial_receive_filter" domain="[('line_status', '=', 'partial_received')]"/>
+                <filter string="Short Closed" name="short_close_filter" domain="[('line_status', '=', 'short_close')]"/>
+                <filter string="Order Date" name="order_date_filter" date="date_order"/>
+                <group expand="0" string="Group By">
+                    <filter string="Products" name="groupby_products"
+                            context="{'group_by':'product_id'}"
+                            help="By Products"/>
+                    <filter name="groupby_state"
+                            context="{'group_by': 'state'}" string="Status" help="Purchase Order Status"/>
+                    <filter name="groupby_order"
+                            context="{'group_by': 'order_id'}" string="Order" help="Purchase Order"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_purchase_order_line_status" model="ir.actions.act_window">
+        <field name="name">Purchase Order Status Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">purchase.order.line</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="bista_orders_report.purchase_order_line_tree_view"/>
+        <field name="search_view_id" ref="bista_orders_report.purchase_order_line_search_view"/>
+        <field name="target">current</field>
+    </record>
+
+</odoo>

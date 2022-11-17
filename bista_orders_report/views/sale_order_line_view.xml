@@ -1,0 +1,130 @@
+<odoo>
+    <data>
+        <!--Inheirted Tree View-->
+        <record id="view_order_line_tree_extend" model="ir.ui.view">
+            <field name="name">sale.order.line.tree.view.extend</field>
+            <field name="model">sale.order.line</field>
+            <field name="inherit_id" ref="sale.view_order_line_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_partner_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>               
+                </xpath>
+                <xpath expr="//field[@name='product_uom_qty']" position="attributes">
+                    <attribute name="invisible">1</attribute>               
+                </xpath>
+                <xpath expr="//field[@name='qty_delivered']" position="attributes">
+                    <attribute name="invisible">1</attribute>               
+                </xpath>
+                <xpath expr="//field[@name='qty_invoiced']" position="attributes">
+                    <attribute name="invisible">1</attribute>               
+                </xpath>
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="invisible">1</attribute>               
+                </xpath>
+                <xpath expr="//field[@name='salesman_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>               
+                </xpath>
+                <xpath expr="//field[@name='qty_to_invoice']" position="attributes">
+                    <attribute name="invisible">1</attribute>               
+                </xpath>
+                <xpath expr="//field[@name='product_uom']" position="attributes">
+                    <attribute name="invisible">1</attribute>               
+                </xpath>
+                <xpath expr="//field[@name='route_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>               
+                </xpath>
+                <xpath expr="//field[@name='price_subtotal']" position="attributes">
+                    <attribute name="invisible">1</attribute>               
+                </xpath>
+                <xpath expr="//field[@name='order_id']" position="before">
+                    <field name="order_partner_id"/>                   
+                </xpath>
+                <xpath expr="//field[@name='order_id']" position="after">
+                    <field name="so_date"/>                   
+                    <field name="order_expected_date" optional="hide" string="Expected Delivery"/>                   
+                    <field name="order_po_ref" string="Customer/PO Ref"/>                   
+                    <field name="partner_country"/>                   
+                    <field name="partner_state"/>                   
+                    <field name="product_id" string="Product Name"/>    
+                    <field name="price_unit"/>
+                    <field name="product_uom"/>
+                    <field name="product_onhand_qty" />           
+                    <field name="product_uom_qty" string="Order Qty"/>           
+                    <field name="qty_delivered" /> 
+                    <field name="remaining_qty" string="Remaining Qty"/>
+                    <field name="qty_shortclose" string="Short Close/ Refund Qty"/>    
+                    <field name="qty_invoiced"/>   
+                    <field name="price_subtotal" string="Order Value"/>
+                    <field name="delivery_value"/>  
+                    <field name="short_close_value" string="Short Close/ Refund Value"/> 
+                    <field name="pending_value"/>
+                    <field name="order_status" string="Order Status"/>
+                    <field name="invoice_status" />
+                </xpath>
+            </field>
+        </record>
+
+        <!--Search View Of the Report-->
+        <record id="view_pending_order_report_search" model="ir.ui.view">
+            <field name="name">sale.order.line.report.search</field>
+            <field name="model">sale.order.line</field>
+            <field name="arch" type="xml">
+                <search string="Pending Order Report">
+                    <field name="product_id"/>
+                    <field name="order_id"/>
+                    <field name="order_partner_id"/>
+                    <field name="order_status"/>
+                    <field name="so_invoice_status"/>
+                    <field name="state"/>
+                    <separator/>
+                    <filter string="Pending" name="order_status"
+                            domain="[('order_status', '=', 'pending')]" help="Pending Order"/>
+                    <filter string="Completed" name="order_status"
+                            domain="[('order_status', '=', 'completed')]" help="Completed Order"/>
+                    <filter string="Short Close Qty/ Refund Qty" name="order_status"
+                            domain="[('qty_shortclose', '>', 0)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Products" name="products"
+                                context="{'group_by':'product_id'}"
+                                help="By Products"/>
+                        <filter name="groupby_so_date"
+                                context="{'group_by': 'so_date'}" string="SO Date" help="SO Date"/>
+                        <filter string="Partners" name="partner"
+                                context="{'group_by':'order_partner_id'}" help="Partners"/>
+                        <filter string="Order Status"
+                                name="order_status" context="{'group_by': 'order_status'}"
+                                help="Order Status"/>
+                        <filter string="Country"
+                                name="by_country" context="{'group_by': 'partner_country'}"
+                                help="By Country"/>
+                        <filter string="State"
+                                name="by_state" context="{'group_by': 'partner_state'}"
+                                help="By State"/>
+                        <filter string="Company" name="company" context="{'group_by':'company_id'}"
+                                groups="base.group_multi_company"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="pending_order_report_action_customer" model="ir.actions.act_window">
+            <field name="name">Sale Order Status Report</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order.line</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('display_type', '=', False),
+                ('product_id.detailed_type', 'in', ['consu', 'product'])
+                ]</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a Order lines through sale orders.
+                </p>
+                <p>
+                    Odoo helps you easily track all activities related to a sale order.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

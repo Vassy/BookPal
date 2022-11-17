@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View of Template Import -->
+    <record id="view_sale_order_status_report_wizard_form" model="ir.ui.view">
+        <field name="name">order.status.report.wiz.form.view</field>
+        <field name="model">order.status.report.wiz</field>
+        <field name="arch" type="xml">
+            <form string="Sale Order Status Report">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="from_date"/>
+                            <field name="to_date"/>
+
+                            <field name="product_ids"
+                                   widget="many2many_tags"
+                                   domain="[('detailed_type', 'in', ('product', 'consu'))]"/>
+                        </group>
+                        <group>
+                            <field name="supplier_ids" widget="many2many_tags" invisible="context.get('sale_report')"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Generate Sale Report"
+                        name="action_generate_order_status_report"
+                        type="object" class="btn-primary" invisible="context.get('purchase_report')"/>
+                    <button string="Generate Purchase Report"
+                        name="generate_purchase_order_status"
+                        type="object" class="btn-primary" invisible="context.get('sale_report')"/>
+                    <button string="Cancel" class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- sale order status report action and menu-->
+    <record model="ir.actions.act_window"
+        id="action_sale_order_status_wizard">
+        <field name="name">Sale Order Status Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">order.status.report.wiz</field>
+        <field name="view_mode">form</field>
+        <field name="view_id"
+                ref="bista_orders_report.view_sale_order_status_report_wizard_form"/>
+        <field name="target">new</field>
+        <field name="context">{'sale_report': True}</field>
+    </record>
+
+    <menuitem id="menu_pending_order_report_new"
+                parent="sale.sale_order_menu"
+                action="bista_orders_report.action_sale_order_status_wizard"
+                sequence="10"/>
+
+    <!-- Purchase order status report action and menu-->
+    <record model="ir.actions.act_window"
+        id="action_purchase_order_status_wizard">
+        <field name="name">Purchase Order Status Report</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">order.status.report.wiz</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'purchase_report': True}</field>
+    </record>
+
+    <menuitem id="menu_pending_purchase_order_report_new"
+              name="Purchase Order Status Report"
+              parent="purchase.menu_procurement_management"
+              action="bista_orders_report.action_purchase_order_status_wizard"
+              sequence="20"/>
+
+</odoo>
