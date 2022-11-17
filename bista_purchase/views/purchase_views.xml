@@ -27,7 +27,7 @@
             </xpath> -->
             <xpath expr="//sheet" position="before">
                 <div class="alert alert-danger mb-0" role="alert">
-                    <span>Before Doing Any Opertions, Please Check The Nuances.</span>
+                    <span>Before doing any operations, please check the Nuances.</span>
                 </div>
             </xpath>
             <xpath expr="//page[@name='purchase_delivery_invoice']" position="after">
@@ -61,7 +61,7 @@
                         </group>
                     </group>
                 </page>
-                <page name="ops_project_owner" string="Steps">
+                <page name="ops_project_owner" string="Steps and Nuances">
                     <group>
                         <group name="ops_project_owner" string="Ops Project Owner">
                             <field name="ordered_by"/>
@@ -185,6 +185,9 @@
                     <field name="activity_ids"/>
                     <field name="message_ids"/>
                 </div>
+                <footer>
+                    <button string="Close" special="cancel" class="btn btn-primary"/>
+                </footer>
             </form>
         </field>
     </record>
