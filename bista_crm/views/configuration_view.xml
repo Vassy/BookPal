@@ -16,7 +16,7 @@
                 sequence="20"/>
    <menuitem
                 id="death_type_action_crm"
-                name="Death Type"
+                name="Die Type"
                 parent="bookpal_menu_crm"
                 action="bista_sale.death_type_action"
                 groups="base.group_system"
