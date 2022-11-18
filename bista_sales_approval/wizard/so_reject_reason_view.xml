@@ -1,29 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
     <record id="view_reject_reason_wiz_form" model="ir.ui.view">
         <field name="name">reject.reason.wiz form view</field>
         <field name="model">reject.reason.wiz</field>
         <field name="arch" type="xml">
             <form string="Reject Reason">
                 <group>
-                    <field name="note"/>
+                    <field name="note" />
                 </group>
                 <footer>
-                    <button string="Update" name="update_reject_reason" type="object" class="oe_highlight"/>
-                    <button string="Cancel"  special="cancel"/>
+                    <button string="Update" name="update_reject_reason" type="object" class="oe_highlight" />
+                    <button string="Cancel" special="cancel" />
                 </footer>
             </form>
         </field>
-    </record>
-
-
-    <record id="action_update_reject_reason" model="ir.actions.act_window">
-        <field name="name">Update Reject Reason</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">reject.reason.wiz</field>
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
-        <field name="view_id" ref="view_reject_reason_wiz_form"/>
     </record>
 </odoo>

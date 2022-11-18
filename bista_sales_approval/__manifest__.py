@@ -12,7 +12,7 @@
     "author": "Bista Solutions Pvt. Ltd.",
     "category": "Sales",
     "summary": "",
-    "description": """Sales approval flow.""",
+    "description": "Sales Order approval flow",
     "depends": ["sale_management"],
     "website": "https://www.bistasolutions.com",
     "data": [
