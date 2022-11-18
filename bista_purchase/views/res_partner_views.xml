@@ -10,7 +10,9 @@
                 <field name="is_primary"/>
             </xpath>
             <xpath expr="//field[@name='child_ids']//kanban//templates/t//field[@name='name']" position="after">
-                <span t-if="record.is_primary.raw_value" style="float:right;color:#f3cc00;"><i class="fa fa-star" role="img" aria-label="Primary Contact" title="Primary Contact"/></span>
+                <span t-if="record.is_primary.raw_value" style="float:right;color:#f3cc00;">
+                    <i class="fa fa-star" role="img" aria-label="Primary Contact" title="Primary Contact"/>
+                </span>
             </xpath>
             <xpath expr="//field[@name='child_ids']//form//field[@name='name']" position="attributes">
                 <attribute name="string">Name</attribute>
@@ -21,8 +23,10 @@
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button class="oe_stat_button" name="open_partner_products" icon="fa-th-list" type="object">
                     <div class="o_field_widget o_stat_info">
-                        <span class="o_stat_value"><field name="product_count"/></span>
-                        <span class="o_stat_text"> Products</span>
+                        <span class="o_stat_value">
+                            <field name="product_count"/>
+                        </span>
+                        <span class="o_stat_text">Products</span>
                     </div>
                 </button>
             </xpath>
@@ -125,5 +129,51 @@
             </xpath>
         </field>
     </record>
+    <record id="bista_purchase_res_partner_view_tree_inherit" model="ir.ui.view">
+        <field name="name">bista.purchase.res_partner.view.tree.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='display_name']" position="after">
+                <field name="is_primary" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
 
+    <record id="bista_purchase_view_partner_kanban_inherit" model="ir.ui.view">
+        <field name="name">bista.purchase.res.partner.kanban.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='display_name']" position="after">
+                <field name="is_primary"/>
+            </xpath>
+            <xpath expr="//templates/t//field[@name='display_name']" position="after">
+                <span t-if="record.is_primary.raw_value" style="float:right;color:#f3cc00;">
+                    <i class="fa fa-star" role="img" aria-label="Primary Contact" title="Primary Contact"/>
+                </span>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="bista_purchase_res_partner_search_inherit" model="ir.ui.view">
+        <field name="name">bista.purchase.res.partner.search.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']" position="after">
+                <filter string="Primary Contact" name="is_primary" domain="[('is_primary', '=', True)]"/>
+                <filter string="Top publisher" name="top_publisher" domain="[('top_publisher', '=', True)]"/>
+                <filter string="Vendor" name="supplier_rank" domain="[('supplier_rank', '>', 0)]"/>
+                <filter string="Customer" name="customer_rank" domain="[('customer_rank', '>', 0)]"/>
+                <filter string="Commercial" name="parent_id" domain="[('parent_id', '=', False)]"/>
+            </xpath>
+<!--            <xpath expr="//filter[@name='group_country']" position="after">-->
+<!--                <filter string="Primary Contact" name="is_primary" domain="[('is_primary', '=', True)]"/>-->
+<!--            </xpath>-->
+            <filter name="group_country" position="after">
+                <filter string="Primary Contact" name="is_primary" context="{'group_by': 'is_primary'}"/>
+            </filter>
+        </field>
+    </record>
 </odoo>
