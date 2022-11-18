@@ -66,7 +66,7 @@
                     <group name="shipping_info" string="Shipping Info">
                         <group>
                             <field name="shipping_address"/>
-                            <field name="carrier_id"/>
+                            <field name="carrier_id" options="{'no_open': True}"/>
                             <field name="event_date"/>
                             <field name="need_date"/>
                             <field name="international_shipping"/>
@@ -85,16 +85,16 @@
                 <page name="journal_details" string="Journal Details">
                     <group name="journal_details" string="Journal Details">
                         <group>
-                            <field name="journal_customization_id"/>
+                            <field name="journal_customization_id" options="{'no_open': True}"/>
                             <field name="customization_cost"/>
-                            <field name="link_to_art_files"/>
-                            <field name="artwork_status_id"/>
+                            <field name="link_to_art_files" />
+                            <field name="artwork_status_id" options="{'no_open': True}"/>
                         </group>
                         <group>
                             <field name="journal_notes" style="max-height: 25px;"/>
                             <field name="journal_setup_fee"/>
                             <!-- <field name="shipping_account" /> -->
-                            <field name="death_type_id"/>
+                            <field name="death_type_id" options="{'no_open': True}"/>
                             <field name="existing_death_order"/>
                         </group>
                     </group>
@@ -109,7 +109,7 @@
                             <field name="special_insert_note" style="max-height: 25px;"/>
                         </group>
                         <group>
-                            <field name="fulfilment_warehouse"/>
+                            <field name="fulfilment_warehouse" options="{'no_open': True}"/>
                             <field name="order_shipping_type"/>
                             <field name="ind_mailer_return_address"/>
                             <field name="attachment_note"/>
@@ -125,7 +125,7 @@
                             <field name="product_status_notes" style="max-height: 25px;"/>
                         </group>
                         <group name="Pricing_info" string="Pricing Info">
-                            <field name="special_pricing_type_id"/>
+                            <field name="special_pricing_type_id" options="{'no_open': True}"/>
                             <field name="special_pricing_notes" style="max-height: 25px;"/>
                         </group>
                     </group>

@@ -30,7 +30,7 @@ class SaleOrder(models.Model):
     journal_setup_fee_waived = fields.Char(string="Journal Set Up Fee Waived")
     shipping_account = fields.Char(string="Shipping Account")
     shipping_cost = fields.Float(string=" Our Shipping Cost")
-    death_type_id = fields.Many2one('death.type', string='Death Type')
+    death_type_id = fields.Many2one('death.type', string='Die Type')
     existing_death_order = fields.Char(string="Existing Death Order #")
     # Project & Fulfilment Tracking.
     fulfilment_project = fields.Boolean('Fulfilment Project')
