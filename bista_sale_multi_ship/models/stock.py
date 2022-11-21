@@ -57,7 +57,8 @@ class StockRule(models.Model):
                     'date_deadline': values['ship_line'].shipping_date})
             res.update({
                 'partner_id': values['ship_line'].partner_id.id,
-                'multi_ship_line_id': values.get('ship_line').id
+                'multi_ship_line_id': values.get('ship_line').id,
+                'shipping_partner_id': values['ship_line'].partner_id.id,
             })
         elif values.get('move_dest_ids'):
             ship_line = values.get('move_dest_ids').mapped(
@@ -70,14 +71,16 @@ class StockRule(models.Model):
                         'date_deadline': ship_line.shipping_date})
                 res.update({
                     'partner_id': ship_line.partner_id.id,
-                    'multi_ship_line_id': ship_line.id
+                    'multi_ship_line_id': ship_line.id,
+                    'shipping_partner_id': ship_line.partner_id.id,
                 })
             else:
                 res.update({
                     'partner_id': dest_move.partner_id.id,
                     'date': dest_move.date,
                     'date_deadline': dest_move.date,
-                    'multi_ship_line_id': dest_move.multi_ship_line_id.id
+                    'multi_ship_line_id': dest_move.multi_ship_line_id.id,
+                    'shipping_partner_id': dest_move.partner_id.id,
                 })
         return res
 
@@ -89,7 +92,9 @@ class StockRule(models.Model):
         if val.get('supplier_id'):
             res.update({'partner_id': val.get('supplier_id').id})
         elif val.get('ship_line'):
-            res.update({'partner_id': val.get('ship_line').supplier_id.id})
+            res.update({
+                'partner_id': val.get('ship_line').supplier_id.id,
+                'dest_address_id': val.get('ship_line').partner_id.id})
         elif val.get('sale_line_id'):
             sale_line_id = self.env['sale.order.line'].browse(
                 val.get('sale_line_id'))
@@ -102,6 +107,9 @@ class StockRule(models.Model):
             partner = values.get('supplier_id')
         dom = super(StockRule, self)._make_po_get_domain(
             company_id, values, partner)
+        if values.get('ship_line'):
+            dom += (('dest_address_id', '=',
+                     values.get('ship_line').partner_id.id),)
         if values.get('ship_line') and \
            values.get('ship_line').route_id.name == 'Dropship':
             shipping_date = fields.Datetime.to_string(
@@ -121,7 +129,7 @@ class StockPicking(models.Model):
         readonly=True)
 
     shipping_partner_id = fields.Many2one(
-        'res.partner', string="Customer")
+        'res.partner', string="Shipping Contact")
 
     def action_automatic_entry(self):
         """Action automatic entry."""
@@ -229,7 +237,7 @@ class StockMove(models.Model):
                 self,
                 key=lambda m: [f if isinstance(
                     f, fields.datetime) else
-                               f.id for f in m._key_assign_picking()]),
+                    f.id for f in m._key_assign_picking()]),
             key=lambda m: [m._key_assign_picking()])
         for group, moves in grouped_moves:
             moves = self.env['stock.move'].concat(*list(moves))
@@ -279,7 +287,8 @@ class StockMove(models.Model):
             proc_values.update({'supplier_id': self.sale_line_id.supplier_id})
         if self.multi_ship_line_id and self.multi_ship_line_id.supplier_id:
             proc_values.update(
-                {'supplier_id': self.multi_ship_line_id.supplier_id})
+                {'supplier_id': self.multi_ship_line_id.supplier_id,
+                 'dest_address_id': self.multi_ship_line_id.partner_id.id})
         if self.restrict_partner_id:
             proc_values['supplierinfo_name'] = self.restrict_partner_id
             self.restrict_partner_id = False
@@ -352,3 +361,13 @@ class StockBackorderConfirmation(models.TransientModel):
 #                 args += [('name', '!=', 'Dropship')]
 #         return super(StockLocationRoute, self).name_search(
 #             name, args, operator, limit)
+
+
+class PurchaseOrder(models.Model):
+    _inherit = "purchase.order"
+
+    def _prepare_picking(self):
+        res = super(PurchaseOrder, self)._prepare_picking()
+        if self.dest_address_id:
+            res.update({'shipping_partner_id': self.dest_address_id.id})
+        return res

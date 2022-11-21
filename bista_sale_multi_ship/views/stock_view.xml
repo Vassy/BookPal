@@ -7,8 +7,9 @@
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
+                <!-- , ('sequence_code', '!=', 'DS') -->
                 <xpath expr="//field[@name='partner_id']" position="after">
-                    <field name="shipping_partner_id" string="Customer" invisible="0"/>
+                    <field name="shipping_partner_id" readonly="1" attrs="{'invisible': [('picking_type_code', '!=', 'incoming')]}"/>
                 </xpath>
                 <xpath expr="//page[@name='operations']//field[@name='move_ids_without_package']//tree//field[@name='product_uom_qty']"
                        position="after">
