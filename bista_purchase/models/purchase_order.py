@@ -68,6 +68,8 @@ class PurchaseOrder(models.Model):
         'sale.order', compute="compute_sale_order_ids")
     purchase_tracking_ids = fields.One2many(
         'purchase.tracking', 'order_id', string="Purchase Tracking")
+    po_date = fields.Integer(compute="compute_po_date", string="Lead Time")
+    so_date = fields.Integer(compute="po_so_line_date", string="Order Processing Time")
 
     def button_cancel(self):
         # Chanage orderline status on cancel order
@@ -143,10 +145,38 @@ class PurchaseOrder(models.Model):
     def onchange_partner_id_cc_email(self):
         self.cc_email = self.partner_id.cc_email
 
-    # def _prepare_picking(self):
-    #     res = super(PurchaseOrder, self)._prepare_picking()
-    #     res.update({'note': self.special_pick_note})
-    #     return res
+        # def _prepare_picking(self):
+        #     res = super(PurchaseOrder, self)._prepare_picking()
+        #     res.update({'note': self.special_pick_note})
+        #     return res
+
+    def compute_po_date(self):
+        for rec in self:
+            days = 0
+            date_list = rec.picking_ids.filtered(lambda picking: picking.id == min(rec.picking_ids.ids)).mapped(
+                'scheduled_date')
+            if date_list and rec.date_approve:
+                date_time = date_list[0].date() - rec.date_approve.date()
+                days = date_time.days
+            rec.po_date = days
+
+    def po_so_line_date(self):
+        for rec in self:
+            if rec.sale_order_ids.split_shipment:
+                days = 0
+                vals = rec.sale_order_ids.sale_multi_ship_qty_lines.filtered(
+                    lambda temp: temp.id == min(rec.sale_order_ids.sale_multi_ship_qty_lines.ids)).mapped(
+                    'confirm_date')
+                if vals and rec.date_approve:
+                    date = vals[0].date() - rec.date_approve.date()
+                    rec.so_date = date.days
+                rec.so_date = days
+            else:
+                if rec.sale_order_ids.date_order and rec.date_approve:
+                    days = 0
+                    order_date = rec.date_approve.date() - rec.sale_order_ids.date_order.date()
+                    rec.so_date = order_date.days
+                rec.so_date = days
 
 
 class RushStatus(models.Model):
