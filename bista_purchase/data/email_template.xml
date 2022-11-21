@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
         <!--Email template -->
         <record id="email_template_purchase_reciept_first_reminder" model="mail.template">
             <field name="name">Purchase First Receipt: Send by Email</field>
-            <field name="model_id" ref="model_stock_picking"/>
+            <field name="model_id" ref="model_stock_picking" />
             <field name="email_to">{{ (object.partner_id.email)}}</field>
             <field name="email_from">{{ object.user_id.email_formatted or user.email_formatted or ''}}</field>
             <field name="email_cc">{{object.partner_id.cc_email}}</field>
-            <!--            <field name="partner_to">{{ object.cc_email}}</field>-->
             <field name="subject">Purchase Backorder First Reminder {{object.partner_id.name}}</field>
             <field name="body_html" type="html">
                 <body>
@@ -19,21 +17,20 @@
                         I hope you are well.
                         This is Your First Reminder You are requested to accept this purchase order for the below
                         mentioned items. Schduled Date is to be made by On
-                        <t t-out="object.scheduled_date"/>
+                        <t t-out="object.scheduled_date" />
                         Payment: Immediately on receipt of the materials in good condition.
                         Best regards,
-
                     </p>
                 </body>
             </field>
         </record>
+
         <record id="email_template_purchase_reciept_second_reminder" model="mail.template">
             <field name="name">Purchase Second Receipt: Send by Email</field>
-            <field name="model_id" ref="model_stock_picking"/>
+            <field name="model_id" ref="model_stock_picking" />
             <field name="email_to">{{ (object.partner_id.email)}}</field>
             <field name="email_from">{{ object.user_id.email_formatted or user.email_formatted or ''}}</field>
             <field name="email_cc">{{object.partner_id.cc_email}}</field>
-            <!--            <field name="partner_to">{{ object.cc_email}}</field>-->
             <field name="subject">Purchase Backorder Second Reminder {{object.partner_id.name}}</field>
             <field name="body_html" type="html">
                 <body>
@@ -45,7 +42,7 @@
                             I hope you are well.
                             This is Your Second Reminder You are requested to accept this purchase order for the below
                             mentioned items. Schduled Date is to be made by On
-                            <t t-out="object.scheduled_date"/>
+                            <t t-out="object.scheduled_date" />
                             Payment: Immediately on receipt of the materials in good condition.
                             Best regards,
                         </p>
@@ -53,13 +50,13 @@
                 </body>
             </field>
         </record>
+
         <record id="email_template_purchase_reciept_deadline_reminder" model="mail.template">
             <field name="name">Purchase Backorder Deadline Receipt: Send by Email</field>
-            <field name="model_id" ref="model_stock_picking"/>
+            <field name="model_id" ref="model_stock_picking" />
             <field name="email_to">{{ (object.partner_id.email)}}</field>
             <field name="email_from">{{ object.user_id.email_formatted or user.email_formatted or ''}}</field>
             <field name="email_cc">{{object.partner_id.cc_email}}</field>
-            <!--            <field name="partner_to">{{ object.cc_email}}</field>-->
             <field name="subject">Purchase Backorder Deadline Reminder {{object.partner_id.name}}</field>
             <field name="body_html" type="html">
                 <body>
@@ -71,19 +68,44 @@
                             I hope you are well.
                             This is Your Deadline Reminder You are requested to accept this purchase order for the below
                             mentioned items. Schduled Date is to be made by On
-                            <t t-out="object.scheduled_date"/>
+                            <t t-out="object.scheduled_date" />
                             Payment: Immediately on receipt of the materials in good condition.
                             Best regards,
-
                         </p>
                         <div style="margin: 16px 0px 16px 0px;">
                             <a t-att-href="object.compute_url()"
-                               style="background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;">
+                                style="background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;">
                                 BackOrder
                             </a>
                         </div>
                     </p>
                 </body>
+            </field>
+        </record>
+
+        <record id="email_template_purchase_tracking" model="mail.template">
+            <field name="name">Purchase Tracking: Send by Email</field>
+            <field name="model_id" ref="model_purchase_tracking" />
+            <field name="email_to">{{ object.order_id.dest_address_id.email_formatted }}</field>
+            <field name="email_from">{{ object.partner_id.email_formatted or user.email_formatted or '' }}</field>
+            <field name="subject">Purchase Tracking of {{object.order_id.name}}</field>
+            <field name="body_html" type="html">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Hello <span t-out="object.order_id.dest_address_id.name" />,
+                    <br /><br />
+                    We are glad to inform you that your purchase order <span t-out="object.order_id.name" /> has been shipped.
+                    <t t-if="object.tracking_ref_ids">
+                        Your tracking reference is <a t-att-href="object.tracking_ref_ids[0].tracking_url" t-out="object.tracking_ref_ids[0].name" />.
+                    </t>
+                    <br /><br />
+                    Please contact Customer Service at 888-645-2628 for any additional questions regarding this shipment.
+                    <br /><br />
+                    We look forward to working with you again soon.
+                    <br /><br />
+                    Thank you,
+                    <br /><br />
+                    <span t-out="object.partner_id.name" />
+                </p>
             </field>
         </record>
     </data>
