@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="customer_block_reasone_partner" model="ir.ui.view">
+        <field name="name">Contact Status Update</field>
+        <field name="model">contact.status.update</field>
+        <field name="arch" type="xml">
+            <form string="Details">
+                <header class="oe_gray">
+                      Details
+                </header>
+                   <group>
+                       <group attrs="{'invisible':[('block','==',False)]}" >
+                       <field name="block" invisible="1"/>
+                       <field name="reason" attrs="{'required':[('block','==',True)]}"/>
+                       </group>
+                       <group attrs="{'invisible':[('block','==',True)]}">
+                           <p>Are You Sure, You want to UNBLOCK this contact?</p>
+                       </group>
+                   </group>
+                <footer>
+                    <button name="update_status"  type="object" confirm="Are You Sure, You want to BLOCK this contact?" string="Yes" class="btn-primary" attrs="{'invisible':[('block','==',False)]}"/>
+                    <button name="unblock_update_status"  type="object" string="Yes" class="btn-primary" attrs="{'invisible':[('block','==',True)]}"/>
+                    <button string="Cancel" special="cancel" class="btn btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+     <record id="customer_block_reasone_partner_contact_wizard" model="ir.actions.act_window">
+        <field name="name">Details</field>
+        <field name="res_model">contact.status.update</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+     </record>
+
+    <record id="customer_block_reasone_partner_contact" model="ir.actions.server">
+        <field name="name">Block</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">form,list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.with_context(block=True).open_block_unblock_wizard()</field>
+    </record>
+    <record id="customer_block_reasone_partner_contact_unblock" model="ir.actions.server">
+        <field name="name">Unblock</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">form,list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.with_context(unblock=True).open_block_unblock_wizard()</field>
+    </record>
+</odoo>
