@@ -9,7 +9,7 @@
                       Details
                 </header>
                    <group>
-                       <group attrs="{'invisible':[('block','==',False)]}" >
+                       <group attrs="{'invisible':[('block','=',False)]}" >
                        <field name="block" invisible="1"/>
                        <field name="reason" attrs="{'required':[('block','==',True)]}"/>
                        </group>
