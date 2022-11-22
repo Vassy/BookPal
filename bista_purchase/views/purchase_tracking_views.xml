@@ -12,6 +12,7 @@
                     </div>
                     <group>
                         <group>
+                            <field name="id" invisible="0"/>
                             <field name="is_read_only" invisible="1" />
                             <field name="partner_id" />
                             <field name="picking_type_id" />
@@ -35,10 +36,12 @@
                             </field>
                         </page>
                         <page name="products" string="Products">
-                            <field name="checkbox" attrs="{'readonly': [('is_read_only', '=', True)]}" />
+                            <group>
+                                <field name="checkbox" string="All pending to shipped" attrs="{'readonly': [('is_read_only', '=', True)]}" />
+                            </group>
                             <field name="tracking_line_ids" attrs="{'readonly': [('is_read_only', '=', True)]}">
                                 <tree editable="bottom" create="0" delete="0" default_order="ship_qty desc">
-                                    <field name="checkbox" nolabel="1" />
+<!--                                    <field name="checkbox" nolabel="1" />-->
                                     <field name="po_line_id" readonly="1" force_save="1" />
                                     <field name="ordered_qty" />
                                     <field name="received_qty" optional="hide" />
@@ -54,6 +57,10 @@
                     <field name="activity_ids" />
                     <field name="message_ids" />
                 </div>
+                <footer>
+                    <button string="Save" special="save" class="btn-primary"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
             </form>
         </field>
     </record>

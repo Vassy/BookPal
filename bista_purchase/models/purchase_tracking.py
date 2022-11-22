@@ -41,7 +41,10 @@ class PurchaseTracking(models.Model):
     is_read_only = fields.Boolean(
         compute="_compute_is_read_only", string="Is Read Only"
     )
-    checkbox = fields.Boolean("Checkbox")
+    checkbox = fields.Boolean(string="Select All (Pending to Shipped)")
+
+    def save(self):
+        return {'type': 'ir.actions.act_window_close'}
 
     @api.onchange("checkbox")
     def _onchange_checkbox(self):
@@ -92,6 +95,20 @@ class PurchaseTracking(models.Model):
         template_id = self.env.ref("bista_purchase.email_template_purchase_tracking")
         template_id.send_mail(self.id, force_send=True)
 
+    def edit_tracking_line(self):
+        self.ensure_one()
+        return {
+            'name': _('Purchase Tracking Line'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'purchase.tracking',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'new',
+            'res_id': self.id,
+            'view_id': self.env.ref('bista_purchase.purchase_tracking_form_view').id,
+            # 'context': {'create': False, 'edit': True},
+            # 'flags': {'mode': 'readonly'},
+        }
 
 class PurchaseTrackingRef(models.Model):
     _name = "purchase.tracking.ref"
@@ -135,4 +152,4 @@ class PurchaseTrackingLine(models.Model):
     @api.onchange("checkbox")
     def _onchange_checkbox(self):
         if self.checkbox:
-            self.ship_qty += self.pending_shipment_qty
+            self.ship_qty = self.pending_shipment_qty
