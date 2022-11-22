@@ -91,14 +91,15 @@ class StockRule(models.Model):
         val = values[0]
         if val.get('supplier_id'):
             res.update({'partner_id': val.get('supplier_id').id})
-        elif val.get('ship_line'):
+        elif val.get('ship_line') and val.get('ship_line').supplier_id:
             res.update({
                 'partner_id': val.get('ship_line').supplier_id.id,
                 'dest_address_id': val.get('ship_line').partner_id.id})
         elif val.get('sale_line_id'):
             sale_line_id = self.env['sale.order.line'].browse(
                 val.get('sale_line_id'))
-            res.update({'partner_id': sale_line_id.supplier_id.id})
+            if sale_line_id.supplier_id:
+                res.update({'partner_id': sale_line_id.supplier_id.id})
         return res
 
     def _make_po_get_domain(self, company_id, values, partner):
