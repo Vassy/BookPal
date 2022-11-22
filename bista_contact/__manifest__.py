@@ -9,8 +9,11 @@
     'license': 'AGPL-3',
     'depends': ['base','product'],
     'data': [
+        'security/ir.model.access.csv',
 
         'views/res_partner_views.xml',
+        'wizard/contact_status_update_views.xml',
+
 
     ],
     'installable': True,
