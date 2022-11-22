@@ -11,9 +11,9 @@
                    <group>
                        <group attrs="{'invisible':[('block','=',False)]}" >
                        <field name="block" invisible="1"/>
-                       <field name="reason" attrs="{'required':[('block','==',True)]}"/>
+                       <field name="reason" attrs="{'required':[('block','=',True)]}"/>
                        </group>
-                       <group attrs="{'invisible':[('block','==',True)]}">
+                       <group attrs="{'invisible':[('block','=',True)]}">
                            <p>Are You Sure, You want to UNBLOCK this contact?</p>
                        </group>
                    </group>
