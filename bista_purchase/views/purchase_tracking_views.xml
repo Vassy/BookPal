@@ -12,7 +12,7 @@
                     </div>
                     <group>
                         <group>
-                            <field name="id" invisible="0"/>
+                            <field name="id" invisible="1"/>
                             <field name="is_read_only" invisible="1" />
                             <field name="partner_id" />
                             <field name="picking_type_id" />
@@ -22,7 +22,7 @@
                         <group>
                             <field name="date_order" string="Order Date" />
                             <field name="date_approve" />
-                            <field name="pro_number" required="1" string="PRO No." attrs="{'readonly': [('is_read_only', '=', True)]}" />
+                            <field name="pro_number" required="0" string="PRO No." attrs="{'readonly': [('is_read_only', '=', True)]}" />
                             <field name="status" required="1" attrs="{'readonly': [('is_read_only', '=', True)]}" />
                         </group>
                     </group>
