@@ -20,7 +20,9 @@
                         <field name="date_approve" />
                     </group>
                 </group>
-                <field name="checkbox" />
+                <group>
+                    <field name="checkbox" />
+                </group>
                 <field name="tracking_lines">
                     <tree editable="bottom" create="0">
                         <field name="checkbox" nolabel="1" />

@@ -15,7 +15,7 @@ class UpdateShipmentTracking(models.TransientModel):
         "update.shipment.tracking.line", "update_shipping_id"
     )
     status_id = fields.Many2one("po.status.line", string="Status")
-    checkbox = fields.Boolean("Checkbox")
+    checkbox = fields.Boolean("Update All Lines")
 
     @api.onchange("checkbox")
     def _onchange_checkbox(self):
