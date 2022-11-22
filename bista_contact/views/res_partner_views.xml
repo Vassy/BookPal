@@ -61,7 +61,7 @@
          <field name="inherit_id" ref="base.view_partner_tree"/>
          <field name="arch" type="xml">
              <xpath expr="//tree/field[@name='country_id']" position='after'>
-                 <field name="block" invisible="1" attrs="{'invisible':[('block','==',True)]}"/>
+                 <field name="block" attrs="{'invisible':[('block','==',True)]}"/>
              </xpath>
              <xpath expr="//tree" position="attributes">
                  <attribute name="decoration-danger">block == True</attribute>
