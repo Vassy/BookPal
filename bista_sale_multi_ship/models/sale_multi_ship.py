@@ -281,7 +281,7 @@ class SaleMultiShipQtyLines(models.Model):
         string="Ordered Qty", help='Product Quantity')
     product_uom = fields.Many2one(
         related="so_line_id.product_uom", store=True)
-    product_qty = fields.Float(string="Shipping Qty")
+    product_qty = fields.Float(string="Delivery Qty")
     personalization_1 = fields.Char('Personalization 1')
     personalization_2 = fields.Char('Personalization 2')
 
