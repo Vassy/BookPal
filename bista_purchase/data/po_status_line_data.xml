@@ -15,7 +15,7 @@
         <field name="sequence">3</field>
     </record>
     <record model="po.status.line" id="status_line_pending">
-        <field name="name">Pending/In Transint</field>
+        <field name="name">Pending/In transient</field>
         <field name="sequence">4</field>
     </record>
     <record model="po.status.line" id="status_line_received">
