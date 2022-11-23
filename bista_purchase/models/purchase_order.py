@@ -217,7 +217,6 @@ class PurchaseOrderLine(models.Model):
 
     @api.onchange('product_id')
     def onchange_product_vendor(self):
-        print("2222222222222")
         result = {}
         bo_transfer = self.check_bo_transfer()
         if self.product_id and bo_transfer:
