@@ -180,10 +180,19 @@ class PurchaseOrderLine(models.Model):
                     seller=seller,
                 )
             try:
+                product_context = dict(self.env.context, partner_id=po.partner_id.id, date=po.date_order, uom=product_uom.id)
+                price, rule_id = seller.vendor_pricelist_id.with_context(product_context).get_product_price_rule(product, product_qty or 1.0, po.partner_id)
+                res['pricelist_id'] = seller.vendor_pricelist_id.id
                 discount = max(0, (res.get('price_unit') - product.vendor_price) * 100 / res.get('price_unit'))
+                if rule_id:
+                    rule = self.env['product.pricelist.item'].browse(rule_id)
+                    if rule.compute_price == 'percentage':
+                        discount = rule.percent_price
                 res['discount'] = discount
             except:
+                res['pricelist_id'] = False
                 res['discount'] = 0
+
         return res
 
     # @api.model

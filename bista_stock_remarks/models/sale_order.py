@@ -11,7 +11,7 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    picking_note = fields.Text('Picking Note')
+    picking_note = fields.Text('Remarks')
 
     def _prepare_procurement_values(self, group_id=False):
         values = super(SaleOrderLine, self)._prepare_procurement_values(
@@ -34,7 +34,7 @@ class SaleMultiShipQtyLines(models.Model):
     _inherit = "sale.multi.ship.qty.lines"
     _description = 'Sale Multi Ship Qty Lines model details.'
 
-    picking_note = fields.Text('Picking Note')
+    picking_note = fields.Text('Remarks')
 
     @api.onchange('so_line_id')
     def onchange_product_vendor(self):

@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <!--Picking notes-->
             <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
-                <field name="picking_note"/>
+                <field name="picking_note" optional="show"/>
             </xpath>
             
             <!--Common Picking Note-->
@@ -21,7 +21,7 @@
                 </group>
             </xpath>
             <xpath expr="//field[@name='sale_multi_ship_qty_lines']/tree/field[@name='so_line_id']" position="after">
-                <field name="picking_note"/>
+                <field name="picking_note" optional="show"/>
             </xpath>
         </field>
     </record>

@@ -36,7 +36,7 @@ class SaleOrder(models.Model):
     #     string="Multi Ship Lines")
 
     split_shipment = fields.Boolean(
-        'Multi Shipments?', default=True, copy=False,
+        'Multi Shipments?', default=False, copy=False,
         help="Check this box if you have multiple shipment \
         locations for products on the same order.\
         Clicking this checkbox will make the Multi-Ship \
@@ -485,7 +485,15 @@ class SaleOrderLine(models.Model):
         res = []
         if self.env.context.get('multi_ship'):
             for sline in self:
-                res.append((sline.id, sline.product_id.name))
+                name = sline.product_id.name
+                if sline.product_id.product_template_attribute_value_ids:
+                    name = sline.product_id.name + "(" + ','.join(
+                        sline.product_id.product_template_attribute_value_ids.
+                        mapped('name')) + ")" + " - " + str(
+                        sline.product_qty)
+                else:
+                    name = sline.product_id.name + " - " + str(sline.product_qty)
+                res.append((sline.id, name))
         else:
             res = super(SaleOrderLine, self).name_get()
         return res

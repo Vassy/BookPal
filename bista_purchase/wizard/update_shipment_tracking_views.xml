@@ -7,61 +7,52 @@
             <form editable="top" string="Purchase Order Line">
                 <div class="oe_title">
                     <h1>
-                        <field name="order_id" readonly="1"/>
+                        <field name="order_id" readonly="1" />
                     </h1>
                 </div>
                 <group>
                     <group>
-                        <field name="partner_id"/>
-                        <field name="picking_type_id"/>
+                        <field name="partner_id" />
+                        <field name="picking_type_id" />
                     </group>
                     <group>
-                        <field name="date_order" string="Order Date"/>
-                        <field name="date_approve"/>
+                        <field name="date_order" string="Order Date" />
+                        <field name="date_approve" />
                     </group>
                 </group>
-                <!--                <field name="po_lines" nolabel="1" readonly="1">-->
-                <!--                    <tree>-->
-                <!--                        <field name="product_id"/>-->
-                <!--                        <field name="product_qty"/>-->
-                <!--                        <field name="status"/>-->
-                <!--                    </tree>-->
-                <!--                </field>-->
+                <group>
+                    <field name="checkbox" />
+                </group>
                 <field name="tracking_lines">
                     <tree editable="bottom" create="0">
-                        <field name="checkbox"/>
-                        <field name="po_line" readonly="1" force_save="1"/>
-                        <field name="product_qty" string="Ordered Quantity"/>
-                        <field name="status_id"/>
+                        <field name="checkbox" nolabel="1" />
+                        <field name="po_line_id" readonly="1" force_save="1" />
+                        <field name="product_qty" string="Ordered Quantity" />
+                        <field name="status_id" />
                     </tree>
                 </field>
                 <group>
                     <group>
                         <field name="status_id" required="1"
-                               options="{'no_edit': True, 'no_create': True, 'no_open': True}"
-                               domain="[('manual_update', '!=', False)]"/>
-                        <!--                        <field name="tracking_ref" required="1"/>-->
-                    </group>
-                    <group>
-                        <!--                        <field name="shipment_date" required="0"/>-->
-                        <!--                        <field name="shipment_name" required="0"/>-->
+                            options="{'no_edit': True, 'no_create': True, 'no_open': True}"
+                            domain="[('manual_update', '!=', False)]" />
                     </group>
                 </group>
                 <footer>
-                    <button name="update" string="Update" type="object" class="btn-primary"/>
-                    <button string="Cancel" special="cancel" class="btn btn-primary"/>
+                    <button name="update" string="Update" type="object" class="btn-primary" />
+                    <button string="Cancel" special="cancel" class="btn btn-primary" />
                 </footer>
             </form>
         </field>
     </record>
-    <record id="update_shipment_tracking_action" model="ir.actions.act_window">
 
+    <record id="update_shipment_tracking_action" model="ir.actions.act_window">
         <field name="name">Update PO Line Status</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">update.shipment.tracking</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
-        <field name="binding_model_id" ref="purchase.model_purchase_order"/>
+        <field name="binding_model_id" ref="purchase.model_purchase_order" />
         <field name="binding_view_types">form</field>
     </record>
 </odoo>

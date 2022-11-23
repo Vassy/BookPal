@@ -217,7 +217,7 @@
                         </h1>
                     </div>
                     <group>
-                        <field name="manual_update" string="Manually Update ?"/>
+                        <field name="manual_update" string="Manually Update ?" groups="base.group_no_one"/>
                         <field name="active" invisible="1"/>
                     </group>
                 </sheet>
@@ -231,18 +231,19 @@
             <tree>
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
-                <field name="manual_update" invisible="1"/>
+                <field name="manual_update" invisible="1" groups="base.group_no_one"/>
             </tree>
         </field>
     </record>
     <record id="po_status_line_action" model="ir.actions.act_window">
-        <field name="name">Po Status Line</field>
+        <field name="name">Product Line Status</field>
         <field name="res_model">po.status.line</field>
         <field name="view_mode">tree,form</field>
     </record>
 
-
-    <menuitem id="po_status_line_menu" name="Status" action="po_status_line_action"
-              parent="purchase.menu_unit_of_measure_in_config_purchase" sequence="11"/>
-
+    <menuitem
+        id="po_status_line_menu"
+        action="po_status_line_action"
+        parent="purchase.menu_product_in_config_purchase"
+        sequence="4" />
 </odoo>

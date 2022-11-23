@@ -5,54 +5,67 @@
     <record model="po.status.line" id="status_line_draft">
         <field name="name">Draft</field>
         <field name="sequence">1</field>
+        <field name="manual_update">False</field>
     </record>
     <record model="po.status.line" id="status_line_ready">
         <field name="name">Ready For Preview</field>
         <field name="sequence">2</field>
+        <field name="manual_update">False</field>
     </record>
     <record model="po.status.line" id="status_line_ordered">
         <field name="name">Ordered</field>
         <field name="sequence">3</field>
+        <field name="manual_update">False</field>
     </record>
     <record model="po.status.line" id="status_line_pending">
-        <field name="name">Pending/In Transint</field>
+        <field name="name">Pending/In transient</field>
         <field name="sequence">4</field>
+        <field name="manual_update">True</field>
     </record>
     <record model="po.status.line" id="status_line_received">
         <field name="name">Received</field>
         <field name="sequence">5</field>
+        <field name="manual_update">False</field>
     </record>
     <record model="po.status.line" id="status_line_stocked">
         <field name="name">Stocked</field>
         <field name="sequence">6</field>
+        <field name="manual_update">False</field>
     </record>
     <record model="po.status.line" id="status_line_completed">
         <field name="name">Completed</field>
         <field name="sequence">7</field>
+        <field name="manual_update">True</field>
     </record>
     <record model="po.status.line" id="status_line_return">
         <field name="name">Return created</field>
         <field name="sequence">8</field>
+        <field name="manual_update">True</field>
     </record>
     <record model="po.status.line" id="status_line_rush_ordered">
         <field name="name">Rush Ordered</field>
         <field name="sequence">9</field>
+        <field name="manual_update">True</field>
     </record>
     <record model="po.status.line" id="status_line_on_hold">
         <field name="name">On Hold</field>
         <field name="sequence">10</field>
+        <field name="manual_update">True</field>
     </record>
     <record model="po.status.line" id="status_line_canceled">
         <field name="name">Canceled</field>
         <field name="sequence">11</field>
+        <field name="manual_update">False</field>
     </record>
     <record model="po.status.line" id="status_line_invoiced">
         <field name="name">Invoiced</field>
         <field name="sequence">12</field>
+        <field name="manual_update">False</field>
     </record>
     <record model="po.status.line" id="status_line_partially_received">
         <field name="name">Partially Received</field>
         <field name="sequence">13</field>
+        <field name="manual_update">False</field>
     </record>
 
 </odoo>

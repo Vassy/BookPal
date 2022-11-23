@@ -62,7 +62,6 @@ class PurchaseOrder(models.Model):
         string="Note to Vendor Nuances", related="partner_id.note_to_vendor_nuances")
     memo = fields.Text(string="Memo")
     supplier_order_number = fields.Char(string="Supplier Order Number")
-    # special_pick_note = fields.Html('Special Instructions and Notes')
     num_of_need_by_days = fields.Text(string='Num of Need By Days')
     sale_order_ids = fields.Many2many(
         'sale.order', compute="compute_sale_order_ids")
@@ -105,22 +104,14 @@ class PurchaseOrder(models.Model):
         return res
 
     def open_tracking(self):
-        # active_id = self.env.context.get('active_id')
-        # po_id = self.env['purchase.order'].browse(active_id)
-
         return {
-            'name': _('Shipment Tracking'),
-            'type': 'ir.actions.act_window',
-            'res_model': 'purchase.tracking',
-            'view_mode': 'form',
-            'view_type': 'form',
-            'target': 'new',
-            'context': {'default_order_id': self.id},
+            "name": _("Shipment Tracking"),
+            "type": "ir.actions.act_window",
+            "res_model": "purchase.tracking",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_order_id": self.id},
         }
-
-    def compute_sale_order_ids(self):
-        for order_id in self:
-            order_id.sale_order_ids = order_id._get_sale_orders()
 
     def compute_sale_order_ids(self):
         for order_id in self:
@@ -145,72 +136,21 @@ class PurchaseOrder(models.Model):
     def onchange_partner_id_cc_email(self):
         self.cc_email = self.partner_id.cc_email
 
-        # def _prepare_picking(self):
-        #     res = super(PurchaseOrder, self)._prepare_picking()
-        #     res.update({'note': self.special_pick_note})
-        #     return res
-
-    def compute_po_date(self):
-        for rec in self:
-            days = 0
-            date_list = rec.picking_ids.filtered(lambda picking: picking.id == min(rec.picking_ids.ids)).mapped(
-                'scheduled_date')
-            if date_list and rec.date_approve:
-                date_time = date_list[0].date() - rec.date_approve.date()
-                days = date_time.days
-            rec.po_date = days
-
-    def po_so_line_date(self):
-        for rec in self:
-            if rec.sale_order_ids.split_shipment:
-                days = 0
-                vals = rec.sale_order_ids.sale_multi_ship_qty_lines.filtered(
-                    lambda temp: temp.id == min(rec.sale_order_ids.sale_multi_ship_qty_lines.ids)).mapped(
-                    'confirm_date')
-                if vals and rec.date_approve:
-                    date = vals[0].date() - rec.date_approve.date()
-                    rec.so_date = date.days
-                rec.so_date = days
-            else:
-                if rec.sale_order_ids.date_order and rec.date_approve:
-                    days = 0
-                    order_date = rec.date_approve.date() - rec.sale_order_ids.date_order.date()
-                    rec.so_date = order_date.days
-                rec.so_date = days
-
 
 class RushStatus(models.Model):
     _name = "rush.status"
     _description = 'Rush Status model details.'
 
 
-class UpdateStatus(models.Model):
-    _name = "update.status"
-
-
 class PurchaseOrderLine(models.Model):
     _inherit = ['purchase.order.line', 'mail.thread', 'mail.activity.mixin']
     _name = 'purchase.order.line'
-
-    purchase_tracking_line_ids = fields.One2many('purchase.tracking.line', 'po_line_id', string="Tracking Lines")
 
     def _default_po_line_status(self):
         draft_status_id = self.env.ref('bista_purchase.status_line_draft')
         return draft_status_id.id
 
-    # status = fields.Selection([('draft', 'Draft'),
-    #                            ('ready_for_preview', 'Ready For Preview '),
-    #                            ('ordered', 'Ordered '),
-    #                            ('pending', 'Pending/In Transint'),
-    #                            ('received', 'Received'),
-    #                            ('stocked', 'Stocked'),
-    #                            ('completed', 'Completed'),
-    #                            ('return_created', 'Return created'),
-    #                            ('rush_ordered', 'Rush Ordered'),
-    #                            ('on_hold', 'On Hold'),
-    #                            ('canceled', 'Canceled'),
-    #                            ('invoiced', 'Invoiced'),
-    #                            ('partially_received', 'Partially Received')], default='draft', tracking=True)
+    purchase_tracking_line_ids = fields.One2many('purchase.tracking.line', 'po_line_id', string="Tracking Lines")
     status_id = fields.Many2one('po.status.line', string="Status", default=_default_po_line_status, copy=False,
                                 ondelete="restrict", tracking=True)
     tracking_ref = fields.Char(
@@ -221,28 +161,11 @@ class PurchaseOrderLine(models.Model):
         """Get the tracking reference."""
         for line in self:
             tracking_ref = line.move_ids.filtered(
-                lambda x: x.picking_type_id.code == 'incoming' and
-                          x.quantity_done).mapped(
-                'picking_id').mapped('carrier_tracking_ref')
+                lambda x: x.picking_type_id.code == 'incoming'
+                          and x.quantity_done).mapped('picking_id').mapped('carrier_tracking_ref')
             tracking_ref = ', '.join([str(elem)
                                       for elem in tracking_ref if elem])
             line.tracking_ref = tracking_ref
-
-    # def write(self, vals):
-    #     res = super(PurchaseOrderLine, self).write(vals)
-    #     print('self', self)
-    #     for line in self:
-    #         print('line', line.name, line.status, line.order_id)
-    #         status_flag = True
-    #         for all_poline in line.order_id.order_line:
-    #             print("all order id", all_poline)
-    #             if all_poline.status != 'ordered':
-    #                 status_flag = False
-    #         if status_flag:
-    #             line.order_id.write({
-    #                 'state': 'purchase'
-    #             })
-    #     return res
 
     def open_po_line(self):
         self.ensure_one()
@@ -279,7 +202,7 @@ class PurchaseOrderLine(models.Model):
         result = {}
         bo_transfer = self.check_bo_transfer()
         if self.product_id and bo_transfer:
-            message = _('"%s" Product is already in back order. you can check this backorder. %s')(
+            message = _('"%s" Product is already in back order. you can check this backorder. %s') % (
                 self.product_id.display_name, bo_transfer)
 
             warning_mess = {
@@ -291,11 +214,11 @@ class PurchaseOrderLine(models.Model):
 
 
 class PoStatus(models.Model):
-    _name = 'po.status.line'
-    _description = 'Status Line'
-    _order = 'sequence'
+    _name = "po.status.line"
+    _description = "Status Line"
+    _order = "sequence"
 
-    name = fields.Char('Status Name')
-    sequence = fields.Integer(string='Sequences', default=0)
+    name = fields.Char("Status Name", required=True)
+    sequence = fields.Integer(string="Sequence", default=0)
     manual_update = fields.Boolean(default=True)
     active = fields.Boolean(string="Archived", default=True)
