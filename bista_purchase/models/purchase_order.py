@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, _, api
+from odoo.exceptions import ValidationError
 
 
 class PurchaseOrder(models.Model):
@@ -67,8 +68,6 @@ class PurchaseOrder(models.Model):
         'sale.order', compute="compute_sale_order_ids")
     purchase_tracking_ids = fields.One2many(
         'purchase.tracking', 'order_id', string="Purchase Tracking")
-    po_date = fields.Integer(compute="compute_po_date", string="Lead Time")
-    so_date = fields.Integer(compute="po_so_line_date", string="Order Processing Time")
 
     def button_cancel(self):
         # Chanage orderline status on cancel order
@@ -136,6 +135,25 @@ class PurchaseOrder(models.Model):
     def onchange_partner_id_cc_email(self):
         self.cc_email = self.partner_id.cc_email
 
+        # def _prepare_picking(self):
+        #     res = super(PurchaseOrder, self)._prepare_picking()
+        #     res.update({'note': self.special_pick_note})
+        #     return res
+
+    @api.constrains('order_line')
+    def _check_exist_product_in_line(self, vals=False):
+        for purchase in self:
+            exist_product_list = []
+            products_in_lines = [product.id for product in purchase.mapped('order_line.product_id')]
+            for line in purchase.order_line:
+                if not vals:
+                    if line.product_id.id in exist_product_list:
+                        raise ValidationError(_('Product is already Existing.'))
+                else:
+                    if vals.id in products_in_lines:
+                        raise ValidationError(_('Product is already Existing.'))
+                exist_product_list.append(line.product_id.id)
+
 
 class RushStatus(models.Model):
     _name = "rush.status"
@@ -199,6 +217,7 @@ class PurchaseOrderLine(models.Model):
 
     @api.onchange('product_id')
     def onchange_product_vendor(self):
+        print("2222222222222")
         result = {}
         bo_transfer = self.check_bo_transfer()
         if self.product_id and bo_transfer:
@@ -211,6 +230,12 @@ class PurchaseOrderLine(models.Model):
             }
             result = {'warning': warning_mess}
         return result
+
+    @api.onchange('product_id')
+    def onchange_product_is_exist(self):
+        product_order = self.order_id._origin._check_exist_product_in_line(self.product_id)
+        if self.product_id and product_order:
+            return product_order
 
 
 class PoStatus(models.Model):

@@ -44,17 +44,6 @@
                         <group name="po_conf">
                             <field name="po_conf" style="max-height: 25px;"/>
                             <field name="hours_process" style="max-height: 20px;"/>
-                            <div class="o_row">
-                                <label for="po_date" string="Lead Time"/>
-                                <field name="po_date" no_label="1"/>
-                                <span class="oe_read_only">Days</span>
-                            </div>
-                            <br/>
-                            <div class="o_row">
-                                <label for="so_date" string="Order Processing Time"/>
-                                <field name="so_date" no_label="1"/>
-                                <span class="oe_read_only">Days</span>
-                            </div>
                         </group>
                         <group name="po_clock">
                             <field name="clock_start_override" style="max-height: 20px;"/>
