@@ -178,7 +178,6 @@ class PurchaseOrder(models.Model):
             else:
                 if rec.sale_order_ids.date_order and rec.date_approve:
                     order_date = rec.date_approve - rec.sale_order_ids.date_order
-                    print('order-date', order_date)
                     rec.order_process_time = order_date.days
 
 
