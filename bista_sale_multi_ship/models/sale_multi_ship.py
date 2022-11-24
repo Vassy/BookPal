@@ -321,7 +321,7 @@ class SaleMultiShipQtyLines(models.Model):
         ('cancel', 'Cancelled'),
         ('short_close', 'Short Closed')],
         string='Shipping Status',
-        readonly=True, copy=False, index=True, tracking=3,
+        readonly=True, copy=False, index=True,
         default='draft')
     partner_state = fields.Selection(
         related="partner_id.state", string='Contact status')
