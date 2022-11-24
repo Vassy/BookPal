@@ -85,9 +85,7 @@
                         <t t-esc="doc.client_order_ref"/>
                         <br/>
                         <strong>Valid Until:</strong>
-                        <t t-if="doc.state in ['draft','sent']">
-                            <t t-esc="doc.validity_date" t-options='{"widget": "date"}'/>
-                        </t>
+                         <t t-esc="doc.validity_date" t-options='{"widget": "date"}'/>
                         <br/>
                         <strong>Salesperson:</strong>
                         <t t-esc="o.user_id.name"/>
