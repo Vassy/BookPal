@@ -50,6 +50,19 @@
                             <field name="clock_override_reason" style="max-height: 25px;"/>
                         </group>
                     </group>
+                    <group class="o_row">
+                        <group>
+                            <field name="lead_time" no_label="1"/>
+                        </group>
+                        <span class="oe_read_only">Days</span>
+                    </group>
+                    <br/>
+                    <group class="o_row">
+                        <group>
+                            <field name="order_process_time" no_label="1"/>
+                        </group>
+                        <span class="oe_read_only">Days</span>
+                    </group>
                 </page>
                 <page name="review_order_notes_and_requirements" string="Review Order Notes and Requirements">
                     <group name="review_order_notes_and_requirements" string="Review Order Notes and Requirements">
@@ -137,9 +150,6 @@
                       attrs="{'invisible':[('state','not in',['purchase','done'])]}">
                     <button name="open_tracking" type="object" string="Create Tracking" class="btn btn-primary"
                             context="{'new':1}"/>
-                    <field name="purchase_tracking_ids"/>
-                <page name="shipment_tracking" string="Shipment Tracking" attrs="{'invisible':[('state','not in',['purchase','done'])]}">
-                    <button name="open_tracking" type="object" string="Create Tracking" class="btn btn-primary" context="{'new':1}"/>
                     <field name="purchase_tracking_ids" readonly="0">
                         <tree string="Purchase Tracking Tree" create="0" write="0" editable="bottom">
                             <field name="name" readonly="1"/>
@@ -147,9 +157,11 @@
                             <field name="carrier_id" optional="show" readonly="1"/>
                             <field name="pro_number" optional="show" readonly="1"/>
                             <field name="status" optional="show" readonly="1"/>
-                            <field name="dest_address_id" invisible="1" />
-                            <button name="edit_tracking_line" icon="fa-edit" type="object" class="btn-link" style="float:right"/>
-                            <button name="send_email" string="Send Email" type="object" class="btn-primary" attrs="{'invisible': ['|', ('dest_address_id', '=', False), ('status', 'in', ['received', 'on_hold'])]}" />
+                            <field name="dest_address_id" invisible="1"/>
+                            <button name="edit_tracking_line" icon="fa-edit" type="object" class="btn-link"
+                                    style="float:right"/>
+                            <button name="send_email" string="Send Email" type="object" class="btn-primary"
+                                    attrs="{'invisible': ['|', ('dest_address_id', '=', False), ('status', 'in', ['received', 'on_hold'])]}"/>
                         </tree>
                     </field>
                 </page>
@@ -245,8 +257,8 @@
     </record>
 
     <menuitem
-        id="po_status_line_menu"
-        action="po_status_line_action"
-        parent="purchase.menu_product_in_config_purchase"
-        sequence="4" />
+            id="po_status_line_menu"
+            action="po_status_line_action"
+            parent="purchase.menu_product_in_config_purchase"
+            sequence="4"/>
 </odoo>

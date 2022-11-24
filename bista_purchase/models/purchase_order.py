@@ -68,6 +68,8 @@ class PurchaseOrder(models.Model):
         'sale.order', compute="compute_sale_order_ids")
     purchase_tracking_ids = fields.One2many(
         'purchase.tracking', 'order_id', string="Purchase Tracking")
+    lead_time = fields.Integer(compute="compute_lead_time", string="Lead Time")
+    order_process_time = fields.Integer(compute="compute_order_process_time", string="Order Processing Time")
 
     def button_cancel(self):
         # Chanage orderline status on cancel order
@@ -153,6 +155,31 @@ class PurchaseOrder(models.Model):
                     if vals.id in products_in_lines:
                         raise ValidationError(_('Product is already Existing.'))
                 exist_product_list.append(line.product_id.id)
+
+    def compute_lead_time(self):
+        for rec in self:
+            rec.lead_time = 0
+            if rec.date_approve:
+                rec.lead_time = False
+                date_list = rec.picking_ids.mapped('scheduled_date')
+                date_list.sort(reverse=True)
+                date_time = date_list[0].date() - rec.date_approve.date()
+                rec.lead_time = date_time.days
+
+    def compute_order_process_time(self):
+        for rec in self:
+            rec.order_process_time = 0
+            if rec.sale_order_ids.split_shipment and rec.date_approve:
+                rec.order_process_time = False
+                vals = min(rec.sale_order_ids.sale_multi_ship_qty_lines.mapped('confirm_date'))
+                if vals:
+                    rec_date = rec.date_approve - vals
+                    rec.order_process_time = rec_date.days
+            else:
+                if rec.sale_order_ids.date_order and rec.date_approve:
+                    order_date = rec.date_approve - rec.sale_order_ids.date_order
+                    print('order-date', order_date)
+                    rec.order_process_time = order_date.days
 
 
 class RushStatus(models.Model):
