@@ -5,7 +5,6 @@ from odoo import _, api, fields, models
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    # common_pick_note = fields.Html('Common Notes', )
     white_glove_id = fields.Many2one(
         'white.glove.type', string='White Glove Type')
     event_date = fields.Date(string="Event Date")
@@ -62,10 +61,11 @@ class SaleOrder(models.Model):
                                     ('low', 'Low')],string='Account Order Standing')
 
     customer_email_add=fields.Char('Customer Email Address',related='partner_id.email')
+
+
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    # picking_note = fields.Text('Picking Note')
     tracking_ref = fields.Char(
         'Tracking Refrence', compute="get_tracking_ref")
 
@@ -81,18 +81,6 @@ class SaleOrderLine(models.Model):
             tracking_ref = ', '.join([str(elem)
                                      for elem in tracking_ref if elem])
             line.tracking_ref = tracking_ref
-
-    # def _prepare_procurement_values(self, group_id=False):
-    #     values = super(
-    #         SaleOrderLine, self)._prepare_procurement_values(group_id)
-    #     pick_note = {
-    #         'picking_note': self.picking_note
-    #     }
-    #     if values and type(values) is list:
-    #         values[0].update(pick_note)
-    #     elif values and type(values) is dict:
-    #         values.update(pick_note)
-    #     return values
 
     # def check_bo_transfer(self):
     #     name = ''

@@ -5,10 +5,6 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <!--Picking notes-->
-<!--             <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">-->
-<!--                <field name="picking_note"/>-->
-<!--            </xpath>-->
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
                 <field name="tracking_ref"/>
             </xpath>
@@ -47,18 +43,6 @@
             <xpath expr="//group[@name='sale_shipping']" position="replace">
                 <span name="expected_date_span" class="text-muted">Expected: <field name="expected_date" widget="date"/></span>
             </xpath>
-
-            <!--Common Picking Note-->
-<!--             <xpath expr="//group[@name='note_group']" position="after">-->
-<!--                <group name="common_note" col="6" class="mt-2 mt-md-0">-->
-<!--                    <group colspan="4">-->
-<!--                        <field name="common_pick_note"-->
-<!--                               class="oe-bordered-editor" nolabel="1"-->
-<!--                               placeholder="Special Instructions and Notes..."/>-->
-<!--                    </group>-->
-<!--                </group>-->
-<!--            </xpath>-->
-
             <xpath expr="//notebook/page[@name='other_information']" position="after">
                 <page string="Order Notes" name="order_notes">
                     <sheet>
