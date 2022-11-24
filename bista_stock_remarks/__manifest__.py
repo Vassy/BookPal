@@ -15,7 +15,7 @@
         'views/sale_order.xml',
         'views/purchase_order.xml',
         'views/stock_picking.xml',
-
+        "report/sale_report_template.xml",
         # 'report/report_stockpicking_operations.xml',
     ],
     'installable': True,

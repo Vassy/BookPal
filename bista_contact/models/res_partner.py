@@ -14,8 +14,8 @@ class ResPartner(models.Model):
                                         ('active', 'Active'), ('idle', 'Idle'),
                                         ('churned', 'Churned'), ('dead', 'Dead'),
                                         ('supplier', 'Supplier')])
-    dead_resone = fields.Char('Dead Reasone', attrs="{'invisible': [('customer_status', '!=','dead')]}")
-    dead_date = fields.Datetime('Dead Date', attrs="{'invisible': [('customer_status', '!=','dead')]}")
+    dead_resone = fields.Char('Dead Reasone')
+    dead_date = fields.Datetime('Dead Date')
     do_not_call = fields.Boolean('DO Not Call')
 
     # Important Details
