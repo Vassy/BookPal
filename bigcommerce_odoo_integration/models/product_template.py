@@ -813,7 +813,11 @@ def _compute_product_lst_price(self):
             list_price = product.uom_id._compute_price(product.list_price, to_uom)
         else:
             list_price = product.list_price
-        product.lst_price = product.bc_sale_price
+        list_price = list_price + product.price_extra
+        if product.bigcommerce_product_variant_id:
+            product.lst_price = product.bc_sale_price
+        else:
+            product.lst_price = list_price
 
 
 ProductProduct._compute_product_lst_price = _compute_product_lst_price
