@@ -14,5 +14,17 @@
             </field>
         </record>
 
+        <!-- base.view_res_partner_filter -->
+        <record id="bigcommerce_customer_search_view_extend" model="ir.ui.view">
+            <field name="name">bigcommerce_customer_search_view_extend</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='inactive']" position="after">
+                    <filter string="Publisher" name="inactive" domain="[('is_publisher', '=', True)]"/>
+                    <filter string="Author" name="inactive" domain="[('is_author', '=', True)]"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

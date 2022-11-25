@@ -15,7 +15,7 @@
                 </xpath>
                 <xpath expr="//field[@name='uom_po_id']" position="after">
                     <field name="publisher_id"/>
-                    <field name="author_id"/>
+                    <field name="author_ids" widget="many2many_tags"/>
                     <field name="isbn"/>
                 </xpath>
             </field>

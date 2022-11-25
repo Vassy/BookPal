@@ -10,12 +10,12 @@
                     <group>
                            <group>
                             <field name="customer_status"/>
-                            <field name="dead_resone"/>
+                            <field name="dead_resone" attrs="{'invisible': [('customer_status', '!=', 'dead')]}" />
                             <field name="block" invisible="1"/>
                             </group>
                             <group>
                             <field name="do_not_call"/>
-                            <field name="dead_date"/>
+                            <field name="dead_date" attrs="{'invisible': [('customer_status', '!=', 'dead')]}" />
                            </group>
                     </group>
                 </page>

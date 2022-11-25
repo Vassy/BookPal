@@ -85,9 +85,7 @@
                         <t t-esc="doc.client_order_ref"/>
                         <br/>
                         <strong>Valid Until:</strong>
-                        <t t-if="doc.state in ['draft','sent']">
-                            <t t-esc="doc.validity_date" t-options='{"widget": "date"}'/>
-                        </t>
+                         <t t-esc="doc.validity_date" t-options='{"widget": "date"}'/>
                         <br/>
                         <strong>Salesperson:</strong>
                         <t t-esc="o.user_id.name"/>
@@ -96,16 +94,6 @@
                 </t>
             </div>
         </xpath>
-        <!-- Show table header in all pages  -->
-        <xpath expr="//table[hasclass('table','table-sm','o_main_table')]" position="before">
-            <div>
-                <h5 style="margin-top:50px;border-bottom:solid 1px;">Special Instructions and Notes</h5>
-                <div>
-                    <span class="mb4" t-field="doc.common_pick_note"/>
-                </div>
-            </div>
-        </xpath>
-
         <xpath expr="//p[@t-field='doc.note']" position="replace">
             <div style="margin-top:40px;">
                 <strong style="border-bottom:solid 1px;">Order Terms and Conditions</strong>
@@ -175,25 +163,13 @@
                 </td>
                 <td name="td_name" style="width:30%; border-top: 1px solid black; border-left: none;
                 border-right: none; border-bottom: 1px solid black;">
-
-                    <b>
-                        <span t-field="line.product_id.name"/>
-                    </b>
+                    <b><span t-field="line.product_id.name"/></b>
                     <br/>
                     <span t-field="line.product_id.default_code"/>
-                    <br/>
-                    <span>Format:</span>
+                    <!-- <br/> -->
+                    <!-- <span>Format:</span> -->
                     <!--                        <span t-field="line.product_id.format"/>-->
-                    <br/>
-                    <div>
-                        <b>
-                            <span>Product Notes:</span>
-                        </b>
-                        <br/>
-                        <span t-field="line.picking_note"/>
-                    </div>
                 </td>
-
                 <td style="border-top: 1px solid black; border-left: none;
                  border-right: none;border-bottom: 1px solid black;" name="td_quantity" class="text-center">
                     <span t-if="float(line.product_uom_qty).is_integer()"
