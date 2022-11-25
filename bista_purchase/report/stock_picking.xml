@@ -53,13 +53,24 @@
                     <h4>
                         <t t-esc="o.picking_type_id.warehouse_id.name"/>
                     </h4>
-<!--                    <div class="row offset-md-4 col-6" style="padding-bottom: 20px;">-->
-<!--                        <t t-esc="o.name"-->
-<!--                           t-options="{'widget': 'barcode', 'width': 500, 'height': 100, 'img_style': 'width:500px;height:55px;'}"/>-->
-<!--                        <br/>-->
-<!--                    </div>-->
+                    <!--                    <div class="row offset-md-4 col-6" style="padding-bottom: 20px;">-->
+                    <!--                        <t t-esc="o.name"-->
+                    <!--                           t-options="{'widget': 'barcode', 'width': 500, 'height': 100, 'img_style': 'width:500px;height:55px;'}"/>-->
+                    <!--                        <br/>-->
+                    <!--                    </div>-->
                 </t>
+
             </t>
+        </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[1]" position="after">
+            <th name="th_format" t-if="o.picking_type_code =='internal'">
+                <strong>Format</strong>
+            </th>
+        </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/t/tr/td[1]" position="after">
+            <th name="th_format" t-if="o.picking_type_code =='internal'">
+                <span  style="font-weight:normal" t-field="o.product_id.product_format"/>
+            </th>
         </xpath>
     </template>
     <template id="report_purchaseorder_deliveryslip_report"
@@ -114,14 +125,24 @@
                     <h4>
                         <t t-esc="o.picking_type_id.warehouse_id.name"/>
                     </h4>
-<!--                    <div class="row offset-md-4 col-6" style="padding-bottom: 20px;">-->
-<!--                        <t t-esc="o.name"-->
-<!--                           t-options="{'widget': 'barcode', 'width': 500, 'height': 100, 'img_style': 'width:500px;height:55px;'}"/>-->
-<!--                        <br/>-->
-<!--                    </div>-->
+                    <!--                    <div class="row offset-md-4 col-6" style="padding-bottom: 20px;">-->
+                    <!--                        <t t-esc="o.name"-->
+                    <!--                           t-options="{'widget': 'barcode', 'width': 500, 'height': 100, 'img_style': 'width:500px;height:55px;'}"/>-->
+                    <!--                        <br/>-->
+                    <!--                    </div>-->
 
                 </t>
             </t>
+        </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[1]" position="after">
+            <th name="th_format" t-if="o.picking_type_code =='internal'">
+                <strong>Format</strong>
+            </th>
+        </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/tr/td[1]" position="after">
+            <th name="th_format" t-if="o.picking_type_code =='internal'">
+                <span style="font-weight:normal" t-field="o.product_id.product_format"/>
+            </th>
         </xpath>
 
     </template>
