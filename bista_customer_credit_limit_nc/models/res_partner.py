@@ -6,7 +6,8 @@
 #
 ##############################################################################
 
-from odoo import fields, models
+from odoo import fields, models, api, _
+from odoo.exceptions import ValidationError
 
 
 class ResPartner(models.Model):
@@ -19,6 +20,14 @@ class ResPartner(models.Model):
         help="Available Credit limit for the Customer",
     )
 
+    @api.constrains("check_over_credit", "available_credit_limit")
+    def _check_credit_limit(self):
+        for partner in self:
+            if partner.check_over_credit and partner.credit_limit < 1:
+                raise ValidationError(
+                    _("Credit Limit should be greater than or equal to 1.")
+                )
+
     def _compute_available_credit_limit(self):
         for partner in self:
             if not partner.check_over_credit:
@@ -30,7 +39,7 @@ class ResPartner(models.Model):
             ]
             amount = 0
             for sale in self.env["sale.order"].search(sale_domain):
-                paid_invoice = sale.invoice_ids.filtered(
+                open_invoice = sale.invoice_ids.filtered(
                     lambda inv: inv.payment_state != "paid"
                 )
                 deliver_lines = sale.picking_ids.filtered(
@@ -43,11 +52,23 @@ class ResPartner(models.Model):
                     lambda line: line.product_id.invoice_policy == "order"
                     and line.product_uom_qty != line.qty_invoiced
                 )
-                if not paid_invoice and not deliver_lines and not product_lines:
+                if not open_invoice and not deliver_lines and not product_lines:
                     continue
-                amount += sale.amount_total - sum(
-                    sale.invoice_ids.filtered(
-                        lambda inv: inv.payment_state == "paid"
-                    ).mapped("amount_total_signed")
+                order_lines = sale.order_line.filtered(
+                    lambda l: l.product_id.invoice_policy != "delivery"
                 )
+                amount_total = sum(order_lines.mapped("price_total"))
+                for line in sale.order_line - order_lines:
+                    open_moves = line.move_ids.filtered(
+                        lambda m: m.state not in ["done", "cancel"]
+                    )
+                    if any(open_moves):
+                        amount_total += line.price_total
+                    else:
+                        price_unit = line.price_total / line.product_uom_qty
+                        amount_total += price_unit * line.qty_delivered
+                paid_invoice = sale.invoice_ids.filtered(
+                    lambda inv: inv.payment_state == "paid"
+                ).mapped("amount_total_signed")
+                amount += amount_total - sum(paid_invoice)
             partner.available_credit_limit = partner.credit_limit - amount
