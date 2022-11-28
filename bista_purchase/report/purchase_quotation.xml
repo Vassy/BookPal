@@ -15,17 +15,14 @@
                          t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
                 </div>
                 <t t-set="report_info" class="col-6 text-right mb4">
-                    <h3 t-if="o.state in ['draft','sent','purchase','done']">Purchase Order</h3>
+                    <h3 t-if="o.state in ['draft','sent','purchase','done']">Request for Quotation</h3>
                     <h3 t-if="o.state == 'cancel'">Cancelled Purchase Quotation/Order</h3>
                     <h4>
                         <strong>
                             <t t-esc="o.name"/>
                         </strong>
                     </h4>
-                    <strong t-if="o.state in ['purchase','done']">Order Date:
-                        <t t-esc="o.date_approve" t-options='{"widget": "date"}'/>
-                    </strong>
-                    <strong t-if="o.state in ['draft','sent']">RFQ Date:
+                    <strong t-if="o.state in ['purchase','done','draft','sent']">RFQ Date:
                         <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                     </strong>
                     <br/>
@@ -130,11 +127,16 @@
                 <td id="product"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
                     <span t-field="order_line.name"/>
+                    <div>
+                        <b>
+                            <span>Remarks:</span>
+                        </b>
+                        <span t-field="order_line.receipt_note"/>
+                    </div>
                 </td>
                 <td class="text-center" name="td_format"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; ">
-                    <t t-set="format" t-value="MMP"/>
-                    <span>MMP</span>
+                    <span t-field="order_line.product_id.product_format"/>
                 </td>
                 <td class="text-center"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">

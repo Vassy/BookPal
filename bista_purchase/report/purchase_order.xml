@@ -139,11 +139,16 @@
                 <td id="product"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
                     <span t-field="line.name"/>
+                    <div>
+                        <b>
+                            <span>Remarks:</span>
+                        </b>
+                        <span t-field="line.receipt_note"/>
+                    </div>
                 </td>
                 <td class="text-center" name="td_format"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; ">
-                    <t t-set="format" t-value="MMP"/>
-                    <span>MMP</span>
+                    <span t-field="line.product_id.product_format"/>
                 </td>
                 <td class="text-center"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">

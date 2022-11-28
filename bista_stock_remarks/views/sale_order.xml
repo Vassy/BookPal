@@ -9,14 +9,12 @@
             <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
                 <field name="picking_note" optional="show"/>
             </xpath>
-            
             <!--Common Picking Note-->
             <xpath expr="//group[@name='note_group']" position="after">
                 <group name="common_note" col="6" class="mt-2 mt-md-0">
                     <group colspan="4">
-                        <field name="common_pick_note"
-                               class="oe-bordered-editor" nolabel="1"
-                               placeholder="Special Instructions and Notes..."/>
+                        <field name="common_pick_note" class="oe-bordered-editor"
+                            nolabel="1" placeholder="Special Instructions and Notes..."/>
                     </group>
                 </group>
             </xpath>
