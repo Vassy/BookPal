@@ -167,8 +167,7 @@
                              style="max-height:100px; max-width:100px;"/>
                     </t>
                     <t t-else="">
-
-                        <strong>No Image</strong>
+                         <img src="/web/static/img/placeholder.png" style="max-height:100px; max-width:100px;"/>
                     </t>
                 </td>
                 <td name="td_name" style="width:30%; border-top: 1px solid black; border-left: none;
