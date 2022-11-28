@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, _, api
+from odoo.exceptions import ValidationError
 
 
 class PurchaseOrder(models.Model):
@@ -67,6 +68,8 @@ class PurchaseOrder(models.Model):
         'sale.order', compute="compute_sale_order_ids")
     purchase_tracking_ids = fields.One2many(
         'purchase.tracking', 'order_id', string="Purchase Tracking")
+    lead_time = fields.Integer(compute="compute_lead_time", string="Lead Time")
+    order_process_time = fields.Integer(compute="compute_order_process_time", string="Order Processing Time")
 
     def button_cancel(self):
         # Chanage orderline status on cancel order
@@ -134,6 +137,49 @@ class PurchaseOrder(models.Model):
     def onchange_partner_id_cc_email(self):
         self.cc_email = self.partner_id.cc_email
 
+        # def _prepare_picking(self):
+        #     res = super(PurchaseOrder, self)._prepare_picking()
+        #     res.update({'note': self.special_pick_note})
+        #     return res
+
+    @api.constrains('order_line')
+    def _check_exist_product_in_line(self, vals=False):
+        for purchase in self:
+            exist_product_list = []
+            products_in_lines = [product.id for product in purchase.mapped('order_line.product_id')]
+            for line in purchase.order_line:
+                if not vals:
+                    if line.product_id.id in exist_product_list:
+                        raise ValidationError(_('Product is already Existing.'))
+                else:
+                    if vals.id in products_in_lines:
+                        raise ValidationError(_('Product is already Existing.'))
+                exist_product_list.append(line.product_id.id)
+
+    def compute_lead_time(self):
+        for rec in self:
+            rec.lead_time = 0
+            if rec.date_approve:
+                rec.lead_time = False
+                date_list = rec.picking_ids.mapped('scheduled_date')
+                date_list.sort(reverse=True)
+                date_time = date_list[0].date() - rec.date_approve.date()
+                rec.lead_time = date_time.days
+
+    def compute_order_process_time(self):
+        for rec in self:
+            rec.order_process_time = 0
+            if rec.sale_order_ids.split_shipment and rec.date_approve:
+                rec.order_process_time = False
+                vals = min(rec.sale_order_ids.sale_multi_ship_qty_lines.mapped('confirm_date'))
+                if vals:
+                    rec_date = rec.date_approve - vals
+                    rec.order_process_time = rec_date.days
+            else:
+                if rec.sale_order_ids.date_order and rec.date_approve:
+                    order_date = rec.date_approve - rec.sale_order_ids.date_order
+                    rec.order_process_time = order_date.days
+
 
 class RushStatus(models.Model):
     _name = "rush.status"
@@ -160,7 +206,7 @@ class PurchaseOrderLine(models.Model):
         for line in self:
             tracking_ref = line.move_ids.filtered(
                 lambda x: x.picking_type_id.code == 'incoming'
-                and x.quantity_done).mapped('picking_id').mapped('carrier_tracking_ref')
+                          and x.quantity_done).mapped('picking_id').mapped('carrier_tracking_ref')
             tracking_ref = ', '.join([str(elem)
                                       for elem in tracking_ref if elem])
             line.tracking_ref = tracking_ref
@@ -200,7 +246,7 @@ class PurchaseOrderLine(models.Model):
         result = {}
         bo_transfer = self.check_bo_transfer()
         if self.product_id and bo_transfer:
-            message = _('"%s" Product is already in back order. you can check this backorder. %s')%(
+            message = _('"%s" Product is already in back order. you can check this backorder. %s') % (
                 self.product_id.display_name, bo_transfer)
 
             warning_mess = {
@@ -209,6 +255,12 @@ class PurchaseOrderLine(models.Model):
             }
             result = {'warning': warning_mess}
         return result
+
+    @api.onchange('product_id')
+    def onchange_product_is_exist(self):
+        product_order = self.order_id._origin._check_exist_product_in_line(self.product_id)
+        if self.product_id and product_order:
+            return product_order
 
 
 class PoStatus(models.Model):
