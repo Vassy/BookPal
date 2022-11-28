@@ -436,7 +436,8 @@ class SaleOrderLine(models.Model):
             # Date wise reserved the stock
             values = sorted(values, key=lambda d: d['date_planned'])
             for val in values:
-                qty = val.get('ship_line').with_context(rule=True)._get_qty_procurement(
+                qty = val.get('ship_line').with_context(
+                    rule=True)._get_qty_procurement(
                     previous_product_uom_qty)
                 if float_compare(
                     qty, val.get('ship_line').product_qty,
@@ -485,14 +486,15 @@ class SaleOrderLine(models.Model):
         res = []
         if self.env.context.get('multi_ship'):
             for sline in self:
-                name = sline.product_id.name
+                name = '[' + sline.product_id.default_code + '] ' + \
+                    sline.product_id.name
                 if sline.product_id.product_template_attribute_value_ids:
-                    name = sline.product_id.name + "(" + ','.join(
+                    name += "(" + ','.join(
                         sline.product_id.product_template_attribute_value_ids.
                         mapped('name')) + ")" + " - " + str(
                         sline.product_qty)
                 else:
-                    name = sline.product_id.name + " - " + str(sline.product_qty)
+                    name += " - " + str(sline.product_qty)
                 res.append((sline.id, name))
         else:
             res = super(SaleOrderLine, self).name_get()
