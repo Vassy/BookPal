@@ -241,6 +241,7 @@ class SaleMultiShipQtyLines(models.Model):
     _name = 'sale.multi.ship.qty.lines'
     _description = 'Sale Order Line Split Qty'
     _rec_name = 'product_id'
+    _order = 'shipping_date'
 
     def get_default_shipping_date(self):
         """Get default shipping date."""
