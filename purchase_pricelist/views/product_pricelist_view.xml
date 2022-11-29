@@ -2,29 +2,28 @@
 <odoo>
     <record model="ir.ui.view" id="product_pricelist_view_inherit">
         <field name="model">product.pricelist</field>
-        <field name="inherit_id" ref="product.product_pricelist_view"/>
+        <field name="inherit_id" ref="product.product_pricelist_view" />
         <field name="arch" type="xml">
             <xpath expr="//group[@name='pricelist_settings']" position="inside">
-                <field name="used_for" groups="base.group_no_one"/>
-                <field name="on_order" attrs="{'invisible':[('used_for','!=','purchase')]}"/>
+                <field name="used_for" groups="base.group_no_one" />
+                <field name="on_order" attrs="{'invisible': [('used_for', '!=', 'purchase')]}" />
             </xpath>
             <xpath expr="//field[@name='item_ids']" position="attributes">
-                <attribute name="attrs">{'invisible':[('used_for','=','purchase'),('on_order','=',True)]}</attribute>
+                <attribute name="attrs">{'invisible': [('used_for', '=', 'purchase'), ('on_order', '=', True)]}</attribute>
             </xpath>
             <xpath expr="//field[@name='item_ids']" position="after">
                 <group>
                     <group>
-                        <field name="apply_on"  attrs="{'invisible':['|',('used_for','!=','purchase'),('on_order','!=',True)]}"/>
+                        <field name="apply_on" attrs="{'invisible': ['|', ('used_for', '!=', 'purchase'), ('on_order', '!=', True)]}" />
                     </group>
                 </group>
-<!--                <p class="text-danger" attrs="{'invisible':['|',('used_for','=','sale'),('on_order','=',False)]}">*In case of not set range with <b>To value</b> set descending order of <b>From Value</b>.</p>-->
                 <field name="product_pricelist_order_ids" attrs="{'invisible':['|',('used_for','=','sale'),('on_order','=',False)]}">
                     <tree editable="bottom">
-                        <field name="pricelist_id" invisible="1"/>
-                        <field name="sequence" widget="handle" invisible="1"/>
-                        <field name="from_value"/>
-                        <field name="to_value"/>
-                        <field name="discount"/>
+                        <field name="pricelist_id" invisible="1" />
+                        <field name="sequence" widget="handle" invisible="1" />
+                        <field name="from_value" />
+                        <field name="to_value" />
+                        <field name="discount" />
                     </tree>
                 </field>
             </xpath>
@@ -43,10 +42,10 @@
         <field name="arch" type="xml">
             <tree string="Products Price List" sample="1">
                 <field name="sequence" widget="handle" />
-                <field name="name"/>
-                <field name="on_order"/>
-                <field name="currency_id" groups="base.group_multi_currency"/>
-                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="name" />
+                <field name="on_order" />
+                <field name="currency_id" groups="base.group_multi_currency" />
+                <field name="company_id" groups="base.group_multi_company" />
             </tree>
         </field>
     </record>
@@ -58,10 +57,14 @@
         <field name="view_mode">tree,kanban,form</field>
         <field name="domain">[('used_for','=','purchase')]</field>
         <field name="search_view_id" ref="product.product_pricelist_view_search" />
-        <field name="view_ids" eval="[(5, 0, 0),
-                          (0, 0, {'view_mode': 'tree', 'view_id': ref('purchase_pricelist.product_purchase_pricelist_view_tree')})]"/>
-        <field name="context">{"default_base":'list_price','default_used_for':'purchase'}</field>
+        <field name="view_id" ref="purchase_pricelist.product_purchase_pricelist_view_tree" />
+        <field name="context">{"default_base": 'list_price', 'default_used_for': 'purchase'}</field>
     </record>
 
-    <menuitem id="product_purchase_pricelist_menu" name="Pricelist" action="product_purchase_pricelist_action" parent="purchase.menu_purchase_products" sequence="31" groups="product.group_product_pricelist"/>
+    <menuitem id="product_purchase_pricelist_menu"
+        name="Pricelist"
+        action="product_purchase_pricelist_action"
+        parent="purchase.menu_purchase_products"
+        sequence="31"
+        groups="product.group_product_pricelist" />
 </odoo>
