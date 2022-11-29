@@ -8,7 +8,7 @@ class ProductTemplate(models.Model):
     product_format = fields.Char('Format')
     publisher_id = fields.Many2one('res.partner', 'Publisher')
     author_ids = fields.Many2many(
-        'res.partner', string='Authors')
+        'res.partner', string='Author(s)')
     origin = fields.Char('Origin')
     isbn = fields.Char(
         'ISBN', compute='_compute_isbn',

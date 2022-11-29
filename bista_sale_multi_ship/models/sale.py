@@ -475,8 +475,7 @@ class SaleOrderLine(models.Model):
         """Overide name_search for sale order line domain."""
         if not args:
             args = []
-        if self.env.context.get('so_lines') and eval(
-                self.env.context.get('so_lines')):
+        if self.env.context.get('so_lines'):
             args += [('id', 'in', eval(self.env.context.get('so_lines')))]
         return super(SaleOrderLine, self).name_search(
             name, args, operator, limit)
