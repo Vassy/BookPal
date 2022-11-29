@@ -5,19 +5,20 @@
         <field name="inherit_id" ref="product.product_supplierinfo_form_view" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='price']" position="after">
-                <field name="vendor_pricelist_id" options="{'no_create':1}" domain="[('used_for','=','purchase')]"/>
+                <field name="vendor_pricelist_id" options="{'no_create': 1}" domain="[('used_for','=','purchase'), ('on_order', '!=', True)]" />
             </xpath>
             <xpath expr="//field[@name='price']" position="attributes">
                 <attribute name="string">Cover Price</attribute>
             </xpath>
         </field>
     </record>
+
     <record model="ir.ui.view" id="product_supplierinfo_tree_view">
         <field name="model">product.supplierinfo</field>
         <field name="inherit_id" ref="product.product_supplierinfo_tree_view" />
         <field name="arch" type="xml">
             <field name="price" position="after">
-                <field name="vendor_pricelist_id" options="{'no_create':1}" domain="[('used_for','=','purchase'),('on_order','!=',True)]"/>
+                <field name="vendor_pricelist_id" options="{'no_create': 1}" domain="[('used_for', '=', 'purchase'), ('on_order', '!=', True)]" />
             </field>
             <xpath expr="//field[@name='price']" position="attributes">
                 <attribute name="string">Cover Price</attribute>
