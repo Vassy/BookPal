@@ -23,7 +23,7 @@
                     type="object"
                     class="btn-primary"
                     attrs="{'invisible': ['|', ('confirm_check', '=', False), ('state','not in', ['draft', 'sent', 'customer_approved'])]}"
-                    confirm="For This Customer Credit Limit is Over, Order will be placed for Review of Accounting Team." />
+                    confirm="Credit Limit Crossed For this Customer. Hence, Order Needs to be reviewed and then Approved." />
                 <button
                     name="action_override_and_send_for_approve"
                     class="btn-primary"
