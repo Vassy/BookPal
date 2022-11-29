@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="bista_purchase_report_invoice_document_inherit" inherit_id="account.report_invoice_document">
+        <xpath expr="//table[hasclass('table', 'table-sm','o_main_table')]/thead/tr/th[1]" position="after">
+            <th name="th_format">
+                <strong>Format</strong>
+            </th>
+        </xpath>
+         <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/t/tr/t/td[1]" position="after">
+            <td name="th_format" style="border-left: 1px solid black;">
+                <span style="font-weight:normal" t-field="line.product_id.product_format"/>
+            </td>
+        </xpath>
+    </template>
+</odoo>

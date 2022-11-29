@@ -82,6 +82,10 @@
                                 class="text-center">
                                 <span>Description</span>
                             </th>
+                            <th style=" border-collapse: collapse;border: none;" name="th_format"
+                                class="text-center">
+                                <span>Format</span>
+                            </th>
                             <th style=" border-collapse: collapse;border: none;" name="th_quantity" class="text-center">
                                 <span>Quantity</span>
                             </th>
@@ -116,6 +120,11 @@
                                         style="width:30%; border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
                                         class="text-center">
                                         <span t-field="line.product_id"/>
+                                    </td>
+                                    <td name="td_format"
+                                        style="width:30%; border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
+                                        class="text-center">
+                                        <span t-field="line.product_id.product_format"/>
                                     </td>
                                     <td name="td_quantity"
                                         style="border-top: 1px solid black; border-left: none;border-right: none;border-bottom: 1px solid black;"

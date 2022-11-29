@@ -22,6 +22,7 @@
 
         # 'report/purchase_order.xml',
         'report/stock_picking.xml',
+        'report/account_move.xml',
         'data/email_schdule_activity.xml',
         'data/email_template.xml',
         'data/po_status_line_data.xml',
