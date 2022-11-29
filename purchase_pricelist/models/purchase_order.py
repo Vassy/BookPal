@@ -1,26 +1,38 @@
 # -*- coding: utf-8 -*-
+
 from odoo import api, fields, models
 
 
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
 
-    pricelist_id = fields.Many2one('product.pricelist', "Pricelist", compute="_compute_product_pricelist", store=True)
-    without_disc_amount_untaxed = fields.Monetary(string='Without Untaxed Amount', store=True, readonly=True, compute='_amount_all')
-    total_discount_amount = fields.Monetary(string='Total Discount Amount', store=True, readonly=True, compute='_amount_all')
-    total_quantity = fields.Float(string="Total Quantity", store=True, compute="_compute_total_quantity")
+    pricelist_id = fields.Many2one(
+        "product.pricelist",
+        "Pricelist",
+        compute="_compute_product_pricelist",
+        store=True,
+    )
+    without_disc_amount_untaxed = fields.Monetary(
+        string="Without Untaxed Amount", store=True, compute="_amount_all"
+    )
+    total_discount_amount = fields.Monetary(
+        string="Total Discount Amount", store=True, compute="_amount_all"
+    )
+    total_quantity = fields.Float(
+        string="Total Quantity", store=True, compute="_compute_total_quantity"
+    )
 
-    @api.onchange('partner_id')
+    @api.onchange("partner_id")
     def _onchange_partner_id(self):
         for line in self.order_line:
             line._onchange_quantity()
 
-    @api.depends('order_line', 'order_line.product_qty')
+    @api.depends("order_line", "order_line.product_qty")
     def _compute_total_quantity(self):
         for order in self:
-            order.total_quantity = sum(order.order_line.mapped('product_qty'))
+            order.total_quantity = sum(order.order_line.mapped("product_qty"))
 
-    @api.onchange('currency_id')
+    @api.onchange("currency_id")
     def onchange_currency_pricelist(self):
         if self.pricelist_id.currency_id != self.currency_id:
             self.pricelist_id = False
@@ -32,37 +44,55 @@ class PurchaseOrder(models.Model):
             for line in order.order_line:
                 without_disc_amount_untaxed += line.without_disc_price_subtotal
                 total_discount_amount += line.discount_amount
-            currency = order.currency_id or order.partner_id.property_purchase_currency_id or self.env.company.currency_id
-            order.update({
-                'without_disc_amount_untaxed': currency.round(without_disc_amount_untaxed),
-                'total_discount_amount': currency.round(total_discount_amount),
-            })
+            currency = (
+                order.currency_id
+                or order.partner_id.property_purchase_currency_id
+                or self.env.company.currency_id
+            )
+            order_data = {
+                "without_disc_amount_untaxed": currency.round(
+                    without_disc_amount_untaxed
+                ),
+                "total_discount_amount": currency.round(total_discount_amount),
+            }
+            order.update(order_data)
 
-    @api.depends('partner_id')
+    @api.depends("partner_id")
     def _compute_product_pricelist(self):
         for order in self:
             order.pricelist_id = order.partner_id.property_product_vendor_pricelist
 
     def update_prices(self):
-        for order in self:
-            if order.pricelist_id:
-                price_list_line = order.pricelist_id.get_pricelist_order_line_based_on_order(order.without_disc_amount_untaxed, order.total_quantity)
-                non_discounted_lines = order.order_line
-                if non_discounted_lines and price_list_line:
-                    non_discounted_lines.discount = price_list_line.discount
-                else:
-                    non_discounted_lines.discount = 0
+        for order in self.filtered(lambda o: o.pricelist_id):
+            pricelist_line = order.pricelist_id.get_pricelist_line_based_on_order(
+                order.without_disc_amount_untaxed, order.total_quantity
+            )
+            non_discounted_lines = order.order_line
+            if non_discounted_lines and pricelist_line:
+                non_discounted_lines.discount = pricelist_line.discount
+            else:
+                non_discounted_lines.discount = 0
 
 
 class PurchaseOrderLine(models.Model):
     _inherit = "purchase.order.line"
 
-    pricelist_id = fields.Many2one('product.pricelist', "Pricelist")
-    disc_price_unit = fields.Float(string="Discounted Unit Price", store=True, compute="_compute_disc_price_unit", digits='Product Price')
-    without_disc_price_subtotal = fields.Monetary(compute='_compute_amount', string='Without Disc. Subtotal', store=True)
-    discount_amount = fields.Monetary(compute='_compute_amount', string='Discount Amount', store=True)
+    pricelist_id = fields.Many2one("product.pricelist", "Pricelist")
+    disc_price_unit = fields.Float(
+        string="Discounted Unit Price",
+        store=True,
+        compute="_compute_disc_price_unit",
+        digits="Product Price",
+    )
+    discount = fields.Float(string="Discount (%)", digits="Discount")
+    without_disc_price_subtotal = fields.Monetary(
+        compute="_compute_amount", string="Without Disc. Subtotal", store=True
+    )
+    discount_amount = fields.Monetary(
+        compute="_compute_amount", string="Discount Amount", store=True
+    )
 
-    @api.depends('price_unit', 'discount')
+    @api.depends("price_unit", "discount")
     def _compute_disc_price_unit(self):
         for order_line in self:
             order_line.disc_price_unit = order_line._get_discounted_price_unit()
@@ -73,30 +103,19 @@ class PurchaseOrderLine(models.Model):
         res = super()._compute_amount()
         for line in self:
             vals = line._prepare_compute_all_values()
-            vals.update({'price_unit': line.price_unit})
+            vals.update({"price_unit": line.price_unit})
             taxes = line.taxes_id.compute_all(**vals)
-            line.update({
-                # 'price_tax': taxes['total_included'] - taxes['total_excluded'],
-                # 'price_total': taxes['total_included'],
-                'discount_amount': line.price_subtotal - taxes['total_excluded'],
-                'without_disc_price_subtotal': taxes['total_excluded'],
-            })
+            line_data = {
+                "discount_amount": line.price_subtotal - taxes["total_excluded"],
+                "without_disc_price_subtotal": taxes["total_excluded"],
+            }
+            line.update(line_data)
         return res
 
     def _prepare_compute_all_values(self):
         vals = super()._prepare_compute_all_values()
         vals.update({"price_unit": self._get_discounted_price_unit()})
         return vals
-
-    discount = fields.Float(string="Discount (%)", digits="Discount")
-
-    # _sql_constraints = [
-    #     (
-    #         "discount_limit",
-    #         "CHECK (discount <= 100.0)",
-    #         "Discount must be lower than 100%.",
-    #     )
-    # ]
 
     def _get_discounted_price_unit(self):
         self.ensure_one()
@@ -106,7 +125,7 @@ class PurchaseOrderLine(models.Model):
 
     @api.onchange("product_qty", "product_uom")
     def _onchange_quantity(self):
-        res = super()._onchange_quantity()
+        super()._onchange_quantity()
         if self.product_id:
             date = None
             if self.order_id.date_order:
@@ -118,105 +137,79 @@ class PurchaseOrderLine(models.Model):
                 uom_id=self.product_uom,
             )
             self._apply_value_from_seller(seller)
-        return res
 
-    @api.model
     def _apply_value_from_seller(self, seller):
-        if not seller:
-            for line in self:
-                line.discount = 0
+        if not seller.vendor_pricelist_id:
+            self.discount = 0
             return
 
-        for line in self:
-            if seller.vendor_pricelist_id:
-                product = line.product_id.with_context(
-                    partner=self.partner_id,
-                    quantity=line.product_uom_qty,
-                    date=self.date_order,
-                    pricelist=seller.vendor_pricelist_id.id,
-                    uom=line.product_uom.id,
-                    seller=seller,
-                )
-                try:
-                    product_context = dict(self.env.context, partner_id=line.order_id.partner_id.id, date=line.order_id.date_order, uom=line.product_uom.id)
-                    price, rule_id = seller.vendor_pricelist_id.with_context(product_context).get_product_price_rule(line.product_id, self.product_uom_qty or 1.0, line.order_id.partner_id)
-                    line.pricelist_id = seller.vendor_pricelist_id
-                    vendor_price = seller.currency_id._convert(product.vendor_price, line.order_id.currency_id, line.order_id.company_id, fields.Date.today())
-                    discount = max(0, (line.price_unit - vendor_price) * 100 / line.price_unit)
-                    if rule_id:
-                        rule = self.env['product.pricelist.item'].browse(rule_id)
-                        if rule.compute_price == 'percentage':
-                            discount = rule.percent_price
-
-                    line.discount = discount
-                except:
-                    line.pricelist_id = False
-                    line.discount = 0
+        self.pricelist_id = seller.vendor_pricelist_id.id
+        product_context = dict(
+            self.env.context,
+            partner_id=self.order_id.partner_id.id,
+            date=self.order_id.date_order,
+            uom=self.product_uom.id,
+        )
+        price, rule_id = self.pricelist_id.with_context(
+            product_context
+        ).get_product_price_rule(
+            self.product_id, self.product_uom_qty or 1.0, self.order_id.partner_id
+        )
+        price = self.price_unit
+        discount = 0
+        if rule_id:
+            rule = self.env["product.pricelist.item"].browse(rule_id)
+            price = rule._compute_price(
+                seller.price, self.product_uom, self.product_id, self.product_uom_qty
+            )
+            if self.pricelist_id.discount_policy == "with_discount":
+                price = price
+            else:
+                discount = max(0, (seller.price - price) * 100 / seller.price)
+        self.price_unit = price
+        self.discount = discount
 
     def _prepare_account_move_line(self, move=False):
-        vals = super(PurchaseOrderLine, self)._prepare_account_move_line(move)
+        vals = super()._prepare_account_move_line(move)
         vals["discount"] = self.discount
         return vals
 
     @api.model
-    def _prepare_purchase_order_line_from_procurement(self, product_id, product_qty, product_uom, company_id, values, po):
-        res = super(PurchaseOrderLine, self)._prepare_purchase_order_line_from_procurement(
-                product_id, product_qty, product_uom, company_id, values, po)
-
+    def _prepare_purchase_order_line_from_procurement(
+        self, product_id, product_qty, product_uom, company_id, values, po
+    ):
+        res = super()._prepare_purchase_order_line_from_procurement(
+            product_id, product_qty, product_uom, company_id, values, po
+        )
         seller = product_id.with_company(company_id)._select_seller(
             partner_id=po.partner_id,
             quantity=product_qty,
             date=po.date_order and po.date_order.date(),
             uom_id=product_id.uom_po_id,
         )
+        if not seller.vendor_pricelist_id:
+            return res
 
-        if seller.vendor_pricelist_id:
-            product = product_id.with_context(
-                    partner=po.partner_id,
-                    quantity=product_qty,
-                    date=po.date_order,
-                    pricelist=seller.vendor_pricelist_id.id,
-                    uom=product_uom.id,
-                    seller=seller,
+        res["pricelist_id"] = seller.vendor_pricelist_id.id
+        product_context = dict(
+            self.env.context,
+            partner_id=po.partner_id.id,
+            date=po.date_order,
+            uom=product_uom.id,
+        )
+        price, rule_id = seller.vendor_pricelist_id.with_context(
+            product_context
+        ).get_product_price_rule(product_id, product_qty or 1.0, po.partner_id)
+        if rule_id:
+            rule = self.env["product.pricelist.item"].browse(rule_id)
+            price = rule._compute_price(
+                seller.price, product_uom, product_id, product_uom
+            )
+            if seller.vendor_pricelist_id.discount_policy == "with_discount":
+                res["price_unit"] = price
+            else:
+                discount = max(
+                    0, (res.get("price_unit") - price) * 100 / res.get("price_unit")
                 )
-            try:
-                product_context = dict(self.env.context, partner_id=po.partner_id.id, date=po.date_order, uom=product_uom.id)
-                price, rule_id = seller.vendor_pricelist_id.with_context(product_context).get_product_price_rule(product, product_qty or 1.0, po.partner_id)
-                res['pricelist_id'] = seller.vendor_pricelist_id.id
-                discount = max(0, (res.get('price_unit') - product.vendor_price) * 100 / res.get('price_unit'))
-                if rule_id:
-                    rule = self.env['product.pricelist.item'].browse(rule_id)
-                    if rule.compute_price == 'percentage':
-                        discount = rule.percent_price
-                res['discount'] = discount
-            except:
-                res['pricelist_id'] = False
-                res['discount'] = 0
-
+                res["discount"] = discount
         return res
-
-    # @api.model
-    # def _prepare_purchase_order_line(
-    #     self, product_id, product_qty, product_uom, company_id, supplier, po
-    # ):
-    #     res = super()._prepare_purchase_order_line(
-    #         product_id, product_qty, product_uom, company_id, supplier, po
-    #     )
-    #     partner = supplier.name
-    #     uom_po_qty = product_uom._compute_quantity(product_qty, product_id.uom_po_id)
-    #     seller = product_id.with_company(company_id)._select_seller(
-    #         partner_id=partner,
-    #         quantity=uom_po_qty,
-    #         date=po.date_order and po.date_order.date(),
-    #         uom_id=product_id.uom_po_id,
-    #     )
-    #     res.update(self._prepare_purchase_order_line_from_seller(seller))
-    #     return res
-
-    # @api.model
-    # def _prepare_purchase_order_line_from_seller(self, seller):
-    #     """Overload this function to prepare other data from seller,
-    #     like in purchase_triple_discount module"""
-    #     if not seller:
-    #         return {}
-    #     return {"discount": seller.discount}
