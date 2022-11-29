@@ -31,6 +31,17 @@
                     </group>
                 </page>
             </xpath>
+            <xpath expr="//button[3]" position="attributes">
+                <attribute name="attrs">{'invisible': ['|','|', ('state', 'in', ('done','cancel')),
+                ('show_validate', '=', False), ('picking_type_code', 'in', ['outgoing', 'incoming'])]}</attribute>     
+            </xpath>
+            <xpath expr="//button[4]" position="attributes">
+                <attribute name="attrs">{'invisible': ['|','|', ('state', 'in', ('done','cancel')),
+                ('show_validate', '=', False), ('picking_type_code', 'not in', ['outgoing', 'incoming'])]}</attribute>
+                <attribute name="class">oe_highlight</attribute> 
+                <attribute name="confirm">Please check your carrier details. 
+                Are you sure with the carrier details?</attribute>          
+            </xpath>
         </field>
     </record>
     <record model="ir.ui.view" id="stock_view__quant_tree_editable_inherit">
