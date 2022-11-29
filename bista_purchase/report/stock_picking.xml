@@ -63,14 +63,14 @@
             </t>
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[1]" position="after">
-            <th name="th_format" t-if="o.picking_type_code =='internal'">
+            <th name="th_format">
                 <strong>Format</strong>
             </th>
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/t/tr/td[1]" position="after">
-            <th name="th_format" t-if="o.picking_type_code =='internal'">
-                <span  style="font-weight:normal" t-field="o.product_id.product_format"/>
-            </th>
+            <td name="td_format">
+                <span style="font-weight:normal" t-field="o.product_id.product_format"/>
+            </td>
         </xpath>
     </template>
     <template id="report_purchaseorder_deliveryslip_report"
@@ -135,15 +135,35 @@
             </t>
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[1]" position="after">
-            <th name="th_format" t-if="o.picking_type_code =='internal'">
+            <th name="th_format">
                 <strong>Format</strong>
             </th>
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/tr/td[1]" position="after">
-            <th name="th_format" t-if="o.picking_type_code =='internal'">
+            <td name="th_format">
                 <span style="font-weight:normal" t-field="o.product_id.product_format"/>
+            </td>
+        </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm', 'mt48')]/thead/tr/th[1]" position="after">
+            <th name="th_format">
+                <strong>Format</strong>
             </th>
         </xpath>
-
+    </template>
+    <template id="bista_purchase_stock_report_delivery_has_serial_move_line"
+              inherit_id="stock.stock_report_delivery_has_serial_move_line">
+        <xpath expr="//td[1]" position="after">
+            <td name="td_format">
+                <span style="font-weight:normal" t-field="move_line.product_id.product_format"/>
+            </td>
+        </xpath>
+    </template>
+    <template id="bista_purchase_stock_report_delivery_aggregated_move_lines"
+              inherit_id="stock.stock_report_delivery_aggregated_move_lines">
+        <xpath expr="//tr/td[1]" position="after">
+            <td name="td_format">
+                <span style="font-weight:normal" t-field="o.product_id.product_format"/>
+            </td>
+        </xpath>
     </template>
 </odoo>

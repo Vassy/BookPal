@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
     <template id="report_saleorder_document_extended"
               inherit_id="sale.report_saleorder_document">
         <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
@@ -19,7 +18,7 @@
                 </div>
                 <t t-set="report_info"
                    class="col-6 text-right mb4">
-                  <h3 t-if="o.state != 'draft'">Sale Order</h3>
+                    <h3 t-if="o.state != 'draft'">Sale Order</h3>
                     <h3 t-if="o.state == 'draft'">Quotation</h3>
                     <h3 t-if="o.state == 'cancel'">Cancelled Sale Quotation/Order</h3>
                     <h4>
@@ -27,16 +26,16 @@
                             <t t-esc="o.name"/>
                         </strong>
                     </h4>
-                       <t t-if="doc.state in ['draft','sent']">
-                            <strong>Quotation Date:</strong>
-                             <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
-                            <br/>
-                        </t>
-                      <t t-if="doc.state not in ['draft','sent']">
+                    <t t-if="doc.state in ['draft','sent']">
+                        <strong>Quotation Date:</strong>
+                        <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                        <br/>
+                    </t>
+                    <t t-if="doc.state not in ['draft','sent']">
                         <strong>Order Date:
                             <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                         </strong>
-                      </t>
+                    </t>
                     <br/>
                 </t>
                 <t t-set="information_block">
@@ -60,7 +59,7 @@
                             <br/>
                         </t>
                         <t t-if="doc.state in ['draft','sent','confirm']">
-                            <strong>Need  By Date:</strong>
+                            <strong>Need By Date:</strong>
                             <t t-esc="doc.commitment_date" t-options='{"widget": "date"}'/>
                             <br/>
                         </t>
@@ -85,7 +84,7 @@
                         <t t-esc="doc.client_order_ref"/>
                         <br/>
                         <strong>Valid Until:</strong>
-                         <t t-esc="doc.validity_date" t-options='{"widget": "date"}'/>
+                        <t t-esc="doc.validity_date" t-options='{"widget": "date"}'/>
                         <br/>
                         <strong>Salesperson:</strong>
                         <t t-esc="o.user_id.name"/>
@@ -101,7 +100,6 @@
                 <!--                  <span t-field="doc.note"/>-->
             </div>
         </xpath>
-
         <xpath expr="//table[hasclass('table','table-sm','o_main_table')]" position="before">
             <span style="font-size:20px;">
                 <strong>Product Details</strong>
@@ -115,6 +113,9 @@
                     </th>
                     <th colspan="2" style=" border-collapse: collapse;
                    border: none;" name="image" class="text-center">Description
+                    </th>
+                    <th style=" border-collapse: collapse;
+                   border: none;" name="th_quantity" class="text-center">Format
                     </th>
                     <th style=" border-collapse: collapse;
                    border: none;" name="th_quantity" class="text-center">Quantity
@@ -162,12 +163,18 @@
                 </td>
                 <td name="td_name" style="width:30%; border-top: 1px solid black; border-left: none;
                 border-right: none; border-bottom: 1px solid black;">
-                    <b><span t-field="line.product_id.name"/></b>
+                    <b>
+                        <span t-field="line.product_id.name"/>
+                    </b>
                     <br/>
                     <span t-field="line.product_id.default_code"/>
                     <!-- <br/> -->
                     <!-- <span>Format:</span> -->
                     <!--                        <span t-field="line.product_id.format"/>-->
+                </td>
+                <td name="td_format" style="border-top: 1px solid black; border-left: none;
+                 border-right: none;border-bottom: 1px solid black;" class="text-center">
+                    <span t-field="line.product_id.product_format"/>
                 </td>
                 <td style="border-top: 1px solid black; border-left: none;
                  border-right: none;border-bottom: 1px solid black;" name="td_quantity" class="text-center">
@@ -189,7 +196,6 @@
                         <span t-field="line.price_unit"
                               t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
                     </t>
-
                 </td>
                 <td style="border-top: 1px solid black; border-left: none;
                      border-right: none; border-bottom: 1px solid black;" name="td_priceunit" class="text-right">
@@ -201,10 +207,8 @@
                         <t t-else="">
                             <span t-field="line.discount"
                                   t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
-
                         </t>
                     </span>
-
                 </td>
                 <td style="border-top: 1px solid black; border-left: none;
                 border-right: none; border-bottom: 1px solid black;"
@@ -221,7 +225,6 @@
                 </td>
             </t>
         </xpath>
-
         <xpath expr="//table[hasclass('table', 'table-sm', 'o_main_table')]"
                position="attributes">
             <attribute name="style">margin-top: 10px; border:none;</attribute>
@@ -234,7 +237,6 @@
         <xpath expr="//div[@t-field='doc.partner_id']" position="before">
             <strong>Customer Details</strong>
         </xpath>
-
         <!-- Hidden information block from base report  -->
         <xpath expr="//div[hasclass('page')]/div[@id='informations']" position="replace"/>
         <!-- Hidden Quotation & Order # from base report  -->
@@ -308,7 +310,6 @@
                         </tr>
                     </table>
                 </div>
-
             </div>
         </xpath>
     </template>
