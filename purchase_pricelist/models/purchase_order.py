@@ -155,7 +155,6 @@ class PurchaseOrderLine(models.Model):
         ).get_product_price_rule(
             self.product_id, self.product_uom_qty or 1.0, self.order_id.partner_id
         )
-        price = self.price_unit
         discount = 0
         if rule_id:
             rule = self.env["product.pricelist.item"].browse(rule_id)
@@ -163,10 +162,9 @@ class PurchaseOrderLine(models.Model):
                 seller.price, self.product_uom, self.product_id, self.product_uom_qty
             )
             if self.pricelist_id.discount_policy == "with_discount":
-                price = price
+                self.price_unit = price
             else:
                 discount = max(0, (seller.price - price) * 100 / seller.price)
-        self.price_unit = price
         self.discount = discount
 
     def _prepare_account_move_line(self, move=False):
