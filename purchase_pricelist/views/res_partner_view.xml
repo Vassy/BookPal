@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="base.view_partner_form" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='property_product_pricelist']" position="attributes">
-                <attribute name="domain">[('used_for','=','sale')]</attribute>
+                <attribute name="domain">[("used_for", "=", "sale")]</attribute>
             </xpath>
             <xpath expr="//field[@name='property_purchase_currency_id']" position="after">
                 <field name="property_product_vendor_pricelist" string="Pricelist" options="{'no_create': 1}" domain="[('used_for', '=', 'purchase'), ('on_order', '=', True), ('currency_id', '=', property_purchase_currency_id)]" />
