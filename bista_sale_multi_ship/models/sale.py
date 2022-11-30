@@ -486,7 +486,7 @@ class SaleOrderLine(models.Model):
         if self.env.context.get('multi_ship'):
             for sline in self:
                 name = '[' + sline.product_id.default_code + '] ' + \
-                    sline.product_id.name
+                    sline.product_id.name if sline.product_id.default_code else sline.product_id.name
                 if sline.product_id.product_template_attribute_value_ids:
                     name += "(" + ','.join(
                         sline.product_id.product_template_attribute_value_ids.

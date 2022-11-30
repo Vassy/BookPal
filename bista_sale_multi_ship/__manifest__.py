@@ -19,7 +19,8 @@
     'depends': ['sale',
                 'delivery_ups',
                 'contacts',
-                'bista_report_header_footer'],
+                'bista_report_header_footer',
+                'sale_mrp',],
 
     # always loaded
     'data': [
