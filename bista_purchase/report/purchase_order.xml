@@ -237,7 +237,7 @@
         </xpath>
         <xpath expr="//p[@t-field='o.notes']" position="before">
             <div class="text-right text-danger">
-                <span style="font-size: 12px; margin-right: 10px;">DO NOT PROCESS IF PRICES ARE INCORRECT</span>
+                <span style="font-size: 12px; margin-right:1px;">DO NOT PROCESS IF PRICES ARE INCORRECT</span>
             </div>
         </xpath>
         <xpath expr="//p[@t-field='o.notes']" position="replace">
