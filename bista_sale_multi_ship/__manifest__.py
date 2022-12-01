@@ -20,10 +20,13 @@
                 'delivery_ups',
                 'contacts',
                 'bista_report_header_footer',
-                'sale_mrp',],
+                'sale_mrp'],
 
     # always loaded
     'data': [
+        'data/email_data.xml',
+        'data/res_config_data.xml',
+        'views/res_config_settings_views.xml',
         'security/ir.model.access.csv',
         'security/product_data.xml',
         'wizard/put_in_pack_wizard_view.xml',
@@ -34,7 +37,8 @@
         'views/stock_view.xml',
         'report/shipment_report_view.xml',
         'report/report_register.xml',
-        # 'data/email_data.xml',
+
+
     ],
     'installable': True,
     'auto_install': False,

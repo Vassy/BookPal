@@ -209,9 +209,18 @@ class ResPartner(models.Model):
         """User can serach tax based on name and description."""
         if not args:
             args = []
-        if not self.env.context.get('shipment_contact'):
-            args += [('is_multi_ship', '=', False)]
-        ids = self._name_search(name, args, operator, limit=limit)
+        if self.env.context.get('shipment_contact'):
+            args += expression.OR(
+                [args, [('is_multi_ship', '=', True)]])
+        elif self.env.context.get('vendor_multi_ship'):
+            vendors = self.get_vendors()
+            args = ['|', ('id', 'in', vendors), ('parent_id', 'in', vendors)]
+        elif self.env.user.has_group(
+                'bista_sale_multi_ship.show_multi_ship_contact'):
+            args = expression.OR([args, [('is_multi_ship', '=', True)]])
+        else:
+            args = expression.AND([args, [('is_multi_ship', '=', False)]])
+        ids = self.with_context(name_search=True)._name_search(name, args, operator, limit=limit)
         return self.browse(ids).sudo().name_get()
 
     def name_get(self):
@@ -249,10 +258,19 @@ class ResPartner(models.Model):
     @api.model
     def _search(self, args, offset=0, limit=None,
                 order=None, count=False, access_rights_uid=None):
-        context = self._context or {}
-        if context.get('vendor_multi_ship'):
-            vendors = self.get_vendors()
-            args += ['|', ('id', 'in', vendors), ('parent_id', 'in', vendors)]
+        if not self.env.context.get('name_search'):
+            if self.env.context.get('shipment_contact'):
+                args += expression.OR(
+                    [args, [('is_multi_ship', '=', True)]])
+            elif self.env.context.get('vendor_multi_ship'):
+                vendors = self.get_vendors()
+                args = ['|', ('id', 'in', vendors), ('parent_id', 'in', vendors)]
+            elif self.env.user.has_group(
+                    'bista_sale_multi_ship.show_multi_ship_contact'):
+                args = expression.OR([args, [('is_multi_ship', '=', True)]])
+            else:
+                args = expression.AND([args, [('is_multi_ship', '=', False)]])
+
         return super(ResPartner, self)._search(
             args, offset, limit, order, count=count,
             access_rights_uid=access_rights_uid)
