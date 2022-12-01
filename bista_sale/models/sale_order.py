@@ -62,6 +62,15 @@ class SaleOrder(models.Model):
 
     customer_email_add=fields.Char('Customer Email Address',related='partner_id.email')
 
+    @api.depends('picking_ids.is_dropship')
+    def _compute_picking_ids(self):
+        super()._compute_picking_ids()
+        for order in self:
+            order.delivery_count = len(order.picking_ids.filtered(lambda p: p.picking_type_id.code in ['outgoing', 'internal'] and p.picking_type_id.sequence_code != 'INT'))
+
+    def action_view_delivery(self):
+        return self._get_action_view_picking(self.picking_ids.filtered(lambda p: not p.is_dropship and p.picking_type_id.code in ['outgoing', 'internal'] and p.picking_type_id.sequence_code != 'INT'))
+
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
