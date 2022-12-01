@@ -59,17 +59,40 @@ class SaleOrder(models.Model):
                                     ('high', 'High'),
                                     ('medium', 'Medium'),
                                     ('low', 'Low')],string='Account Order Standing')
-
     customer_email_add=fields.Char('Customer Email Address',related='partner_id.email')
+    saving_amount = fields.Float(
+        "Total Saving Amount", compute="_amount_all", store=True
+    )
+
+    @api.depends("order_line.price_total")
+    def _amount_all(self):
+        super()._amount_all()
+        for sale in self:
+            sale.saving_amount = sum(sale.order_line.mapped("saving_amount"))
 
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     tracking_ref = fields.Char(
-        'Tracking Refrence', compute="get_tracking_ref")
+        "Tracking Refrence", compute="get_tracking_ref"
+    )
+    saving_amount = fields.Float(
+        "Saving Amount", compute="_compute_amount", store=True
+    )
+    discounted_price = fields.Float(
+        "Discounted Price", compute="_compute_amount", store=True
+    )
 
-    @api.depends('move_ids.state')
+    @api.depends("product_uom_qty", "discount", "price_unit", "tax_id")
+    def _compute_amount(self):
+        super()._compute_amount()
+        for line in self:
+            saving_unit = (line.price_unit * line.discount) / 100
+            line.saving_amount = saving_unit * line.product_uom_qty
+            line.discounted_price = line.price_unit - saving_unit
+
+    @api.depends("move_ids.state")
     def get_tracking_ref(self):
         """Get the tracking reference."""
         for line in self:
@@ -81,68 +104,3 @@ class SaleOrderLine(models.Model):
             tracking_ref = ', '.join([str(elem)
                                      for elem in tracking_ref if elem])
             line.tracking_ref = tracking_ref
-
-    # def check_bo_transfer(self):
-    #     name = ''
-    #     if self.product_id:
-    #         domain = [('picking_type_code', '=', 'incoming'),
-    #                   ('partner_id', '=', self.product_id.seller_ids[0].name.id
-    #                    if not self.supplier_id else self.supplier_id.id),
-    #                   ('backorder_id', '!=', False),
-    #                   ('state', 'not in', ['done', 'cancel'])]
-    #         picking_ids = self.env['stock.picking'].search(domain)
-    #         pick_id = picking_ids.move_ids_without_package.filtered(
-    #             lambda x: x.product_id == self.product_id)
-    #         if pick_id:
-    #             for ref in pick_id:
-    #                 name += '\n' + ref.picking_id.name
-    #     return name
-
-    # @api.onchange('product_id', 'supplier_id')
-    # def onchange_product_vendor(self):
-    #     result = {}
-    #     bo_transfer = self.check_bo_transfer()
-    #     if self.product_id and bo_transfer:
-    #         message = _('"%s" Product is already in back order. you can check this backorder. %s')\
-    #             % (self.product_id.display_name, bo_transfer)
-    #         warning_mess = {
-    #             'title': _('WARNING!'),
-    #             'message': message
-    #         }
-    #         result = {'warning': warning_mess}
-    #         return result
-
-
-# class SaleMultiShipQtyLines(models.Model):
-#     _inherit = "sale.multi.ship.qty.lines"
-#     _description = 'Sale Multi Ship Qty Lines model details.'
-
-#     def check_bo_transfer(self):
-#         name = ''
-#         if self.so_line_id:
-#             domain = [('picking_type_code', '=', 'incoming'),
-#                       ('partner_id', '=', self.so_line_id.product_id.seller_ids[0].name.id
-#                        if not self.supplier_id else self.supplier_id.id),
-#                       ('backorder_id', '!=', False),
-#                       ('state', 'not in', ['done', 'cancel'])]
-#             picking_ids = self.env['stock.picking'].search(domain)
-#             pick_id = picking_ids.move_ids_without_package.filtered(
-#                 lambda x: x.product_id == self.so_line_id.product_id)
-#             if pick_id:
-#                 for ref in pick_id:
-#                     name += '\n' + ref.picking_id.name
-#         return name
-
-#     @api.onchange('so_line_id', 'supplier_id')
-#     def onchange_product_vendor(self):
-#         result = {}
-#         bo_transfer = self.check_bo_transfer()
-#         if self.so_line_id and bo_transfer:
-#             message = _('"%s" Product is already in back order. you can check this backorder. %s')\
-#                 % (self.so_line_id.product_id.display_name, bo_transfer)
-#             warning_mess = {
-#                 'title': _('WARNING!'),
-#                 'message': message
-#             }
-#             result = {'warning': warning_mess}
-#             return result
