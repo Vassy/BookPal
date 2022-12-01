@@ -3,62 +3,70 @@
     <record id="sale_order_view_extended" model="ir.ui.view">
         <field name="name">sale.order.view.extend</field>
         <field name="model">sale.order</field>
-        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
-                <field name="tracking_ref"/>
+                <field name="tracking_ref" />
             </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
+                <field name="saving_amount" optional="show" />
+                <field name="discounted_price" optional="show" />
+            </xpath>
+            <field name="tax_totals_json" position="after">
+                <field name="saving_amount" />
+            </field>
+            <!-- <xpath expr="//group[@name='note_group']" position="inside"> -->
+                <!-- <div class="oe_right">
+                    <label for="saving_amount" />
+                </div> -->
+            <!-- </xpath> -->
             <xpath expr="//field[@name='validity_date']" position="attributes">
                 <attribute name="string">Valid Until</attribute>
                 <attribute name="attrs">{'invisible': 0 }</attribute>
-           </xpath>
-             <xpath expr="//group[@name='order_details']/div[@class='o_td_label']" position="replace">
-                <div class="o_td_label"  attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}">
-                    <label for="date_order" string="Quotation Date"/>
+            </xpath>
+            <xpath expr="//group[@name='order_details']/div[hasclass('o_td_label')]" position="replace">
+                <div class="o_td_label" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}">
+                    <label for="date_order" string="Quotation Date" />
                 </div>
-             </xpath>
-             <xpath expr="//group[@name='order_details']/field[@name='date_order']" position="replace">
-                <field name="date_order" nolabel="1" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
-             </xpath>
-
-             <xpath expr="//field[@name='payment_term_id']" position="before">
-                <field name="commitment_date"/>
-             </xpath>
-
-             <xpath expr="//field[@name='commitment_date']" position="attributes">
+            </xpath>
+            <xpath expr="//group[@name='order_details']/field[@name='date_order']" position="replace">
+                <field name="date_order" nolabel="1" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}" />
+            </xpath>
+            <xpath expr="//field[@name='payment_term_id']" position="before">
+                <field name="commitment_date" />
+            </xpath>
+            <xpath expr="//field[@name='commitment_date']" position="attributes">
                 <attribute name="string">Need By Date</attribute>
-             </xpath>
-
-              <xpath expr="//field[@name='payment_term_id']" position="after">
-                <field name="client_order_ref"/>
             </xpath>
-
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="client_order_ref" />
+            </xpath>
             <xpath expr="//field[@name='partner_id']" position="after">
-                <field name="due_amount"/>
+                <field name="due_amount" />
             </xpath>
-
             <xpath expr="//group/group[@name='sales_person']/field[@name='client_order_ref']" position="replace">
             </xpath>
-
             <xpath expr="//group[@name='sale_shipping']" position="replace">
-                <span name="expected_date_span" class="text-muted">Expected: <field name="expected_date" widget="date"/></span>
+                <span name="expected_date_span" class="text-muted">
+                    Expected: <field name="expected_date" widget="date" />
+                </span>
             </xpath>
             <xpath expr="//notebook/page[@name='other_information']" position="after">
                 <page string="Order Notes" name="order_notes">
                     <sheet>
                         <group>
                             <group name="order_notes">
-                                <field name="event_date"/>
-                                <field name="order_notes"  class="bp_text_field"/>
-                                <field name="gorgias_ticket"  widget='url'  class="bp_text_field"/>
-                                <field name="product_status_notes" class="bp_text_field"/>
+                                <field name="event_date" />
+                                <field name="order_notes" class="bp_text_field" />
+                                <field name="gorgias_ticket" widget="url" class="bp_text_field" />
+                                <field name="product_status_notes" class="bp_text_field" />
                             </group>
                             <group>
-                                <field name="white_glove_id"/>
-                                <field name="ce_notes"  class="bp_text_field"/>
-                                <field name="payment_notes"   class="bp_text_field"/>
-                                <field name="am_notes"  class="bp_text_field"/>
-                                <field name="ce_ops_acct_notes"  class="bp_text_field"/>
+                                <field name="white_glove_id" />
+                                <field name="ce_notes" class="bp_text_field" />
+                                <field name="payment_notes" class="bp_text_field" />
+                                <field name="am_notes" class="bp_text_field" />
+                                <field name="ce_ops_acct_notes" class="bp_text_field" />
                             </group>
                         </group>
                     </sheet>
@@ -67,20 +75,20 @@
             <xpath expr="//notebook/page[@name='order_notes']" position="after">
                 <page name="journal_details" string="Journal Details">
                     <group>
-                        <group name="journal_details" >
-                            <field name="journal_customization_id" class="bp_text_field"/>
-                            <field name="link_to_art_files" class="bp_text_field"/>
-                            <field name="journal_notes" class="bp_text_field"/>
-                            <field name="journal_setup_fee_waived"/>
-                            <field name="journal_setup_fee" class="bp_text_field_char"/>
+                        <group name="journal_details">
+                            <field name="journal_customization_id" class="bp_text_field" />
+                            <field name="link_to_art_files" class="bp_text_field" />
+                            <field name="journal_notes" class="bp_text_field" />
+                            <field name="journal_setup_fee_waived" />
+                            <field name="journal_setup_fee" class="bp_text_field_char" />
                         </group>
                         <group>
-                            <field name="shipping_account"/>
-                            <field name="shipping_cost"/>
-                            <field name="artwork_status_id" class="bp_text_field"/>
-                            <field name="death_type_id"/>
-                            <field name="existing_death_order"/>
-                            <field name="customization_cost"/>
+                            <field name="shipping_account" />
+                            <field name="shipping_cost" />
+                            <field name="artwork_status_id" class="bp_text_field" />
+                            <field name="death_type_id" />
+                            <field name="existing_death_order" />
+                            <field name="customization_cost" />
                         </group>
                     </group>
                 </page>
@@ -89,24 +97,24 @@
                 <page string="Project Tracking" name="project_fulfilment_trac">
                     <group>
                         <group name="project_fulfilment_tracking">
-                            <field name="fulfilment_project"/>
-                            <field name="am_owner"/>
-                            <field name="project_description"/>
-                            <field name="status_notes"  class="bp_text_field"/>
-                            <field name="delivery_location"/>
-                            <field name="project_status"/>
+                            <field name="fulfilment_project" />
+                            <field name="am_owner" />
+                            <field name="project_description" />
+                            <field name="status_notes" class="bp_text_field" />
+                            <field name="delivery_location" />
+                            <field name="project_status" />
                             <field name="shipping_instruction" class="bp_text_field" />
-                            <field name="customization_type_ids" widget="many2many_tags"/>
-                            <field name="individual_mailer_return_address" class="bp_text_field_height"/>
+                            <field name="customization_type_ids" widget="many2many_tags" />
+                            <field name="individual_mailer_return_address" class="bp_text_field_height" />
                         </group>
                         <group>
-                            <field name="special_insert_note" class="bp_text_field"/>
-                            <field name="attachment_note" class="bp_text_field"/>
-                            <field name="book_status"/>
-                            <field name="on_hold_reason" class="bp_text_field"/>
-                            <field name="recipient_list_status"/>
+                            <field name="special_insert_note" class="bp_text_field" />
+                            <field name="attachment_note" class="bp_text_field" />
+                            <field name="book_status" />
+                            <field name="on_hold_reason" class="bp_text_field" />
+                            <field name="recipient_list_status" />
                             <field name="individual_mailer_return_receiver" class="bp_text_field_height" />
-                            <field name="recipient_list_expected" class="bp_text_field_char"/>
+                            <field name="recipient_list_expected" class="bp_text_field_char" />
                         </group>
                     </group>
                 </page>
@@ -115,24 +123,24 @@
                 <page string="Payment">
                     <group>
                         <group name="payment_info">
-                            <field name="billing_notes" class="bp_text_field"/>
+                            <field name="billing_notes" class="bp_text_field" />
                         </group>
                         <group>
-                            <field name="placed_from_ip"/>
+                            <field name="placed_from_ip" />
                         </group>
                     </group>
                 </page>
             </xpath>
-             <xpath expr="//notebook/page[@name='project_fulfilment_trac']" position="after">
+            <xpath expr="//notebook/page[@name='project_fulfilment_trac']" position="after">
                 <page string="Order Details">
                     <group>
                         <group name="order_details">
-                            <field name='refer_by_company'/>
-                            <field name='refer_by_person'/>
+                            <field name="refer_by_company" />
+                            <field name="refer_by_person" />
                         </group>
                         <group>
-                            <field name="account_order_standing"/>
-                            <field name="customer_email_add"/>
+                            <field name="account_order_standing" />
+                            <field name="customer_email_add" />
                         </group>
                     </group>
                 </page>
