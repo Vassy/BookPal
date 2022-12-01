@@ -126,6 +126,9 @@ class PurchaseTrackingLine(models.Model):
     checkbox = fields.Boolean(string="Checkbox")
     tracking_id = fields.Many2one("purchase.tracking", string="Tracking")
     po_line_id = fields.Many2one("purchase.order.line", "PO Line")
+    default_code = fields.Char(
+        related="po_line_id.product_id.default_code", store=True, string="ISBN"
+    )
     ordered_qty = fields.Float(
         related="po_line_id.product_qty", string="Ordered Quantity", store=True
     )

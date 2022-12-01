@@ -43,6 +43,7 @@
                                 <tree editable="bottom" create="0" delete="0" default_order="ship_qty desc">
 <!--                                    <field name="checkbox" nolabel="1" />-->
                                     <field name="po_line_id" readonly="1" force_save="1" />
+                                    <field name="default_code" optional="show" />
                                     <field name="ordered_qty" />
                                     <field name="received_qty" optional="hide" />
                                     <field name="pending_shipment_qty" />
