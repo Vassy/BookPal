@@ -18,19 +18,11 @@ class PurchaseOrder(models.Model):
     total_discount_amount = fields.Monetary(
         string="Total Discount Amount", store=True, compute="_amount_all"
     )
-    total_quantity = fields.Float(
-        string="Total Quantity", store=True, compute="_compute_total_quantity"
-    )
 
     @api.onchange("partner_id")
     def _onchange_partner_id(self):
         for line in self.order_line:
             line._onchange_quantity()
-
-    @api.depends("order_line", "order_line.product_qty")
-    def _compute_total_quantity(self):
-        for order in self:
-            order.total_quantity = sum(order.order_line.mapped("product_qty"))
 
     @api.onchange("currency_id")
     def onchange_currency_pricelist(self):
@@ -65,7 +57,8 @@ class PurchaseOrder(models.Model):
     def update_prices(self):
         for order in self.filtered(lambda o: o.pricelist_id):
             pricelist_line = order.pricelist_id.get_pricelist_line_based_on_order(
-                order.without_disc_amount_untaxed, order.total_quantity
+                order.without_disc_amount_untaxed,
+                sum(order.order_line.mapped("product_qty")),
             )
             non_discounted_lines = order.order_line
             if non_discounted_lines and pricelist_line:

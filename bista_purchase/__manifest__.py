@@ -8,7 +8,7 @@
     'website': "http://www.bistasolutions.com",
     'category': "Purchase",
     'version': '15.0.1.0.1',
-    'depends': ['purchase', 'delivery', 'bista_contact', 'bista_sale'],
+    'depends': ['purchase_pricelist', 'delivery', 'bista_contact', 'bista_sale'],
     'data': [
         'security/ir.model.access.csv',
         'views/res_partner_views.xml',

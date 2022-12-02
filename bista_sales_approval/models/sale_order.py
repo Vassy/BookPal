@@ -12,7 +12,6 @@ AddState = [
     ("customer_approved", "Customer Approved"),
     ("min_price_review", "Price Review"),
     ("pending_for_approval", "Pending for Approval"),
-    ("approved", "Approved"),
     ("sale",),
 ]
 
