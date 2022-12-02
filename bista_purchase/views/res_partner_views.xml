@@ -42,7 +42,7 @@
                 <group>
                     <field name="rep"/>
                     <!-- <field name="write_uid" string="Last Modified By"/> -->
-                    <field name="write_date" string="Reviewed Date"/>
+                    <field name="reviewed_date" string="Reviewed Date"/>
                     <!-- <field name="active" string="Status"/> -->
                     <field name="account_number"/>
                     <field name="top_publisher"/>
