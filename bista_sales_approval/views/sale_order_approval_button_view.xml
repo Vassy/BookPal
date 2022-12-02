@@ -1,27 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="sale_order_sale_manager_editable" model="ir.ui.view">
-        <field name="name">Sale order Salesperson Edit Right</field>
-        <field name="model">sale.order</field>
-        <field name="groups_id" eval="[(4,ref('bista_sales_approval.group_sale_approval_admin'))]" />
-        <field name="inherit_id" ref="sale.view_order_form" />
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='order_line']" position="attributes">
-                <attribute name="attrs">{'readonly': [('state', 'in', [])]}</attribute>
-            </xpath>
-            <xpath expr="//field[@name='payment_term_id']" position="attributes">
-                <attribute name="readonly">0</attribute>
-            </xpath>
-        </field>
-    </record>
-
     <record id="sale_order_approval_button_inherit" model="ir.ui.view">
         <field name="name">Sale order approval button</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
             <xpath expr="//header//button[@name='action_quotation_send'][4]" position="attributes">
-                <attribute name="states">sent,sale,approved</attribute>
+                <attribute name="states">sent,sale</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
                 <field name="check_price_over_minimum" force_save="1" invisible="1" />
@@ -33,24 +18,29 @@
                 <attribute name="attrs">{"invisible": [("state", "not in", ["done", "cancel"])]}</attribute>
             </button>
             <xpath expr="//header//button[@name='action_quotation_send'][1]" position="after">
-                <button name="action_send_for_approval" string="Send For Approval" type="object" attrs="{'invisible': [('state','not in',['draft','sent','customer_approved'])]}" class="btn-primary" />
-                <button name="action_approve_minimum_price" string="Approve Price" type="object" confirm="Are you sure you want to approve the sale price?" states="min_price_review" groups="bista_sales_approval.group_approve_product_price" class="btn-primary" />
-                <button name="action_approval" string="Approve" type="object" states="pending_for_approval" groups="bista_sales_approval.group_sale_approval_admin" class="btn-primary" />
-                <button name="action_reject" string="Reject" type="object" states="pending_for_approval" groups="bista_sales_approval.group_sale_approval_admin" class="btn-primary" />
-                <button name="action_reject" string="Reject" type="object" states="min_price_review" groups="bista_sales_approval.group_approve_product_price" class="btn-primary" />
+                <button name="action_send_for_approval" string="Send For Approval" type="object" class="btn-primary"
+                    attrs="{'invisible': [('state', 'not in', ['draft', 'sent', 'customer_approved'])]}" />
+                <button name="action_approve_minimum_price" string="Approve Price" type="object" class="btn-primary"
+                    confirm="Are you sure you want to approve the sale price?"
+                    states="min_price_review" groups="bista_sales_approval.group_approve_product_price" />
+                <button name="action_approval" string="Approve" type="object" states="pending_for_approval"
+                    groups="bista_sales_approval.group_sale_approval_admin" class="btn-primary" />
+                <button name="action_reject" string="Reject" type="object" states="pending_for_approval"
+                    groups="bista_sales_approval.group_sale_approval_admin" class="btn-primary" />
+                <button name="action_reject" string="Reject" type="object" states="min_price_review"
+                    groups="bista_sales_approval.group_approve_product_price" class="btn-primary" />
             </xpath>
-            <xpath expr="//header//button[@name='action_confirm'][2]" position="attributes">
-                <attribute name="class">d-none</attribute>
+            <xpath expr="//header/button[@name='action_confirm'][2]" position="attributes">
+                <attribute name="invisible">1</attribute>
             </xpath>
-            <xpath expr="//header//button[@name='action_confirm'][1]" position="attributes">
-                <attribute name="attrs">{'invisible': [ ('state', 'not in', ['approved'])]}
-                </attribute>
+            <xpath expr="//header/button[@name='action_confirm'][1]" position="attributes">
+                <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']" position="attributes">
-                <attribute name="attrs">{'readonly': [('state', 'not in', ['draft', 'sent'])]}</attribute>
+                <attribute name="attrs">{"readonly": [("state", "not in", ["draft", "sent"])]}</attribute>
             </xpath>
             <xpath expr="//field[@name='payment_term_id']" position="attributes">
-                <attribute name="attrs">{'readonly': [('state', 'not in', ['draft', 'sent'])]}</attribute>
+                <attribute name="attrs">{"readonly": [("state", "not in", ["draft", "sent"])]}</attribute>
             </xpath>
             <notebook position="inside">
                 <page name="sale_approval_log_ids" string="Approval Status">
@@ -65,6 +55,20 @@
                     </field>
                 </page>
             </notebook>
+        </field>
+    </record>
+
+    <record id="sale_order_sale_manager_editable" model="ir.ui.view">
+        <field name="name">Sale order Salesperson Edit Right</field>
+        <field name="model">sale.order</field>
+        <field name="groups_id" eval="[(4,ref('bista_sales_approval.group_sale_approval_admin'))]" />
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']" position="attributes">
+                <attribute name="attrs">
+                    {"readonly": [("state", "not in", ["draft", "sent", "pending_for_approval"])]}
+                </attribute>
+            </xpath>
         </field>
     </record>
 
