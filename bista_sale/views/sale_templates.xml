@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="sale_order_portal_content_saving_amount" inherit_id="sale.sale_order_portal_content">
+        <xpath expr="//table[@id='sales_order_table']//th[3]" position="after">
+            <th class="text-right">Saving Amount</th>
+        </xpath>
+        <xpath expr="//table[@id='sales_order_table']//td[3]" position="after">
+            <td class="text-right">
+                <span t-field="line.saving_amount" t-options="{'decimal_precision': 'Product Price'}" />
+            </td>
+        </xpath>
+    </template>
+
+    <template id="sale_order_portal_content_totals_table_saving_amount" inherit_id="sale.sale_order_portal_content_totals_table">
+        <xpath expr="//table" position="inside">
+            <tr>
+                <td><strong>Total Saving Amount</strong></td>
+                <td class="text-right">
+                    <span t-field="sale_order.saving_amount"/>
+                </td>
+            </tr>
+        </xpath>
+    </template>
+</odoo>

@@ -13,13 +13,8 @@
                 <field name="discounted_price" optional="show" />
             </xpath>
             <field name="tax_totals_json" position="after">
-                <field name="saving_amount" />
+                <field style="font-size: 1.3em; font-weight: bold;" name="saving_amount" />
             </field>
-            <!-- <xpath expr="//group[@name='note_group']" position="inside"> -->
-                <!-- <div class="oe_right">
-                    <label for="saving_amount" />
-                </div> -->
-            <!-- </xpath> -->
             <xpath expr="//field[@name='validity_date']" position="attributes">
                 <attribute name="string">Valid Until</attribute>
                 <attribute name="attrs">{'invisible': 0 }</attribute>

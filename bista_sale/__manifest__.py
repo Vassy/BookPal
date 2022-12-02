@@ -29,7 +29,7 @@
         # 'report/sale_delivery_report.xml',
         'report/sale.xml',
         'data/data.xml',
-
+        "views/sale_templates.xml",
     ],
     'installable': True,
     'auto_install': False
