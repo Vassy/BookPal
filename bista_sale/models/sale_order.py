@@ -60,7 +60,7 @@ class SaleOrder(models.Model):
                                     ('medium', 'Medium'),
                                     ('low', 'Low')],string='Account Order Standing')
     customer_email_add=fields.Char('Customer Email Address',related='partner_id.email')
-    saving_amount = fields.Float(
+    saving_amount = fields.Monetary(
         "Total Saving Amount", compute="_amount_all", store=True
     )
 
