@@ -85,7 +85,7 @@
                 <page name="journal_details" string="Journal Details">
                     <group name="journal_details" string="Journal Details">
                         <group>
-                            <field name="journal_customization_id" options="{'color_field': 'color', 'no_open': True}" widget="many2many_tags"/>
+                            <field name="journal_customization_ids" options="{'color_field': 'color', 'no_open': True}" widget="many2many_tags"/>
                             <field name="customization_cost"/>
                             <field name="link_to_art_files" />
                             <field name="artwork_status_id" options="{'no_open': True}"/>

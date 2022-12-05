@@ -90,7 +90,7 @@
                 <page name="journal_details" string="Journal Details">
                     <group>
                         <group name="journal_details">
-                            <field name="journal_customization_id" class="bp_text_field" widget="many2many_tags"
+                            <field name="journal_customization_ids" class="bp_text_field" widget="many2many_tags"
                                    options="{'color_field': 'color'}"/>
                             <field name="link_to_art_files" class="bp_text_field"/>
                             <field name="journal_notes" class="bp_text_field"/>

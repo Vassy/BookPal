@@ -19,7 +19,7 @@ class SaleOrder(models.Model):
     billing_notes = fields.Text(string="Billing Notes")
     placed_from_ip = fields.Char(string="Placed from IP")
     # journal or promotional product fields
-    journal_customization_id = fields.Many2many(
+    journal_customization_ids = fields.Many2many(
         'journal.customization', string='Journal Customization')
     customization_cost = fields.Float('Our Customization Cost')
     link_to_art_files = fields.Text(string='Link to Art Files')

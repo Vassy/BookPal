@@ -12,7 +12,7 @@ class JournalCustomization(models.Model):
     active = fields.Boolean(string="Archived", default=True)
 
     def unlink(self):
-        sale_orders = self.env['sale.order'].search([('journal_customization_id', '=', self.id)])
+        sale_orders = self.env['sale.order'].search([('journal_customization_ids', '=', self.id)])
         if sale_orders:
             raise ValidationError('The record is existing in sale order you cannot delete the record, you can '
                                   'Archived it.')
