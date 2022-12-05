@@ -10,8 +10,8 @@
                 <field name="attachment_ids" widget="many2many_binary"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
-                <field name="saving_amount" optional="show"/>
-                <field name="discounted_price" optional="show"/>
+                <field name="discounted_price" optional="show" />
+                <field name="saving_amount" optional="show" />
             </xpath>
             <field name="tax_totals_json" position="after">
                 <field style="font-size: 1.3em; font-weight: bold;" name="saving_amount"/>
