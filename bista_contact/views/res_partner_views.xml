@@ -5,79 +5,85 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
-               <xpath expr="//notebook" position="inside">
+            <xpath expr="//page[@name='sales_purchases']//field[@name='team_id']" position="after">
+                 <field name="account_order_standing"  decoration-danger="account_order_standing == 'high'"  decoration-warning="account_order_standing == 'medium'" decoration-success="account_order_standing == 'low'"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
                 <page name="contact_details" string="Contact Details">
                     <group>
-                           <group>
+                        <group>
                             <field name="customer_status"/>
-                            <field name="dead_resone" attrs="{'invisible': [('customer_status', '!=', 'dead')]}" />
+                            <field name="dead_resone" attrs="{'invisible': [('customer_status', '!=', 'dead')]}"/>
                             <field name="block" invisible="1"/>
-                            </group>
-                            <group>
+                        </group>
+                        <group>
                             <field name="do_not_call"/>
-                            <field name="dead_date" attrs="{'invisible': [('customer_status', '!=', 'dead')]}" />
-                           </group>
+                            <field name="dead_date" attrs="{'invisible': [('customer_status', '!=', 'dead')]}"/>
+                        </group>
                     </group>
                 </page>
-               </xpath>
-             <xpath expr="//notebook" position="inside">
+            </xpath>
+            <xpath expr="//notebook" position="inside">
                 <page name="order_information" string="Order Info">
                     <group>
-                           <group>
+                        <group>
                             <field name="avg_order_value"/>
                             <field name="first_order_date"/>
                             <field name="last_order_date"/>
                             <separator string="Products Sale"/>
-                            <field name="sale_product_ids"  nolabel="1" widget="many2many_tags"/>
-                           </group>
+                            <field name="sale_product_ids" nolabel="1" widget="many2many_tags"/>
+                        </group>
                     </group>
                 </page>
-             </xpath>
-             <xpath expr="//notebook" position="inside">
+            </xpath>
+            <xpath expr="//notebook" position="inside">
                 <page name="important_details" string="Imp Details">
                     <group>
-                           <group>
+                        <group>
                             <field name="source"/>
                             <field name="source_notes"/>
                             <field name="referal_source"/>
-                           </group>
+                        </group>
                     </group>
                 </page>
-             </xpath>
+            </xpath>
             <xpath expr="//notebook" position="inside">
                 <page name="Status" string="Block Reason" attrs="{'invisible':[('block','==',False)]}">
                     <group>
-                           <group>
-                           <field name="block_reason"/>
-                           </group>
+                        <group>
+                            <field name="block_reason"/>
+                        </group>
                     </group>
                 </page>
-             </xpath>
+            </xpath>
+<!--            <xpath expr="//page[@name='sales_purchases']//field[@name='property_payment_term_id']" position="after">-->
+<!--                <field name="account_order_standing"/>-->
+<!--            </xpath>-->
         </field>
     </record>
-        <record model="ir.ui.view" id="res_partner_tree_views">
+    <record model="ir.ui.view" id="res_partner_tree_views">
         <field name="name">res.partner.tree</field>
         <field name="model">res.partner</field>
-         <field name="inherit_id" ref="base.view_partner_tree"/>
-         <field name="arch" type="xml">
-             <xpath expr="//tree/field[@name='country_id']" position='after'>
-                 <field name="block" attrs="{'invisible':[('block','==',True)]}"/>
-             </xpath>
-             <xpath expr="//tree" position="attributes">
-                 <attribute name="decoration-danger">block == True</attribute>
-             </xpath>
-         </field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree/field[@name='country_id']" position='after'>
+                <field name="block" attrs="{'invisible':[('block','==',True)]}"/>
+            </xpath>
+            <xpath expr="//tree" position="attributes">
+                <attribute name="decoration-danger">block == True</attribute>
+            </xpath>
+        </field>
     </record>
 
-<!--    Block filter-->
+    <!--    Block filter-->
     <record id="view_partner_blocked_filter_form_inherit" model="ir.ui.view">
-       <field name="name">res.partner.filter</field>
-       <field name="model">res.partner</field>
-       <field name="inherit_id" ref="base.view_res_partner_filter"/>
-       <field name="arch" type="xml">
-           <xpath expr="//search/group" position="inside">
-               <filter string="Blocked" name="block" domain="[('block', '=',True)]"/>
-           </xpath>
-       </field>
-</record>
+        <field name="name">res.partner.filter</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search/group" position="inside">
+                <filter string="Blocked" name="block" domain="[('block', '=',True)]"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>

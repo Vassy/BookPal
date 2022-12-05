@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class SaleOrder(models.Model):
@@ -18,7 +19,7 @@ class SaleOrder(models.Model):
     billing_notes = fields.Text(string="Billing Notes")
     placed_from_ip = fields.Char(string="Placed from IP")
     # journal or promotional product fields
-    journal_customization_id = fields.Many2one(
+    journal_customization_id = fields.Many2many(
         'journal.customization', string='Journal Customization')
     customization_cost = fields.Float('Our Customization Cost')
     link_to_art_files = fields.Text(string='Link to Art Files')
@@ -30,7 +31,7 @@ class SaleOrder(models.Model):
     shipping_account = fields.Char(string="Shipping Account")
     shipping_cost = fields.Float(string=" Our Shipping Cost")
     death_type_id = fields.Many2one('death.type', string='Die Type')
-    existing_death_order = fields.Char(string="Existing Death Order #")
+    existing_death_order = fields.Char(string="Existing Die Order #")
     # Project & Fulfilment Tracking.
     fulfilment_project = fields.Boolean('Fulfilment Project')
     am_owner = fields.Char(string="AM Owner")
@@ -53,13 +54,11 @@ class SaleOrder(models.Model):
     on_hold_reason = fields.Text(string='On Hold Reason(s)')
     due_amount = fields.Monetary('Due Amount', related='partner_id.total_due')
 
-    refer_by_company=fields.Char('Referring Organization')
-    refer_by_person=fields.Char('Referring Person')
-    account_order_standing=fields.Selection([
-                                    ('high', 'High'),
-                                    ('medium', 'Medium'),
-                                    ('low', 'Low')],string='Account Order Standing')
-    customer_email_add=fields.Char('Customer Email Address',related='partner_id.email')
+    refer_by_company = fields.Char('Referring Organization')
+    refer_by_person = fields.Char('Referring Person')
+    account_order_standing = fields.Selection(related="partner_id.account_order_standing",
+                                              string='Account Order Standing')
+    customer_email_add = fields.Char('Customer Email Address', related='partner_id.email')
     saving_amount = fields.Monetary(
         "Total Saving Amount", compute="_amount_all", store=True
     )
@@ -74,10 +73,22 @@ class SaleOrder(models.Model):
     def _compute_picking_ids(self):
         super()._compute_picking_ids()
         for order in self:
-            order.delivery_count = len(order.picking_ids.filtered(lambda p: p.picking_type_id.code in ['outgoing', 'internal'] and p.picking_type_id.sequence_code != 'INT'))
+            order.delivery_count = len(order.picking_ids.filtered(lambda p: p.picking_type_id.code in ['outgoing',
+                                                                                                       'internal'] and p.picking_type_id.sequence_code != 'INT'))
 
     def action_view_delivery(self):
-        return self._get_action_view_picking(self.picking_ids.filtered(lambda p: not p.is_dropship and p.picking_type_id.code in ['outgoing', 'internal'] and p.picking_type_id.sequence_code != 'INT'))
+        return self._get_action_view_picking(self.picking_ids.filtered(
+            lambda p: not p.is_dropship and p.picking_type_id.code in ['outgoing',
+                                                                       'internal'] and p.picking_type_id.sequence_code != 'INT'))
+
+    @api.constrains('journal_setup_fee', 'journal_setup_fee_waived')
+    def constrains_journal_setup_fee(self):
+        if self.journal_setup_fee:
+            if not self.journal_setup_fee.isdigit():
+                raise ValidationError('Only number of digits are allowed in Journal Setup Fee!')
+        if self.journal_setup_fee_waived:
+            if not self.journal_setup_fee_waived.isdigit():
+                raise ValidationError('Only number of digits are allowed Journal Setup Fee Waived!')
 
 
 class SaleOrderLine(models.Model):
@@ -108,9 +119,9 @@ class SaleOrderLine(models.Model):
         for line in self:
             tracking_ref = line.move_ids.filtered(
                 lambda x: x.picking_type_id.code in
-                ['outgoing', 'incoming'] and
-                x.quantity_done).mapped(
+                          ['outgoing', 'incoming'] and
+                          x.quantity_done).mapped(
                 'picking_id').mapped('carrier_tracking_ref')
             tracking_ref = ', '.join([str(elem)
-                                     for elem in tracking_ref if elem])
+                                      for elem in tracking_ref if elem])
             line.tracking_ref = tracking_ref

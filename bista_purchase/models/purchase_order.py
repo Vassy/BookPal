@@ -147,14 +147,17 @@ class PurchaseOrder(models.Model):
         for purchase in self:
             exist_product_list = []
             products_in_lines = [product.id for product in purchase.mapped('order_line.product_id')]
+            products_list = ''
             for line in purchase.order_line:
                 if not vals:
                     if line.product_id.id in exist_product_list:
-                        raise ValidationError(_('Product is already Existing.'))
+                        products_list = products_list + '\n' + '[' + line.product_id.default_code + '] ' + line.product_id.name
                 else:
                     if vals.id in products_in_lines:
-                        raise ValidationError(_('Product is already Existing.'))
+                        raise ValidationError(_('This product is already added in line, you can Update the qty there.'))
                 exist_product_list.append(line.product_id.id)
+            if products_list:
+                raise ValidationError(_(products_list) + '\n Add the qty in one line and remove the other one. ')
 
     def compute_lead_time(self):
         for rec in self:
@@ -162,8 +165,8 @@ class PurchaseOrder(models.Model):
             if rec.date_approve:
                 rec.lead_time = False
                 date_list = rec.picking_ids.mapped('scheduled_date')
-                date_list.sort(reverse=True)
-                date_time = date_list[0].date() - rec.date_approve.date()
+                val = sorted(date_list, reverse=True)
+                date_time = val[0].date() - rec.date_approve.date()
                 rec.lead_time = date_time.days
 
     def compute_order_process_time(self):

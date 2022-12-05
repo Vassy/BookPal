@@ -6,9 +6,9 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     type = fields.Selection(selection_add=[
-                            ('return', 'Return Address'),
-                            ('warehouse', 'Warehouse Address'),]
-                            )
+        ('return', 'Return Address'),
+        ('warehouse', 'Warehouse Address'), ]
+    )
     # Contact Details
     customer_status = fields.Selection([('pending', 'Prospect'),
                                         ('active', 'Active'), ('idle', 'Idle'),
@@ -23,20 +23,24 @@ class ResPartner(models.Model):
     referal_source = fields.Char('Referral Source')
     source_notes = fields.Char('Source Notes')
 
-   # Order Information
-    avg_order_value = fields.Char('Average Order Value',compute='get_avg_order_value')
-    first_order_date = fields.Datetime('First Order Date',compute='get_first_order_date')
-    last_order_date = fields.Datetime('Last Order Date',compute='get_first_order_date')
-    sale_product_ids = fields.Many2many('product.product',string='Sale Products',compute='get_ordered_product')
-    block_reason=fields.Char('Reason')
-    block=fields.Boolean('Block')
+    # Order Information
+    avg_order_value = fields.Char('Average Order Value', compute='get_avg_order_value')
+    first_order_date = fields.Datetime('First Order Date', compute='get_first_order_date')
+    last_order_date = fields.Datetime('Last Order Date', compute='get_first_order_date')
+    sale_product_ids = fields.Many2many('product.product', string='Sale Products', compute='get_ordered_product')
+    block_reason = fields.Char('Reason')
+    block = fields.Boolean('Block')
+    account_order_standing = fields.Selection([
+        ('high', 'High'),
+        ('medium', 'Medium'),
+        ('low', 'Low')], string='Account Order Standing')
 
     def get_first_order_date(self):
         """To get first order date and last order date"""
         self.first_order_date = False
-        self.last_order_date =  False
+        self.last_order_date = False
         if self.sale_order_count > 0:
-            date_list= self.sale_order_ids.mapped('date_order')
+            date_list = self.sale_order_ids.mapped('date_order')
             date_list.sort()
             if date_list:
                 self.first_order_date = date_list[0]
@@ -46,16 +50,16 @@ class ResPartner(models.Model):
         """To calculate average amount of customers's order"""
         self.avg_order_value = 0
         if self.sale_order_count > 0:
-            amount= self.sale_order_ids.mapped('amount_total')
-            self.avg_order_value = sum(amount)/self.sale_order_count
+            amount = self.sale_order_ids.mapped('amount_total')
+            self.avg_order_value = sum(amount) / self.sale_order_count
 
     def get_ordered_product(self):
         """To get Sale Products"""
         self.sale_product_ids = False
         if self.sale_order_count > 0:
-           product_list = self.sale_order_ids.mapped('order_line').filtered(
+            product_list = self.sale_order_ids.mapped('order_line').filtered(
                 lambda a: a.product_id.detailed_type != 'service').mapped('product_id')
-           self.sale_product_ids=[(6,0,product_list.ids)]
+            self.sale_product_ids = [(6, 0, product_list.ids)]
 
     def _avatar_get_placeholder_path(self):
         if self.type == 'return':
@@ -68,29 +72,29 @@ class ResPartner(models.Model):
         """ to block/unblock contact """
         partner_ids = self.ids
         if self.env.context.get('block'):
-             return {
-                     'name': 'Details',
-                     'type': 'ir.actions.act_window',
-                     'view_mode': 'form',
-                     "view_type": "form",
-                     'res_model': 'contact.status.update',
-                     'target': 'new',
-                     'view_id': self.env.ref
-                     ('bista_contact.customer_block_reasone_partner').id,
-                     'context': {'partner_ids': partner_ids,'default_block': True},
-                 }
+            return {
+                'name': 'Details',
+                'type': 'ir.actions.act_window',
+                'view_mode': 'form',
+                "view_type": "form",
+                'res_model': 'contact.status.update',
+                'target': 'new',
+                'view_id': self.env.ref
+                ('bista_contact.customer_block_reasone_partner').id,
+                'context': {'partner_ids': partner_ids, 'default_block': True},
+            }
         if self.env.context.get('unblock'):
-             return {
-                     'name': 'Details',
-                     'type': 'ir.actions.act_window',
-                     'view_mode': 'form',
-                     "view_type": "form",
-                     'res_model': 'contact.status.update',
-                     'target': 'new',
-                     'view_id': self.env.ref
-                     ('bista_contact.customer_block_reasone_partner').id,
-                     'context': {'partner_ids': partner_ids,'default_block': False},
-                 }
+            return {
+                'name': 'Details',
+                'type': 'ir.actions.act_window',
+                'view_mode': 'form',
+                "view_type": "form",
+                'res_model': 'contact.status.update',
+                'target': 'new',
+                'view_id': self.env.ref
+                ('bista_contact.customer_block_reasone_partner').id,
+                'context': {'partner_ids': partner_ids, 'default_block': False},
+            }
 
     def _get_name(self):
         """ Utility method to allow name_get to be overrided without re-browse the partner """
