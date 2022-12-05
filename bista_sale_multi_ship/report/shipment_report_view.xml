@@ -60,7 +60,7 @@
                         <t t-esc="doc.client_order_ref"/>
                         <br/>
                         <strong>Valid Until:</strong>
-                            <t t-esc="doc.validity_date" t-options='{"widget": "date"}'/>
+                        <t t-esc="doc.validity_date" t-options='{"widget": "date"}'/>
                         <br/>
                         <strong>Salesperson:</strong>
                         <t t-esc="o.user_id.name"/>
@@ -71,34 +71,35 @@
                     <!-- In case we want to repeat the header, remove "display: table-row-group" -->
                     <thead style="display: table-row-group">
                         <tr style="border-top: 1px solid black;">
-                            <th style="border: none;" name="th_nd" class="text-center">
+                            <th style="border: none;" name="th_nd" class="text-left">
                                 <strong>Need By Date</strong>
                             </th>
                             <th style=" border-collapse: collapse;border: none;" name="shipment_add"
-                                class="text-center">
-                                <span>Shipment Address</span>
+                                class="text-left">
+                                <strong>Shipment Address</strong>
                             </th>
                             <th style=" border-collapse: collapse;border: none;" name="th_description"
-                                class="text-center">
-                                <span>Description</span>
+                                class="text-left">
+                                <strong>Description</strong>
                             </th>
                             <th style=" border-collapse: collapse;border: none;" name="th_format"
                                 class="text-center">
-                                <span>Format</span>
+                                <strong>Format</strong>
                             </th>
                             <th style=" border-collapse: collapse;border: none;" name="th_quantity" class="text-center">
-                                <span>Quantity</span>
+                                <strong>Quantity</strong>
                             </th>
-                            <th style=" border-collapse: collapse;border: none;" name="th_uom" class="text-center">
-                                <span>UOM</span>
+                            <th style=" border-collapse: collapse;border: none;" name="th_coverprice"
+                                class="text-center">
+                                <strong>Cover Price</strong>
                             </th>
                             <th style=" border-collapse: collapse;border: none;" name="th_priceunit"
                                 class="text-center">
-                                <span>Unit Price</span>
+                                <strong>Price</strong>
                             </th>
                             <th style=" border-collapse: collapse;border: none;padding-left:15px;" name="th_subtotal"
-                                class="text-center">
-                                <span>Amount</span>
+                                class="text-right">
+                                <strong>Amount</strong>
                             </th>
                         </tr>
                     </thead>
@@ -108,21 +109,29 @@
                                 <t t-if="not line.so_line_id.display_type">
                                     <td name="td_nd"
                                         style="border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
-                                        class="text-center">
-                                        <span t-field="line.shipping_date"/>
+                                        class="text-left">
+                                        <span t-field="line.shipping_date" t-options='{"widget": "date"}'/>
                                     </td>
                                     <td name="shipment_add"
-                                        style="border-top: 1px solid black; border-left: none; border-right: none; border-bottom: 1px solid black;"
-                                        class="text-center">
+                                        style="border-top: 1px solid black; border-left: none; border-right: none; border-bottom: 1px solid black;width:14%;"
+                                        class="text-left">
                                         <span t-field="line.partner_id"/>
                                     </td>
                                     <td name="td_name"
-                                        style="width:30%; border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
-                                        class="text-center">
-                                        <span t-field="line.product_id"/>
+                                        style="width:30%; border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;">
+                                        <b>
+                                            <span t-field="line.product_id.name"/>
+                                        </b>
+                                        <br/>
+                                        <span t-field="line.product_id.default_code"/>
+                                        <br/>
+                                        <b>
+                                            <span>Product Notes:</span>
+                                        </b>
+                                        <span t-field="line.picking_note"/>
                                     </td>
                                     <td name="td_format"
-                                        style="width:30%; border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
+                                        style="border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
                                         class="text-center">
                                         <span t-field="line.product_id.product_format"/>
                                     </td>
@@ -134,16 +143,33 @@
                                         <span t-if="not float(line.product_qty).is_integer()"
                                               t-field="line.product_qty"/>
                                     </td>
-                                    <td name="td_uom"
-                                        style="border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
+                                    <td name="td_cprice_unit"
+                                        style=" border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
                                         class="text-center">
-                                        <span t-field="line.product_uom"/>
+                                        <t t-if="line.so_line_id.discount">
+                                            <s>
+                                                <span t-field="line.so_line_id.price_unit"
+                                                      t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                            </s>
+                                        </t>
+                                        <t t-else="">
+                                            <span t-field="line.so_line_id.price_unit"
+                                                  t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                        </t>
                                     </td>
                                     <td name="td_price_unit"
                                         style=" border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
                                         class="text-center">
-                                        <span t-field="line.so_line_id.price_unit"
-                                              t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
+                                        <span>
+                                            <t t-if="line.so_line_id.discount">
+                                                <t t-esc="line.so_line_id.price_unit-((line.so_line_id.discount/100)*line.so_line_id.price_unit)"
+                                                   t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                            </t>
+                                            <t t-else="">
+                                                <span t-field="line.so_line_id.discount"
+                                                      t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                            </t>
+                                        </span>
                                     </td>
                                     <td name="td_subtotal"
                                         style="border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"

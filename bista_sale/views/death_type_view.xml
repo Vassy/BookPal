@@ -8,7 +8,8 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="name" />                      
+                        <field name="name"/>
+                        <field name="active" invisible="1"/>
                     </group>
                 </sheet>
             </form>
@@ -20,13 +21,14 @@
         <field name="model">death.type</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="name" />               
+                <field name="name"/>
+                <field name="active" invisible="1"/>
             </tree>
         </field>
     </record>
 
     <record id="death_type_action" model="ir.actions.act_window">
-        <field name="name">Death Type</field>
+        <field name="name">Die Type</field>
         <field name="res_model">death.type</field>
         <field name="view_mode">tree,form</field>
     </record>

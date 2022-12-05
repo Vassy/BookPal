@@ -40,7 +40,7 @@ class CrmLead(models.Model):
     inside_delivery_req = fields.Char(string='Inside Delivery Required')
 
     # Journal Info fields
-    journal_customization_id = fields.Many2one('journal.customization', string='Journal Customization')
+    journal_customization_ids = fields.Many2many('journal.customization', string='Journal Customization')
     customization_cost = fields.Float('Our Customization Cost')
     link_to_art_files = fields.Char(string='Link to Art Files')
     artwork_status_id = fields.Many2one('artwork.status', string='Artwork Status')
@@ -81,7 +81,7 @@ class CrmLead(models.Model):
         res['context'].update({
             'default_link_to_art_files': self.link_to_art_files,
             'default_journal_notes': self.journal_notes,
-            'default_journal_customization_id': self.journal_customization_id.id,
+            'default_journal_customization_ids': self.journal_customization_ids.ids,
             'default_customization_cost': self.customization_cost,
             'default_artwork_status_id': self.artwork_status_id.id,
             'default_journal_setup_fee': self.journal_setup_fee,

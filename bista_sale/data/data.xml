@@ -60,33 +60,43 @@
       <!-- journal.customization -->
         <record id="journal_customization_1" model="journal.customization">
             <field name="name">Logo Only</field>
-        </record>  
+            <field name="color">1</field>
+        </record>
         <record id="journal_customization_2" model="journal.customization">
             <field name="name">Tipin Page</field>
+            <field name="color">2</field>
         </record>  
         <record id="journal_customization_3" model="journal.customization">
             <field name="name">Belly Band</field>
+            <field name="color">3</field>
         </record>  
         <record id="journal_customization_4" model="journal.customization">
             <field name="name">Personalization</field>
+            <field name="color">4</field>
         </record>  
         <record id="journal_customization_5" model="journal.customization">
             <field name="name">Gel Dome</field>
+            <field name="color">5</field>
         </record>  
         <record id="journal_customization_6" model="journal.customization">
             <field name="name">Oversized Die Charge</field>
+            <field name="color">6</field>
         </record>  
         <record id="journal_customization_7" model="journal.customization">
             <field name="name">Second Die Charge</field>
+            <field name="color">7</field>
         </record>  
         <record id="journal_customization_8" model="journal.customization">
             <field name="name">Gift Box</field>
+            <field name="color">8</field>
         </record>  
         <record id="journal_customization_9" model="journal.customization">
             <field name="name">Mirror</field>
+            <field name="color">9</field>
         </record>  
         <record id="journal_customization_10" model="journal.customization">
             <field name="name">Pen</field>
+            <field name="color">10</field>
         </record>
         <!-- white.glove.type -->
         <record id="white_glove_type" model="white.glove.type">
