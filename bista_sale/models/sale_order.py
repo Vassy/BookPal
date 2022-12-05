@@ -26,8 +26,8 @@ class SaleOrder(models.Model):
     artwork_status_id = fields.Many2one(
         'artwork.status', string='Artwork Status')
     journal_notes = fields.Text(string='Journal Notes')
-    journal_setup_fee = fields.Char(string="Journal Set Up Fee")
-    journal_setup_fee_waived = fields.Char(string="Journal Set Up Fee Waived")
+    journal_setup_fee = fields.Float(string="Journal Set Up Fee")
+    journal_setup_fee_waived = fields.Float(string="Journal Set Up Fee Waived")
     shipping_account = fields.Char(string="Shipping Account")
     shipping_cost = fields.Float(string=" Our Shipping Cost")
     death_type_id = fields.Many2one('death.type', string='Die Type')
@@ -80,15 +80,6 @@ class SaleOrder(models.Model):
         return self._get_action_view_picking(self.picking_ids.filtered(
             lambda p: not p.is_dropship and p.picking_type_id.code in ['outgoing',
                                                                        'internal'] and p.picking_type_id.sequence_code != 'INT'))
-
-    @api.constrains('journal_setup_fee', 'journal_setup_fee_waived')
-    def constrains_journal_setup_fee(self):
-        if self.journal_setup_fee:
-            if not self.journal_setup_fee.isdigit():
-                raise ValidationError('Only number of digits are allowed in Journal Setup Fee!')
-        if self.journal_setup_fee_waived:
-            if not self.journal_setup_fee_waived.isdigit():
-                raise ValidationError('Only number of digits are allowed Journal Setup Fee Waived!')
 
 
 class SaleOrderLine(models.Model):
