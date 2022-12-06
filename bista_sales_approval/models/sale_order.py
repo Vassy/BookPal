@@ -7,6 +7,7 @@
 ##############################################################################
 
 from odoo import api, models, fields
+from lxml import etree
 
 AddState = [
     ("customer_approved", "Customer Approved"),
@@ -102,6 +103,29 @@ class SaleOrder(models.Model):
                 "action_date": fields.Datetime.now(),
             }
         )
+
+    @api.model
+    def _fields_view_get(
+        self, view_id=None, view_type="form", toolbar=False, submenu=False
+    ):
+        result = super()._fields_view_get(view_id, view_type, toolbar, submenu)
+        if view_type == "form":
+            attrs = "{'readonly': [('state', 'not in', ['draft', 'sent'])]}"
+            if self.env.user.has_group(
+                "bista_sales_approval.group_sale_approval_admin"
+            ):
+                attrs = "{'readonly': [('state', 'not in', ['draft', 'sent', 'pending_for_approval'])]}"
+            doc = etree.XML(result["arch"])
+            for field in doc.xpath("//field"):
+                if (
+                    field.attrib.get("invisible") == "1"
+                    or field.attrib.get("readonly") == "1"
+                    or field.attrib.get("attrs")
+                ):
+                    continue
+                field.attrib["attrs"] = attrs
+            result["arch"] = etree.tostring(doc)
+        return result
 
 
 class SaleOrderLine(models.Model):

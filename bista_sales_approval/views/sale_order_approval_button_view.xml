@@ -36,12 +36,6 @@
             <xpath expr="//header/button[@name='action_confirm'][1]" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
-            <xpath expr="//field[@name='order_line']" position="attributes">
-                <attribute name="attrs">{"readonly": [("state", "not in", ["draft", "sent"])]}</attribute>
-            </xpath>
-            <xpath expr="//field[@name='payment_term_id']" position="attributes">
-                <attribute name="attrs">{"readonly": [("state", "not in", ["draft", "sent"])]}</attribute>
-            </xpath>
             <notebook position="inside">
                 <page name="sale_approval_log_ids" string="Approval Status">
                     <field name="sale_approval_log_ids">
