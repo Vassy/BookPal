@@ -267,7 +267,7 @@ class ResPartner(models.Model):
                 args = ['|', ('id', 'in', vendors), ('parent_id', 'in', vendors)]
             elif self.env.user.has_group(
                     'bista_sale_multi_ship.show_multi_ship_contact'):
-                args = expression.OR([args, [('is_multi_ship', '=', True)]])
+                args = expression.AND([[('is_multi_ship', 'in', [True, False])], args])
             else:
                 args = expression.AND([args, [('is_multi_ship', '=', False)]])
 
