@@ -9,27 +9,24 @@
             <field name="user_id" position="after">
                 <field name="confirm_check" force_save="1" invisible="1" />
             </field>
-            <button name="action_cancel" position="attributes">
-                <attribute name="attrs">{"invisible": [("state", "in", ["done", "cancel"])]}</attribute>
-            </button>
-            <xpath expr="//header//button[@name='action_send_for_approval']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', ('confirm_check', '=', True), ('state', 'not in', ['draft', 'sent', 'customer_approved'])]}
+            <xpath expr="//button[@name='action_send_for_approval']" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('confirm_check', '=', True), ('state', 'not in', ['quote_confirm', 'sent', 'customer_approved'])]}
                 </attribute>
             </xpath>
-            <xpath expr="//header//button[@name='action_quotation_send'][1]" position="after">
+            <xpath expr="//button[@name='action_quotation_send']" position="after">
                 <button
                     name="action_check_credit_for_approval"
                     string="Send For Approval"
                     type="object"
                     class="btn-primary"
-                    attrs="{'invisible': ['|', ('confirm_check', '=', False), ('state','not in', ['draft', 'sent', 'customer_approved'])]}"
+                    attrs="{'invisible': ['|', ('confirm_check', '=', False), ('state', 'not in', ['quote_confirm', 'sent', 'customer_approved'])]}"
                     confirm="Credit Limit Crossed For this Customer. Hence, Order Needs to be reviewed and then Approved." />
                 <button
                     name="action_override_and_send_for_approve"
                     class="btn-primary"
                     confirm="Are you sure you want to Override the Credit Limit for this Contact?"
                     type="object"
-                    attrs="{'invisible': [('state', '!=', 'credit_review')]}"
+                    states="credit_review"
                     string="Override Credit Limit"
                     groups="bista_customer_credit_limit_nc.group_credit_limit" />
                 <button
@@ -64,19 +61,14 @@
                 Create a Quotation, the first step of a new sale.
             </p>
             <p>
-                Once the quotation is confirmed, it becomes a sales
-                order.
+                Once the quotation is confirmed, it becomes a sales order.
                 You'll be able to invoice it and collect payments.
-                From the
-                <i>Sales Orders</i>
-                menu, you can track delivery
-                orders or services.
+                From the <i>Sales Orders</i> menu, you can track delivery orders or services.
             </p>
         </field>
     </record>
     
-    <menuitem
-        id="menu_so_credit_review"
+    <menuitem id="menu_so_credit_review"
         name="Credit Review"
         parent="account.menu_finance_reports"
         action="bista_customer_credit_limit_nc.action_orders_credit_review" />

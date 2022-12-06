@@ -7,11 +7,10 @@
 ##############################################################################
 
 {
-    "name": "Network Craze: SO approval",
+    "name": "Sale Order Approval",
     "version": "15.0.1.0.0",
     "author": "Bista Solutions Pvt. Ltd.",
     "category": "Sales",
-    "summary": "",
     "description": "Sales Order approval flow",
     "depends": ["sale_management"],
     "website": "https://www.bistasolutions.com",
@@ -19,9 +18,7 @@
         "security/sale_security.xml",
         "security/ir.model.access.csv",
         "views/sale_order_approval_button_view.xml",
-        "views/product.xml",
         "wizard/so_reject_reason_view.xml",
-        "wizard/min_price_wiz.xml",
     ],
     "installable": True,
     "application": False,
