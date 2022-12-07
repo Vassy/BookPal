@@ -11,6 +11,11 @@
     'depends': ['purchase_pricelist', 'delivery', 'bista_contact', 'bista_sale'],
     'data': [
         'security/ir.model.access.csv',
+        'data/email_schdule_activity.xml',
+        'data/email_template.xml',
+        'data/po_status_line_data.xml',
+        'data/ir_sequence_data.xml',
+        'data/email_schdule_activity.xml',
         'views/res_partner_views.xml',
         'views/purchase_views.xml',
         'views/stock_picking_views.xml',
@@ -23,17 +28,12 @@
         # 'report/purchase_order.xml',
         'report/stock_picking.xml',
         'report/account_move.xml',
-        'data/email_schdule_activity.xml',
-        'data/email_template.xml',
-        'data/po_status_line_data.xml',
-        'data/ir_sequence_data.xml',
         # 'wizard/update_shipping_views.xml',
-
         'wizard/update_shipment_tracking_views.xml',
         'views/purchase_tracking_views.xml',
         # 'report/purchase_order.xml',
         'report/stock_picking.xml',
-        'data/email_schdule_activity.xml',
+        
 
     ],
     'auto_install': False,
