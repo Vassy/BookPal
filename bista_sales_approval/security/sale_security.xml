@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data noupdate="0">
-        <record id="group_sale_approval_admin" model="res.groups">
-            <field name="name">Sale Approval</field>
-        </record>
-
-        <record id="group_approve_product_price" model="res.groups">
-            <field name="name">Can override product minimum price</field>
-        </record>
-    </data>
+<odoo noupdate="0">
+    <record id="group_sale_approval_admin" model="res.groups">
+        <field name="name">Sale Approval</field>
+    </record>
 </odoo>
