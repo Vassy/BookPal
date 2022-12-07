@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+
 from odoo import models, fields, _, api
 from odoo.exceptions import ValidationError
+import datetime
 
 
 class PurchaseOrder(models.Model):
@@ -264,6 +266,32 @@ class PurchaseOrderLine(models.Model):
         product_order = self.order_id._origin._check_exist_product_in_line(self.product_id)
         if self.product_id and product_order:
             return product_order
+
+    def action_purchase_history(self):
+        ''' can show the purchase order line history in purchase order line. where user can see back order qty
+        details '''
+        if self.order_id.date_approve:
+            date_approve = str(self.order_id.date_approve.date()) + ' ' + str(
+                datetime.timedelta(hours=0, minutes=0, seconds=0))
+            domain = [('display_type', '=', False),
+                      ('order_id.date_approve', '>=', date_approve),
+                      ('product_id', '=', self.product_id.id),
+                      ('order_id.partner_id', '=', self.order_id.partner_id.id),
+                      ('order_id.state', 'not in', ['draft', 'cancel'])]
+            action = self.env.ref('bista_orders_report.''action_purchase_order_line_status').read()[0]
+            action.update({'domain': domain})
+            return action
+        if self.order_id.date_order:
+            date_order = str(self.order_id.date_order.date()) + ' ' + str(
+                datetime.timedelta(hours=0, minutes=0, seconds=0))
+            domain = [('display_type', '=', False),
+                      ('order_id.date_order', '>=', date_order),
+                      ('product_id', '=', self.product_id.id),
+                      ('order_id.partner_id', '=', self.order_id.partner_id.id),
+                      ('order_id.state', 'not in', ['done', 'cancel'])]
+            action = self.env.ref('bista_orders_report.''action_purchase_order_line_status').read()[0]
+            action.update({'domain': domain})
+            return action
 
 
 class PoStatus(models.Model):

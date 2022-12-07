@@ -90,22 +90,22 @@
                 <page name="journal_details" string="Journal Details">
                     <group>
                         <group name="journal_details">
-                            <field name="journal_customization_ids" class="bp_text_field" widget="many2many_tags"
+                            <field name="journal_customization_ids"  widget="many2many_tags"
                                    options="{'color_field': 'color'}"/>
-                            <field name="link_to_art_files" class="bp_text_field"/>
-                            <field name="journal_notes" class="bp_text_field"/>
+                            <field name="link_to_art_files" style="max-height: 25px;"/>
+                            <field name="journal_notes" style="max-height: 25px;"/>
+                            <field name="journal_setup_fee"/>
                             <field name="journal_setup_fee_waived"/>
-                            <field name="journal_setup_fee" class="bp_text_field_char"/>
                         </group>
                         <group>
                             <field name="shipping_account"/>
                             <field name="shipping_cost"/>
-                            <field name="artwork_status_id" class="bp_text_field"/>
+                            <field name="artwork_status_id" />
                             <field name="death_type_id"/>
                             <field name="existing_death_order"/>
                             <field name="customization_cost"/>
                         </group>
-                    </group>
+                     </group>
                 </page>
             </xpath>
             <xpath expr="//notebook/page[@name='journal_details']" position="after">
@@ -142,20 +142,6 @@
                         </group>
                         <group>
                             <field name="placed_from_ip"/>
-                        </group>
-                    </group>
-                </page>
-            </xpath>
-            <xpath expr="//notebook/page[@name='project_fulfilment_trac']" position="after">
-                <page string="Order Details">
-                    <group>
-                        <group name="order_details">
-                            <field name="refer_by_company"/>
-                            <field name="refer_by_person"/>
-                        </group>
-                        <group>
-                            <field name="account_order_standing"/>
-                            <field name="customer_email_add"/>
                         </group>
                     </group>
                 </page>
