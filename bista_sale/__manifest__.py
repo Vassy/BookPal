@@ -6,9 +6,10 @@
     'summary': 'Manage Sale',
     'website': 'http://www.bistasolutions.com',
     'license': 'AGPL-3',
-    'depends': [ 'web','contacts',
-                'sale','bista_report_header_footer','bista_sale_multi_ship',
-    ],
+    'depends': ['web', 'contacts',
+                'sale', 'bista_report_header_footer',
+                'bista_sale_multi_ship',
+                ],
     'assets': {
         'web.assets_backend': [
             'bista_sale/static/src/css/custome_field.css',

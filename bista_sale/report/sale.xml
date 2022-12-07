@@ -126,6 +126,7 @@
                     <th style=" border-collapse: collapse;
                    border: none;" name="th_priceunit" class="text-center">Price
                     </th>
+                    <th name="th_taxes" class="text-right">Taxes</th>
                     <th style=" border-collapse: collapse;
                    border: none;padding-left:15px;" name="th_subtotal" class="text-right">
                         <span groups="account.group_show_line_subtotals_tax_excluded">
@@ -209,6 +210,9 @@
                                   t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
                         </t>
                     </span>
+                </td>
+                <td name="td_taxes" class="text-right">
+                    <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_id))"/>
                 </td>
                 <td style="border-top: 1px solid black; border-left: none;
                 border-right: none; border-bottom: 1px solid black;"

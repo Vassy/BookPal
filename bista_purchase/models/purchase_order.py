@@ -71,7 +71,8 @@ class PurchaseOrder(models.Model):
     purchase_tracking_ids = fields.One2many(
         'purchase.tracking', 'order_id', string="Purchase Tracking")
     lead_time = fields.Integer(compute="compute_lead_time", string="Lead Time")
-    order_process_time = fields.Integer(compute="compute_order_process_time", string="Order Processing Time")
+    order_process_time = fields.Integer(
+        compute="compute_order_process_time", string="Order Processing Time")
 
     def button_cancel(self):
         # Chanage orderline status on cancel order
@@ -148,18 +149,23 @@ class PurchaseOrder(models.Model):
     def _check_exist_product_in_line(self, vals=False):
         for purchase in self:
             exist_product_list = []
-            products_in_lines = [product.id for product in purchase.mapped('order_line.product_id')]
+            products_in_lines = [
+                product.id for product in purchase.mapped('order_line.product_id')]
             products_list = ''
             for line in purchase.order_line:
                 if not vals:
                     if line.product_id.id in exist_product_list:
-                        products_list = products_list + '\n' + '[' + line.product_id.default_code + '] ' + line.product_id.name
+                        products_list = products_list + '\n' + \
+                            '[' + line.product_id.default_code + '] ' + \
+                            line.product_id.name
                 else:
                     if vals.id in products_in_lines:
-                        raise ValidationError(_('This product is already added in line, you can Update the qty there.'))
+                        raise ValidationError(
+                            _('This product is already added in line, you can Update the qty there.'))
                 exist_product_list.append(line.product_id.id)
             if products_list:
-                raise ValidationError(_(products_list) + '\n Add the qty in one line and remove the other one. ')
+                raise ValidationError(
+                    _(products_list) + '\n Add the qty in one line and remove the other one. ')
 
     def compute_lead_time(self):
         for rec in self:
@@ -176,7 +182,8 @@ class PurchaseOrder(models.Model):
             rec.order_process_time = 0
             if rec.sale_order_ids.split_shipment and rec.date_approve:
                 rec.order_process_time = False
-                vals = min(rec.sale_order_ids.sale_multi_ship_qty_lines.mapped('confirm_date'))
+                vals = min(
+                    rec.sale_order_ids.sale_multi_ship_qty_lines.mapped('confirm_date'))
                 if vals:
                     rec_date = rec.date_approve - vals
                     rec.order_process_time = rec_date.days
@@ -199,8 +206,9 @@ class PurchaseOrderLine(models.Model):
         draft_status_id = self.env.ref('bista_purchase.status_line_draft')
         return draft_status_id.id
 
-    purchase_tracking_line_ids = fields.One2many('purchase.tracking.line', 'po_line_id', string="Tracking Lines")
-    status_id = fields.Many2one('po.status.line', string="Status", default=_default_po_line_status, copy=False,
+    purchase_tracking_line_ids = fields.One2many(
+        'purchase.tracking.line', 'po_line_id', string="Tracking Lines")
+    status_id = fields.Many2one('po.status.line', string="Status", copy=False,
                                 ondelete="restrict", tracking=True)
     tracking_ref = fields.Char(
         'Tracking Refrence', compute="get_tracking_ref")
@@ -211,7 +219,7 @@ class PurchaseOrderLine(models.Model):
         for line in self:
             tracking_ref = line.move_ids.filtered(
                 lambda x: x.picking_type_id.code == 'incoming'
-                          and x.quantity_done).mapped('picking_id').mapped('carrier_tracking_ref')
+                and x.quantity_done).mapped('picking_id').mapped('carrier_tracking_ref')
             tracking_ref = ', '.join([str(elem)
                                       for elem in tracking_ref if elem])
             line.tracking_ref = tracking_ref
@@ -263,7 +271,8 @@ class PurchaseOrderLine(models.Model):
 
     @api.onchange('product_id')
     def onchange_product_is_exist(self):
-        product_order = self.order_id._origin._check_exist_product_in_line(self.product_id)
+        product_order = self.order_id._origin._check_exist_product_in_line(
+            self.product_id)
         if self.product_id and product_order:
             return product_order
 
