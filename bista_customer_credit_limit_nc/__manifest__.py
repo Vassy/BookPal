@@ -8,7 +8,7 @@
 
 {
     "name": "Customer Credit Limit",
-    "version": "15.0.1.0.0",
+    "version": "15.0.1.1.1",
     "category": "Partner",
     # Dependent module required for this module to be installed
     "depends": ["delivery", "bista_sales_approval"],
