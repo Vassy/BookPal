@@ -209,9 +209,8 @@
     </record>
 
 
-    <menuitem id="special_pricing_type_menu" name="Special Pricing Type" action="special_pricing_type_action"
-              parent="bookpal_menu_crm" sequence="21"/>
-    <menuitem id="fulfillment_warehouse_menu" name="Fulfillment Warehouse" action="fulfillment_warehouse_action"
-              parent="bookpal_menu_crm" sequence="22"/>
+    <menuitem id="special_pricing_type_menu" name="Special Pricing Type" action="bista_crm.special_pricing_type_action"
+              parent="bista_crm.bookpal_menu_crm" sequence="21"/>
+    <menuitem id="fulfillment_warehouse_menu" name="Fulfillment Warehouse" action="bista_crm.fulfillment_warehouse_action"
+              parent="bista_crm.bookpal_menu_crm" sequence="22"/>
 </odoo>
-
