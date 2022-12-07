@@ -14,25 +14,16 @@
                 </attribute>
             </xpath>
             <xpath expr="//button[@name='action_quotation_send']" position="after">
-                <button
-                    name="action_check_credit_for_approval"
-                    string="Send For Approval"
-                    type="object"
+                <button name="action_check_credit_for_approval" type="object" string="Send For Approval"
                     class="btn-primary"
                     attrs="{'invisible': ['|', ('confirm_check', '=', False), ('state', 'not in', ['quote_confirm', 'sent', 'customer_approved'])]}"
                     confirm="Credit Limit Crossed For this Customer. Hence, Order Needs to be reviewed and then Approved." />
-                <button
-                    name="action_override_and_send_for_approve"
+                <button name="action_override_and_send_for_approve" type="object" string="Override Credit Limit"
                     class="btn-primary"
                     confirm="Are you sure you want to Override the Credit Limit for this Contact?"
-                    type="object"
                     states="credit_review"
-                    string="Override Credit Limit"
                     groups="bista_customer_credit_limit_nc.group_credit_limit" />
-                <button
-                    name="action_reject"
-                    string="Reject"
-                    type="object"
+                <button name="action_reject" type="object" string="Reject"
                     states="credit_review"
                     groups="bista_customer_credit_limit_nc.group_credit_limit"
                     class="btn-primary" />
@@ -42,12 +33,7 @@
             </field>
         </field>
     </record>
-    
-    <record id="sale.action_orders" model="ir.actions.act_window">
-        <field name="domain">[("state", "not in", ("draft", "credit_review", "sent", "cancel"))]
-        </field>
-    </record>
-    
+
     <record id="action_orders_credit_review" model="ir.actions.act_window">
         <field name="name">Credit Reviews</field>
         <field name="type">ir.actions.act_window</field>
