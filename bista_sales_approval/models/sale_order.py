@@ -25,6 +25,38 @@ class SaleOrder(models.Model):
     state = fields.Selection(selection_add=AddState)
     sale_approval_log_ids = fields.One2many("sale.approval.log", "sale_id")
 
+    @api.returns("mail.message", lambda value: value.id)
+    def message_post(self, **kwargs):
+        if self.env.context.get("mark_so_as_sent"):
+            self.filtered(lambda o: o.state == "quote_confirm").with_context(
+                tracking_disable=True
+            ).write({"state": "sent"})
+        return super().message_post(**kwargs)
+
+    def has_to_be_signed(self, include_draft=False):
+        display_state = self.state == "sent" or (
+            self.state in ["draft", "quote_approval", "quote_confirm"] and include_draft
+        )
+        return (
+            display_state
+            and not self.is_expired
+            and self.require_signature
+            and not self.signature
+        )
+
+    def has_to_be_paid(self, include_draft=False):
+        transaction = self.get_portal_last_transaction()
+        display_state = self.state == "sent" or (
+            self.state in ["draft", "quote_approval", "quote_confirm"] and include_draft
+        )
+        return (
+            display_state
+            and not self.is_expired
+            and self.require_payment
+            and transaction.state != "done"
+            and self.amount_total
+        )
+
     def write(self, vals):
         if vals.get("state") and vals.get("state") == "sent":
             self._create_sale_approval_log("Quote Sent to Customer")
@@ -75,23 +107,26 @@ class SaleOrder(models.Model):
         self, view_id=None, view_type="form", toolbar=False, submenu=False
     ):
         result = super()._fields_view_get(view_id, view_type, toolbar, submenu)
-        if view_type == "form":
-            attrs = "{'readonly': [('state', 'not in', ['draft', 'sent'])]}"
-            if self.env.user.has_group(
-                "bista_sales_approval.group_sale_approval_admin"
+        if view_type != "form":
+            return result
+        attrs = "{'readonly': [('state', 'not in', ['draft', 'sent'])]}"
+        line_attrs = "{'readonly': [('state', 'not in', ['draft'])]}"
+        if self.env.user.has_group("bista_sales_approval.group_sale_approval_admin"):
+            attrs = "{'readonly': [('state', 'not in', ['draft', 'sent', 'pending_for_approval'])]}"
+            line_attrs = "{'readonly': [('state', 'in', ['done', 'cancel'])]}"
+        doc = etree.XML(result["arch"])
+        for field in doc.xpath("//field"):
+            if field.attrib["name"] == "order_line":
+                field.attrib["attrs"] = line_attrs
+            if (
+                field.attrib.get("invisible") == "1"
+                or field.attrib.get("readonly") == "1"
+                or field.attrib.get("attrs")
+                or field.attrib["name"] not in self._fields
             ):
-                attrs = "{'readonly': [('state', 'not in', ['draft', 'sent', 'pending_for_approval'])]}"
-            doc = etree.XML(result["arch"])
-            for field in doc.xpath("//field"):
-                if (
-                    field.attrib.get("invisible") == "1"
-                    or field.attrib.get("readonly") == "1"
-                    or field.attrib.get("attrs")
-                    or field.attrib["name"] not in self._fields
-                ):
-                    continue
-                field.attrib["attrs"] = attrs
-            result["arch"] = etree.tostring(doc)
+                continue
+            field.attrib["attrs"] = attrs
+        result["arch"] = etree.tostring(doc)
         return result
 
 
