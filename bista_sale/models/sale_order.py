@@ -57,7 +57,7 @@ class SaleOrder(models.Model):
     refer_by_company = fields.Char('Referring Organization')
     refer_by_person = fields.Char('Referring Person')
     account_order_standing = fields.Selection(related="partner_id.account_order_standing",
-                                              string='Account Order Standing')
+                                              string='Account Order Standing', store=True)
     customer_email_add = fields.Char('Customer Email Address', related='partner_id.email')
     saving_amount = fields.Monetary(
         "Total Saving Amount", compute="_amount_all", store=True
@@ -80,6 +80,17 @@ class SaleOrder(models.Model):
         return self._get_action_view_picking(self.picking_ids.filtered(
             lambda p: not p.is_dropship and p.picking_type_id.code in ['outgoing',
                                                                        'internal'] and p.picking_type_id.sequence_code != 'INT'))
+
+    @api.constrains('journal_setup_fee', 'journal_setup_fee_waived', 'customization_cost', 'shipping_cost')
+    def warning_journal_setup_fee(self):
+        if self.journal_setup_fee < 0:
+            raise ValidationError("journal setup fee waived  value is negative,add positive value.")
+        if self.journal_setup_fee_waived < 0:
+            raise ValidationError("journal setup fee waived value is  negative,add positive value.")
+        if self.customization_cost < 0:
+            raise ValidationError("customization cost value is negative,add positive value.")
+        if self.shipping_cost < 0:
+            raise ValidationError("shipping cost  value is negative,add positive value.")
 
 
 class SaleOrderLine(models.Model):
