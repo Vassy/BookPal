@@ -44,20 +44,6 @@
         </field>
     </record>
 
-    <record id="sale_order_sale_manager_editable" model="ir.ui.view">
-        <field name="name">Sale order Salesperson Edit Right</field>
-        <field name="model">sale.order</field>
-        <field name="inherit_id" ref="sale.view_order_form" />
-        <field name="groups_id" eval="[(4, ref('bista_sales_approval.group_sale_approval_admin'))]" />
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='order_line']" position="attributes">
-                <attribute name="attrs">
-                    {"readonly": [("state", "not in", ["draft", "sent", "pending_for_approval"])]}
-                </attribute>
-            </xpath>
-        </field>
-    </record>
-
     <record id="sale_order_view_search_quotation_approval" model="ir.ui.view">
         <field name="name">sale.order.inherit.approval</field>
         <field name="model">sale.order</field>
