@@ -7,7 +7,6 @@
 ##############################################################################
 
 from odoo import models, fields
-from datetime import datetime
 
 
 class SaleOrderRejectReason(models.TransientModel):
@@ -18,7 +17,13 @@ class SaleOrderRejectReason(models.TransientModel):
     note = fields.Text(string="Reason for rejection")
 
     def update_reject_reason(self):
-        self.sale_id.action_draft()
+        sale_data = {
+            "state": "draft",
+            "signature": False,
+            "signed_by": False,
+            "signed_on": False,
+        }
+        self.sale_id.write(sale_data)
         log_data = {
             "sale_id": self.sale_id.id,
             "done_action": "Quote Rejected",

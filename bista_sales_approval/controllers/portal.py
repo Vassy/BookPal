@@ -33,9 +33,8 @@ class ModCustomerPortal(CustomerPortal):
             return {"error": _("Invalid order.")}
 
         if not order_sudo.has_to_be_signed():
-            return {
-                "error": _("The order is not in a state requiring customer signature.")
-            }
+            msg = _("The order is not in a state requiring customer signature.")
+            return {"error": msg}
         if not signature:
             return {"error": _("Signature is missing.")}
 
@@ -53,11 +52,8 @@ class ModCustomerPortal(CustomerPortal):
         if not order_sudo.has_to_be_paid():
             order_sudo.state = "customer_approved"
 
-        pdf = (
-            request.env.ref("sale.action_report_saleorder")
-            .with_user(SUPERUSER_ID)
-            ._render_qweb_pdf([order_sudo.id])[0]
-        )
+        report_id = request.env.ref("sale.action_report_saleorder")
+        pdf = report_id.with_user(SUPERUSER_ID)._render_qweb_pdf([order_sudo.id])[0]
 
         _message_post_helper(
             "sale.order",
