@@ -43,6 +43,7 @@
                     </field>
                     <group>
                         <group name="po_conf">
+                            <field name="po_name" />
                             <field name="po_conf" style="max-height: 25px;"/>
                             <field name="hours_process" style="max-height: 20px;"/>
                         </group>
@@ -82,7 +83,6 @@
                             <field name="ops_project_owner_id"/>
                         </group>
                         <group name="approved_payment" string="Approved Payment">
-                            <field name="payment_receive_date"/>
                             <field name="billing_notes" style="max-height: 25px;"/>
                         </group>
                         <group name="confirm_supplier" string="Confirm Supplier">

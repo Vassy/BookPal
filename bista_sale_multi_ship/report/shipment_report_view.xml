@@ -21,9 +21,16 @@
                             <t t-esc="o.name"/>
                         </strong>
                     </h4>
-                    <strong>Order Date:
+                    <t t-if="doc.state in ['draft','sent']">
+                        <strong>Quotation Date:</strong>
                         <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
-                    </strong>
+                        <br/>
+                    </t>
+                    <t t-if="doc.state not in ['draft','sent']">
+                        <strong>Order Date:
+                            <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                        </strong>
+                    </t>
                     <br/>
                 </t>
                 <t t-set="information_block">
@@ -174,18 +181,39 @@
                                     <td name="td_subtotal"
                                         style="border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
                                         class="text-right">
-                                        <span t-esc="line.product_qty * line.so_line_id.price_unit"
-                                              t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
+                                        <t t-if="line.so_line_id.discount">
+                                            <t t-esc="line.product_qty * (line.so_line_id.price_unit-((line.so_line_id.discount/100)*line.so_line_id.price_unit))"
+                                               t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                        </t>
+                                        <t t-else="">
+                                            <span t-esc="line.product_qty * line.so_line_id.price_unit"
+                                                  t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
+                                        </t>
                                     </td>
                                 </t>
                             </tr>
                         </t>
                     </tbody>
                 </table>
-                <div class="text-right">
+                <div class="col-6" >
+                    <span style="color:black;">
+                        <b>Total Savings:
+                        </b>
+                        <span t-esc="sum((line.product_uom_qty*line.price_unit)-line.price_subtotal for line in doc.order_line)"
+                              t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                    </span>
+                </div>
+                <div class="text-right" style="margin-top:-20px;">
                     <t t-set="current_sub" t-value="0"/>
                     <t t-foreach="doc.sale_multi_ship_qty_lines" t-as="line">
-                        <t t-set="current_sub" t-value="current_sub + (line.product_qty* line.so_line_id.price_unit)"/>
+                        <t t-if="line.so_line_id.discount">
+                            <t t-set="current_sub"
+                               t-value="current_sub + line.product_qty * (line.so_line_id.price_unit-((line.so_line_id.discount/100)*line.so_line_id.price_unit))"/>
+                        </t>
+                        <t t-else="">
+                            <t t-set="current_sub"
+                               t-value="current_sub + (line.product_qty* line.so_line_id.price_unit)"/>
+                        </t>
                     </t>
                     <table style="border: 1px solid black; width: 26%; margin-left:74%;" class="text-right">
                         <tr>
@@ -199,6 +227,17 @@
                                       t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
                             </td>
                         </tr>
+<!--                        <tr>-->
+<!--                            <td class="text-left"-->
+<!--                                style="height:1px; border-left: 1px solid black; border-right: 1px solid black; width:180px; border-top: 1px solid black; color: black; padding-left:10px;">-->
+<!--                                <strong>Total Savings</strong>-->
+<!--                            </td>-->
+<!--                            <td class="text-right"-->
+<!--                                style="padding-right:8px; border-left: 1px solid black; border-right: 1px solid black; height:1px; border-top: 1px solid black; padding-left:10px; background-color: white;">-->
+<!--                                <span t-esc="sum((line.product_uom_qty*line.price_unit)-line.price_subtotal for line in doc.order_line)"-->
+<!--                              t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>-->
+<!--                        </td>-->
+<!--                        </tr>-->
                     </table>
                 </div>
             </div>
