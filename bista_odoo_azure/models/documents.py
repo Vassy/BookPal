@@ -276,24 +276,27 @@ class DocumentsDocument(models.Model):
         })
 
     def _run_script(self, parsed_data, document):
+
+        purchase_id = False
         if parsed_data.get('PO Number'):
             po_number = parsed_data.get('PO Number')
             purchase_order_name = po_number.replace("(Reference", "")
-            purchase_order = self.env['purchase.order'].search([('name', '=', purchase_order_name)])
-            if purchase_order.id:
-                if len(purchase_order.ids) == 0:
-                    raise Exception("Purchase Order not found: ", purchase_order_name)
-                elif len(purchase_order.ids) != 1:
-                    raise Exception("Multiple Purchase Order found: ", purchase_order_name)
+            purchase_order = self.env['purchase.order'].search([('name', '=', purchase_order_name)], limit=1)
+            if len(purchase_order.ids) == 0:
+                raise Exception("Purchase Order not found: ", purchase_order_name)
+            if len(purchase_order.ids) > 1:
+                raise Exception("Multiple Purchase Order found: ", purchase_order_name)
+            purchase_id = purchase_order.id
 
+        carrier_id = False
         if parsed_data.get('Carrier Name'):
             carrier = self.env['delivery.carrier'].search([('name', '=', parsed_data.get('Carrier Name'))])
-            if carrier.ids:
-                if len(carrier.ids) == 0:
-                    raise Exception("Carrier not found: ", parsed_data.get('Carrier Name'))
-                elif len(carrier.ids) != 1:
-                    raise Exception("Multiple Carrier found: ", parsed_data.get('Carrier Name'))
-
+            if len(carrier.ids) == 0:
+                raise Exception("Carrier not found: ", parsed_data.get('Carrier Name'))
+            elif len(carrier.ids) > 1:
+                raise Exception("Multiple Carrier found: ", parsed_data.get('Carrier Name'))
+            carrier_id = carrier.id
+        date = False
         if parsed_data.get('Ship Date'):
             date = self._date_converter(parsed_data.get('Ship Date'))
 
@@ -315,38 +318,38 @@ class DocumentsDocument(models.Model):
                     tracking_ref_ids_list.append((0, 0, {
                         'name': items,
                     }))
+        if purchase_id and carrier_id and date:
+            purchase_tracking_vals = {
+                'order_id': purchase_id,
+                'name': _("New"),
+                'shipment_date': date,
+                'carrier_id': carrier_id,
+                'pro_number': parsed_data.get('Pro Number') or False,
+                'tracking_ref_ids': tracking_ref_ids_list if len(tracking_ref_ids_list) > 0 else False,
+            }
 
-        purchase_tracking_vals = {
-            'order_id': purchase_order.id,
-            'name': _("New"),
-            'shipment_date': date,
-            'carrier_id': carrier.id,
-            'pro_number': parsed_data.get('Pro Number') or False,
-            'tracking_ref_ids': tracking_ref_ids_list if len(tracking_ref_ids_list) > 0 else False,
-        }
+            tracking = self.env['purchase.tracking'].create(purchase_tracking_vals)
+            if document.attachment_id:
+                document.attachment_id.copy({
+                    'res_id': tracking.order_id.id,
+                    'res_model': 'purchase.order',
+                })
 
-        tracking = self.env['purchase.tracking'].create(purchase_tracking_vals)
-        if document.attachment_id:
-            document.attachment_id.copy({
-                'res_id': tracking.order_id.id,
-                'res_model': 'purchase.order',
-            })
+            if parsed_data.get('Line Item'):
+                isbn_list = parsed_data.get('Line Item')
+                if len(isbn_list) > 0:
+                    tracking.onchange_order_id()
+                    if tracking.tracking_line_ids:
+                        for isbns_line in isbn_list:
+                            isbn_number = isbns_line.get('ISBN')
+                            product_line = tracking.tracking_line_ids.filtered(
+                                lambda p: p.default_code == isbn_number)
+                            if len(product_line.ids) == 1:
+                                product_line.ship_qty = self._strip_float(isbns_line.get('Quantity'))
+                            else:
+                                raise Exception("ISBN not found: ", isbn_number, " in PO: ", tracking.order_id.name)
 
-        if parsed_data.get('Line Item'):
-            isbn_list = parsed_data.get('Line Item')
-            if len(isbn_list) > 0:
-                tracking.onchange_order_id()
-                if tracking.tracking_line_ids:
-                    for isbns_line in isbn_list:
-                        isbn_number = isbns_line.get('ISBN')
-                        product_line = tracking.tracking_line_ids.filtered(
-                            lambda p: p.default_code == isbn_number)
-                        if len(product_line.ids) == 1:
-                            product_line.ship_qty = self._strip_float(isbns_line.get('Quantity'))
-                        else:
-                            raise Exception("ISBN not found: ", isbn_number, " in PO: ", tracking.order_id.name)
-
-        return tracking
+            return tracking
 
     def _strip_float(self, value):
         p = '[\d]+|[\d]*[.][\d]+|[\d]+'
