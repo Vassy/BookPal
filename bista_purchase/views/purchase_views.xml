@@ -9,6 +9,7 @@
                 <field name="tracking_ref" optional="show"/>
                 <field name="status_id" readonly="1" force_save="1"/>
                 <button name="open_po_line" type="object" icon="fa-eye" class="btn btn-link" style="float:right"/>
+                <button name="action_purchase_history" type="object"  icon="fa-history" style="float:left"/>
             </xpath>
             <!--            <xpath expr="//page[@name='products']/field[@name='order_line']" position="before">-->
             <!--                <button name="update_po_lines" string="Update PO Lines" type="object" class="btn-primary"/>-->
@@ -42,6 +43,7 @@
                     </field>
                     <group>
                         <group name="po_conf">
+                            <field name="po_name" />
                             <field name="po_conf" style="max-height: 25px;"/>
                             <field name="hours_process" style="max-height: 20px;"/>
                         </group>
@@ -81,7 +83,6 @@
                             <field name="ops_project_owner_id"/>
                         </group>
                         <group name="approved_payment" string="Approved Payment">
-                            <field name="payment_receive_date"/>
                             <field name="billing_notes" style="max-height: 25px;"/>
                         </group>
                         <group name="confirm_supplier" string="Confirm Supplier">

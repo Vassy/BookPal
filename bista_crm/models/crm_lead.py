@@ -45,7 +45,7 @@ class CrmLead(models.Model):
     link_to_art_files = fields.Char(string='Link to Art Files')
     artwork_status_id = fields.Many2one('artwork.status', string='Artwork Status')
     journal_notes = fields.Text(string='Journal Notes')
-    journal_setup_fee = fields.Char(string="Journal Set Up Fee")
+    journal_setup_fee = fields.Float(string="Journal Set Up Fee")
     death_type_id = fields.Many2one('death.type', string='Die Type')
     existing_death_order = fields.Char(string="Existing Die Order #")
 
@@ -93,6 +93,12 @@ class CrmLead(models.Model):
             'default_special_insert_note': self.special_insert_note,
             'default_individual_mailer_return_receiver': self.ind_mailer_return_address,
             'default_attachment_note': self.attachment_note,
+            'default_commitment_date': self.need_date,
+            'default_event_date': self.event_date,
+            'default_order_notes': self.order_notes,
+            'default_payment_notes': self.payment_notes,
+            'default_product_status_notes': self.product_status_notes,
+
 
         })
 

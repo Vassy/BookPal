@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+
 from odoo import models, fields, _, api
 from odoo.exceptions import ValidationError
+import datetime
 
 
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
+    po_name = fields.Char(string="Purchase Order Name")
     po_conf = fields.Text(string='PO Conf #')
     clock_start_override = fields.Date(string='Clock Starts Override')
     clock_override_reason = fields.Text(string='Clock Starts Override Reason')
@@ -18,7 +21,6 @@ class PurchaseOrder(models.Model):
         related="sale_order_ids.partner_id", string="Ordered By")
     ops_project_owner_id = fields.Many2one(
         'res.users', string='Ops Project Owner')
-    payment_receive_date = fields.Date(string='Payment Received Date')
     billing_notes = fields.Text(string="Billing Notes")
     cc_email = fields.Char(string="CC Email")
     supplier_nuances = fields.Text(
@@ -150,20 +152,31 @@ class PurchaseOrder(models.Model):
             products_in_lines = [
                 product.id for product in purchase.mapped('order_line.product_id')]
             products_list = ''
+            product_name = ''
             for line in purchase.order_line:
                 if not vals:
                     if line.product_id.id in exist_product_list:
                         products_list = products_list + '\n' + \
-                            '[' + line.product_id.default_code + '] ' + \
-                            line.product_id.name
+                                        '[' + line.product_id.default_code + '] ' + \
+                                        line.product_id.name
                 else:
                     if vals.id in products_in_lines:
-                        raise ValidationError(
-                            _('This product is already added in line, you can Update the qty there.'))
+                        if vals.id == line.product_id.id:
+                            product_name = product_name + \
+                                      '[' + line.product_id.default_code + '] ' + \
+                                      line.product_id.name
                 exist_product_list.append(line.product_id.id)
-            if products_list:
+            duplicate_product_list  = set([x for x in exist_product_list if exist_product_list.count(x) > 1])
+            if duplicate_product_list and len(list(duplicate_product_list)) > 1:
                 raise ValidationError(
-                    _(products_list) + '\n Add the qty in one line and remove the other one. ')
+                    _(' Following products are already added in line, you can Update the qty there. ' + products_list))
+            elif duplicate_product_list:
+                raise ValidationError(
+                    _(products_list + ' is already added in line, you can Update the qty there.'))
+            if product_name:
+                raise ValidationError(
+                    _(product_name + ' is already added in line, you can Update the qty there.'))
+
 
     def compute_lead_time(self):
         for rec in self:
@@ -217,7 +230,7 @@ class PurchaseOrderLine(models.Model):
         for line in self:
             tracking_ref = line.move_ids.filtered(
                 lambda x: x.picking_type_id.code == 'incoming'
-                and x.quantity_done).mapped('picking_id').mapped('carrier_tracking_ref')
+                          and x.quantity_done).mapped('picking_id').mapped('carrier_tracking_ref')
             tracking_ref = ', '.join([str(elem)
                                       for elem in tracking_ref if elem])
             line.tracking_ref = tracking_ref
@@ -273,6 +286,32 @@ class PurchaseOrderLine(models.Model):
             self.product_id)
         if self.product_id and product_order:
             return product_order
+
+    def action_purchase_history(self):
+        ''' can show the purchase order line history in purchase order line. where user can see back order qty
+        details '''
+        if self.order_id.date_approve:
+            date_approve = str(self.order_id.date_approve.date()) + ' ' + str(
+                datetime.timedelta(hours=0, minutes=0, seconds=0))
+            domain = [('display_type', '=', False),
+                      ('order_id.date_approve', '>=', date_approve),
+                      ('product_id', '=', self.product_id.id),
+                      ('order_id.partner_id', '=', self.order_id.partner_id.id),
+                      ('order_id.state', 'not in', ['draft', 'cancel'])]
+            action = self.env.ref('bista_orders_report.''action_purchase_order_line_status').read()[0]
+            action.update({'domain': domain})
+            return action
+        if self.order_id.date_order:
+            date_order = str(self.order_id.date_order.date()) + ' ' + str(
+                datetime.timedelta(hours=0, minutes=0, seconds=0))
+            domain = [('display_type', '=', False),
+                      ('order_id.date_order', '>=', date_order),
+                      ('product_id', '=', self.product_id.id),
+                      ('order_id.partner_id', '=', self.order_id.partner_id.id),
+                      ('order_id.state', 'not in', ['done', 'cancel'])]
+            action = self.env.ref('bista_orders_report.''action_purchase_order_line_status').read()[0]
+            action.update({'domain': domain})
+            return action
 
 
 class PoStatus(models.Model):

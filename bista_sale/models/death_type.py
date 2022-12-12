@@ -11,8 +11,9 @@ class DeathType(models.Model):
     active = fields.Boolean(string="Archived", default=True)
 
     def unlink(self):
-        sale_orders = self.env['sale.order'].search([('death_type_id', '=', self.id)])
-        if sale_orders:
-            raise ValidationError('The record is existing in sale order you cannot delete the record, you can '
-                                  'Archived it.')
-        return super(DeathType, self).unlink()
+        for rec in self:
+            sale_orders = rec.env['sale.order'].search([('death_type_id', '=', rec.id)])
+            if sale_orders:
+                raise ValidationError('The record is existing in sale order you cannot delete the record, you can '
+                                      'Archived it.')
+            return super(DeathType, rec).unlink()
