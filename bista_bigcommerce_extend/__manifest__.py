@@ -14,6 +14,9 @@
     'data': [
         'views/product_template.xml',
         'views/res_partner_view_extend.xml',
+        'views/bigcommerce_configuration_view.xml',
+        'views/bigcommerce_operation_view.xml',
+        'views/sale_order_view.xml',
     ],
     'installable': True,
     'application': True,

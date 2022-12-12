@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <record id="view_bigcommerce_operation_tree_view_extend" model="ir.ui.view">
+            <field name="name">BigCommerce Operation Extend</field>
+            <field name="model">bigcommerce.operation</field>
+            <field name="type">tree</field>
+            <field name="inherit_id" ref="bigcommerce_odoo_integration.view_bigcommerce_operation_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='create_date']" position="after">
+                    <field name="bigcommerce_message"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
