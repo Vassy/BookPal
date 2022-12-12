@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="bigcommerce_order_form_view_shipped_qty" model="ir.ui.view">
+            <field name="name">bigcommerce.order.form.view.shipped.qty</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='get_shipped_qty']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('bigcommerce_store_id', '=', False)]}</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

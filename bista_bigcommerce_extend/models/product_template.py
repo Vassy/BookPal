@@ -1,5 +1,6 @@
 
 from odoo import api, fields, models
+from odoo.addons.product.models.product import ProductProduct
 
 
 class ProductTemplate(models.Model):
@@ -16,7 +17,8 @@ class ProductTemplate(models.Model):
 
     @api.depends('product_variant_ids', 'product_variant_ids.default_code')
     def _compute_isbn(self):
-        unique_variants = self.filtered(lambda template: len(template.product_variant_ids) == 1)
+        unique_variants = self.filtered(
+            lambda template: len(template.product_variant_ids) == 1)
         for template in unique_variants:
             template.isbn = template.product_variant_ids.isbn
         for template in (self - unique_variants):
@@ -40,6 +42,28 @@ class ProductTemplate(models.Model):
             if related_vals:
                 template.write(related_vals)
         return templates
+
+    @api.depends('list_price', 'price_extra', 'bc_sale_price')
+    @api.depends_context('uom')
+    def _compute_product_lst_price(self):
+        to_uom = None
+        if 'uom' in self._context:
+            to_uom = self.env['uom.uom'].browse(self._context['uom'])
+
+        for product in self:
+            if to_uom:
+                list_price = product.uom_id._compute_price(
+                    product.list_price, to_uom)
+            else:
+                list_price = product.list_price
+            list_price = list_price + product.price_extra
+            if product.bigcommerce_product_variant_id:
+                product.lst_price = product.bc_sale_price
+            else:
+                product.lst_price = list_price
+
+    ProductProduct._compute_product_lst_price = \
+        _compute_product_lst_price
 
 
 class ProductProduct(models.Model):
