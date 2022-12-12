@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.azure.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <div id="languages" position="after">
+                <div id="azure_settings">
+                    <h2>Azure</h2>
+                    <div class="row mt16 o_settings_container" name="azure_end_settings">
+                        <div class="col-12 col-lg-6 o_setting_box" id="azure_end_point">
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Azure Endpoint</span>
+                                <div class="text-muted">
+                                    Azure endpoint for document recognizer
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16 row">
+                                        <label for="azure_end_point" string="Azure Endpoint" class="col-3 col-lg-3 o_light_label"/>
+                                        <field name="azure_end_point" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box" id="azure_doc_key">
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Azure Key</span>
+                                <div class="text-muted">
+                                    Azure key for document recognizer
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16 row">
+                                        <label for="azure_key" string="Azure Key" class="col-3 col-lg-3 o_light_label"/>
+                                        <field name="azure_key" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box" id="azure_models">
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Azure Model</span>
+                                <div class="text-muted">
+                                    Azure Doc Model
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16 row">
+                                        <label for="azure_model" string="Azure Model" class="col-3 col-lg-3 o_light_label"/>
+                                        <field name="azure_model" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box" id="re_read_mails">
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Re-Read Mails</span>
+                                <div class="text-muted">
+                                    Check the Boolean True if already read mails have to read again.
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16 row">
+                                        <label for="re_read_mails" string="Re-Read Mails" class="col-3 col-lg-3 o_light_label"/>
+                                        <field name="re_read_mails" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box" id="azure_fetch_domain">
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Domain to Fetch Mail (Azure)</span>
+                                <div class="text-muted">
+                                    Set the domain on which mail will be received.
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16 row">
+                                        <label for="azure_alias_domain" string="Azure Domain" class="col-3 col-lg-3 o_light_label"/>
+                                        <field name="azure_alias_domain" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="group_azure_models" model="res.groups">
+        <field name="name">Need Multiple Azure Models</field>
+        <field name="comment">This group determines whether it need multiple model</field>
+        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+    </record>
+
+</odoo>
