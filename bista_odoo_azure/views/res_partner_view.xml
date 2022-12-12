@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record id="view_res_partner_filter_azure" model="ir.ui.view">
+        <field name="name">view.res.partner.filter.inherit.azure</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <filter name="group_country" position="after">
+                <filter string="Azure Model" name="azuremodel_id"
+                        context="{'group_by': 'azuremodel_id'}"/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="azure_view_partner_form_inherit" model="ir.ui.view">
+        <field name="name">azure.view.partner.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="optional_emails" string="Automation Configuration">
+                    <group>
+                        <group>
+                            <field name="azuremodel_id"/>
+                        </group>
+                        <group>
+
+                            <field name="emails_ids" nolabel="1">
+                                <tree editable="bottom">
+                                    <field name="email"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_partner_email_actions" model="ir.actions.act_window">
+        <field name="name">Res Partner Email Action</field>
+        <field name="res_model">res.partner.email</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

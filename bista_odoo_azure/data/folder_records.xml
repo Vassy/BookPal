@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+
+    <record id="azure_documents" model="documents.folder">
+        <field name="name">Azure Analysis Documents</field>
+    </record>
+
+    <record id="to_create_folder" model="documents.folder">
+        <field name="name">Documents to create</field>
+        <field name="parent_folder_id" ref="bista_odoo_azure.azure_documents"/>
+    </record>
+
+    <record id="not_found_folder" model="documents.folder">
+        <field name="name">Creation Error Documents</field>
+        <field name="parent_folder_id" ref="bista_odoo_azure.azure_documents"/>
+    </record>
+
+    <record id="filtered_out_folder" model="documents.folder">
+        <field name="name">Non-PDF Documents</field>
+        <field name="parent_folder_id" ref="bista_odoo_azure.azure_documents"/>
+    </record>
+
+
+    <record id="untrained_pdf" model="documents.folder">
+        <field name="name">Untrained PDFs</field>
+        <field name="parent_folder_id" ref="bista_odoo_azure.azure_documents"/>
+    </record>
+
+</odoo>

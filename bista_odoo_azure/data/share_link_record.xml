@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+
+    <record id="share_azure_fetch_link" model="documents.share">
+        <field name="name">Inbox Azure</field>
+        <field name="type">domain</field>
+        <field name="action">downloadupload</field>
+        <field name="activity_option">True</field>
+        <field name="folder_id" ref="bista_odoo_azure.to_create_folder"/>
+    </record>
+
+</odoo>
