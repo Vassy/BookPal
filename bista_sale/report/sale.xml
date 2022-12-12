@@ -168,7 +168,7 @@
                 <td name="td_name" style="width:20%; border-top: 1px solid black; border-left: none;
                 border-right: none; border-bottom: 1px solid black;">
                     <b>
-                        <span t-field="line.product_id.name"/>
+                        <span t-field="line.name"/>
                     </b>
                     <br/>
                     <span t-field="line.product_id.default_code"/>
