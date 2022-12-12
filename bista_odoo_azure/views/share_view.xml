@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="azure_share_view_form_inherit" model="ir.ui.view">
+        <field name="name">azure.share.view.form.inherit</field>
+        <field name="model">documents.share</field>
+        <field name="inherit_id" ref="documents.share_view_form"/>
+        <field name="arch" type="xml">
+            <field name="action" position="after">
+                <field name="filter_mail"/>
+                <field name="filter_type_selection" widget="radio"
+                       attrs="{'invisible':[('filter_mail', '=', False)], 'required': [('filter_mail', '=', True)]}"/>
+                <field name="filter_attachments"
+                       attrs="{'invisible':[('filter_type_selection', 'not in', 'attachment')]}">
+                    <tree editable="bottom">
+                        <field name="filter_name"/>
+                    </tree>
+                </field>
+                <field name="filter_keywords" attrs="{'invisible':[('filter_type_selection', 'not in', 'keyword')]}">
+                    <tree editable="bottom">
+                        <field name="filter_name"/>
+                    </tree>
+                </field>
+            </field>
+        </field>
+    </record>
+
+</odoo>

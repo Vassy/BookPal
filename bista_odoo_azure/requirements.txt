@@ -1,0 +1,14 @@
+sudo pip3 install  azure-storage-blob
+pip3 install azure-ai-formrecognizer
+pip install azure-ai-formrecognizer --pre --upgrade
+
+server_action :
+if records:
+  for rec in records:
+    if rec.email:
+      rec.write({
+        'emails_ids' : [(0, 0, {
+                    'email': rec.email,
+                    'self_email': True,
+                })]
+      })

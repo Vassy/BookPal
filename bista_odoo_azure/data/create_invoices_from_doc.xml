@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+    <record id="create_invoices_from_document" model="ir.cron">
+        <field name="name">Create records from azure document folder</field>
+        <field name="model_id" ref="model_documents_document"/>
+        <field name="state">code</field>
+        <field name="code">model._azure_doc_handler()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="numbercall">1</field>
+<!--        <field name="nextcall">2022-06-01 00:01:00</field>-->
+    </record>
+</odoo>

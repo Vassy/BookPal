@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="azure_log_tree" model="ir.ui.view">
+        <field name="name">Azure Log Tree</field>
+        <field name="model">documents.azure.log</field>
+        <field name="arch" type="xml">
+            <tree name="Azure Log" create="false">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="azure_log_form" model="ir.ui.view">
+        <field name="name">Azure Lof Form</field>
+        <field name="model">documents.azure.log</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                            <field name="name"/>
+                    </group>
+                    <group>
+                            <field name="log"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="azure_log_model_action" model="ir.actions.act_window">
+        <field name="name">Azure Log Action</field>
+        <field name="res_model">documents.azure.log</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+<!--    <menuitem-->
+<!--            id="azure_log_menu_parent"-->
+<!--            name="Azure"-->
+<!--            parent="base.menu_custom"-->
+<!--            sequence=""/>-->
+
+    <menuitem
+            id="azure_log_menu"
+            name="Azure Logs"
+            action="azure_log_model_action"
+            parent="azure_model_menu_parent"
+            sequence="11"/>
+
+</odoo>

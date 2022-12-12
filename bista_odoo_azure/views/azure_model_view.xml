@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="azure_odoo_tree" model="ir.ui.view">
+        <field name="name">Azure Models</field>
+        <field name="model">azure.models</field>
+        <field name="arch" type="xml">
+            <tree name="Azure Models" editable="bottom">
+                <field name="name"/>
+                <field name="azure_model"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="azure_odoo_form" model="ir.ui.view">
+        <field name="name">Azure Models</field>
+        <field name="model">azure.models</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="azure_model"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="azure_model_action" model="ir.actions.act_window">
+        <field name="name">Azure Model</field>
+        <field name="res_model">azure.models</field>
+       <field name="type">ir.actions.act_window</field>
+       <field name="view_mode">tree,form</field>
+    </record>
+    
+    <menuitem
+        id="azure_model_menu_parent"
+        name="Azure"
+        parent="base.menu_custom"
+        sequence="5"/>
+
+    <menuitem
+        id="azure_model_menu"
+        name="Azure Models"
+        action="azure_model_action"
+        parent="azure_model_menu_parent"
+        sequence="10"/>
+
+</odoo>
