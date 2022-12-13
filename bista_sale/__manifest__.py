@@ -6,9 +6,13 @@
     'summary': 'Manage Sale',
     'website': 'http://www.bistasolutions.com',
     'license': 'AGPL-3',
-    'depends': ['web', 'contacts',
-                'sale', 'bista_report_header_footer',
+    'depends': ['contacts',
                 'bista_sale_multi_ship',
+                'bista_bigcommerce_extend',
+                'stock_dropshipping',
+                # added dpendancy for compute picking based on dropshipping
+                'account_followup',
+                # used total_due field of this module as related field in SO
                 ],
     'assets': {
         'web.assets_backend': [

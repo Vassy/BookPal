@@ -33,7 +33,7 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="bookpal_menu" name="BookPal" parent="sale.menu_sale_config" sequence="100"/>
+    <menuitem id="bookpal_menu" name="Jounrals" parent="sale.menu_sale_config" sequence="100"/>
 
     <menuitem id="artwork_status_menu" name="Artwork Status" action="artwork_status_action"
               parent="bookpal_menu" sequence="1"/>
