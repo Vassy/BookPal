@@ -103,7 +103,7 @@ class SaleOrderLine(models.Model):
         "Saving Amount", compute="_compute_amount", store=True
     )
     discounted_price = fields.Float(
-        "Discounted Price", compute="_compute_amount", store=True
+        "Discounted Unit Price", compute="_compute_amount", store=True
     )
     attachment_ids = fields.Many2many('ir.attachment', string="Attach File")
 
@@ -111,9 +111,24 @@ class SaleOrderLine(models.Model):
     def _compute_amount(self):
         super()._compute_amount()
         for line in self:
-            saving_unit = (line.price_unit * line.discount) / 100
-            line.saving_amount = saving_unit * line.product_uom_qty
-            line.discounted_price = line.price_unit - saving_unit
+            price = line.currency_id.round(
+                line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+            )
+            taxes = line.tax_id.compute_all(
+                price,
+                line.order_id.currency_id,
+                line.product_uom_qty,
+                product=line.product_id,
+                partner=line.order_id.partner_shipping_id
+            )
+            line_data = {
+                "discounted_price": price,
+                "saving_amount": price * line.product_uom_qty,
+                "price_tax": sum(t.get("amount", 0.0) for t in taxes.get("taxes", [])),
+                "price_total": taxes["total_included"],
+                "price_subtotal": taxes["total_excluded"],
+            }
+            line.update(line_data)
 
     @api.depends("move_ids.state")
     def get_tracking_ref(self):
