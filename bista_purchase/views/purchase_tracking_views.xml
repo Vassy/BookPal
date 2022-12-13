@@ -16,12 +16,12 @@
                             <field name="is_read_only" invisible="1" />
                             <field name="partner_id" />
                             <field name="picking_type_id" />
-                            <field name="carrier_id" required="1" attrs="{'readonly': [('is_read_only', '=', True)]}" />
+                            <field name="carrier_id" required="0" attrs="{'readonly': [('is_read_only', '=', True)]}" />
                             <field name="shipment_date" required="1" attrs="{'readonly': [('is_read_only', '=', True)]}" />
                         </group>
                         <group>
-                            <field name="date_order" string="Order Date" />
-                            <field name="date_approve" />
+                            <field name="date_order" string="Order Date" widget="date"/>
+                            <field name="date_approve" widget="date"/>
                             <field name="pro_number" required="0" string="PRO No." attrs="{'readonly': [('is_read_only', '=', True)]}" />
                             <field name="status" required="1" attrs="{'readonly': [('is_read_only', '=', True)]}" />
                         </group>
