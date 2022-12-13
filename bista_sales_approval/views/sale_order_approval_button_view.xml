@@ -46,6 +46,9 @@
                     </field>
                 </page>
             </notebook>
+            <page name="customer_signature" position="attributes">
+                <attribute name="groups" />
+            </page>
         </field>
     </record>
 
