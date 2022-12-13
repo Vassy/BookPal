@@ -17,6 +17,7 @@
     "data": [
         "security/sale_security.xml",
         "security/ir.model.access.csv",
+        "data/sale_approval_data.xml",
         "views/sale_order_approval_button_view.xml",
         "wizard/so_reject_reason_view.xml",
     ],

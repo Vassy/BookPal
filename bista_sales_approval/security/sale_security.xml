@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="0">
-    <record id="group_sale_approval_admin" model="res.groups">
-        <field name="name">Sale Approval</field>
+    <record model="ir.module.category" id="module_category_quote_sale">
+        <field name="name">Quotation &amp; Order Rights</field>
+        <field name="sequence">999</field>
+    </record>
+
+    <record id="group_create_sale_quote" model="res.groups">
+        <field name="name">Create Sale Quotations</field>
+        <field name="category_id" ref="module_category_quote_sale"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <record id="group_approve_sale_quote" model="res.groups">
+        <field name="name">Approve Sale Quotations</field>
+        <field name="category_id" ref="module_category_quote_sale"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        <field name="implied_ids" eval="[(4, ref('bista_sales_approval.group_create_sale_quote'))]"/>
+    </record>
+
+    <record id="group_create_sale_order" model="res.groups">
+        <field name="name">Create Sale Orders</field>
+        <field name="category_id" ref="module_category_quote_sale"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <record id="group_approve_sale_order" model="res.groups">
+        <field name="name">Approve Sale Orders</field>
+        <field name="category_id" ref="module_category_quote_sale"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        <field name="implied_ids" eval="[(4, ref('bista_sales_approval.group_create_sale_order'))]"/>
     </record>
 </odoo>

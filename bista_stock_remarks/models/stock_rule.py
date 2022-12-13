@@ -13,7 +13,6 @@ class StockRule(models.Model):
                                values):
         move_values = super()._get_stock_move_values(product_id, product_qty, product_uom, location_id, name, origin,
                                                      company_id, values)
-        print("move_values")
         move_dest_ids = values.get('move_dest_ids', False)
         if values.get('move_dest_ids', False):
             notes = move_dest_ids.picking_note

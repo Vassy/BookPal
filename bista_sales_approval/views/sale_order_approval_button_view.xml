@@ -12,16 +12,21 @@
                 <attribute name="states">quote_confirm</attribute>
             </xpath>
             <xpath expr="//button[@name='action_quotation_send']" position="after">
-                <button name="action_send_quote_approval" string="Send For Approval Quotation" type="object" class="btn-primary" states="draft" />
-                <button name="action_quote_confirm" string="Confirm Quotation" type="object" class="btn-primary" states="draft" />
+                <button name="action_quote_confirm" string="Approve Quotation" type="object" class="btn-primary" states="draft" groups="bista_sales_approval.group_approve_sale_quote" />
+                <button name="action_send_quote_approval" string="Send For Quotation Approval" type="object" class="btn-primary" states="draft" />
                 <button name="action_quote_confirm" string="Approve" type="object" states="quote_approval"
-                    groups="bista_sales_approval.group_sale_approval_admin" class="btn-primary" />
-                <button name="action_send_for_approval" string="Send For Approval" type="object" class="btn-primary"
-                    attrs="{'invisible': [('state', 'not in', ['quote_confirm', 'sent', 'customer_approved'])]}" />
+                    groups="bista_sales_approval.group_approve_sale_quote" class="btn-primary" />
+                <button name="action_reject" string="Reject" type="object" states="quote_approval"
+                    groups="bista_sales_approval.group_approve_sale_quote" class="btn-primary" />
+                <button name="action_order_booked" string="Book Order" type="object" class="btn-primary"
+                    states="quote_confirm,sent" groups="bista_sales_approval.group_create_sale_order" />
+                <button name="action_send_for_approval" string="Send For Order Approval" type="object" class="btn-primary"
+                    states="order_booked" groups="bista_sales_approval.group_create_sale_order" />
                 <button name="action_approval" string="Approve" type="object" states="pending_for_approval"
-                    groups="bista_sales_approval.group_sale_approval_admin" class="btn-primary" />
-                <button name="action_reject" string="Reject" type="object" states="quote_approval,pending_for_approval"
-                    groups="bista_sales_approval.group_sale_approval_admin" class="btn-primary" />
+                    groups="bista_sales_approval.group_approve_sale_order" class="btn-primary"
+                    confirm="Please confirm multishipment details (if any), routes, vendor, discount, etc before Approving." />
+                <button name="action_reject" string="Reject" type="object" states="pending_for_approval"
+                    groups="bista_sales_approval.group_approve_sale_order" class="btn-primary" />
             </xpath>
             <xpath expr="//header/button[@name='action_confirm'][2]" position="attributes">
                 <attribute name="invisible">1</attribute>
@@ -44,25 +49,45 @@
         </field>
     </record>
 
-    <record id="sale_order_view_search_quotation_approval" model="ir.ui.view">
-        <field name="name">sale.order.inherit.approval</field>
+    <record id="view_order_tree_inherit" model="ir.ui.view">
+        <field name="name">Sale order Tree</field>
         <field name="model">sale.order</field>
-        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation" />
+        <field name="inherit_id" ref="sale.view_order_tree" />
         <field name="arch" type="xml">
-            <filter name="draft" position="after">
-                <filter string="Quotation Approval" name="quote_approval" domain="[('state', '=', 'quote_approval')]"/>
-                <filter string="Quotation Confirmed" name="quote_confirm" domain="[('state', '=', 'quote_confirm')]"/>
-                <filter string="Pending for Approval" name="order_approval" domain="[('state', '=', 'pending_for_approval')]"/>
-            </filter>
+            <field name="state" position="replace" />
+            <field name="invoice_status" position="before">
+                <field name="state" decoration-success="state in ['sale', 'done']" widget="badge" />
+            </field>
         </field>
     </record>
 
-    <record id="to_approve_sale_orders" model="ir.actions.act_window">
-        <field name="name">Sale Orders To Approve</field>
-        <field name="res_model">sale.order</field>
-        <field name="view_id" ref="sale.view_quotation_tree" />
-        <field name="domain">[("state", "in", ["quote_approval", "pending_for_approval"])]</field>
+    <record id="sale_order_view_search_quotation_approval" model="ir.ui.view">
+        <field name="name">sale.order.inherit.approval</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter" />
+        <field name="arch" type="xml">
+            <search position="inside">
+                <filter string="Quotation In Approval" name="quote_approval" domain="[('state', '=', 'quote_approval')]"/>
+                <filter string="Quotation Approved" name="quote_confirm" domain="[('state', '=', 'quote_confirm')]"/>
+                <filter string="Booked Order" name="booked_order" domain="[('state', '=', 'order_booked')]"/>
+                <filter string="Order In Approval" name="order_approval" domain="[('state', '=', 'pending_for_approval')]"/>
+                <filter string="Status" name="groupby_state" domain="[]" context="{'group_by': 'state'}"/>
+            </search>
+        </field>
     </record>
 
-    <menuitem id="pending_for_approval_orders" action="to_approve_sale_orders" name="Quotations To Approve" parent="sale.sale_order_menu" groups="bista_sales_approval.group_sale_approval_admin" />
+    <record id="sale.action_orders" model="ir.actions.act_window">
+        <field name="context">{"order_booked": True}</field>
+        <field name="domain">[("state", "in", ("order_booked", "pending_for_approval", "sale", "done"))]</field>
+    </record>
+
+    <record id="sale.menu_sale_quotations" model="ir.ui.menu">
+        <field name="groups_id" eval="[ref('bista_sales_approval.group_create_sale_quote'), ref('bista_sales_approval.group_create_sale_order')]" />
+        <field name="action" ref="bista_sales_approval.sales_quotation_action" />
+    </record>
+
+    <record id="sale.menu_sale_order" model="ir.ui.menu">
+        <field name="groups_id" eval="[ref('bista_sales_approval.group_create_sale_order')]" />
+        <field name="action" ref="bista_sales_approval.sales_order_action" />
+    </record>
 </odoo>
