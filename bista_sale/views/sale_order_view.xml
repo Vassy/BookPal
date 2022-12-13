@@ -10,11 +10,11 @@
                 <field name="attachment_ids" widget="many2many_binary"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
-                <field name="discounted_price" optional="show" />
-                <field name="saving_amount" optional="show" />
+                <field name="discounted_price" optional="show" readonly="1" />
+                <field name="saving_amount" optional="show" readonly="1" />
             </xpath>
             <field name="tax_totals_json" position="after">
-                <field style="font-size: 1.3em; font-weight: bold;" name="saving_amount"/>
+                <field style="font-size: 1.3em; font-weight: bold;" name="saving_amount" readonly="1" />
             </field>
             <xpath expr="//field[@name='validity_date']" position="attributes">
                 <attribute name="string">Valid Until</attribute>

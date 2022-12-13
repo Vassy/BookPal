@@ -16,7 +16,7 @@
     'version': '15.0.0.1',
 
     # Dependent module required for this module to be installed
-    'depends': ['sale',
+    'depends': ['bista_sales_approval',
                 'delivery_ups',
                 'contacts',
                 'bista_report_header_footer',
