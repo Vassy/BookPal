@@ -65,6 +65,13 @@ class SaleOrder(models.Model):
             else:
                 rec.is_confirm_ship = False
 
+    def action_approval(self):
+        if self.split_shipment and self.sale_multi_ship_qty_lines.filtered(lambda sp: not sp.route_id):
+            raise ValidationError("Please set routes on shipment lines.")
+        if not self.split_shipment and self.order_line.filtered(lambda l: not l.route_id):
+            raise ValidationError("Please set routes on order lines.")
+        return super().action_approval()
+
     def open_sale_multi_ship_wizard(self):
         """Open sale multi ship wizard."""
         context = self.env.context.copy()
