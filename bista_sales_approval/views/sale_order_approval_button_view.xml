@@ -23,7 +23,8 @@
                 <button name="action_send_for_approval" string="Send For Order Approval" type="object" class="btn-primary"
                     states="order_booked" groups="bista_sales_approval.group_create_sale_order" />
                 <button name="action_approval" string="Approve" type="object" states="pending_for_approval"
-                    groups="bista_sales_approval.group_approve_sale_order" class="btn-primary" />
+                    groups="bista_sales_approval.group_approve_sale_order" class="btn-primary"
+                    confirm="Please confirm multishipment details (if any), routes, vendor, discount, etc before Approving." />
                 <button name="action_reject" string="Reject" type="object" states="pending_for_approval"
                     groups="bista_sales_approval.group_approve_sale_order" class="btn-primary" />
             </xpath>
