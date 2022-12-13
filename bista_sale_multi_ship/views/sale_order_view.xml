@@ -18,7 +18,7 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <field name='partner_shipping_id' position="after">
-                    <field name="split_shipment" invisible="0" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="split_shipment" attrs="{'invisible': [('state', 'in', ['draft', 'quote_approval', 'quote_confirm', 'sent'])]}" />
                     <field name="so_lines" invisible="1" force_save="1"/>
                 </field>
                 <xpath expr="//header" position="inside">

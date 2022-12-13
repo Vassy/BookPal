@@ -10,20 +10,54 @@ from odoo import api, models, fields
 from lxml import etree
 
 AddState = [
-    ("quote_approval", "Quotation Approval"),
-    ("quote_confirm", "Quotation Confirmed"),
+    ("quote_approval", "Quotation In Approval"),
+    ("quote_confirm", "Approved Quotation"),
     ("sent",),
-    ("customer_approved", "Customer Approved"),
-    ("pending_for_approval", "Pending for Approval"),
-    ("sale",),
+    ("order_booked", "Order Booked"),
+    ("pending_for_approval", "Order In Approval"),
+    ("sale", "Approved Order"),
 ]
 
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
+    _description = "Sales"
 
     state = fields.Selection(selection_add=AddState)
     sale_approval_log_ids = fields.One2many("sale.approval.log", "sale_id")
+
+    @api.model
+    def default_get(self, fields_list):
+        result = super().default_get(fields_list)
+        if self._context.get("order_booked"):
+            result["state"] = "order_booked"
+        return result
+
+    def trigger_quote_action(self):
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            "sale.action_quotations_with_onboarding"
+        )
+        if self.env.user.has_group(
+            "bista_sales_approval.group_create_sale_order"
+        ) and self.env.user.has_group("bista_sales_approval.group_approve_sale_quote"):
+            action["context"] = {
+                "search_default_quote_confirm": 1,
+                "search_default_quote_approval": 1,
+                "search_default_groupby_state": 1,
+            }
+        elif self.env.user.has_group("bista_sales_approval.group_create_sale_order"):
+            action["context"] = {"search_default_quote_confirm": 1}
+        elif self.env.user.has_group("bista_sales_approval.group_approve_sale_quote"):
+            action["context"] = {"search_default_quote_approval": 1}
+        return action
+
+    def trigger_order_action(self):
+        action = self.env["ir.actions.actions"]._for_xml_id("sale.action_orders")
+        if self.env.user.has_group("bista_sales_approval.group_approve_sale_order"):
+            action["context"] = {"search_default_order_approval": 1}
+        elif self.env.user.has_group("bista_sales_approval.group_create_sale_order"):
+            action["context"] = {"search_default_booked_order": 1}
+        return action
 
     @api.returns("mail.message", lambda value: value.id)
     def message_post(self, **kwargs):
@@ -61,6 +95,11 @@ class SaleOrder(models.Model):
         if vals.get("state") and vals.get("state") == "sent":
             self._create_sale_approval_log("Quote Sent to Customer")
         return super().write(vals)
+
+    def action_order_booked(self):
+        for sale in self:
+            sale.state = "order_booked"
+            sale._create_sale_approval_log("Sale Order Booked")
 
     def action_send_quote_approval(self):
         for sale in self:
@@ -109,20 +148,24 @@ class SaleOrder(models.Model):
         result = super()._fields_view_get(view_id, view_type, toolbar, submenu)
         if view_type != "form":
             return result
-        attrs = "{'readonly': [('state', 'not in', ['draft', 'sent'])]}"
-        line_attrs = "{'readonly': [('state', 'not in', ['draft'])]}"
-        if self.env.user.has_group("bista_sales_approval.group_sale_approval_admin"):
-            attrs = "{'readonly': [('state', 'not in', ['draft', 'sent', 'pending_for_approval'])]}"
-            line_attrs = "{'readonly': [('state', 'in', ['done', 'cancel'])]}"
+        if self.env.user.has_group("bista_sales_approval.group_approve_sale_order"):
+            attrs = "{'readonly': [('state', 'in', ['sale', 'done', 'cancel'])]}"
+        elif self.env.user.has_group("bista_sales_approval.group_create_sale_order"):
+            attrs = "{'readonly': [('state', 'in', ['pending_for_approval', 'sale', 'done', 'cancel'])]}"
+        elif self.env.user.has_group("bista_sales_approval.group_approve_sale_quote"):
+            attrs = "{'readonly': [('state', 'not in', ['draft', 'quote_approval'])]}"
+        else:
+            attrs = "{'readonly': [('state', 'not in', ['draft'])]}"
         doc = etree.XML(result["arch"])
         for field in doc.xpath("//field"):
             if field.attrib["name"] == "order_line":
-                field.attrib["attrs"] = line_attrs
+                field.attrib["attrs"] = attrs
             if (
                 field.attrib.get("invisible") == "1"
                 or field.attrib.get("readonly") == "1"
-                or field.attrib.get("attrs")
                 or field.attrib["name"] not in self._fields
+                or field.attrib.get("attrs")
+                or field.attrib["name"] == "sale_multi_ship_qty_lines"
             ):
                 continue
             field.attrib["attrs"] = attrs

@@ -10,13 +10,13 @@
                 <field name="confirm_check" force_save="1" invisible="1" />
             </field>
             <xpath expr="//button[@name='action_send_for_approval']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', ('confirm_check', '=', True), ('state', 'not in', ['quote_confirm', 'sent', 'customer_approved'])]}
+                <attribute name="attrs">{"invisible": ["|", ("confirm_check", "=", True), ("state", "!=", "order_booked")]}
                 </attribute>
             </xpath>
             <xpath expr="//button[@name='action_quotation_send']" position="after">
                 <button name="action_check_credit_for_approval" type="object" string="Send For Approval"
                     class="btn-primary"
-                    attrs="{'invisible': ['|', ('confirm_check', '=', False), ('state', 'not in', ['quote_confirm', 'sent', 'customer_approved'])]}"
+                    attrs="{'invisible': ['|', ('confirm_check', '=', False), ('state', '!=', 'order_booked')]}"
                     confirm="Credit Limit Crossed For this Customer. Hence, Order Needs to be reviewed and then Approved." />
                 <button name="action_override_and_send_for_approve" type="object" string="Override Credit Limit"
                     class="btn-primary"
