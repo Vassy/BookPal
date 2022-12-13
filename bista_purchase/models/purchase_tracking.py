@@ -124,7 +124,7 @@ class PurchaseTrackingLine(models.Model):
     _description = "Purchase Tracking Line"
 
     checkbox = fields.Boolean(string="Checkbox")
-    tracking_id = fields.Many2one("purchase.tracking", string="Tracking")
+    tracking_id = fields.Many2one("purchase.tracking", string="Tracking", ondelete='cascade')
     po_line_id = fields.Many2one("purchase.order.line", "PO Line")
     default_code = fields.Char(
         related="po_line_id.product_id.default_code", store=True, string="ISBN"
