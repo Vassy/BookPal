@@ -7,7 +7,7 @@ class ResConfigSettings(models.TransientModel):
     azure_end_point = fields.Char("Azure End Point", related="company_id.azure_end_point", readonly=False)
     azure_key = fields.Char("Azure Key", related="company_id.azure_key", readonly=False)
     azure_model = fields.Char("Azure Model", related="company_id.azure_model", readonly=False)
-    re_read_mails = fields.Boolean("Re-Read Mails", defaul=False)
+    re_read_mails = fields.Boolean("Re-Read Mails", default=False)
     azure_alias_domain = fields.Char('Azure Alias Domain')
 
     def set_values(self):
