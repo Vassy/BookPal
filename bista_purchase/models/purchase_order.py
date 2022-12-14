@@ -73,6 +73,7 @@ class PurchaseOrder(models.Model):
     lead_time = fields.Integer(compute="compute_lead_time", string="Lead Time")
     order_process_time = fields.Integer(
         compute="compute_order_process_time", string="Order Processing Time")
+    purchase_approval_log_ids = fields.One2many("purchase.approval.log", "order_id")
 
     def button_cancel(self):
         # Chanage orderline status on cancel order
@@ -106,6 +107,23 @@ class PurchaseOrder(models.Model):
                 if not order._approval_allowed():
                     order.order_line.write({'status_id': ready_status_id.id})
         return res
+
+    def _approval_allowed(self):
+        """Returns whether the order qualifies to be approved by the current user"""
+        self.ensure_one()
+        if self._context.get('skip_approval'):
+            return True
+        return super(PurchaseOrder, self)._approval_allowed()
+
+    def write(self, vals):
+        if vals.get("state") and not self._context.get('no_history_update'):
+            log_data = {
+                "order_id": self.id,
+                "old_state": self.state,
+                "state": vals.get("state")
+            }
+            self.env["purchase.approval.log"].create(log_data)
+        return super(PurchaseOrder, self).write(vals)
 
     def open_tracking(self):
         return {
@@ -202,6 +220,21 @@ class PurchaseOrder(models.Model):
                 if rec.sale_order_ids.date_order and rec.date_approve:
                     order_date = rec.date_approve - rec.sale_order_ids.date_order
                     rec.order_process_time = order_date.days
+
+    def action_send_for_approval(self):
+        for rec in self:
+            rec.state = "to approve"
+
+    def button_reject(self):
+        return {
+            "name": "Reject Reason",
+            "view_mode": "form",
+            "res_model": "order.reject.wiz",
+            "type": "ir.actions.act_window",
+            "context": {"default_order_id": self.id},
+            "target": "new",
+        }
+
 
 
 class RushStatus(models.Model):
