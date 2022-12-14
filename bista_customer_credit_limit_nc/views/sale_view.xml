@@ -7,29 +7,47 @@
         <field name="inherit_id" ref="sale.view_order_form" />
         <field name="arch" type="xml">
             <field name="user_id" position="after">
-                <field name="confirm_check" force_save="1" invisible="1" />
+                <field name="confirm_check" invisible="1" />
             </field>
             <xpath expr="//button[@name='action_send_for_approval']" position="attributes">
-                <attribute name="attrs">{"invisible": ["|", ("confirm_check", "=", True), ("state", "!=", "order_booked")]}
-                </attribute>
+                <attribute name="attrs">{"invisible": ["|", ("confirm_check", "=", True), ("state", "!=", "order_booked")]}</attribute>
+                <attribute name="states" />
             </xpath>
             <xpath expr="//button[@name='action_quotation_send']" position="after">
-                <button name="action_check_credit_for_approval" type="object" string="Send For Approval"
-                    class="btn-primary"
+                <button name="action_check_credit_for_approval" type="object" string="Send For Order Approval" class="btn-primary"
                     attrs="{'invisible': ['|', ('confirm_check', '=', False), ('state', '!=', 'order_booked')]}"
                     confirm="Credit Limit Crossed For this Customer. Hence, Order Needs to be reviewed and then Approved." />
                 <button name="action_override_and_send_for_approve" type="object" string="Override Credit Limit"
-                    class="btn-primary"
+                    class="btn-primary" states="credit_review"
                     confirm="Are you sure you want to Override the Credit Limit for this Contact?"
-                    states="credit_review"
                     groups="bista_customer_credit_limit_nc.group_credit_limit" />
                 <button name="action_reject" type="object" string="Reject"
-                    states="credit_review"
-                    groups="bista_customer_credit_limit_nc.group_credit_limit"
-                    class="btn-primary" />
+                    class="btn-primary" states="credit_review" groups="bista_customer_credit_limit_nc.group_credit_limit" />
             </xpath>
             <field name="fiscal_position_id" position="after">
                 <field name="available_credit_limit" />
+            </field>
+        </field>
+    </record>
+
+    <record id="view_order_tree_credit_limit" model="ir.ui.view">
+        <field name="name">sale.order.tree.credit.limit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree" />
+        <field name="arch" type="xml">
+            <field name="state" position="attributes">
+                <attribute name="decoration-warning">state in ["pending_for_approval", "credit_review"]</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_quotation_tree_credit_limit" model="ir.ui.view">
+        <field name="name">sale.quotation.tree.credit.limit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <field name="state" position="attributes">
+                <attribute name="decoration-warning">state in ["quote_approval", "pending_for_approval", "credit_review"]</attribute>
             </field>
         </field>
     </record>

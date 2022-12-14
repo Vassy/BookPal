@@ -53,10 +53,11 @@ class SaleOrder(models.Model):
 
     def trigger_order_action(self):
         action = self.env["ir.actions.actions"]._for_xml_id("sale.action_orders")
+        action["context"] = {"order_booked": True}
         if self.env.user.has_group("bista_sales_approval.group_approve_sale_order"):
-            action["context"] = {"search_default_order_approval": 1}
+            action["context"].update({"search_default_order_approval": 1})
         elif self.env.user.has_group("bista_sales_approval.group_create_sale_order"):
-            action["context"] = {"search_default_booked_order": 1}
+            action["context"].update({"search_default_booked_order": 1})
         return action
 
     @api.returns("mail.message", lambda value: value.id)
