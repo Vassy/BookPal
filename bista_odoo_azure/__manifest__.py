@@ -5,9 +5,10 @@
     "website": "https://www.bistasolutions.com",
     "support": "support@bistasolutions.com",
     "category": "Purchase",
+    "license": "AGPL-3",
     "summary": "",
     "description":
-        """ 
+        """
         """,
     "version": "15.0.0",
     "depends": ['base', 'documents', 'contacts'],
