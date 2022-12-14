@@ -5,3 +5,4 @@ from . import purchase_tracking
 from . import stock_move
 from . import account_move
 from . import purchase_order
+from . import purchase_approval_log
