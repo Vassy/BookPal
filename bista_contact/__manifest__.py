@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Bista Contact',
-    'version': '15.0.1.0.0',
+    'version': '15.0.1.1.1',
     'description': 'Manage Conatct',
     'category': 'Contact',
     'summary': 'Manage Conatct',
