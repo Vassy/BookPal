@@ -59,7 +59,21 @@
         <field name="arch" type="xml">
             <field name="state" position="replace" />
             <field name="invoice_status" position="before">
-                <field name="state" decoration-success="state in ['sale', 'done']" widget="badge" />
+                <field name="state" widget="badge" decoration-success="state in ['sale', 'done']"
+                    decoration-warning="state == 'pending_for_approval'" decoration-info="state == 'order_booked'" />
+            </field>
+        </field>
+    </record>
+
+    <record id="view_quotation_tree_approval" model="ir.ui.view">
+        <field name="name">sale.quotation.tree.approval</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <field name="state" position="attributes">
+                <attribute name="decoration-info">state in ["draft", "sent", "order_booked"]</attribute>
+                <attribute name="decoration-warning">state in ["quote_approval", "pending_for_approval"]</attribute>
+                <attribute name="decoration-success">state in ["quote_confirm", "sale", "done"]</attribute>
             </field>
         </field>
     </record>
@@ -72,7 +86,7 @@
             <search position="inside">
                 <filter string="Quotation In Approval" name="quote_approval" domain="[('state', '=', 'quote_approval')]"/>
                 <filter string="Quotation Approved" name="quote_confirm" domain="[('state', '=', 'quote_confirm')]"/>
-                <filter string="Booked Order" name="booked_order" domain="[('state', '=', 'order_booked')]"/>
+                <filter string="Order Booked" name="booked_order" domain="[('state', '=', 'order_booked')]"/>
                 <filter string="Order In Approval" name="order_approval" domain="[('state', '=', 'pending_for_approval')]"/>
                 <filter string="Status" name="groupby_state" domain="[]" context="{'group_by': 'state'}"/>
             </search>
@@ -81,7 +95,7 @@
 
     <record id="sale.action_orders" model="ir.actions.act_window">
         <field name="context">{"order_booked": True}</field>
-        <field name="domain">[("state", "in", ("order_booked", "pending_for_approval", "sale", "done"))]</field>
+        <field name="domain">[("state", "not in", ("draft", "quote_approval", "quote_confirm", "sent", "cancel"))]</field>
     </record>
 
     <record id="sale.menu_sale_quotations" model="ir.ui.menu">
