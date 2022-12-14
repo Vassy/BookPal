@@ -13,14 +13,14 @@
     """,
     'author': 'Bista Solutions Pvt. Ltd.',
     'website': 'http://www.bistasolutions.com',
-    'version': '15.0.0.1',
+    'version': '15.0.1.1',
 
     # Dependent module required for this module to be installed
     'depends': ['bista_sales_approval',
                 'delivery_ups',
                 'contacts',
                 'bista_report_header_footer',
-                'sale_mrp'],
+                ],
 
     # always loaded
     'data': [

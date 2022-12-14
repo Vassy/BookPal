@@ -438,23 +438,6 @@ class SaleMultiShipQtyLines(models.Model):
             else:
                 line.display_qty_widget = False
 
-            # Hide the widget for kits since forecast doesn't support them.
-            boms = self.env['mrp.bom']
-            if line.state == 'sale':
-                boms = line.move_ids.mapped('bom_line_id.bom_id')
-            elif line.state in ['draft', 'sent'] and line.product_id:
-                boms = boms._bom_find(line.product_id, company_id=line.order_id.company_id.id, bom_type='phantom')[line.product_id]
-            relevant_bom = boms.filtered(lambda b: b.type == 'phantom' and
-                    (b.product_id == line.product_id or
-                    (b.product_tmpl_id == line.product_id.product_tmpl_id and not b.product_id)))
-            if relevant_bom:
-                line.display_qty_widget = False
-                continue
-            if line.state == 'draft' and line.product_type == 'consu':
-                components = line.product_id.get_components()
-                if components and components != [line.product_id.id]:
-                    line.display_qty_widget = True
-
     @api.depends(
         'product_id', 'product_qty', 'order_id.commitment_date',
         'move_ids', 'move_ids.forecast_expected_date',
@@ -581,51 +564,22 @@ class SaleMultiShipQtyLines(models.Model):
                     incoming_moves |= move
         return outgoing_moves, incoming_moves
 
-    # @api.depends('move_ids.state',
-    #              'move_ids.scrapped', 'move_ids.product_uom_qty',
-    #              'move_ids.product_uom',
-    #              'qty_delivered_method',
-    #              'qty_delivered_manual')
-    # def _compute_qty_delivered(self):
-    #     # Just ignore for timesheet may need to check in future.
-    #     # lines_by_analytic = self.filtered(
-    #     #     lambda sol: sol.qty_delivered_method == 'analytic')
-    #     # mapping = lines_by_analytic._get_delivered_quantity_by_analytic(
-    #     #     [('amount', '<=', 0.0)])
-    #     # for so_line in lines_by_analytic:
-    #     #     so_line.qty_delivered = mapping.get(
-    #     #         so_line.id or so_line._origin.id, 0.0)
-    #     for line in self:  # TODO: maybe one day, this should be done in SQL
-    #         # for performance sake
-    #         if line.qty_delivered_method == 'stock_move':
-    #             qty = 0.0
-    #             outgoing_moves, incoming_moves = line.\
-    #                 _get_outgoing_incoming_moves()
-    #             for move in outgoing_moves:
-    #                 if move.state != 'done':
-    #                     continue
-    #                 qty += move.product_uom._compute_quantity(
-    #                     move.product_uom_qty,
-    #                     line.product_uom, rounding_method='HALF-UP')
-    #             for move in incoming_moves:
-    #                 if move.state != 'done':
-    #                     continue
-    #                 qty -= move.product_uom._compute_quantity(
-    #                     move.product_uom_qty, line.product_uom,
-    #                     rounding_method='HALF-UP')
-    #             line.qty_delivered = qty
-    #         elif line.qty_delivered_method == 'manual':
-    #             line.qty_delivered = line.qty_delivered_manual or 0.0
-    #         if line.product_qty and line.qty_delivered == line.product_qty:
-    #             line.state = 'deliver'
-
     @api.depends('move_ids.state',
                  'move_ids.scrapped', 'move_ids.product_uom_qty',
                  'move_ids.product_uom',
                  'qty_delivered_method',
                  'qty_delivered_manual')
     def _compute_qty_delivered(self):
-        for line in self:
+        # Just ignore for timesheet may need to check in future.
+        # lines_by_analytic = self.filtered(
+        #     lambda sol: sol.qty_delivered_method == 'analytic')
+        # mapping = lines_by_analytic._get_delivered_quantity_by_analytic(
+        #     [('amount', '<=', 0.0)])
+        # for so_line in lines_by_analytic:
+        #     so_line.qty_delivered = mapping.get(
+        #         so_line.id or so_line._origin.id, 0.0)
+        for line in self:  # TODO: maybe one day, this should be done in SQL
+            # for performance sake
             if line.qty_delivered_method == 'stock_move':
                 qty = 0.0
                 outgoing_moves, incoming_moves = line.\
@@ -643,56 +597,6 @@ class SaleMultiShipQtyLines(models.Model):
                         move.product_uom_qty, line.product_uom,
                         rounding_method='HALF-UP')
                 line.qty_delivered = qty
-
-                boms = line.move_ids.filtered(lambda m: m.state != 'cancel').mapped('bom_line_id.bom_id')
-                dropship = any(m._is_dropshipped() for m in line.move_ids)
-                if not boms and dropship:
-                    boms = boms._bom_find(line.product_id, company_id=line.order_id.company_id.id, bom_type='phantom')[line.product_id]
-                # We fetch the BoMs of type kits linked to the line,
-                # the we keep only the one related to the finished produst.
-                # This bom shoud be the only one since bom_line_id was written on the moves
-                relevant_bom = boms.filtered(lambda b: b.type == 'phantom' and
-                                    (b.product_id == line.product_id or
-                                    (b.product_tmpl_id == line.product_id.product_tmpl_id and not b.product_id)))
-                if relevant_bom:
-                    # In case of dropship, we use a 'all or nothing' policy since 'bom_line_id' was
-                    # not written on a move coming from a PO: all moves (to customer) must be done
-                    # and the returns must be delivered back to the customer
-                    # FIXME: if the components of a kit have different suppliers, multiple PO
-                    # are generated. If one PO is confirmed and all the others are in draft, receiving
-                    # the products for this PO will set the qty_delivered. We might need to check the
-                    # state of all PO as well... but sale_mrp doesn't depend on purchase.
-                    if dropship:
-                        moves = line.move_ids.filtered(lambda m: m.state != 'cancel')
-                        if any((m.location_dest_id.usage == 'customer' and m.state != 'done')
-                               or (m.location_dest_id.usage != 'customer'
-                               and m.state == 'done'
-                               and float_compare(m.quantity_done,
-                                                 sum(sub_m.product_uom._compute_quantity(sub_m.quantity_done, m.product_uom) for sub_m in m.returned_move_ids if sub_m.state == 'done'),
-                                                 precision_rounding=m.product_uom.rounding) > 0)
-                               for m in moves) or not moves:
-                            line.qty_delivered = 0
-                        else:
-                            line.qty_delivered = line.product_uom_qty
-                        continue
-                    moves = line.move_ids.filtered(lambda m: m.state == 'done' and not m.scrapped)
-                    filters = {
-                        'incoming_moves': lambda m: m.location_dest_id.usage == 'customer' and (not m.origin_returned_move_id or (m.origin_returned_move_id and m.to_refund)),
-                        'outgoing_moves': lambda m: m.location_dest_id.usage != 'customer' and m.to_refund
-                    }
-                    order_qty = line.product_uom._compute_quantity(line.product_uom_qty, relevant_bom.product_uom_id)
-                    qty_delivered = moves._compute_kit_quantities(line.product_id, order_qty, relevant_bom, filters)
-                    line.qty_delivered = relevant_bom.product_uom_id._compute_quantity(qty_delivered, line.product_uom)
-
-                # If no relevant BOM is found, fall back on the all-or-nothing policy. This happens
-                # when the product sold is made only of kits. In this case, the BOM of the stock moves
-                # do not correspond to the product sold => no relevant BOM.
-                elif boms:
-                    # if the move is ingoing, the product **sold** has delivered qty 0
-                    if all(m.state == 'done' and m.location_dest_id.usage == 'customer' for m in line.move_ids):
-                        line.qty_delivered = line.product_uom_qty
-                    else:
-                        line.qty_delivered = 0.0
             elif line.qty_delivered_method == 'manual':
                 line.qty_delivered = line.qty_delivered_manual or 0.0
             if line.product_qty and line.qty_delivered == line.product_qty:
@@ -729,17 +633,6 @@ class SaleMultiShipQtyLines(models.Model):
 
     def _get_qty_procurement(self, previous_product_uom_qty=False):
         self.ensure_one()
-        bom = self.env['mrp.bom']._bom_find(self.product_id, bom_type='phantom')[self.product_id]
-        if bom:
-            moves = self.move_ids.filtered(lambda r: r.state != 'cancel' and not r.scrapped)
-            filters = {
-                'incoming_moves': lambda m: m.location_dest_id.usage == 'customer' and (not m.origin_returned_move_id or (m.origin_returned_move_id and m.to_refund)),
-                'outgoing_moves': lambda m: m.location_dest_id.usage != 'customer' and m.to_refund
-            }
-            order_qty = self.product_uom._compute_quantity(self.product_uom_qty, bom.product_uom_id)
-            qty = moves._compute_kit_quantities(self.product_id, order_qty, bom, filters)
-            return bom.product_uom_id._compute_quantity(qty, self.product_uom)
-
         # People without purchase rights should be able to do this operation
         purchase_lines_sudo = self.sudo().purchase_line_ids
         if purchase_lines_sudo.filtered(lambda r: r.state != 'cancel'):
