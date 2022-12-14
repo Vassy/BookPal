@@ -20,6 +20,9 @@
                     groups="bista_sales_approval.group_approve_sale_quote" class="btn-primary" />
                 <button name="action_order_booked" string="Book Order" type="object" class="btn-primary"
                     states="quote_confirm,sent" groups="bista_sales_approval.group_create_sale_order" />
+                <button name="action_approval" string="Approve Order" type="object" class="btn-primary"
+                    states="order_booked" groups="bista_sales_approval.group_approve_sale_order"
+                    confirm="Please confirm multishipment details (if any), routes, vendor, discount, etc before Approving." />
                 <button name="action_send_for_approval" string="Send For Order Approval" type="object" class="btn-primary"
                     states="order_booked" groups="bista_sales_approval.group_create_sale_order" />
                 <button name="action_approval" string="Approve" type="object" states="pending_for_approval"
