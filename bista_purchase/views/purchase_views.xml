@@ -5,6 +5,17 @@
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//button[@id='draft_confirm']" position="replace">
+                <!-- <button name="button_confirm" type="object" states="sent" string="Confirmmmmm Order" class="oe_highlight" id="bid_confirm" data-hotkey="v"/> -->
+                <button name="button_confirm" type="object" states="draft" string="Send for Approval" id="draft_confirm"/>
+            </xpath>
+            <xpath expr="//button[@id='bid_confirm']" position="attributes">
+                <attribute name="context">{'skip_approval': True}</attribute>
+            </xpath>
+            <xpath expr="//button[@name='button_approve']" position="after">
+                <button name="button_confirm" type="object" states="draft" string="Confirm Orders" context="{'skip_approval': True}"/>
+                <button name="button_reject" type="object" states='to approve' string="Reject Order" class="oe_highlight" groups="purchase.group_purchase_manager" />
+            </xpath>
             <xpath expr="//field[@name='order_line']//tree" position="inside">
                 <field name="tracking_ref" optional="show"/>
                 <field name="status_id" readonly="1" force_save="1"/>
@@ -167,6 +178,20 @@
                     </field>
                 </page>
             </xpath>
+            <notebook position="inside">
+                <page name="purchase_approval_log_ids" string="Approval Status">
+                    <field name="purchase_approval_log_ids">
+                        <tree string="Approval Status" editable="top" create="0" delete="0">
+                            <field name="action_user_id" readonly="1" options="{'no_open': True}" />
+                            <field name="action_date" readonly="1" />
+                            <field name="done_action" readonly="1" />
+                            <field name="note" readonly="1" />
+                            <field name="old_state" readonly="1"/>
+                            <field name="state" readonly="1" />
+                        </tree>
+                    </field>
+                </page>
+            </notebook>
         </field>
     </record>
 
