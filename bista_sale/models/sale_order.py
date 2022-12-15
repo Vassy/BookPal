@@ -142,3 +142,14 @@ class SaleOrderLine(models.Model):
             tracking_ref = ', '.join([str(elem)
                                       for elem in tracking_ref if elem])
             line.tracking_ref = tracking_ref
+
+    @api.onchange('product_id')
+    def product_id_change(self):
+        res = super(SaleOrderLine, self).product_id_change()
+        if self.product_id:
+            vendor = self.product_id._prepare_sellers({}).filtered(
+                lambda s: not s.company_id or s.company_id == self.company_id
+            )[:1]
+            if vendor:
+                self.supplier_id = vendor.name.id
+        return res

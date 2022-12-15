@@ -630,6 +630,12 @@ class SaleMultiShipQtyLines(models.Model):
         """Set default schedule date."""
         if self.so_line_id:
             self.shipping_date = self.get_default_shipping_date()
+            if self.so_line_id.product_id:
+                vendor = self.so_line_id.product_id._prepare_sellers({}).filtered(
+                    lambda s: not s.company_id or s.company_id == self.so_line_id.company_id
+                )[:1]
+                if vendor:
+                    self.supplier_id = vendor.name.id
 
     def _get_qty_procurement(self, previous_product_uom_qty=False):
         self.ensure_one()
