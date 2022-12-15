@@ -80,14 +80,14 @@ class BigCommerceStoreConfiguration(models.Model):
         return True
 
 
-    def auto_import_bigcommerce_orders(self):
+    def auto_import_bigcommerce_orders(self,status_id):
         store_ids = self.sudo().search([('auto_import_orders', '!=', False)])
         for store_id in store_ids:
             sale_order_obj = self.env['sale.order']
-            last_modification_date = datetime.now() - relativedelta(days=1)
+            last_modification_date = datetime.now() - relativedelta(days=15)
             today_date = datetime.now() + relativedelta(hours=5)
             total_pages = 2
-            sale_order_obj.with_user(1).bigcommerce_to_odoo_import_orders(store_id.warehouse_id, store_id,last_modification_date,today_date,total_pages)
+            sale_order_obj.with_user(1).bigcommerce_to_odoo_import_orders(store_id.warehouse_id, store_id,last_modification_date,today_date,total_pages,status_id)
 
     def bigcommerce_import_operation_wizard(self):
         return self.env.ref('bigcommerce_odoo_integration.action_bc_import_operation').read()[0]
@@ -273,22 +273,22 @@ class BigCommerceStoreConfiguration(models.Model):
     #     import_inventory = product_inventory.bigcommerce_to_odoo_import_inventory(self.warehouse_id, self)
     #     return import_inventory
 
-    def bigcommerce_to_odoo_import_orders_main(self,from_date=False,to_date=False):
+    def bigcommerce_to_odoo_import_orders_main(self,from_date=False,to_date=False,bigcommerce_order_status=False):
         self.bigcommerce_operation_message = "Import Sale Order Process Running..."
         self._cr.commit()
         dbname = self.env.cr.dbname
         db_registry = registry(dbname)
         with api.Environment.manage(), db_registry.cursor() as cr:
             env_thread1 = api.Environment(cr, SUPERUSER_ID, self._context)
-            t = Thread(target=self.bigcommerce_to_odoo_import_orders, args=(from_date,to_date))
+            t = Thread(target=self.bigcommerce_to_odoo_import_orders, args=(from_date,to_date,bigcommerce_order_status))
             t.start()
 
-    def bigcommerce_to_odoo_import_orders(self,from_date=False,to_date=False):
+    def bigcommerce_to_odoo_import_orders(self,from_date=False,to_date=False,bigcommerce_order_status=False):
         with api.Environment.manage():
             new_cr = registry(self._cr.dbname).cursor()
             self = self.with_env(self.env(cr=new_cr))
             sale_order_obj = self.env['sale.order']
-            import_order = sale_order_obj.with_user(1).bigcommerce_to_odoo_import_orders(self.warehouse_id, self,last_modification_date=from_date,today_date=to_date)
+            import_order = sale_order_obj.with_user(1).bigcommerce_to_odoo_import_orders(self.warehouse_id, self,last_modification_date=from_date,today_date=to_date,bigcommerce_order_status=bigcommerce_order_status)
             return import_order
 
     def bigcommerce_customers(self):

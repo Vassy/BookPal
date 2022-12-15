@@ -9,6 +9,32 @@
                 <xpath expr="//button[@name='get_shipped_qty']" position="attributes">
                     <attribute name="attrs">{'invisible': [('bigcommerce_store_id', '=', False)]}</attribute>
                 </xpath>
+                <xpath expr="//page[@name='order_lines']//tree//field[@name='tax_id']" position="attributes">
+                    <attribute name="attrs">
+                        {'column_invisible': ['|', ('parent.fiscal_position_id', '=', False), ('parent.is_avatax', '=', True)]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//page[@name='order_lines']//tree//field[@name='big_commerce_tax']" position="attributes">
+                    <attribute name="attrs">
+                        {'column_invisible': ['|',('parent.bigcommerce_store_id', '=', False), ('parent.fiscal_position_id', '!=', False), ]}
+                    </attribute>
+                    <attribute name="string">BC Tax</attribute>
+                </xpath>
+                <!-- <xpath expr="//field[@name='tax_totals_json']" position="after">
+                    <field name="bc_tax_total" attrs="{'invisible': [('bc_tax_total', '=', 0)]}"/>
+                </xpath> -->
+            </field>
+        </record>
+
+        <record id="bigcommerce_order_search_view_bc_id_filter" model="ir.ui.view">
+            <field name="name">bigcommerce.order.search.view.bc.id.filter</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']" position="after">
+                    <field name="big_commerce_order_id"/>
+                    <field name="bigcommerce_shipment_order_status"/>
+                </xpath>
             </field>
         </record>
     </data>
