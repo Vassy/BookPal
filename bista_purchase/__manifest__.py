@@ -11,6 +11,7 @@
     'depends': ['purchase_pricelist', 'delivery', 'bista_contact', 'bista_sale', 'bista_stock_remarks'],
     'data': [
         'security/ir.model.access.csv',
+        'report/purchase_backorder_view.xml',
         'data/email_schdule_activity.xml',
         'data/email_template.xml',
         'data/po_status_line_data.xml',
@@ -35,9 +36,6 @@
         'views/purchase_tracking_views.xml',
         # 'report/purchase_order.xml',
         'report/stock_picking.xml',
-        'report/purchase_backorder_view.xml',
-
-
     ],
     'auto_install': False,
     'installable': True,
