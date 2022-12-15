@@ -54,7 +54,7 @@
                     </field>
                     <group>
                         <group name="po_conf">
-                            <field name="po_name"/>
+<!--                            <field name="po_name"/>-->
                             <field name="po_conf" style="max-height: 25px;"/>
                             <field name="hours_process" style="max-height: 20px;"/>
                         </group>
