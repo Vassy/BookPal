@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="utm.source" id="utm.utm_source_search_engine">
+            <field name="name">Affiliate</field>
+        </record>
+        <record model="utm.source" id="utm.utm_source_mailing">
+            <field name="name">Authors Unbound</field>
+        </record>
+        <record model="utm.source" id="utm.utm_source_newsletter">
+            <field name="name">Books In Common</field>
+        </record>
+        <record model="utm.source" id="utm.utm_source_facebook">
+            <field name="name">Central Park Speakers</field>
+        </record>
+        <record model="utm.source" id="utm.utm_source_twitter">
+            <field name="name">Client Referral</field>
+        </record>
+        <record model="utm.source" id="utm.utm_source_linkedin">
+            <field name="name">Contact Us Form</field>
+        </record>
+        <record model="utm.source" id="utm.utm_source_monster">
+            <field name="name">Email Request</field>
+        </record>
+        <record model="utm.source" id="utm.utm_source_glassdoor">
+            <field name="name">Existing Client</field>
+        </record>
+        <record model="utm.source" id="utm.utm_source_craigslist">
+            <field name="name">Google Search</field>
+        </record>
+        <record model="utm.source" id="utm_source_incoming_phone_call">
+            <field name="name">Incoming Phone Call</field>
+        </record>
+        <record model="utm.source" id="utm_source_industry_refferel">
+            <field name="name">Industry Referral</field>
+        </record>
+        <record model="utm.source" id="utm_source_price_match_request">
+            <field name="name">Price Match Requested</field>
+        </record>
+        <record model="utm.source" id="utm_source_quote_request_form">
+            <field name="name">Quote Request Form</field>
+        </record>
+        <record model="utm.source" id="utm_source_trade_show_event">
+            <field name="name">Trade Show/Event</field>
+        </record>
+        <record model="utm.source" id="utm_source_website_chat">
+            <field name="name">Website Chat</field>
+        </record>
+        <record model="utm.source" id="utm_source_paid_social">
+            <field name="name">Paid Social</field>
+        </record>
+        <record model="utm.source" id="utm_source_organic_social">
+            <field name="name">Organic Social</field>
+        </record>
+        <record model="utm.source" id="utm_source_product_page">
+            <field name="name">Product Page</field>
+        </record>
+    </data>
+</odoo>

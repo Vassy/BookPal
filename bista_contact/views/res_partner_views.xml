@@ -15,9 +15,11 @@
                             <field name="customer_status"/>
                             <field name="dead_resone" attrs="{'invisible': [('customer_status', '!=', 'dead')]}"/>
                             <field name="block" invisible="1"/>
+                            <field name="email_opt_out"/>
                         </group>
                         <group>
                             <field name="do_not_call"/>
+                            <field name="account_spend"/>
                             <field name="dead_date" attrs="{'invisible': [('customer_status', '!=', 'dead')]}"/>
                         </group>
                     </group>

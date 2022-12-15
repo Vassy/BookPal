@@ -20,7 +20,7 @@
                 <field name="tracking_ref" optional="show"/>
                 <field name="status_id" readonly="1" force_save="1"/>
                 <button name="open_po_line" type="object" icon="fa-eye" class="btn btn-link" style="float:right"/>
-                <button name="action_purchase_history" type="object"  icon="fa-history" style="float:left"/>
+                <button name="action_purchase_history" type="object" icon="fa-history" style="float:left"/>
             </xpath>
             <!--            <xpath expr="//page[@name='products']/field[@name='order_line']" position="before">-->
             <!--                <button name="update_po_lines" string="Update PO Lines" type="object" class="btn-primary"/>-->
@@ -54,7 +54,7 @@
                     </field>
                     <group>
                         <group name="po_conf">
-                            <field name="po_name" />
+                            <field name="po_name"/>
                             <field name="po_conf" style="max-height: 25px;"/>
                             <field name="hours_process" style="max-height: 20px;"/>
                         </group>
@@ -80,6 +80,7 @@
                 <page name="review_order_notes_and_requirements" string="Review Order Notes and Requirements">
                     <group name="review_order_notes_and_requirements" string="Review Order Notes and Requirements">
                         <group>
+                            <field name="status" />
                             <field name="order_notes" style="max-height: 25px;"/>
                         </group>
                         <group>
@@ -93,11 +94,11 @@
                             <field name="ordered_by"/>
                             <field name="ops_project_owner_id"/>
                         </group>
-                        <group name="approved_payment" string="Approved Payment">
-                            <field name="billing_notes" style="max-height: 25px;"/>
-                        </group>
+                        <!--                        <group name="approved_payment" string="Approved Payment">-->
+                        <!--                            <field name="billing_notes" style="max-height: 25px;"/>-->
+                        <!--                        </group>-->
                         <group name="confirm_supplier" string="Confirm Supplier">
-                            <field name="cc_email"/>
+                            <!--                            <field name="cc_email"/>-->
                             <field name="supplier_nuances"/>
                             <field name="minimum_nuances"/>
                             <field name="pre_approval_nuances"/>
@@ -111,6 +112,7 @@
                     <group name="date_delivary_requirements" string="Date And Delivary">
                         <group>
                             <field name="num_of_need_by_days"/>
+                            <field name="need_by_date"/>
                             <field name="future_ship_nuances"/>
                             <field name="shipping_nuances"/>
                             <field name="processing_time_nuances"/>
@@ -150,10 +152,10 @@
                 <page name="financials" string="Financials">
                     <group name="financials" string="Financials">
                         <group>
-                            <field name="supplier_order_number"/>
+                            <!--                            <field name="supplier_order_number"/>-->
+                            <field name="create_uid" string="Created By"/>
                         </group>
                         <group>
-                            <field name="create_uid" string="Created By"/>
                             <field name="write_uid" string="Last Modified By"/>
                         </group>
                     </group>
@@ -281,10 +283,113 @@
         <field name="res_model">po.status.line</field>
         <field name="view_mode">tree,form</field>
     </record>
+    <record id="rush_status_form_view" model="ir.ui.view">
+        <field name="name">rush.status.form.view</field>
+        <field name="model">rush.status</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="rush_status_tree_view" model="ir.ui.view">
+        <field name="name">rush status tree view</field>
+        <field name="model">rush.status</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="rush_status_action" model="ir.actions.act_window">
+        <field name="name">Rush Status</field>
+        <field name="res_model">rush.status</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <record id="shipping_instruction_form_view" model="ir.ui.view">
+        <field name="name">shipping.instruction.form.view</field>
+        <field name="model">shipping.instruction</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="shipping_instruction_tree_view" model="ir.ui.view">
+        <field name="name">shipping.instruction.tree.view</field>
+        <field name="model">shipping.instruction</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="shipping_instruction_action" model="ir.actions.act_window">
+        <field name="name">Shipping Instruction</field>
+        <field name="res_model">shipping.instruction</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <record id="purchase_line_status_form_view" model="ir.ui.view">
+        <field name="name">purchase line status form view</field>
+        <field name="model">purchase.line.status</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="purchase_line_status_tree_view" model="ir.ui.view">
+        <field name="name">purchase.line.status.tree.view</field>
+        <field name="model">purchase.line.status</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="purchase_line_status_action" model="ir.actions.act_window">
+        <field name="name">Purchase Line Status</field>
+        <field name="res_model">purchase.line.status</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
 
     <menuitem
             id="po_status_line_menu"
             action="po_status_line_action"
             parent="purchase.menu_product_in_config_purchase"
             sequence="4"/>
+     <menuitem id="menu_bista_purchase_line_status"
+              name="Status"
+              parent="purchase.menu_procurement_management"
+              action="purchase_line_status_action"
+              sequence="22"/>
+    <menuitem id="menu_bista_purchase_rush_status"
+              name="Rush Status"
+              parent="purchase.menu_product_in_config_purchase"
+              action="rush_status_action"
+              sequence="5"/>
+    <menuitem id="menu_bista_purchase_shipping_instruction"
+              name="Shipping Instruction"
+              parent="purchase.menu_product_in_config_purchase"
+              action="shipping_instruction_action"
+              sequence="6"/>
 </odoo>
