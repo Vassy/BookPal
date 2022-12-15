@@ -76,8 +76,8 @@
                             <field name="is_confirm_ship" invisible="1"/>
                         </group>
 
-                        <!-- <button name="open_sale_multi_ship_wizard" type="object"
-                                icon="fa-truck" string="Import Shipping Data" class="btn-primary" style="float:right"/> -->
+                        <button name="open_sale_multi_ship_wizard" type="object"
+                                icon="fa-truck" string="Import Shipping Data" class="btn-primary" style="float:right"/>
                         <field name="sale_multi_ship_qty_lines" context="{'multi_ship': True}">
                             <tree context="{'multi_ship': True}" decoration-danger="partner_state =='error' and state=='draft'" decoration-success="partner_state =='verified' and state=='draft'" decoration-muted="state == 'cancel' or state == 'short_close'" decoration-warning="qty_delivered and product_qty != qty_delivered" editable="top">
                                 <field name="id" invisible="1"/>

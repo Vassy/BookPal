@@ -21,6 +21,7 @@
                                attrs="{'invisible':['|',('import_product_bc_id_wise','!=',True),('import_operation_of_bc','!=','import_products')],'required':[('import_product_bc_id_wise','=',True)]}"/>
                         <field name="from_order_date" attrs="{'invisible':[('import_operation_of_bc','!=','import_order')],'required':[('import_operation_of_bc','=','import_order')]}"/>
                         <field name="to_order_date" attrs="{'invisible':[('import_operation_of_bc','!=','import_order')],'required':[('import_operation_of_bc','=','import_order')]}"/>
+                        <field name="bigcommerce_order_status" attrs="{'invisible':[('import_operation_of_bc','!=','import_order')],'required':[('import_operation_of_bc','=','import_order')]}"/>
                     </group>
                 </group>
                 <footer>

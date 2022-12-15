@@ -32,6 +32,21 @@ class BigCommerceImportOperation(models.TransientModel):
     to_order_date = fields.Datetime(string="To Date")
     source_of_import_data = fields.Integer(string="Source(Page) Of Import Data", default=1)
     destination_of_import_data = fields.Integer(string="Destination(Page) Of Import Data", default=1)
+    bigcommerce_order_status = fields.Selection([('0', '0 - Incomplete'),
+                                                 ('1', '1 - Pending'),
+                                                 ('2', '2 - Shipped'),
+                                                 ('3', '3 - Partially Shipped'),
+                                                 ('4', '4 - Refunded'),
+                                                 ('5', '5 - Cancelled'),
+                                                 ('6', '6 - Declined'),
+                                                 ('7', '7 - Awaiting Payment'),
+                                                 ('8', '8 - Awaiting Pickup'),
+                                                 ('9', '9 - Awaiting Shipment'),
+                                                 ('10', '10 - Completed'),
+                                                 ('11', '11 - Awaiting Fulfillment'),
+                                                 ('12', '12 - Manual Verification Required'),
+                                                 ('13', '13 - Disputed'),
+                                                 ('14', '14 - Partially Refunded')], default='11')
 
     def do_import_operations(self):
         dbname = self.env.cr.dbname
@@ -66,5 +81,5 @@ class BigCommerceImportOperation(models.TransientModel):
                                args=(self.source_of_import_data, self.destination_of_import_data))
                     t.start()
         elif self.import_operation_of_bc == 'import_order':
-            self.bc_store_instance_id.bigcommerce_to_odoo_import_orders_main(self.from_order_date, self.to_order_date)
+            self.bc_store_instance_id.bigcommerce_to_odoo_import_orders_main(self.from_order_date, self.to_order_date, self.bigcommerce_order_status)
         pass
