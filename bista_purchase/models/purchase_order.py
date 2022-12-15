@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import datetime
+
+from lxml import etree
+
 from odoo import models, fields, _, api
 from odoo.exceptions import ValidationError
-import datetime
 
 
 class PurchaseOrder(models.Model):
@@ -235,7 +238,26 @@ class PurchaseOrder(models.Model):
             "target": "new",
         }
 
-
+    @api.model
+    def _fields_view_get(
+        self, view_id=None, view_type="form", toolbar=False, submenu=False
+    ):
+        result = super()._fields_view_get(view_id, view_type, toolbar, submenu)
+        if view_type != "form":
+            return result
+        if not self.env.user.has_group("purchase.group_purchase_manager"):
+            attrs = "{'readonly': [('state', 'not in', ['draft', 'sent'])]}"
+            doc = etree.XML(result["arch"])
+            for field in doc.xpath("//field"):
+                if (
+                    field.attrib.get("invisible") == "1"
+                    or field.attrib.get("readonly") == "1"
+                    or field.attrib["name"] not in self._fields
+                ):
+                    continue
+                field.attrib["attrs"] = attrs
+            result["arch"] = etree.tostring(doc)
+        return result
 
 class RushStatus(models.Model):
     _name = "rush.status"
