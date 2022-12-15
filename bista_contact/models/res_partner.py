@@ -30,6 +30,7 @@ class ResPartner(models.Model):
     first_order_date = fields.Datetime('First Order Date', compute='get_first_order_date')
     last_order_date = fields.Datetime('Last Order Date', compute='get_first_order_date')
     sale_product_ids = fields.Many2many('product.product', string='Sale Products', compute='get_ordered_product')
+    purchase_product_ids = fields.Many2many('product.product', string='Purchase Products', compute='get_vendor_ordered_product')
     block_reason = fields.Char('Reason')
     block = fields.Boolean('Block')
     account_order_standing = fields.Selection([
@@ -126,3 +127,11 @@ class ResPartner(models.Model):
         if self._context.get('show_vat') and partner.vat:
             name = "%s ‒ %s" % (name, partner.vat)
         return name
+
+    def get_vendor_ordered_product(self):
+        """To get Purchase Products"""
+        self.purchase_product_ids = False
+        if self.purchase_order_count > 0:
+            product_list = self.purchase_line_ids.filtered(
+                lambda a: a.product_id.detailed_type != 'service').mapped('product_id')
+            self.purchase_product_ids = [(6, 0, product_list.ids)]

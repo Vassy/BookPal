@@ -8,7 +8,7 @@ import datetime
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
-    po_name = fields.Char(string="Purchase Order Name", related="name")
+    # po_name = fields.Char(string="Purchase Order Name", related="name")
     po_conf = fields.Text(string='PO Conf #')
     clock_start_override = fields.Date(string='Clock Starts Override')
     clock_override_reason = fields.Text(string='Clock Starts Override Reason')

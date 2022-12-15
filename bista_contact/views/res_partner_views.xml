@@ -45,6 +45,8 @@
                             <field name="source"/>
                             <field name="source_notes"/>
                             <field name="referal_source"/>
+                            <separator string="Products Purchase"/>
+                            <field name="purchase_product_ids" nolabel="1" widget="many2many_tags"/>
                         </group>
                     </group>
                 </page>
