@@ -16,6 +16,7 @@
         'data/po_status_line_data.xml',
         'data/ir_sequence_data.xml',
         'data/email_schdule_activity.xml',
+        'data/master_data_all_file.xml',
         'views/res_partner_views.xml',
         'views/purchase_views.xml',
         'views/stock_picking_views.xml',
@@ -34,7 +35,8 @@
         'views/purchase_tracking_views.xml',
         # 'report/purchase_order.xml',
         'report/stock_picking.xml',
-        
+        'report/purchase_backorder_view.xml',
+
 
     ],
     'auto_install': False,

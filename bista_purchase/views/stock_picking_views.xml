@@ -13,7 +13,7 @@
                        domain="[('id', 'in', applicable_tracking_ids)]" context="{'shipping_selection':1}"/>
             </xpath>
             <xpath expr="//page[@name='note']" position="after">
-                <page name="nuances" string="Nuances">
+                <page name="nuances" string="Nuances"  attrs="{'invisible':[('picking_type_code','!=','incoming')]}">
                     <group>
                         <group>
                             <field name="shipping_acct_nuances"/>

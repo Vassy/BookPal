@@ -8,21 +8,22 @@ import datetime
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
-    po_name = fields.Char(string="Purchase Order Name")
+    # po_name = fields.Char(string="Purchase Order Name", related="name")
     po_conf = fields.Text(string='PO Conf #')
     clock_start_override = fields.Date(string='Clock Starts Override')
     clock_override_reason = fields.Text(string='Clock Starts Override Reason')
     hours_process = fields.Char(string='Hours to Process')
 
     # Review Order Notes and Requirements
+    status = fields.Many2one('purchase.line.status', string='Status')
     order_notes = fields.Text(string='Order Notes')
     fulfilment_project = fields.Boolean(string="Fulfilment Project")
     ordered_by = fields.Many2one(
-        related="sale_order_ids.partner_id", string="Ordered By")
+        related="order_line.partner_id", string="Ordered By")
     ops_project_owner_id = fields.Many2one(
         'res.users', string='Ops Project Owner')
-    billing_notes = fields.Text(string="Billing Notes")
-    cc_email = fields.Char(string="CC Email")
+    # billing_notes = fields.Text(string="Billing Notes")
+    # cc_email = fields.Char(string="CC Email")
     supplier_nuances = fields.Text(
         string="Supplier Nuances", related="partner_id.supplier_nuances")
     minimum_nuances = fields.Text(
@@ -49,10 +50,10 @@ class PurchaseOrder(models.Model):
     author_event_shipping_naunces = fields.Text(string="Author Event Shipping Nuances",
                                                 related="partner_id.author_event_shipping_naunces")
     rush_status_id = fields.Many2one('rush.status', string='Rush Status')
-    shipping_instructions = fields.Char(string='Shipping Instructions')
-    order_shipping_desc = fields.Char(string='Order Shipping Description')
-    default_supplier_shipping = fields.Char(string='Default Supplier Shipping')
-    freight_charges = fields.Text(string='Freight Charges')
+    shipping_instructions = fields.Many2one('shipping.instruction', string='Shipping Instructions')
+    order_shipping_desc = fields.Text(string='Order Shipping Description', related="partner_id.shipping_notes")
+    default_supplier_shipping = fields.Many2one(string='Default Supplier Shipping', related="partner_id.default_shipping_id")
+    freight_charges = fields.Float(string='Freight Charges',related="partner_id.default_frieght_charges")
     rush_shipping_nuances = fields.Text(
         string="Rush Shipping Nuances", related="partner_id.rush_processing_nuances")
     shipping_acct_nuances = fields.Text(
@@ -66,6 +67,7 @@ class PurchaseOrder(models.Model):
     memo = fields.Text(string="Memo")
     supplier_order_number = fields.Char(string="Supplier Order Number")
     num_of_need_by_days = fields.Text(string='Num of Need By Days')
+    need_by_date = fields.Date(String="Need By Date")
     sale_order_ids = fields.Many2many(
         'sale.order', compute="compute_sale_order_ids")
     purchase_tracking_ids = fields.One2many(
@@ -154,14 +156,14 @@ class PurchaseOrder(models.Model):
             'domain': (['id', 'in', po_lines.ids]),
         }
 
-    @api.onchange('partner_id')
-    def onchange_partner_id_cc_email(self):
-        self.cc_email = self.partner_id.cc_email
+    # @api.onchange('partner_id')
+    # def onchange_partner_id_cc_email(self):
+    #     self.cc_email = self.partner_id.cc_email
 
-        # def _prepare_picking(self):
-        #     res = super(PurchaseOrder, self)._prepare_picking()
-        #     res.update({'note': self.special_pick_note})
-        #     return res
+    # def _prepare_picking(self):
+    #     res = super(PurchaseOrder, self)._prepare_picking()
+    #     res.update({'note': self.special_pick_note})
+    #     return res
 
     @api.constrains('order_line')
     def _check_exist_product_in_line(self, vals=False):
@@ -181,10 +183,10 @@ class PurchaseOrder(models.Model):
                     if vals.id in products_in_lines:
                         if vals.id == line.product_id.id:
                             product_name = product_name + \
-                                      '[' + line.product_id.default_code + '] ' + \
-                                      line.product_id.name
+                                           '[' + line.product_id.default_code + '] ' + \
+                                           line.product_id.name
                 exist_product_list.append(line.product_id.id)
-            duplicate_product_list  = set([x for x in exist_product_list if exist_product_list.count(x) > 1])
+            duplicate_product_list = set([x for x in exist_product_list if exist_product_list.count(x) > 1])
             if duplicate_product_list and len(list(duplicate_product_list)) > 1:
                 raise ValidationError(
                     _(' Following products are already added in line, you can Update the qty there. ' + products_list))
@@ -195,7 +197,6 @@ class PurchaseOrder(models.Model):
                 raise ValidationError(
                     _(product_name + ' is already added in line, you can Update the qty there.'))
 
-
     def compute_lead_time(self):
         for rec in self:
             rec.lead_time = 0
@@ -203,8 +204,9 @@ class PurchaseOrder(models.Model):
                 rec.lead_time = False
                 date_list = rec.picking_ids.mapped('scheduled_date')
                 val = sorted(date_list, reverse=True)
-                date_time = val[0].date() - rec.date_approve.date()
-                rec.lead_time = date_time.days
+                if val:
+                    date_time = val[0].date() - rec.date_approve.date()
+                    rec.lead_time = date_time.days
 
     def compute_order_process_time(self):
         for rec in self:
@@ -240,6 +242,31 @@ class PurchaseOrder(models.Model):
 class RushStatus(models.Model):
     _name = "rush.status"
     _description = 'Rush Status model details.'
+    _order = "sequence"
+
+    name = fields.Char('Name')
+    sequence = fields.Integer(string="Sequence", default=0)
+    active = fields.Boolean(string="Archived", default=True)
+
+
+class ShippingInstruction(models.Model):
+    _name = "shipping.instruction"
+    _description = 'Shipping Instruction model details.'
+    _order = "sequence"
+
+    name = fields.Char('Name')
+    sequence = fields.Integer(string="Sequence", default=0)
+    active = fields.Boolean(string="Archived", default=True)
+
+
+class PurchaseLineStatus(models.Model):
+    _name = "purchase.line.status"
+    _description = 'Purchase Order Line Status model details.'
+    _order = "sequence"
+
+    name = fields.Char('Name')
+    sequence = fields.Integer(string="Sequence", default=0)
+    active = fields.Boolean(string="Archived", default=True)
 
 
 class PurchaseOrderLine(models.Model):
