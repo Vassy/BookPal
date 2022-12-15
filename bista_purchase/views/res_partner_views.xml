@@ -49,9 +49,9 @@
                     <field name="availability_check"/>
                 </group>
             </xpath>
-            <xpath expr="//field[@name='property_account_payable_id']" position="after">
-                <field name="invoice_issues_contact"/>
-            </xpath>
+<!--            <xpath expr="//field[@name='property_account_payable_id']" position="after">-->
+<!--                <field name="invoice_issues_contact"/>-->
+<!--            </xpath>-->
             <xpath expr="//notebook" position="inside">
                 <page name="nuances" string="Nuances">
                     <group>
@@ -80,7 +80,7 @@
                     <group>
                         <group>
                             <field name="dropship_applicable"/>
-                            <field name="transfer_to_bp_warehouse"/>
+<!--                            <field name="transfer_to_bp_warehouse"/>-->
                             <!-- <field name="warehouse_zip_code"/> -->
                             <!-- <field name="warehouse_address"/> -->
                             <field name="default_shipping_id"/>

@@ -17,6 +17,8 @@ class ResPartner(models.Model):
     dead_resone = fields.Char('Dead Reasone')
     dead_date = fields.Datetime('Dead Date')
     do_not_call = fields.Boolean('DO Not Call')
+    email_opt_out = fields.Boolean(string="Email Opt Out", default=False)
+    account_spend = fields.Float(string="Account Spend")
 
     # Important Details
     source = fields.Char('Source')

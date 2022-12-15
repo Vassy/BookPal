@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, _, api
+from odoo.exceptions import ValidationError
 
 
 class ResPartner(models.Model):
@@ -42,7 +43,7 @@ class ResPartner(models.Model):
 
     # Shipping Info
     dropship_applicable = fields.Boolean(string="Dropship")
-    transfer_to_bp_warehouse = fields.Boolean(string="Transfer to BookPal Warehouse")
+    # transfer_to_bp_warehouse = fields.Boolean(string="Transfer to BookPal Warehouse")
     # warehouse_zip_code = fields.Char(string="Warehouse Zip Code")
     # warehouse_address = fields.Char(string="Warehouse Address")
     default_shipping_id = fields.Many2one('delivery.carrier', "Default Shipping")
@@ -74,7 +75,8 @@ class ResPartner(models.Model):
 
     def _compute_product_count(self):
         for partner_id in self:
-            product_tmpl_ids = self.env['product.supplierinfo'].search([('name','=',partner_id.id)]).mapped('product_tmpl_id')
+            product_tmpl_ids = self.env['product.supplierinfo'].search([('name', '=', partner_id.id)]).mapped(
+                'product_tmpl_id')
             partner_id.product_count = len(product_tmpl_ids)
             partner_id.product_tmpl_ids = product_tmpl_ids
 
@@ -98,6 +100,12 @@ class ResPartner(models.Model):
     def _onchange_contact_type(self):
         if self.type != 'contact':
             self.is_primary = False
+
+    @api.constrains('default_frieght_charges')
+    def warning_default_frieght_charges(self):
+        if self.default_frieght_charges < 0:
+            raise ValidationError("Default frieght charges  value is negative,add positive value.")
+
 
 class ResPartnerShipping(models.Model):
     _name = 'res.partner.shipping'
