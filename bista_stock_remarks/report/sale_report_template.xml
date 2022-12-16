@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_saleorder_document_note" inherit_id="sale.report_saleorder_document">
-        <xpath expr="//table[hasclass('table','table-sm','o_main_table')]" position="before">
+        <xpath expr="//div[hasclass('oe_structure')]" position="after">
             <div>
                 <h5 style="margin-top:50px;border-bottom:solid 1px;">Special Instructions and Notes</h5>
                 <div>
