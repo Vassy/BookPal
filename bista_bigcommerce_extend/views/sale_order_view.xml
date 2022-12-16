@@ -20,9 +20,6 @@
                     </attribute>
                     <attribute name="string">BC Tax</attribute>
                 </xpath>
-                <!-- <xpath expr="//field[@name='tax_totals_json']" position="after">
-                    <field name="bc_tax_total" attrs="{'invisible': [('bc_tax_total', '=', 0)]}"/>
-                </xpath> -->
             </field>
         </record>
 
@@ -34,6 +31,11 @@
                 <xpath expr="//field[@name='order_line']" position="after">
                     <field name="big_commerce_order_id"/>
                     <field name="bigcommerce_shipment_order_status"/>
+                </xpath>
+                <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
+                    <filter string="Normal Order" name="normal_order" domain="[('big_commerce_order_id', '=', False)]"/>
+                    <filter string="Big commerce Order" name="big_commere_order" domain="[('big_commerce_order_id', '!=', False)]"/>
+
                 </xpath>
             </field>
         </record>

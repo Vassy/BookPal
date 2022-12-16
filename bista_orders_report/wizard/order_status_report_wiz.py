@@ -65,7 +65,6 @@ class SaleOrderReportWiz(models.TransientModel):
             # report_name = "Purchase Order Status Report"
             action = self.env.ref(
                 'bista_orders_report.'
-                'action_purchase_order_line_status').read()[0]
+                'action_purchase_order_line_status').sudo().read()[0]
             action.update({'domain': domain})
             return action
-
