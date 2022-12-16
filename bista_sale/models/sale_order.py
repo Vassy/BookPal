@@ -151,5 +151,5 @@ class SaleOrderLine(models.Model):
                 lambda s: not s.company_id or s.company_id == self.company_id
             )[:1]
             if vendor:
-                self.supplier_id = vendor.name.id
+                self.supplier_id = vendor.filtered(lambda x: x.name.is_primary).name.id if vendor.filtered(lambda x: x.name.is_primary) else vendor[:1].name.id
         return res
