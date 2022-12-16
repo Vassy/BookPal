@@ -152,6 +152,10 @@ class PurchaseTrackingLine(models.Model):
             ).mapped("ship_qty")
             line.pending_shipment_qty = line.ordered_qty - sum(total_ship_qty)
 
+    @api.onchange("ship_qty")
+    def _onchange_ship_qty(self):
+        self.pending_shipment_qty = self.pending_shipment_qty - self.ship_qty
+
     @api.onchange("checkbox")
     def _onchange_checkbox(self):
         if self.checkbox:
