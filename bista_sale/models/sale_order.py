@@ -111,9 +111,9 @@ class SaleOrderLine(models.Model):
     def _compute_amount(self):
         super()._compute_amount()
         for line in self:
-            price = line.currency_id.round(
-                line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            )
+            price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+            if line.currency_id:
+                price = line.currency_id.round(price)
             taxes = line.tax_id.compute_all(
                 price,
                 line.order_id.currency_id,
