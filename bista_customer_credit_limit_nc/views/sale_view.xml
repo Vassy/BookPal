@@ -4,7 +4,7 @@
         <field name="name">sale.order.form.for.credit.inherit</field>
         <field name="model">sale.order</field>
         <field name="type">form</field>
-        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="inherit_id" ref="bista_sales_approval.sale_order_approval_button_inherit" />
         <field name="arch" type="xml">
             <field name="user_id" position="after">
                 <field name="confirm_check" invisible="1" />
@@ -13,8 +13,17 @@
                 <attribute name="attrs">{"invisible": ["|", ("confirm_check", "=", True), ("state", "!=", "order_booked")]}</attribute>
                 <attribute name="states" />
             </xpath>
+            <xpath expr="//button[@name='action_approval']" position="attributes">
+                <attribute name="attrs">{"invisible": ["|", ("confirm_check", "=", True), ("state", "!=", "order_booked")]}</attribute>
+                <attribute name="states" />
+            </xpath>
             <xpath expr="//button[@name='action_quotation_send']" position="after">
-                <button name="action_check_credit_for_approval" type="object" string="Send For Order Approval" class="btn-primary"
+                <button name="action_override_and_send_for_approve" type="object" string="Override Credit Limit"
+                    class="btn-primary" groups="bista_customer_credit_limit_nc.group_credit_limit"
+                    attrs="{'invisible': ['|', ('confirm_check', '=', False), ('state', '!=', 'order_booked')]}"
+                    confirm="Are you sure you want to Override the Credit Limit for this Contact?" />
+                <button name="action_check_credit_for_approval" type="object" string="Send For Credit Review"
+                    class="btn-primary" groups="bista_sales_approval.group_create_sale_order"
                     attrs="{'invisible': ['|', ('confirm_check', '=', False), ('state', '!=', 'order_booked')]}"
                     confirm="Credit Limit Crossed For this Customer. Hence, Order Needs to be reviewed and then Approved." />
                 <button name="action_override_and_send_for_approve" type="object" string="Override Credit Limit"
@@ -52,13 +61,23 @@
         </field>
     </record>
 
+    <record id="view_sales_order_filter_credit_limit" model="ir.ui.view">
+        <field name="name">sale.order.inherit.credit.limit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="bista_sales_approval.sale_order_view_search_quotation_approval" />
+        <field name="arch" type="xml">
+            <filter name="order_approval" position="after">
+                <filter string="Credit Review" name="credit_review" domain="[('state', '=', 'credit_review')]"/>
+            </filter>
+        </field>
+    </record>
+
     <record id="action_orders_credit_review" model="ir.actions.act_window">
         <field name="name">Credit Reviews</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">sale.order</field>
         <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
         <field name="search_view_id" ref="sale.view_sales_order_filter" />
-        <field name="context">{}</field>
         <field name="domain">[("state", "=", "credit_review")]</field>
         <field name="help" type="html">
             <p class="oe_view_nocontent_create">

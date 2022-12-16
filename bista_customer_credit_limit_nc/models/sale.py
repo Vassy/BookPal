@@ -22,6 +22,17 @@ class SaleOrder(models.Model):
         related="partner_id.available_credit_limit"
     )
 
+    def trigger_order_action(self):
+        action = super().trigger_order_action()
+        if self.env.user.has_group("bista_customer_credit_limit_nc.group_credit_limit"):
+            action["context"].update({"search_default_credit_review": 1})
+            if (
+                "search_default_order_approval" in action["context"]
+                or "search_default_booked_order" in action["context"]
+            ):
+                action["context"].update({"search_default_groupby_state": 1})
+        return action
+
     def action_override_and_send_for_approve(self):
         for rec in self:
             rec._create_sale_approval_log("Overriden Credit Limit")
