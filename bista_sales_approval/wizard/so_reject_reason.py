@@ -14,16 +14,13 @@ class SaleOrderRejectReason(models.TransientModel):
     _description = "Reason for Rejection"
 
     sale_id = fields.Many2one("sale.order", ondelete="cascade")
-    note = fields.Text(string="Reason for rejection")
+    note = fields.Text(string="Reason for rejection", required=True)
 
     def update_reject_reason(self):
-        sale_data = {
-            "state": "draft",
-            "signature": False,
-            "signed_by": False,
-            "signed_on": False,
-        }
-        self.sale_id.write(sale_data)
+        state = "order_booked"
+        if self.sale_id.state == "quote_approval":
+            state = "draft"
+        self.sale_id.write({"state": state})
         log_data = {
             "sale_id": self.sale_id.id,
             "done_action": "Quote Rejected",

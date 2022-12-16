@@ -8,13 +8,16 @@
             <button name="action_cancel" position="attributes">
                 <attribute name="attrs">{"invisible": [("state", "in", ["done", "cancel"])]}</attribute>
             </button>
+            <button name="action_draft" position="attributes">
+                <attribute name="groups">bista_sales_approval.group_create_sale_quote</attribute>
+            </button>
             <xpath expr="//button[@name='action_quotation_send']" position="attributes">
                 <attribute name="states">quote_confirm</attribute>
             </xpath>
             <xpath expr="//button[@name='action_quotation_send']" position="after">
                 <button name="action_quote_confirm" string="Approve Quotation" type="object" class="btn-primary" states="draft" groups="bista_sales_approval.group_approve_sale_quote" />
-                <button name="action_send_quote_approval" string="Send For Quotation Approval" type="object" class="btn-primary" states="draft" />
-                <button name="action_quote_confirm" string="Approve" type="object" states="quote_approval"
+                <button name="action_send_quote_approval" string="Send For Quotation Approval" type="object" class="btn-primary" states="draft" groups="bista_sales_approval.group_create_sale_quote" />
+                <button name="action_quote_confirm" string="Quote Approve" type="object" states="quote_approval"
                     groups="bista_sales_approval.group_approve_sale_quote" class="btn-primary" />
                 <button name="action_reject" string="Reject" type="object" states="quote_approval"
                     groups="bista_sales_approval.group_approve_sale_quote" class="btn-primary" />
@@ -25,7 +28,7 @@
                     confirm="Please confirm multishipment details (if any), routes, vendor, discount, etc before Approving." />
                 <button name="action_send_for_approval" string="Send For Order Approval" type="object" class="btn-primary"
                     states="order_booked" groups="bista_sales_approval.group_create_sale_order" />
-                <button name="action_approval" string="Approve" type="object" states="pending_for_approval"
+                <button name="action_approval" string="Order Approve" type="object" states="pending_for_approval"
                     groups="bista_sales_approval.group_approve_sale_order" class="btn-primary"
                     confirm="Please confirm multishipment details (if any), routes, vendor, discount, etc before Approving." />
                 <button name="action_reject" string="Reject" type="object" states="pending_for_approval"
