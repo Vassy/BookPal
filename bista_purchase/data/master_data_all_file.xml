@@ -162,9 +162,8 @@
         <record model="purchase.line.status" id="purchase_line_status_9">
             <field name="name">Express WW (DHL)</field>
             <field name="sequence">9</field>
-        </record>
-        <record model="purchase.line.status" id="purchase_line_status_10">
-            <field name="name">Express WW (DHL)</field>
+        </record>       <record model="purchase.line.status" id="purchase_line_status_10">
+            <field name="name"> Express A.M. (DHL))</field>
             <field name="sequence">10</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_11">
