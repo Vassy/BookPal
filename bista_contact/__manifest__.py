@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Bista Contact',
-    'version': '15.0.1.1.1',
+    'version': '15.0.1.2.1',
     'description': 'Manage Conatct',
     'category': 'Contact',
     'summary': 'Manage Conatct',
     'website': 'http://www.bistasolutions.com',
     'license': 'AGPL-3',
-    'depends': ['base','product'],
+    'depends': ['base', 'product'],
     'data': [
         'security/ir.model.access.csv',
 
