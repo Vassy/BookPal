@@ -116,6 +116,7 @@ class StockRule(models.Model):
             shipping_date = fields.Datetime.to_string(
                 values.get('ship_line').shipping_date)
             dom += (('date_order', '=', shipping_date),)
+        dom += (("date_order", "=", values.get("date_planned")),)
         return dom
 
 
