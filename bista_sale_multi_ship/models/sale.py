@@ -66,9 +66,13 @@ class SaleOrder(models.Model):
                 rec.is_confirm_ship = False
 
     def action_approval(self):
-        if self.split_shipment and self.sale_multi_ship_qty_lines.filtered(lambda sp: not sp.route_id):
+        if self.split_shipment and self.sale_multi_ship_qty_lines.filtered(
+            lambda sp: not sp.route_id and sp.product_id.type != "service"
+        ):
             raise ValidationError("Please set routes on shipment lines.")
-        if not self.split_shipment and self.order_line.filtered(lambda l: not l.route_id):
+        if not self.split_shipment and self.order_line.filtered(
+            lambda l: not l.route_id and l.product_id.type != "service"
+        ):
             raise ValidationError("Please set routes on order lines.")
         return super().action_approval()
 
