@@ -58,7 +58,8 @@ class SaleOrder(models.Model):
     refer_by_person = fields.Char('Referring Person')
     account_order_standing = fields.Selection(related="partner_id.account_order_standing",
                                               string='Account Order Standing', store=True)
-    customer_email_add = fields.Char('Customer Email Address', related='partner_id.email')
+    # customer_email_add = fields.Char(
+    #     'Customer Email Address', related='partner_id.email')
     saving_amount = fields.Monetary(
         "Total Saving Amount", compute="_amount_all", store=True
     )

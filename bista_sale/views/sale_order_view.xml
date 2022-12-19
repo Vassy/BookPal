@@ -60,7 +60,7 @@
                             <field name="account_order_standing" decoration-danger="account_order_standing == 'high'"
                                    decoration-warning="account_order_standing == 'medium'"
                                    decoration-success="account_order_standing == 'low'"/>
-                            <field name="customer_email_add"/>
+                            <!-- <field name="customer_email_add"/> -->
                         </group>
                     </group>
                 </page>
@@ -109,7 +109,7 @@
                 </page>
             </xpath>
             <xpath expr="//notebook/page[@name='journal_details']" position="after">
-                <page string="Project Tracking" name="project_fulfilment_trac">
+                <page string="Fulfillment Project" name="project_fulfilment_trac">
                     <group>
                         <group name="project_fulfilment_tracking">
                             <field name="fulfilment_project"/>

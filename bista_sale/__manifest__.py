@@ -1,6 +1,6 @@
 {
     'name': 'Bista Sale',
-    'version': '15.0.1.0.0',
+    'version': '15.0.1.1.0',
     'description': 'Manage Sale order',
     'category': 'Sale',
     'summary': 'Manage Sale',
