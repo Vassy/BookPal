@@ -55,8 +55,9 @@ class PurchaseOrder(models.Model):
     rush_status_id = fields.Many2one('rush.status', string='Rush Status')
     shipping_instructions = fields.Many2one('shipping.instruction', string='Shipping Instructions')
     order_shipping_desc = fields.Text(string='Order Shipping Description', related="partner_id.shipping_notes")
-    default_supplier_shipping = fields.Many2one(string='Default Supplier Shipping', related="partner_id.default_shipping_id")
-    freight_charges = fields.Float(string='Freight Charges',related="partner_id.default_frieght_charges")
+    default_supplier_shipping = fields.Many2one(string='Default Supplier Shipping',
+                                                related="partner_id.default_shipping_id")
+    freight_charges = fields.Float(string='Freight Charges', related="partner_id.default_frieght_charges")
     rush_shipping_nuances = fields.Text(
         string="Rush Shipping Nuances", related="partner_id.rush_processing_nuances")
     shipping_acct_nuances = fields.Text(
@@ -179,15 +180,22 @@ class PurchaseOrder(models.Model):
             for line in purchase.order_line:
                 if not vals:
                     if line.product_id.id in exist_product_list:
-                        products_list = products_list + '\n' + \
-                                        '[' + line.product_id.default_code + '] ' + \
-                                        line.product_id.name
+                        if line.product_id.default_code:
+                            products_list = products_list + \
+                                            '[' + line.product_id.default_code + '] ' + \
+                                            line.product_id.name
+                        else:
+                            products_list = products_list + line.product_id.name
                 else:
                     if vals.id in products_in_lines:
                         if vals.id == line.product_id.id:
-                            product_name = product_name + \
-                                           '[' + line.product_id.default_code + '] ' + \
-                                           line.product_id.name
+                            if line.product_id.default_code:
+                                product_name = product_name + \
+                                               '[' + line.product_id.default_code + '] ' + \
+                                               line.product_id.name
+                            else:
+                                product_name = product_name + line.product_id.name
+
                 exist_product_list.append(line.product_id.id)
             duplicate_product_list = set([x for x in exist_product_list if exist_product_list.count(x) > 1])
             if duplicate_product_list and len(list(duplicate_product_list)) > 1:
@@ -242,7 +250,7 @@ class PurchaseOrder(models.Model):
 
     @api.model
     def _fields_view_get(
-        self, view_id=None, view_type="form", toolbar=False, submenu=False
+            self, view_id=None, view_type="form", toolbar=False, submenu=False
     ):
         result = super()._fields_view_get(view_id, view_type, toolbar, submenu)
         if view_type != "form":
@@ -252,14 +260,15 @@ class PurchaseOrder(models.Model):
             doc = etree.XML(result["arch"])
             for field in doc.xpath("//field"):
                 if (
-                    field.attrib.get("invisible") == "1"
-                    or field.attrib.get("readonly") == "1"
-                    or field.attrib["name"] not in self._fields
+                        field.attrib.get("invisible") == "1"
+                        or field.attrib.get("readonly") == "1"
+                        or field.attrib["name"] not in self._fields
                 ):
                     continue
                 field.attrib["attrs"] = attrs
             result["arch"] = etree.tostring(doc)
         return result
+
 
 class RushStatus(models.Model):
     _name = "rush.status"
