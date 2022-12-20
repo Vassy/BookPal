@@ -3,6 +3,12 @@
 from odoo import _, api, fields, models
 
 
+class ProductTemplate(models.Model):
+    _inherit = "product.template"
+
+    is_never_report = fields.Boolean(string="Never Report", default=False)
+
+
 class ProductProduct(models.Model):
     _inherit = "product.product"
 

@@ -63,6 +63,14 @@ class SaleOrder(models.Model):
     saving_amount = fields.Monetary(
         "Total Saving Amount", compute="_amount_all", store=True
     )
+    is_report = fields.Boolean(string='Report', default=True, tracking=True)
+    reason = fields.Char(string='Reason')
+    report_type = fields.Selection([
+                    ('individual', 'Individual'),
+                    ('bulk', 'Bulk'),
+                    ('mixed', 'Mixed'),
+                ], string='Report Type')
+    report_notes = fields.Text(string='Reporting Notes')
 
     @api.depends("order_line.price_total")
     def _amount_all(self):
@@ -92,6 +100,11 @@ class SaleOrder(models.Model):
             raise ValidationError("customization cost value is negative,add positive value.")
         if self.shipping_cost < 0:
             raise ValidationError("shipping cost  value is negative,add positive value.")
+
+    @api.onchange('fulfilment_project')
+    def onchange_fulfilment_project(self):
+        if self.fulfilment_project:
+            self.report_type = 'individual'
 
 
 class SaleOrderLine(models.Model):
