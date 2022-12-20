@@ -146,6 +146,16 @@
                     </group>
                 </page>
             </xpath>
+            <xpath expr="//notebook/page[last()]" position="after">
+                <page name='best_seller_report' string='Best Seller Report'>
+                    <group>
+                        <field name="is_report" />
+                        <field name="reason" attrs="{'invisible': [('is_report', '=', True)], 'required': [('is_report', '=', False)]}"/>
+                        <field name="report_type" />
+                        <field name="report_notes" />
+                    </group>
+                </page>
+            </xpath>
         </field>
     </record>
 </odoo>

@@ -8,3 +8,4 @@ from . import death_type
 from . import journal_customization
 from . import customization_type
 from . import product
+from . import seller_report
