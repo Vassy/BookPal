@@ -180,22 +180,17 @@ class PurchaseOrder(models.Model):
             for line in purchase.order_line:
                 if not vals:
                     if line.product_id.id in exist_product_list:
-                        if line.product_id.default_code:
-                            products_list = products_list + \
-                                            '[' + line.product_id.default_code + '] ' + \
-                                            line.product_id.name
-                        else:
-                            products_list = products_list + line.product_id.name
+                        product_ref = '' if not line.product_id.default_code else '[' + line.product_id.default_code + '] '
+                        products_list = products_list + '\n' + \
+                                        product_ref + \
+                                        line.product_id.name
                 else:
                     if vals.id in products_in_lines:
                         if vals.id == line.product_id.id:
-                            if line.product_id.default_code:
-                                product_name = product_name + \
-                                               '[' + line.product_id.default_code + '] ' + \
-                                               line.product_id.name
-                            else:
-                                product_name = product_name + line.product_id.name
-
+                            product_ref = '' if not line.product_id.default_code else '[' + line.product_id.default_code + ']'
+                            product_name = product_name + \
+                                           product_ref + \
+                                           line.product_id.name
                 exist_product_list.append(line.product_id.id)
             duplicate_product_list = set([x for x in exist_product_list if exist_product_list.count(x) > 1])
             if duplicate_product_list and len(list(duplicate_product_list)) > 1:

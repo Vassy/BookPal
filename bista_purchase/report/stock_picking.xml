@@ -68,9 +68,9 @@
                         </span>
                         <t t-if="o.move_ids_without_package[0].partner_id.parent_id.name">
                             <div>
-                                <span t-field="o.move_ids_without_package[0].partner_id.parent_id.name"/>
-                                <br/>
                                 <span t-field="o.move_ids_without_package[0].partner_id.name"/>
+                                <br/>
+                                <span t-field="o.move_ids_without_package[0].partner_id.parent_id.name"/>
                             </div>
                             <div t-field="o.move_ids_without_package[0].partner_id"
                                  t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
@@ -86,9 +86,9 @@
                         </span>
                         <t t-if="o.picking_type_id.warehouse_id.partner_id.parent_id.name">
                             <div>
-                                <span t-field="o.picking_type_id.warehouse_id.partner_id.parent_id.name"/>
-                                <br/>
                                 <span t-field="o.picking_type_id.warehouse_id.partner_id.name"/>
+                                <br/>
+                                <span t-field="o.picking_type_id.warehouse_id.partner_id.parent_id.name"/>
                             </div>
                             <div t-field="o.picking_type_id.warehouse_id.partner_id"
                                  t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
@@ -118,9 +118,9 @@
                     <div t-if="o.partner_id" name="partner_header">
                         <t t-if="o.partner_id.parent_id.name">
                             <div>
-                                <span t-field="o.partner_id.parent_id.name"/>
-                                <br/>
                                 <span t-field="o.partner_id.name"/>
+                                <br/>
+                                <span t-field="o.partner_id.parent_id.name"/>
                             </div>
                             <div t-field="o.partner_id"
                                  t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
@@ -191,9 +191,9 @@
                             </span>
                             <t t-if="o.move_ids_without_package[0].partner_id.parent_id.name">
                                 <div>
-                                    <span t-field="o.move_ids_without_package[0].partner_id.parent_id.name"/>
-                                    <br/>
                                     <span t-field="o.move_ids_without_package[0].partner_id.name"/>
+                                    <br/>
+                                    <span t-field="o.move_ids_without_package[0].partner_id.parent_id.name"/>
                                 </div>
                                 <div t-field="o.move_ids_without_package[0].partner_id"
                                      t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
@@ -209,9 +209,9 @@
                             </span>
                             <t t-if="o.picking_type_id.warehouse_id.partner_id.parent_id.name">
                                 <div>
-                                    <span t-field="o.picking_type_id.warehouse_id.partner_id.parent_id.name"/>
-                                    <br/>
                                     <span t-field="o.picking_type_id.warehouse_id.partner_id.name"/>
+                                    <br/>
+                                    <span t-field="o.picking_type_id.warehouse_id.partner_id.parent_id.name"/>
                                 </div>
                                 <div t-field="o.picking_type_id.warehouse_id.partner_id"
                                      t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
@@ -243,9 +243,9 @@
                         <div t-if="partner" name="partner_header">
                             <t t-if="partner.commercial_partner_id.parent_id.name">
                                 <div>
-                                    <span t-field="partner.commercial_partner_id.parent_id.name"/>
-                                    <br/>
                                     <span t-field="partner.commercial_partner_id.name"/>
+                                    <br/>
+                                    <span t-field="partner.commercial_partner_id.parent_id.name"/>
                                 </div>
                                 <div t-field="partner.commercial_partner_id"
                                      t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
