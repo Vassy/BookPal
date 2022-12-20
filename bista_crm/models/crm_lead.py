@@ -41,11 +41,11 @@ class CrmLead(models.Model):
 
     # Journal Info fields
     journal_customization_ids = fields.Many2many('journal.customization', string='Journal Customization')
-    customization_cost = fields.Float('Our Customization Cost')
+    customization_cost = fields.Monetary('Our Customization Cost')
     link_to_art_files = fields.Char(string='Link to Art Files')
     artwork_status_id = fields.Many2one('artwork.status', string='Artwork Status')
     journal_notes = fields.Text(string='Journal Notes')
-    journal_setup_fee = fields.Float(string="Journal Set Up Fee")
+    journal_setup_fee = fields.Monetary(string="Journal Set Up Fee")
     death_type_id = fields.Many2one('death.type', string='Die Type')
     existing_death_order = fields.Char(string="Existing Die Order #")
 
@@ -73,6 +73,10 @@ class CrmLead(models.Model):
     # deal_close_lost_date = fields.Date(string='Close Lost Date')
     # deal_close_lost_reason = fields.Char(string='Close Lost Reason')
     split_order_number = fields.Char(string='Number of Orders Split On')
+    currency_id = fields.Many2one('res.currency', string="Currency",
+                                  related='company_id.currency_id',
+                                  default=lambda
+                                      self: self.env.user.company_id.currency_id.id)
 
     # sale_order_count = fields.Char(string="Orders Count", compute="compute_sale_order_ids")
 
