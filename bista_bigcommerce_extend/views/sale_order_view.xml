@@ -18,7 +18,7 @@
                     <attribute name="attrs">
                         {'column_invisible': ['|',('parent.bigcommerce_store_id', '=', False), ('parent.fiscal_position_id', '!=', False), ]}
                     </attribute>
-                    <attribute name="string">BC Tax</attribute>
+                    <attribute name="optional">hide</attribute>
                 </xpath>
             </field>
         </record>
@@ -33,7 +33,7 @@
                     <field name="bigcommerce_shipment_order_status"/>
                 </xpath>
                 <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
-                    <filter string="Normal Order" name="normal_order" domain="[('big_commerce_order_id', '=', False)]"/>
+                    <filter string="Odoo Order" name="normal_order" domain="[('big_commerce_order_id', '=', False)]"/>
                     <filter string="Big commerce Order" name="big_commere_order" domain="[('big_commerce_order_id', '!=', False)]"/>
 
                 </xpath>

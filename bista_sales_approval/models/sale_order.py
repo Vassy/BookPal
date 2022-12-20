@@ -159,7 +159,14 @@ class SaleOrder(models.Model):
             attrs = "{'readonly': [('state', 'not in', ['draft'])]}"
         doc = etree.XML(result["arch"])
         for field in doc.xpath("//field"):
-            if field.attrib["name"] in ["order_line", "partner_shipping_id", "validity_date", "date_order"]:
+            if field.attrib["name"] in [
+                "order_line",
+                "partner_shipping_id",
+                "validity_date",
+                "date_order",
+                "supplier_id",
+                "customer_lead",
+            ]:
                 field.attrib["attrs"] = attrs
             if (
                 field.attrib.get("invisible") == "1"
