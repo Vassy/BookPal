@@ -10,9 +10,9 @@
                     <strong>Customer Detail:</strong>
                     <t t-if="o.partner_id.parent_id.name">
                         <div>
-                            <span t-field="o.partner_id.parent_id.name"/>
-                            <br/>
                             <span t-field="o.partner_id.name"/>
+                            <br/>
+                            <span t-field="o.partner_id.parent_id.name"/>
                         </div>
                         <div t-field="doc.partner_id"
                              t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
