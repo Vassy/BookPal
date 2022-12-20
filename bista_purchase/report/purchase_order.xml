@@ -11,8 +11,19 @@
                     <span>
                         <strong>SUPPLIER</strong>
                     </span>
-                    <div t-field="o.partner_id"
-                         t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                    <t t-if="o.partner_id.parent_id.name">
+                        <div>
+                            <span t-field="o.partner_id.parent_id.name"/>
+                            <br/>
+                            <span t-field="o.partner_id.name"/>
+                        </div>
+                        <div t-field="o.partner_id"
+                             t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
+                    </t>
+                    <t t-else="">
+                        <div t-field="o.partner_id"
+                             t-options='{"widget": "contact", "fields": ["address","name","phone"], "no_marker": True, "phone_icons": True}'/>
+                    </t>
                 </div>
                 <t t-set="report_info" class="col-6 text-right mb4">
                     <h3 t-if="o.state in ['draft','sent','purchase','done']">Purchase Order</h3>
@@ -72,7 +83,7 @@
                         <br/>
                         <t t-if="o.shipping_instructions">
                             <strong>Shipping Instructions :</strong>
-                            <t t-esc="o.shipping_instructions"/>
+                            <t t-esc="o.shipping_instructions.name"/>
                             <br/>
                         </t>
                         <strong>Salesperson:</strong>
@@ -186,7 +197,8 @@
                         <td style="padding-left:10px;">
                             <strong>Total W/D</strong>
                         </td>
-                        <td class="text-right" style="border-left: 1px solid black;padding-right:8px; margin: auto; width: 111px;">
+                        <td class="text-right"
+                            style="border-left: 1px solid black;padding-right:8px; margin: auto; width: 111px;">
                             <span t-field="o.without_disc_amount_untaxed"/>
                         </td>
                     </tr>

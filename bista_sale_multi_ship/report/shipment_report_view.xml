@@ -8,8 +8,19 @@
             <div class="page">
                 <div t-set="address">
                     <strong>Customer Detail:</strong>
-                    <div t-field="doc.partner_id"
-                         t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                    <t t-if="o.partner_id.parent_id.name">
+                        <div>
+                            <span t-field="o.partner_id.parent_id.name"/>
+                            <br/>
+                            <span t-field="o.partner_id.name"/>
+                        </div>
+                        <div t-field="doc.partner_id"
+                             t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
+                    </t>
+                    <t t-else="">
+                        <div t-field="doc.partner_id"
+                             t-options='{"widget": "contact", "fields": ["address","name","phone"], "no_marker": True, "phone_icons": True}'/>
+                    </t>
                 </div>
                 <t t-set="report_info"
                    class="col-6 text-right mb4">
@@ -36,8 +47,21 @@
                 <t t-set="information_block">
                     <t t-if="doc.state not in ['draft', 'sent']">
                         <strong>Invoicing Address:</strong>
-                        <div t-field="doc.partner_invoice_id"
-                             t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                        <!--                        <div t-field="doc.partner_invoice_id"-->
+                        <!--                             t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>-->
+                        <t t-if="o.partner_invoice_id.parent_id.name">
+                            <div>
+                                <span t-field="o.partner_invoice_id.parent_id.name"/>
+                                <br/>
+                                <span t-field="o.partner_invoice_id.name"/>
+                            </div>
+                            <div t-field="doc.partner_invoice_id"
+                                 t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
+                        </t>
+                        <t t-else="">
+                            <div t-field="doc.partner_invoice_id"
+                                 t-options='{"widget": "contact", "fields": ["address","name","phone"], "no_marker": True, "phone_icons": True}'/>
+                        </t>
                     </t>
                 </t>
                 <t t-set="custom_information_block">
@@ -195,7 +219,7 @@
                         </t>
                     </tbody>
                 </table>
-                <div class="col-6" >
+                <div class="col-6">
                     <span style="color:black;">
                         <b>Total Savings:
                         </b>
@@ -227,17 +251,17 @@
                                       t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
                             </td>
                         </tr>
-<!--                        <tr>-->
-<!--                            <td class="text-left"-->
-<!--                                style="height:1px; border-left: 1px solid black; border-right: 1px solid black; width:180px; border-top: 1px solid black; color: black; padding-left:10px;">-->
-<!--                                <strong>Total Savings</strong>-->
-<!--                            </td>-->
-<!--                            <td class="text-right"-->
-<!--                                style="padding-right:8px; border-left: 1px solid black; border-right: 1px solid black; height:1px; border-top: 1px solid black; padding-left:10px; background-color: white;">-->
-<!--                                <span t-esc="sum((line.product_uom_qty*line.price_unit)-line.price_subtotal for line in doc.order_line)"-->
-<!--                              t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>-->
-<!--                        </td>-->
-<!--                        </tr>-->
+                        <!--                        <tr>-->
+                        <!--                            <td class="text-left"-->
+                        <!--                                style="height:1px; border-left: 1px solid black; border-right: 1px solid black; width:180px; border-top: 1px solid black; color: black; padding-left:10px;">-->
+                        <!--                                <strong>Total Savings</strong>-->
+                        <!--                            </td>-->
+                        <!--                            <td class="text-right"-->
+                        <!--                                style="padding-right:8px; border-left: 1px solid black; border-right: 1px solid black; height:1px; border-top: 1px solid black; padding-left:10px; background-color: white;">-->
+                        <!--                                <span t-esc="sum((line.product_uom_qty*line.price_unit)-line.price_subtotal for line in doc.order_line)"-->
+                        <!--                              t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>-->
+                        <!--                        </td>-->
+                        <!--                        </tr>-->
                     </table>
                 </div>
             </div>

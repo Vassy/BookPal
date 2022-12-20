@@ -27,6 +27,7 @@
                             <field name="frieght_nuances"/>
                             <field name="pre_approval_nuances"/>
                             <field name="author_event_shipping_naunces"/>
+<!--                             <field name="attachment_ids" widget="many2many_binary"/>-->
                         </group>
                     </group>
                 </page>
