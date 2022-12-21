@@ -31,6 +31,7 @@
         'views/journal_customization_view.xml',
         'views/death_type_view.xml',
         'views/customization_type_view.xml',
+        'views/product_view.xml',
         "views/sale_templates.xml",
         "views/product_views.xml",
         "views/seller_report_views.xml",

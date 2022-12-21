@@ -5,11 +5,19 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_invoice_id']" position="attributes">
+                <attribute name="string">Billing Address</attribute>
+            </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
-                <field name="tracking_ref"/>
-                <field name="attachment_ids" widget="many2many_binary"/>
+                <field name="tracking_ref" optional="hide"/>
+                <field name="attachment_ids" widget="many2many_binary" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
+                <attribute name="string">Cover Price</attribute>
+                <attribute name="optional">show</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
+                <field name="cost" optional="show"/>
                 <field name="discounted_price" optional="show" readonly="1" />
                 <field name="saving_amount" optional="show" readonly="1" />
             </xpath>
@@ -20,14 +28,29 @@
                 <attribute name="string">Valid Until</attribute>
                 <attribute name="attrs">{'invisible': 0 }</attribute>
             </xpath>
-            <xpath expr="//group[@name='order_details']/div[hasclass('o_td_label')]" position="replace">
-                <div class="o_td_label" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}">
+            <xpath expr="//group[@name='order_details']//div[hasclass('o_td_label')][1]" position="replace">
+            
+            <div class="o_td_label" >
+                <label for="date_order" string="Quotation Date" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel', 'order_booked',  'pending_for_approval', 'credit_for_review'])]}"/>
+                <label for="date_order" string="Order Date" attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'quote_confirm', 'quote_approval'])]}"/>
+            </div>
+            <field name="date_order" nolabel="1" required="1"/>
+                <!-- <div class="o_td_label" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel', 'order_booked',  'pending_for_approval', 'credit_for_review'])]}">
                     <label for="date_order" string="Quotation Date"/>
-                </div>
+                </div> -->
             </xpath>
-            <xpath expr="//group[@name='order_details']/field[@name='date_order']" position="replace">
-                <field name="date_order" nolabel="1"
-                       attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
+            <xpath expr="//group[@name='order_details']//field[@name='date_order'][1]" position="replace">
+                <!-- <field name="date_order" nolabel="1"
+                       attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel', 'order_booked',  'pending_for_approval', 'credit_for_review'])]}"/> -->
+            </xpath>
+            <xpath expr="//group[@name='order_details']//div[hasclass('o_td_label')][2]" position="replace">
+               <!--  <div class="o_td_label" attrs="{'invisible': [('state', 'not in', ['sale', 'done', 'cancel', 'order_booked',  'pending_for_approval', 'credit_for_review'])]}">
+                    <label for="date_order" string="Order Date"/>
+                </div> -->
+            </xpath>
+            <xpath expr="//group[@name='order_details']//field[@name='date_order'][2]" position="replace">
+                <!-- <field name="date_order" nolabel="1"
+                       attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'quote_confirm', 'quote_approval'])]}"/> -->
             </xpath>
             <xpath expr="//field[@name='payment_term_id']" position="before">
                 <field name="commitment_date"/>
