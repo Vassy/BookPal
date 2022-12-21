@@ -21,15 +21,15 @@ class SaleOrder(models.Model):
     # journal or promotional product fields
     journal_customization_ids = fields.Many2many(
         'journal.customization', string='Journal Customization')
-    customization_cost = fields.Float('Our Customization Cost')
+    customization_cost = fields.Monetary('Our Customization Cost')
     link_to_art_files = fields.Text(string='Link to Art Files')
     artwork_status_id = fields.Many2one(
         'artwork.status', string='Artwork Status')
     journal_notes = fields.Text(string='Journal Notes')
-    journal_setup_fee = fields.Float(string="Journal Set Up Fee")
-    journal_setup_fee_waived = fields.Float(string="Journal Set Up Fee Waived")
+    journal_setup_fee = fields.Monetary(string="Journal Set Up Fee")
+    journal_setup_fee_waived = fields.Monetary(string="Journal Set Up Fee Waived")
     shipping_account = fields.Char(string="Shipping Account")
-    shipping_cost = fields.Float(string=" Our Shipping Cost")
+    shipping_cost = fields.Monetary(string=" Our Shipping Cost")
     death_type_id = fields.Many2one('death.type', string='Die Type')
     existing_death_order = fields.Char(string="Existing Die Order #")
     # Project & Fulfilment Tracking.

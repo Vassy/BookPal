@@ -94,16 +94,16 @@
                                    options="{'color_field': 'color'}"/>
                             <field name="link_to_art_files" style="max-height: 25px;"/>
                             <field name="journal_notes" style="max-height: 25px;"/>
-                            <field name="journal_setup_fee"/>
-                            <field name="journal_setup_fee_waived"/>
+                            <field name="journal_setup_fee"  widget="monetary"/>
+                            <field name="journal_setup_fee_waived"  widget="monetary"/>
                         </group>
                         <group>
                             <field name="shipping_account"/>
-                            <field name="shipping_cost"/>
+                            <field name="shipping_cost" widget="monetary"/>
                             <field name="artwork_status_id" />
                             <field name="death_type_id"/>
                             <field name="existing_death_order"/>
-                            <field name="customization_cost"/>
+                            <field name="customization_cost" widget="monetary"/>
                         </group>
                      </group>
                 </page>
