@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_seller_report" model="ir.ui.view">
+            <field name="name">seller.report.list</field>
+            <field name="model">best.seller.report</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="order_number"/>
+                    <field name="order_date"/>
+                    <field name="product_id"/>
+                    <field name="sku"/>
+                    <field name="customer_email"/>
+                    <field name="quantity"/>
+                    <!-- <field name="publication_date"/>
+                    <field name="shipping_zip_Code"/>
+                    <field name="order_account"/>
+                    <field name="customer_segment"/> -->
+                    <field name="order_company"/>
+                    <field name="order_status"/>
+               </tree>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_seller_report_pivot">
+            <field name="name">seller.report.pivot</field>
+            <field name="model">best.seller.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Seller Report">
+                    <field name="order_number"/>
+                    <field name="order_date"/>
+                    <field name="product_id"/>
+                    <field name="sku"/>
+                    <field name="customer_email"/>
+                    <field name="quantity"/>
+                    <field name="order_company"/>
+                    <field name="order_status"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="action_view_seller_report" model="ir.actions.act_window">
+            <field name="name">Best Seller Report</field>
+            <field name="res_model">best.seller.report</field>
+            <field name="view_mode">tree,pivot</field>
+            <!-- <field name="view_id" ref="view_seller_report"/> -->
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

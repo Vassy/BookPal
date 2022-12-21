@@ -20,9 +20,10 @@
         ]
     },
     'data': [
-        # security
         'security/ir.model.access.csv',
-        # views
+        'data/data.xml',
+        'report/sale.xml',
+        # 'report/sale_delivery_report.xml',
         'views/artwork_status_view.xml',
         'views/sale_order_view.xml',
         'views/stock_picking_view.xml',
@@ -30,11 +31,11 @@
         'views/journal_customization_view.xml',
         'views/death_type_view.xml',
         'views/customization_type_view.xml',
-        # report
-        # 'report/sale_delivery_report.xml',
-        'report/sale.xml',
-        'data/data.xml',
         "views/sale_templates.xml",
+        "views/product_views.xml",
+        "views/seller_report_views.xml",
+        "wizard/best_seller_report_views.xml",
+
     ],
     'installable': True,
     'auto_install': False
