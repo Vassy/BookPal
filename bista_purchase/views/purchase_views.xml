@@ -5,6 +5,10 @@
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="options">{"always_reload": True}</attribute>
+                <attribute name="context">{'res_partner_search_mode': 'supplier', 'show_address': 1, 'show_vat': True}</attribute>
+            </xpath>
             <xpath expr="//button[@id='draft_confirm']" position="replace">
                 <!-- <button name="button_confirm" type="object" states="sent" string="Confirmmmmm Order" class="oe_highlight" id="bid_confirm" data-hotkey="v"/> -->
                 <button name="button_confirm" type="object" states="draft" string="Send for Approval" id="draft_confirm"/>

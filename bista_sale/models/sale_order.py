@@ -120,6 +120,7 @@ class SaleOrderLine(models.Model):
         "Discounted Unit Price", compute="_compute_amount", store=True
     )
     attachment_ids = fields.Many2many('ir.attachment', string="Attach File")
+    cost = fields.Float(related="product_id.standard_price", string="Cost")
 
     @api.depends("product_uom_qty", "discount", "price_unit", "tax_id")
     def _compute_amount(self):
