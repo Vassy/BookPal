@@ -154,7 +154,10 @@ class PurchaseTrackingLine(models.Model):
 
     @api.onchange("ship_qty")
     def _onchange_ship_qty(self):
-        self.pending_shipment_qty = self.pending_shipment_qty - self.ship_qty
+        total_ship_qty = self.po_line_id.purchase_tracking_line_ids.filtered(
+            lambda l: l.tracking_id.status != "cancel" and l.id != self._origin.id
+        ).mapped("ship_qty")
+        self.pending_shipment_qty = self.ordered_qty - sum(total_ship_qty) - self.ship_qty
 
     @api.onchange("checkbox")
     def _onchange_checkbox(self):
