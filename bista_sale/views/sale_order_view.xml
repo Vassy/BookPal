@@ -17,7 +17,6 @@
                 <attribute name="optional">show</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
-                <field name="cost" optional="show"/>
                 <field name="discounted_price" optional="show" readonly="1" />
                 <field name="saving_amount" optional="show" readonly="1" />
             </xpath>
