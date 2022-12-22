@@ -82,13 +82,12 @@ class SaleOrder(models.Model):
     def _compute_picking_ids(self):
         super()._compute_picking_ids()
         for order in self:
-            order.delivery_count = len(order.picking_ids.filtered(lambda p: p.picking_type_id.code in ['outgoing',
-                                                                                                       'internal'] and p.picking_type_id.sequence_code != 'INT'))
+            order.delivery_count -= len(order.picking_ids.filtered(lambda p: p.sequence_code in ["IN", "INT"]))
 
     def action_view_delivery(self):
-        return self._get_action_view_picking(self.picking_ids.filtered(
-            lambda p: not p.is_dropship and p.picking_type_id.code in ['outgoing',
-                                                                       'internal'] and p.picking_type_id.sequence_code != 'INT'))
+        return self._get_action_view_picking(
+            self.picking_ids.filtered(lambda p: not p.is_dropship and p.sequence_code not in ["IN", "INT"])
+        )
 
     @api.constrains('journal_setup_fee', 'journal_setup_fee_waived', 'customization_cost', 'shipping_cost')
     def warning_journal_setup_fee(self):
@@ -126,8 +125,6 @@ class SaleOrderLine(models.Model):
         super()._compute_amount()
         for line in self:
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            if line.currency_id:
-                price = line.currency_id.round(price)
             taxes = line.tax_id.compute_all(
                 price,
                 line.order_id.currency_id,
@@ -136,7 +133,7 @@ class SaleOrderLine(models.Model):
                 partner=line.order_id.partner_shipping_id
             )
             line_data = {
-                "discounted_price": price,
+                "discounted_price": int(price * 10 ** 2) / 10 ** 2,
                 "saving_amount": price * line.product_uom_qty,
                 "price_tax": sum(t.get("amount", 0.0) for t in taxes.get("taxes", [])),
                 "price_total": taxes["total_included"],

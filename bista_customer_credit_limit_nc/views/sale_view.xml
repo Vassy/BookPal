@@ -34,7 +34,7 @@
                     class="btn-primary" states="credit_review" groups="bista_customer_credit_limit_nc.group_credit_limit" />
             </xpath>
             <field name="fiscal_position_id" position="after">
-                <field name="available_credit_limit" />
+                <field name="available_credit_limit" readonly="1" />
             </field>
         </field>
     </record>
