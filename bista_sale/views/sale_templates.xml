@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="sale_order_portal_content_saving_amount" inherit_id="sale.sale_order_portal_content">
+        <address t-field="sale_order.partner_invoice_id" position="before">
+            <t t-if="sale_order.partner_invoice_id.name">
+                <span t-field="sale_order.partner_invoice_id.name"/><br/>
+            </t>
+            <span t-if="sale_order.partner_invoice_id.parent_id.name" t-field="sale_order.partner_invoice_id.parent_id.name"/>
+        </address>
+        <address t-field="sale_order.partner_invoice_id" position="attributes">
+            <attribute name="t-options">{"widget": "contact", "fields": ["address", "email", "phone"], "no_marker": True}</attribute>
+        </address>
+        <address t-field="sale_order.partner_shipping_id" position="before">
+            <t t-if="sale_order.partner_shipping_id.name">
+                <span t-field="sale_order.partner_shipping_id.name"/><br/>
+            </t>
+            <span t-if="sale_order.partner_shipping_id.parent_id.name" t-field="sale_order.partner_shipping_id.parent_id.name"/>
+        </address>
+        <address t-field="sale_order.partner_shipping_id" position="attributes">
+            <attribute name="t-options">{"widget": "contact", "fields": ["address", "email", "phone"], "no_marker": True}</attribute>
+        </address>
         <xpath expr="//table[@id='sales_order_table']//th[3]" position="after">
             <th class="text-right">Saving Amount</th>
         </xpath>
