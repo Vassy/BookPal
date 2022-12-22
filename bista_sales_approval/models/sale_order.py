@@ -25,6 +25,7 @@ class SaleOrder(models.Model):
 
     state = fields.Selection(selection_add=AddState)
     sale_approval_log_ids = fields.One2many("sale.approval.log", "sale_id")
+    is_order = fields.Boolean()
 
     @api.model
     def default_get(self, fields_list):
@@ -37,17 +38,7 @@ class SaleOrder(models.Model):
         action = self.env["ir.actions.actions"]._for_xml_id(
             "sale.action_quotations_with_onboarding"
         )
-        if self.env.user.has_group(
-            "bista_sales_approval.group_create_sale_order"
-        ) and self.env.user.has_group("bista_sales_approval.group_approve_sale_quote"):
-            action["context"] = {
-                "search_default_quote_confirm": 1,
-                "search_default_quote_approval": 1,
-                "search_default_groupby_state": 1,
-            }
-        elif self.env.user.has_group("bista_sales_approval.group_create_sale_order"):
-            action["context"] = {"search_default_quote_confirm": 1}
-        elif self.env.user.has_group("bista_sales_approval.group_approve_sale_quote"):
+        if self.env.user.has_group("bista_sales_approval.group_approve_sale_quote"):
             action["context"] = {"search_default_quote_approval": 1}
         return action
 
@@ -57,7 +48,7 @@ class SaleOrder(models.Model):
         if self.env.user.has_group("bista_sales_approval.group_approve_sale_order"):
             action["context"].update({"search_default_order_approval": 1})
         elif self.env.user.has_group("bista_sales_approval.group_create_sale_order"):
-            action["context"].update({"search_default_booked_order": 1})
+            action["context"].update({"search_default_quote_confirm": 1})
         return action
 
     @api.returns("mail.message", lambda value: value.id)
@@ -99,7 +90,7 @@ class SaleOrder(models.Model):
 
     def action_order_booked(self):
         for sale in self:
-            sale.state = "order_booked"
+            sale.write({"state": "order_booked", "is_order": True})
             sale._create_sale_approval_log("Sale Order Booked")
 
     def action_send_quote_approval(self):
@@ -166,6 +157,7 @@ class SaleOrder(models.Model):
                 "date_order",
                 "supplier_id",
                 "customer_lead",
+                "analytic_account_id",
             ]:
                 field.attrib["attrs"] = attrs
             if (
