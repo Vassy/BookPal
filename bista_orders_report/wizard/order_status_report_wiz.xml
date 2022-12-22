@@ -66,7 +66,7 @@
 
     <menuitem id="menu_pending_purchase_order_report_new"
               name="Purchase Order Status Report"
-              parent="purchase.menu_procurement_management"
+              parent="purchase.purchase_report_main"
               action="bista_orders_report.action_purchase_order_status_wizard"
               sequence="20"/>
 

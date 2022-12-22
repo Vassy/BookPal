@@ -22,9 +22,9 @@ class OrderRejectReason(models.TransientModel):
             "done_action": "RFQ Rejected",
             "note": self.note,
             "old_state": self.order_id.state,
-            "state": "draft"
+            "state": "reject"
         }
         self.env["purchase.approval.log"].create(log_data)
         self.order_id.with_context(no_history_update=True).write({
-                    "state": "draft",
+                    "state": "reject",
                 })
