@@ -7,6 +7,15 @@ from lxml import etree
 from odoo import models, fields, _, api
 from odoo.exceptions import ValidationError
 
+AddState = [
+        ('draft', 'Order'),
+        ('sent', 'Order Sent'),
+        ('to approve', 'To Approve'),
+        ('reject', 'Rejected'),
+        ('purchase', 'Purchase Order'),
+        ('done', 'Locked'),
+        ('cancel', 'Cancelled')
+    ]
 
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
@@ -80,6 +89,7 @@ class PurchaseOrder(models.Model):
     order_process_time = fields.Integer(
         compute="compute_order_process_time", string="Order Processing Time")
     purchase_approval_log_ids = fields.One2many("purchase.approval.log", "order_id")
+    state = fields.Selection(selection_add=AddState)
 
     def button_cancel(self):
         # Chanage orderline status on cancel order
@@ -263,6 +273,32 @@ class PurchaseOrder(models.Model):
                 field.attrib["attrs"] = attrs
             result["arch"] = etree.tostring(doc)
         return result
+
+    @api.model
+    def create(self, vals_list):
+        """Create Purchase Order Approval History """
+        rec = super(PurchaseOrder, self).create(vals_list)
+        log_data = {
+                "order_id": rec.id,
+                "old_state": rec.state,
+                "state": rec.state
+            }
+        self.env["purchase.approval.log"].create(log_data)
+        return rec
+
+    def trigger_rfq_action(self):
+        """ server action to add filter according to user right for purchase order"""
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            "purchase.purchase_rfq"
+        )
+        if self.env.user.has_group("purchase.group_purchase_manager"):
+            action["context"] = {"search_default_to_approve": 1}
+        elif self.env.user.has_group(
+            "purchase.group_purchase_user"):
+            action["context"] = {
+                "search_default_draft_rfqs": 1,
+            }
+        return action
 
 
 class RushStatus(models.Model):

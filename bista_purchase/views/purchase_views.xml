@@ -20,6 +20,9 @@
                 <button name="button_confirm" type="object" states="draft" string="Confirm Orders" context="{'skip_approval': True}"/>
                 <button name="button_reject" type="object" states='to approve' string="Reject Order" class="oe_highlight" groups="purchase.group_purchase_manager" />
             </xpath>
+            <xpath expr="//button[@name='button_draft']" position="attributes">
+                <attribute name="states">cancel,reject</attribute>
+            </xpath>
             <xpath expr="//field[@name='order_line']//tree" position="inside">
                 <field name="tracking_ref" optional="show"/>
                 <field name="status_id" readonly="1" force_save="1"/>
@@ -374,6 +377,52 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="view_purchase_order_filter_rfq_approval" model="ir.ui.view">
+        <field name="name">purchase.order.inherit.approval</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.view_purchase_order_filter" />
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='draft']" position="attributes">
+                <attribute name="string">Orders</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='draft_rfqs']" position="attributes">
+                <attribute name="string">Draft Orders</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='waiting_rfqs']" position="attributes">
+                <attribute name="string">Waiting Orders</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='late_rfqs']" position="attributes">
+                <attribute name="string">Late Orders</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase.action_rfq_form" model="ir.actions.act_window">
+        <field name="name">Book Order</field>
+    </record>
+
+    <record id="purchase.purchase_action_dashboard_kanban" model="ir.actions.act_window">
+        <field name="name">Book Order</field>
+    </record>
+
+    <record id="purchase.purchase_action_dashboard_list" model="ir.actions.act_window">
+        <field name="name">Book Order</field>
+    </record>
+
+    <record id="purchase.purchase_rfq" model="ir.actions.act_window">
+        <field name="name">Book Order</field>
+    </record>
+
+    <record model="ir.ui.menu" id="purchase.menu_purchase_form_action">
+        <field name="groups_id" eval="[(6,0,[ref('purchase.group_purchase_manager')])]"/>
+    </record>
+
+    <record model="ir.ui.menu" id="purchase.menu_purchase_rfq">
+        <field name="name">Book Order</field>
+        <field name="action" ref="bista_purchase.request_for_quotation_action" />
+    </record>
+
+
 
     <menuitem
             id="po_status_line_menu"
@@ -382,7 +431,7 @@
             sequence="4"/>
      <menuitem id="menu_bista_purchase_line_status"
               name="Status"
-              parent="purchase.menu_procurement_management"
+              parent="purchase.menu_purchase_config"
               action="purchase_line_status_action"
               sequence="22"/>
     <menuitem id="menu_bista_purchase_rush_status"
