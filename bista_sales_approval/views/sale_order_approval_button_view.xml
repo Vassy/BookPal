@@ -10,11 +10,14 @@
             </button>
             <button name="action_draft" position="attributes">
                 <attribute name="groups">bista_sales_approval.group_create_sale_quote</attribute>
+                <attribute name="attrs">{"invisible": ["|", ("is_order", "=", True), ("state", "!=", "cancel")]}</attribute>
+                <attribute name="states" />
             </button>
             <xpath expr="//button[@name='action_quotation_send']" position="attributes">
                 <attribute name="states">quote_confirm</attribute>
             </xpath>
             <xpath expr="//button[@name='action_quotation_send']" position="after">
+                <field name="is_order" invisible="1" />
                 <button name="action_quote_confirm" string="Approve Quotation" type="object" class="btn-primary" states="draft" groups="bista_sales_approval.group_approve_sale_quote" />
                 <button name="action_send_quote_approval" string="Send For Quotation Approval" type="object" class="btn-primary" states="draft" groups="bista_sales_approval.group_create_sale_quote" />
                 <button name="action_quote_confirm" string="Quote Approve" type="object" states="quote_approval"
@@ -33,6 +36,8 @@
                     confirm="Please confirm multishipment details (if any), routes, vendor, discount, etc before Approving." />
                 <button name="action_reject" string="Reject" type="object" states="pending_for_approval"
                     groups="bista_sales_approval.group_approve_sale_order" class="btn-primary" />
+                <button name="action_order_booked" type="object" string="Set to Order Book"
+                    attrs="{'invisible': ['|', ('is_order', '=', False), ('state', '!=', 'cancel')]}" />
             </xpath>
             <xpath expr="//header/button[@name='action_confirm'][2]" position="attributes">
                 <attribute name="invisible">1</attribute>
@@ -91,7 +96,7 @@
         <field name="arch" type="xml">
             <search position="inside">
                 <filter string="Quotation In Approval" name="quote_approval" domain="[('state', '=', 'quote_approval')]"/>
-                <filter string="Quotation Approved" name="quote_confirm" domain="[('state', '=', 'quote_confirm')]"/>
+                <filter string="Approved Quotation" name="quote_confirm" domain="[('state', '=', 'quote_confirm')]"/>
                 <filter string="Order Booked" name="booked_order" domain="[('state', '=', 'order_booked')]"/>
                 <filter string="Order In Approval" name="order_approval" domain="[('state', '=', 'pending_for_approval')]"/>
                 <filter string="Status" name="groupby_state" domain="[]" context="{'group_by': 'state'}"/>
@@ -101,11 +106,11 @@
 
     <record id="sale.action_orders" model="ir.actions.act_window">
         <field name="context">{"order_booked": True}</field>
-        <field name="domain">[("state", "not in", ("draft", "quote_approval", "quote_confirm", "sent", "cancel"))]</field>
+        <field name="domain">[("state", "not in", ("draft", "quote_approval", "cancel"))]</field>
     </record>
 
     <record id="sale.menu_sale_quotations" model="ir.ui.menu">
-        <field name="groups_id" eval="[ref('bista_sales_approval.group_create_sale_quote'), ref('bista_sales_approval.group_create_sale_order')]" />
+        <field name="groups_id" eval="[ref('bista_sales_approval.group_create_sale_quote')]" />
         <field name="action" ref="bista_sales_approval.sales_quotation_action" />
     </record>
 
