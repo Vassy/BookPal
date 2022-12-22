@@ -29,7 +29,7 @@ class SaleOrder(models.Model):
     journal_setup_fee = fields.Monetary(string="Journal Set Up Fee")
     journal_setup_fee_waived = fields.Monetary(string="Journal Set Up Fee Waived")
     shipping_account = fields.Char(string="Shipping Account")
-    shipping_cost = fields.Monetary(string=" Our Shipping Cost")
+    so_shipping_cost = fields.Monetary(string=" Our Shipping Cost")
     death_type_id = fields.Many2one('death.type', string='Die Type')
     existing_death_order = fields.Char(string="Existing Die Order #")
     # Project & Fulfilment Tracking.
@@ -89,7 +89,7 @@ class SaleOrder(models.Model):
             self.picking_ids.filtered(lambda p: not p.is_dropship and p.sequence_code not in ["IN", "INT"])
         )
 
-    @api.constrains('journal_setup_fee', 'journal_setup_fee_waived', 'customization_cost', 'shipping_cost')
+    @api.constrains('journal_setup_fee', 'journal_setup_fee_waived', 'customization_cost', 'so_shipping_cost')
     def warning_journal_setup_fee(self):
         if self.journal_setup_fee < 0:
             raise ValidationError("journal setup fee waived  value is negative,add positive value.")
@@ -97,7 +97,7 @@ class SaleOrder(models.Model):
             raise ValidationError("journal setup fee waived value is  negative,add positive value.")
         if self.customization_cost < 0:
             raise ValidationError("customization cost value is negative,add positive value.")
-        if self.shipping_cost < 0:
+        if self.so_shipping_cost < 0:
             raise ValidationError("shipping cost  value is negative,add positive value.")
 
     @api.onchange('fulfilment_project')

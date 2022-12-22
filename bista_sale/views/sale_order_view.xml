@@ -121,7 +121,7 @@
                         </group>
                         <group>
                             <field name="shipping_account"/>
-                            <field name="shipping_cost" widget="monetary"/>
+                            <field name="so_shipping_cost" widget="monetary"/>
                             <field name="artwork_status_id" />
                             <field name="death_type_id"/>
                             <field name="existing_death_order"/>
