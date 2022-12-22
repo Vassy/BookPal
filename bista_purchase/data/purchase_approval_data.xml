@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+    <record id="request_for_quotation_action" model="ir.actions.server">
+        <field name="name">Request for Quotation</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="state">code</field>
+        <field name="code">
+action = model.trigger_rfq_action()
+        </field>
+    </record>
+
+    <!-- <record id="purchase_order_action" model="ir.actions.server">
+        <field name="name">Purchase Order</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="state">code</field>
+        <field name="code">
+        action = model.trigger_order_action()
+        </field>
+    </record> -->
+</odoo>
