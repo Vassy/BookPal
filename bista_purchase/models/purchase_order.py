@@ -80,7 +80,7 @@ class PurchaseOrder(models.Model):
     memo = fields.Text(string="Memo")
     supplier_order_number = fields.Char(string="Supplier Order Number")
     num_of_need_by_days = fields.Text(string='Num of Need By Days')
-    need_by_date = fields.Date(String="Need By Date")
+    need_by_date = fields.Date(string="Need By Date")
     sale_order_ids = fields.Many2many(
         'sale.order', compute="compute_sale_order_ids")
     purchase_tracking_ids = fields.One2many(
