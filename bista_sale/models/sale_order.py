@@ -164,3 +164,11 @@ class SaleOrderLine(models.Model):
             if vendor:
                 self.supplier_id = vendor.filtered(lambda x: x.name.is_primary).name.id if vendor.filtered(lambda x: x.name.is_primary) else vendor[:1].name.id
         return res
+
+    @api.model
+    def create(self, vals_list):
+        """Fix attachment ownership"""
+        rec = super(SaleOrderLine, self).create(vals_list)
+        if rec.attachment_ids:
+            rec.attachment_ids.write({'res_model': self._name, 'res_id': rec.id})
+        return rec
