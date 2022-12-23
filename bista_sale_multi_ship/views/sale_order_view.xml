@@ -22,7 +22,7 @@
                     <field name="so_lines" invisible="1" force_save="1"/>
                 </field>
                 <xpath expr="//header" position="inside">
-                    <button string="External Delivery" name="action_open_shiping_wizard" type="object" class="oe_highlight" attrs="{'invisible': [('state', 'not in', ('sale'))]}"/>
+                    <button string="External Delivery" name="action_open_shiping_wizard" type="object" class="oe_highlight" invisible="1"/>
                 </xpath>
                 <field name='partner_shipping_id' position="attributes">
                     <attribute name="attrs">{'invisible': [('split_shipment', '=', True)]}</attribute>
@@ -77,7 +77,7 @@
                         </group>
 
                         <button name="open_sale_multi_ship_wizard" type="object"
-                                icon="fa-truck" string="Import Shipping Data" class="btn-primary" style="float:right"/>
+                                icon="fa-truck" string="Import Shipping Data" class="btn-primary" style="float:right" invisible="1"/>
                         <field name="sale_multi_ship_qty_lines" context="{'multi_ship': True}">
                             <tree context="{'multi_ship': True}" decoration-danger="partner_state =='error' and state=='draft'" decoration-success="partner_state =='verified' and state=='draft'" decoration-muted="state == 'cancel' or state == 'short_close'" decoration-warning="qty_delivered and product_qty != qty_delivered" editable="top">
                                 <field name="id" invisible="1"/>
