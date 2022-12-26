@@ -6,7 +6,7 @@
 #
 ##############################################################################
 
-from odoo import api, models, fields
+from odoo import api, models, fields, _
 from lxml import etree
 
 AddState = [
@@ -26,6 +26,14 @@ class SaleOrder(models.Model):
     state = fields.Selection(selection_add=AddState)
     sale_approval_log_ids = fields.One2many("sale.approval.log", "sale_id")
     is_order = fields.Boolean()
+
+    @api.depends("state")
+    def _compute_type_name(self):
+        states = ("draft", "quote_approval", "quote_confirm", "sent", "cancel")
+        for record in self:
+            record.type_name = (
+                _("Quotation") if record.state in states else _("Sales Order")
+            )
 
     @api.model
     def default_get(self, fields_list):
@@ -48,7 +56,7 @@ class SaleOrder(models.Model):
         if self.env.user.has_group("bista_sales_approval.group_approve_sale_order"):
             action["context"].update({"search_default_order_approval": 1})
         elif self.env.user.has_group("bista_sales_approval.group_create_sale_order"):
-            action["context"].update({"search_default_quote_confirm": 1})
+            action["context"].update({"search_default_booked_order": 1})
         return action
 
     @api.returns("mail.message", lambda value: value.id)

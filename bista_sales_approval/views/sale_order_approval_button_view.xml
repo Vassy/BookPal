@@ -37,7 +37,8 @@
                 <button name="action_reject" string="Reject" type="object" states="pending_for_approval"
                     groups="bista_sales_approval.group_approve_sale_order" class="btn-primary" />
                 <button name="action_order_booked" type="object" string="Set to Order Book"
-                    attrs="{'invisible': ['|', ('is_order', '=', False), ('state', '!=', 'cancel')]}" />
+                    attrs="{'invisible': ['|', ('is_order', '=', False), ('state', '!=', 'cancel')]}"
+                    groups="bista_sales_approval.group_create_sale_order" />
             </xpath>
             <xpath expr="//header/button[@name='action_confirm'][2]" position="attributes">
                 <attribute name="invisible">1</attribute>
@@ -70,8 +71,8 @@
         <field name="arch" type="xml">
             <field name="state" position="replace" />
             <field name="invoice_status" position="before">
-                <field name="state" widget="badge" decoration-success="state in ['sale', 'done']"
-                    decoration-warning="state == 'pending_for_approval'" decoration-info="state == 'order_booked'" />
+                <field name="state" widget="badge" decoration-success="state in ['quote_confirm', 'sale', 'done']"
+                    decoration-warning="state == 'pending_for_approval'" decoration-info="state in ['sent', 'order_booked']" />
             </field>
         </field>
     </record>
@@ -97,6 +98,7 @@
             <search position="inside">
                 <filter string="Quotation In Approval" name="quote_approval" domain="[('state', '=', 'quote_approval')]"/>
                 <filter string="Approved Quotation" name="quote_confirm" domain="[('state', '=', 'quote_confirm')]"/>
+                <filter string="Quotation Sent" name="quote_sent" domain="[('state', '=', 'sent')]"/>
                 <filter string="Order Booked" name="booked_order" domain="[('state', '=', 'order_booked')]"/>
                 <filter string="Order In Approval" name="order_approval" domain="[('state', '=', 'pending_for_approval')]"/>
                 <filter string="Status" name="groupby_state" domain="[]" context="{'group_by': 'state'}"/>
@@ -106,7 +108,7 @@
 
     <record id="sale.action_orders" model="ir.actions.act_window">
         <field name="context">{"order_booked": True}</field>
-        <field name="domain">[("state", "not in", ("draft", "quote_approval", "cancel"))]</field>
+        <field name="domain">["|", ("state", "not in", ("draft", "quote_approval", "cancel")), ("is_order", "=", True)]</field>
     </record>
 
     <record id="sale.menu_sale_quotations" model="ir.ui.menu">
