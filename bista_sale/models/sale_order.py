@@ -134,7 +134,7 @@ class SaleOrderLine(models.Model):
             )
             line_data = {
                 "discounted_price": int(price * 10 ** 2) / 10 ** 2,
-                "saving_amount": price * line.product_uom_qty,
+                "saving_amount": line.price_unit * line.discount / 100 * line.product_uom_qty,
                 "price_tax": sum(t.get("amount", 0.0) for t in taxes.get("taxes", [])),
                 "price_total": taxes["total_included"],
                 "price_subtotal": taxes["total_excluded"],

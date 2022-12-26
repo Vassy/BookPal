@@ -17,6 +17,19 @@ from odoo.addons.sale.controllers.portal import CustomerPortal
 
 
 class ModCustomerPortal(CustomerPortal):
+    def _prepare_quotations_domain(self, partner):
+        states = ["draft", "quote_approval", "quote_confirm", "sent", "cancel"]
+        return [
+            ("message_partner_ids", "child_of", [partner.commercial_partner_id.id]),
+            ("state", "in", states),
+        ]
+
+    def _prepare_orders_domain(self, partner):
+        return [
+            ("message_partner_ids", "child_of", [partner.commercial_partner_id.id]),
+            ("state", "in", ["order_booked", "pending_for_approval", "sale", "done"]),
+        ]
+
     @http.route(
         ["/my/orders/<int:order_id>/accept"], type="json", auth="public", website=True
     )
