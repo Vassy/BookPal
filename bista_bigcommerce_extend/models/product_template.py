@@ -14,6 +14,7 @@ class ProductTemplate(models.Model):
     isbn = fields.Char(
         'ISBN', compute='_compute_isbn',
         inverse='_set_isbn', store=True)
+    bigcommerce_description = fields.Html('BigCommerce Product Description')
 
     @api.depends('product_variant_ids', 'product_variant_ids.default_code')
     def _compute_isbn(self):
