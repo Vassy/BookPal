@@ -476,6 +476,9 @@ class SaleOrderLine(models.Model):
         for order in orders:
             pickings_to_confirm = order.picking_ids.filtered(
                 lambda p: p.state not in ['cancel', 'done'])
+            for pick in pickings_to_confirm:
+                if pick.partner_id.id and pick.location_dest_id == pick.partner_id.property_stock_customer:
+                    pick.carrier_id = pick.partner_id.property_delivery_carrier_id.id
             if pickings_to_confirm:
                 # Trigger the Scheduler for Pickings
                 pickings_to_confirm.action_confirm()
