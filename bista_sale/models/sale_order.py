@@ -116,9 +116,18 @@ class SaleOrderLine(models.Model):
         "Saving Amount", compute="_compute_amount", store=True
     )
     discounted_price = fields.Float(
-        "Discounted Unit Price", compute="_compute_amount", store=True
+        "Quote Price", compute="_compute_amount", store=True,
+        inverse="_inverse_discounted_price",
     )
     attachment_ids = fields.Many2many('ir.attachment', string="Attach File")
+
+    def _inverse_discounted_price(self):
+        for line in self:
+            if line.price_unit:
+                line.discount = 100 - (line.discounted_price / line.price_unit * 100)
+            else:
+                line.discount = 0
+            line.saving_amount = line.price_unit * line.discount / 100 * line.product_uom_qty
 
     @api.depends("product_uom_qty", "discount", "price_unit", "tax_id")
     def _compute_amount(self):
@@ -134,7 +143,7 @@ class SaleOrderLine(models.Model):
             )
             line_data = {
                 "discounted_price": int(price * 10 ** 2) / 10 ** 2,
-                "saving_amount": price * line.product_uom_qty,
+                "saving_amount": line.price_unit * line.discount / 100 * line.product_uom_qty,
                 "price_tax": sum(t.get("amount", 0.0) for t in taxes.get("taxes", [])),
                 "price_total": taxes["total_included"],
                 "price_subtotal": taxes["total_excluded"],

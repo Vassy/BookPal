@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_menu_sale_approval" inherit_id="sale.portal_my_home_menu_sale">
+        <xpath expr="//a[@t-if='sale_order']/.." position="replace" />
+        <xpath expr="//a[@t-if='sale_order']/.." position="replace" />
+        <xpath expr="//li[@t-if='sale_order']" position="replace" />
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'quote' or sale_order and sale_order.state in ('draft', 'quote_approval', 'quote_confirm', 'sent', 'cancel')" t-attf-class="breadcrumb-item #{'active ' if not sale_order else ''}">
+                <a t-if="sale_order" t-attf-href="/my/quotes?{{ keep_query() }}">Quotations</a>
+                <t t-else="">Quotations</t>
+            </li>
+            <li t-if="page_name == 'order' or sale_order and sale_order.state not in ('draft', 'quote_approval', 'quote_confirm', 'sent', 'cancel')" t-attf-class="breadcrumb-item #{'active ' if not sale_order else ''}">
+                <a t-if="sale_order" t-attf-href="/my/orders?{{ keep_query() }}">Sales Orders</a>
+                <t t-else="">Sales Orders</t>
+            </li>
+            <li t-if="sale_order" class="breadcrumb-item active">
+                <span t-field="sale_order.type_name" />
+                <t t-esc="sale_order.name" />
+            </li>
+        </xpath>
+    </template>
+
+    <template id="sale_order_portal_content_approval" inherit_id="sale.sale_order_portal_content">
+        <xpath expr="//div[@id='so_date']" position="replace">
+            <div class="row" id="so_date">
+                <div class="mb-3 col-6">
+                    <strong t-if="sale_order.state in ['draft', 'quote_approval', 'quote_confirm', 'sent', 'cancel']">Quotation Date:</strong>
+                    <strong t-else="">Order Date:</strong>
+                    <span t-field="sale_order.date_order" t-options='{"widget": "date"}' />
+                </div>
+                <div class="mb-3 col-6" t-if="sale_order.validity_date">
+                    <strong>Valid Until:</strong>
+                    <span t-field="sale_order.validity_date" t-options='{"widget": "date"}' />
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
