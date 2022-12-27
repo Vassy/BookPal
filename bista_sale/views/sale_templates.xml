@@ -29,16 +29,20 @@
         </xpath>
         <xpath expr="//table[@id='sales_order_table']//th[5]" position="replace" />
         <xpath expr="//table[@id='sales_order_table']//td[5]" position="replace" />
-    </template>
-
-    <template id="sale_order_portal_content_totals_table_saving_amount" inherit_id="sale.sale_order_portal_content_totals_table">
-        <xpath expr="//table" position="inside">
-            <tr>
-                <td><strong>Total Saving Amount</strong></td>
-                <td class="text-right">
-                    <span t-field="sale_order.saving_amount"/>
-                </td>
-            </tr>
+        <xpath expr="//div[@name='total']/div" position="before">
+            <div class="col-6">
+                <table class="table table-sm">
+                    <tr>
+                        <td><strong>Total Saving Amount</strong></td>
+                        <td class="text-right">
+                            <span t-field="sale_order.saving_amount"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </xpath>
+        <xpath expr="//div[@name='total']/div" position="attributes">
+            <attribute name="class">col-6</attribute>
         </xpath>
     </template>
 </odoo>
