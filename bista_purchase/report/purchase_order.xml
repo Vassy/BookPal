@@ -41,6 +41,25 @@
                     </strong>
                     <br/>
                 </t>
+                <t t-if="o.dest_address_id">
+                    <t t-set="information_block">
+                        <strong>Shipping address:</strong>
+                            <t t-if="o.dest_address_id.parent_id.name">
+                                <div>
+                                    <span t-field="o.dest_address_id.name"/>
+                                    <br/>
+                                    <span t-field="o.dest_address_id.parent_id.name"/>
+                                </div>
+                                <div t-field="o.dest_address_id"
+                                     t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
+                            </t>
+                            <t t-else="">
+                                <div t-field="o.dest_address_id"
+                                     t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'
+                                     name="purchase_shipping_address"/>
+                            </t>
+                    </t>
+                </t>
                 <t t-set="custom_information_block">
                     <div>
                         <t t-if="o.state in ['draft','sent']">
@@ -184,7 +203,6 @@
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
                     <span t-field="line.disc_price_unit"/>
                 </td>
-
                 <td class="text-right"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; margin: auto;width: 111px;">
                     <span t-field="line.price_subtotal"
@@ -236,14 +254,14 @@
                             <span t-esc="0.0" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                         </td>
                     </tr>
-                    <tr>
+                    <tr style="background-color: #CC5500;">
                         <td style="border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black; padding-top:10px; padding-left:10px;
-                                      background: black;color: white; height:1px ;">
+                                      height:1px ;">
                             <strong class="border-black o_subtotal;text-right">Total</strong>
                         </td>
-                        <td style="border-top: 1px solid black; padding-left:10px;padding-right:8px; height:1px ; padding-top:10px; background-color: black; color: white;"
+                        <td style="border-top: 1px solid black; padding-left:10px;padding-right:8px; height:1px ; padding-top:10px;"
                             class="text-right">
-                            <span t-field="o.amount_total"/>
+                            <strong t-field="o.amount_total"/>
                         </td>
                     </tr>
                 </table>
@@ -262,6 +280,7 @@
                 <p class="mb-1" t-field="o.notes" style="margin-left: 50px;"/>
             </div>
         </xpath>
+        <xpath expr="//t[@t-set='information_block']" position="replace"/>
         <xpath expr="//div[@id='informations']" position="replace"/>
         <xpath expr="//div[@id='total']" position="replace"/>
         <xpath expr="//h2[1]" position="replace"/>

@@ -24,7 +24,7 @@
                 <attribute name="readonly">1</attribute>
             </xpath>
             <field name="tax_totals_json" position="after">
-                <field style="font-size: 1.3em; font-weight: bold;" name="saving_amount" readonly="1" />
+                <field style="font-size: 1.3em; font-weight: bold;" name="saving_amount" readonly="1"/>
             </field>
             <xpath expr="//field[@name='validity_date']" position="attributes">
                 <attribute name="string">Valid Until</attribute>
@@ -74,6 +74,9 @@
                     <field name="expected_date" widget="date"/>
                 </span>
             </xpath>
+            <xpath expr="//group[@name='sale_reporting']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
             <xpath expr="//notebook/page[@name='other_information']" position="after">
                 <page string="Order Details" name="order_details">
                     <group>
@@ -86,6 +89,18 @@
                                    decoration-warning="account_order_standing == 'medium'"
                                    decoration-success="account_order_standing == 'low'"/>
                             <!-- <field name="customer_email_add"/> -->
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Tracking" name="sale_reporting">
+                            <group name="technical" colspan="2" class="mb-0">
+                                <field name="origin"/>
+                            </group>
+                            <group name="utm_link" colspan="2" class="mt-0">
+                                <field name="campaign_id"/>
+                                <field name="medium_id"/>
+                                <field name="source_id"/>
+                            </group>
                         </group>
                     </group>
                 </page>
@@ -115,12 +130,12 @@
                 <page name="journal_details" string="Journal Details">
                     <group>
                         <group name="journal_details">
-                            <field name="journal_customization_ids"  widget="many2many_tags"
+                            <field name="journal_customization_ids" widget="many2many_tags"
                                    options="{'color_field': 'color'}"/>
                             <field name="link_to_art_files" style="max-height: 25px;"/>
                             <field name="journal_notes" style="max-height: 25px;"/>
-                            <field name="journal_setup_fee"  widget="monetary"/>
-                            <field name="journal_setup_fee_waived"  widget="monetary"/>
+                            <field name="journal_setup_fee" widget="monetary"/>
+                            <field name="journal_setup_fee_waived" widget="monetary"/>
                         </group>
                         <group>
                             <field name="shipping_account"/>
@@ -130,7 +145,7 @@
                             <field name="existing_death_order"/>
                             <field name="customization_cost" widget="monetary"/>
                         </group>
-                     </group>
+                    </group>
                 </page>
             </xpath>
             <xpath expr="//notebook/page[@name='journal_details']" position="after">

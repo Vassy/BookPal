@@ -22,6 +22,7 @@
     </template>
 
     <template id="shipment_custom_header">
+        <t t-if="not o" t-set="o" t-value="doc"/>
         <t t-set="company" t-value="user.company_id"/>
         <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
             <div class="o_boxed_header">
@@ -38,8 +39,8 @@
                 </div>
             </div>
         </div>
-        <div class="article o_report_layout_standard" t-att-data-oe-model="doc and doc._name"
-             t-att-data-oe-id="doc and doc.id">
+
+        <div class="article o_report_layout_standard" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
             <div class="pt-4">
                 <!-- This div ensures that the address is not cropped by the header. -->
                 <t t-call="bista_report_header_footer.custom_address_layout"/>
@@ -47,7 +48,7 @@
             <t t-out="0"/>
         </div>
 
-        <t t-if="not o" t-set="o" t-value="doc"/>
+
         <div t-attf-class="footer o_company_#{company.id}_layout">
             <div class="text-center" style="border-top: 3px solid black; padding-bottom:30px; text-color: black;">
                 <div  t-if="report_type == 'pdf'">
