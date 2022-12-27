@@ -25,11 +25,9 @@ class ProductProduct(models.Model):
 
     def name_get(self):
         """Updated display name."""
-        res = []
-        if self.detailed_type == 'consu':
-            variant_name = ", ".join([variant[:variant.find('(')] for variant in self.product_template_attribute_value_ids.mapped('name')])
-            name = variant_name and "%s (%s)" % (self.name, variant_name) or self.name
-            res.append((self.id, name))
-            return res
-        else:
-            return super(ProductProduct, self).name_get()
+        res = super(ProductProduct, self.filtered(lambda p: p.type != "consu")).name_get()
+        for product in self.filtered(lambda p: p.type == "consu"):
+            variant_name = ", ".join([variant[:variant.find('(')] for variant in product.product_template_attribute_value_ids.mapped('name')])
+            name = variant_name and "%s (%s)" % (product.name, variant_name) or product.name
+            res.append((product.id, name))
+        return res
