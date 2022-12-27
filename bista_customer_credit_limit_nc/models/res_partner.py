@@ -42,31 +42,12 @@ class ResPartner(models.Model):
                 open_invoice = sale.invoice_ids.filtered(
                     lambda inv: inv.payment_state != "paid"
                 )
-                deliver_lines = sale.picking_ids.filtered(
-                    lambda p: p.state not in ["done", "cancel"]
-                ) or sale.order_line.filtered(
-                    lambda line: line.product_id.invoice_policy == "delivery"
-                    and line.qty_delivered != line.qty_invoiced
+                lines = sale.order_line.filtered(
+                    lambda line: line.invoice_status != "invoiced"
                 )
-                product_lines = sale.order_line.filtered(
-                    lambda line: line.product_id.invoice_policy == "order"
-                    and line.product_uom_qty != line.qty_invoiced
-                )
-                if not open_invoice and not deliver_lines and not product_lines:
+                if not open_invoice and not lines:
                     continue
-                order_lines = sale.order_line.filtered(
-                    lambda l: l.product_id.invoice_policy != "delivery"
-                )
-                amount_total = sum(order_lines.mapped("price_total"))
-                for line in sale.order_line - order_lines:
-                    open_moves = line.move_ids.filtered(
-                        lambda m: m.state not in ["done", "cancel"]
-                    )
-                    if any(open_moves):
-                        amount_total += line.price_total
-                    else:
-                        price_unit = line.price_total / line.product_uom_qty
-                        amount_total += price_unit * line.qty_delivered
+                amount_total = sum(sale.order_line.mapped("price_total"))
                 payments = sale.invoice_ids.filtered(
                     lambda inv: inv.payment_state in ["in_payment", "paid", "partial"]
                 )._get_reconciled_payments()
