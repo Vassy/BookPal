@@ -39,7 +39,8 @@
                         <strong>Quotation Date:</strong>
                         <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                         <br/>
-                    </t> <t t-if="doc.state in ['order_booked']">
+                    </t>
+                    <t t-if="doc.state in ['order_booked']">
                         <strong>Booked order date:</strong>
                         <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                         <br/>
