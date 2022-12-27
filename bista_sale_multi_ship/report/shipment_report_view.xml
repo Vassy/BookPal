@@ -32,12 +32,17 @@
                             <t t-esc="o.name"/>
                         </strong>
                     </h4>
-                    <t t-if="doc.state in ['draft','sent']">
+                    <t t-if="doc.state in ['draft','sent','quote_approval','quote_confirm']">
                         <strong>Quotation Date:</strong>
                         <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                         <br/>
                     </t>
-                    <t t-if="doc.state not in ['draft','sent']">
+                    <t t-if="doc.state in ['order_booked']">
+                        <strong>Booked order date:</strong>
+                        <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                        <br/>
+                    </t>
+                    <t t-if="doc.state in ['sale','pending_for_approval','credit_review','cancel','done']">
                         <strong>Order Date:
                             <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                         </strong>
@@ -66,24 +71,29 @@
                 </t>
                 <t t-set="custom_information_block">
                     <div>
-                        <t t-if="doc.state in ['draft','sent']">
+                        <t t-if="doc.state in ['draft','sent','quote_approval','quote_confirm']">
                             <strong>Quotation:</strong>
                             <t t-esc="doc.name"/>
                             <br/>
                         </t>
-                        <t t-if="doc.state not in ['draft','sent']">
+                        <t t-if="doc.state in ['sale','pending_for_approval','order_booked','credit_review','cancel','done']">
                             <strong>Sale Order:</strong>
                             <t t-esc="doc.name"/>
                             <br/>
                         </t>
-                        <t t-if="doc.state in ['draft','sent']">
+                        <t t-if="doc.state in ['draft','sent','quote_approval','quote_confirm']">
                             <strong>Quotation Date:</strong>
                             <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                             <br/>
                         </t>
-                        <t t-if="doc.state not in ['draft','sent']">
+                        <t t-if="doc.state in ['order_booked']">
+                            <strong>Booked order date:</strong>
+                            <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                            <br/>
+                        </t>
+                        <t t-if="doc.state  in ['sale','pending_for_approval','credit_review','cancel','done']">
                             <strong>Order Date:</strong>
-                            <span t-esc="datetime.datetime.now()" t-options='{"widget": "date"}'>
+                            <span t-esc="o.date_order" t-options='{"widget": "date"}'>
                             </span>
                             <br/>
                         </t>
@@ -239,16 +249,17 @@
                                t-value="current_sub + (line.product_qty* line.so_line_id.price_unit)"/>
                         </t>
                     </t>
-                    <table style="border: 1px solid black; width: 26%; margin-left:74%;" class="text-right">
+                    <table style="border: 1px solid black; width: 26%; margin-left:74%;background-color: #CC5500;"
+                           class="text-right">
                         <tr>
                             <td class="text-left"
                                 style="height:1px; border-left: 1px solid black; border-right: 1px solid black; width:180px; border-top: 1px solid black; color: black; padding-left:10px;">
                                 <strong>Subtotal</strong>
                             </td>
                             <td class="text-right"
-                                style="padding-right:8px; border-left: 1px solid black; border-right: 1px solid black; height:1px; border-top: 1px solid black; padding-left:10px; background-color: white;">
-                                <span t-esc="current_sub"
-                                      t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
+                                style="padding-right:8px; border-left: 1px solid black; border-right: 1px solid black; height:1px; border-top: 1px solid black; padding-left:10px;">
+                                <strong t-esc="current_sub"
+                                        t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
                             </td>
                         </tr>
                         <!--                        <tr>-->

@@ -25,6 +25,26 @@
                              t-options='{"widget": "contact", "fields": ["address","name","phone"], "no_marker": True, "phone_icons": True}'/>
                     </t>
                 </div>
+                <t t-if="o.dest_address_id">
+                    <t t-set="information_block">
+                        <strong>Shipping address:</strong>
+                        <t t-if="o.dest_address_id.parent_id.name">
+                            <div>
+                                <span t-field="o.dest_address_id.name"/>
+                                <br/>
+                                <span t-field="o.dest_address_id.parent_id.name"/>
+                            </div>
+                            <div t-field="o.dest_address_id"
+                                 t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
+                        </t>
+                        <t t-else="">
+                            <div t-field="o.dest_address_id"
+                                 t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'
+                                 name="purchase_shipping_address"/>
+                        </t>
+                    </t>
+                </t>
+
                 <t t-set="report_info" class="col-6 text-right mb4">
                     <h3 t-if="o.state in ['draft','sent','purchase','done']">Request for Quotation</h3>
                     <h3 t-if="o.state == 'cancel'">Cancelled Purchase Quotation/Order</h3>
@@ -190,7 +210,7 @@
             </t>
         </xpath>
         <xpath expr="//p[@t-field='o.notes']" position="replace">
-            <div class="mt-5 mx-3" t-if="o.notes" >
+            <div class="mt-5 mx-3" t-if="o.notes">
                 <strong>Purchase Order Terms and
                     Conditions
                 </strong>
@@ -198,6 +218,7 @@
             </div>
         </xpath>
         <xpath expr="//div[@id='informations']" position="replace"/>
+        <xpath expr="//t[@t-set='information_block']" position="replace"/>
         <xpath expr="//h2[1]" position="replace"/>
     </template>
 </odoo>
