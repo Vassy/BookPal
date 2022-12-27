@@ -17,7 +17,7 @@
                         </group>
                     </sheet>
                     <footer>
-                        <button string="Save" name="open_best_seller_report" type="object" class="btn-primary" data-hotkey="q"/>
+                        <button string="Generate" name="open_best_seller_report" type="object" class="btn-primary" data-hotkey="q"/>
                         <button string="Cancel" class="btn-secondary" special="cancel"/>
                     </footer>
                </form>
