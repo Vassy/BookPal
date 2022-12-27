@@ -20,7 +20,7 @@
             <field name="type">form</field>
             <field name="arch" type="xml">
                 <xpath expr="//sheet/notebook/page[last()]" position="after">
-                    <page string="BigCommerce Information">
+                    <page string="BigCommerce Information" name="bigcommerce_info">
                         <group>
                             <group>
                                 <field name="is_exported_to_bigcommerce" readonly="1"/>
