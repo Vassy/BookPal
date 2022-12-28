@@ -50,10 +50,11 @@ class PurchaseOrderLine(models.Model):
             line.qty_shortclose = 0
             line.qty_received_uom = line.product_uom._compute_quantity(
                 line.qty_received, line.uom_id)
-            line.qty_received_value = line.qty_received_uom * line.price_unit
+
+            line.qty_received_value = line.qty_received_uom * line.disc_price_unit
             line.short_close_price = 0
             line.qty_remain_receive_value = 0
-            if line.qty_received_uom and line.qty_received_uom != \
+            if line.qty_received_uom != \
                     line.product_uom_qty:
                 if line.move_ids.filtered(
                     lambda x: x.state not in ['done', 'cancel']) or \
@@ -62,9 +63,9 @@ class PurchaseOrderLine(models.Model):
                     line.qty_remain_receive = line.product_uom_qty - \
                         line.qty_received_uom
                     line.qty_remain_receive_value = line.qty_remain_receive * \
-                        line.price_unit
+                        line.disc_price_unit
                 else:
                     line.qty_shortclose = line.product_uom_qty - \
                         line.qty_received_uom
                     line.short_close_price = line.qty_shortclose * \
-                        line.price_unit
+                        line.disc_price_unit
