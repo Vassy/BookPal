@@ -34,7 +34,7 @@
                 </div>
                 <!--                <t t-if="o.partner_shipping_id and (o.partner_shipping_id != o.partner_id)">-->
                 <t t-set="information_block" t-if="o.move_type == 'out_invoice'">
-                    <div name="shipping_address_block" >
+                    <div name="shipping_address_block">
                         <strong>Shipping Address:</strong>
                         <t t-if="o.partner_shipping_id.parent_id.name">
                             <div>
@@ -219,12 +219,78 @@
                 </td>
 
                 <td class="text-right"
-                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; margin: auto; width: 111px;" >
+                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; margin: auto; ">
                     <span t-field="line.price_subtotal"
                           t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                 </td>
             </t>
         </xpath>
+        <xpath expr="//table[@name='invoice_line_table']" position="after">
+            <div>
+                <table style="border: 1px solid black; margin-left: auto; width:25%;">
+                    <t t-if="o.move_type == 'in_invoice'">
+                        <tr class="border-black o_subtotal">
+                            <td style="border-left: 1px solid black;  width: 111px;padding-left:10px;">
+                                <strong>Total W/D</strong>
+                            </td>
+                            <td class="text-right"
+                                style=" border-left: 1px solid black; border-right: 1px solid black; margin: auto; padding-right:8px;">
+                                <!--                        <t t-esc="o.line_ids.purchase_order_id.without_disc_amount_untaxed"/>-->
+                                <t t-foreach="request.env['purchase.order'].sudo().search([('name', '=', o.invoice_origin)])"
+                                   t-as="purchase">
+                                    <t t-esc="purchase.without_disc_amount_untaxed"
+                                       t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                </t>
+                            </td>
+                        </tr>
+                        <tr class="border-black o_subtotal">
+                            <td style="border-left: 1px solid black; padding-left:10px;">
+                                <strong>Discount</strong>
+                            </td>
+                            <td class="text-right" style="padding-right:8px;border-left: 1px solid black;border-right: 1px solid black;">
+                                <span t-esc="o.invoice_line_ids.purchase_order_id.total_discount_amount"
+                                      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                            </td>
+                        </tr>
+                    </t>
+                    <tr class="border-black o_subtotal">
+                        <td style="padding-left:10px;">
+                            <strong>Subtotal</strong>
+                        </td>
+                        <td class="text-right" style="border-left: 1px solid black; padding-right:8px;">
+                            <span t-field="o.amount_untaxed"/>
+                        </td>
+                    </tr>
+                    <tr class="border-black o_subtotal">
+                        <td style="padding-left:10px;">
+                            <strong class="text-right">Tax</strong>
+                        </td>
+                        <td class="text-right" style="border-left: 1px solid black; padding-right:8px;">
+                            <span t-field="o.amount_tax"/>
+                        </td>
+                    </tr>
+                    <tr class="border-black o_subtotal">
+                        <td style="padding-left:10px;">
+                            <strong class="text-right">Shipping</strong>
+                        </td>
+                        <td class="text-right" style="border-left: 1px solid black; padding-right:8px;">
+                            <span t-esc="0.0" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                        </td>
+                    </tr>
+                    <tr style="background-color: #CC5500;">
+                        <td style="border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black; padding-top:10px; padding-left:10px;
+                                      height:1px ;">
+                            <strong class="border-black o_subtotal;text-right">Total</strong>
+                        </td>
+                        <td style="border-top: 1px solid black; padding-left:10px;padding-right:8px; height:1px ; padding-top:10px;"
+                            class="text-right">
+                            <strong t-field="o.amount_total"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </xpath>
+
         <xpath expr="//p[@name='payment_communication']" position="replace"/>
         <xpath expr="//div[@name='comment']" position="replace">
             <div class="mt-5 mx-3" t-if="o.narration">
@@ -234,122 +300,21 @@
             </div>
         </xpath>
 
-        <xpath expr="//div[@id='total']/div/table" position="attributes">
-            <attribute name="style">width: 50.9% !important; margin-left: 49.2% !important;</attribute>
-        </xpath>
-        <xpath expr="//table[@name='invoice_line_table']" position="attributes">
-            <attribute name="style">margin-bottom: 0rem; margin-top: 5px;</attribute>
-        </xpath>
+<!--        <xpath expr="//div[@id='total']/div/table" position="attributes">-->
+<!--            <attribute name="style">width: 50.9% !important; margin-left: 49.2% !important;</attribute>-->
+<!--        </xpath>-->
+        <!--        <xpath expr="//table[@name='invoice_line_table']" position="attributes">-->
+        <!--            <attribute name="style">margin-bottom: 0rem; margin-top: 5px;</attribute>-->
+        <!--        </xpath>-->
         <xpath expr="//div[@id='informations']" position="replace"/>
         <xpath expr="//h2" position="replace"/>
         <xpath expr="//div[hasclass('page')]" position="attributes">
             <attribute name="style">margin-top: 50px;</attribute>
         </xpath>
+        <xpath expr="//div[@id='total']" position="replace"/>
+<!--         <xpath expr="//table[@name='invoice_line_table']" position="attributes">-->
+<!--            <attribute name="style">margin-bottom: 0px;</attribute>-->
+<!--        </xpath>-->
     </template>
-    <template id="document_tax_totals_extended" inherit_id="account.document_tax_totals">
-        <xpath expr="//td[1]" position="replace">
-            <td style="border-right: 1px solid black;border-left: 1px solid black;border-bottom: 1px solid black; ">
-                <strong>Subtotal</strong>
-            </td>
-        </xpath>
-        <xpath expr="//td[2]" position="attributes">
-            <attribute name="style">border-right: 1px solid black;</attribute>
-        </xpath>
-        <xpath expr="//t[@t-as='subtotal']" position="before">
-            <t t-if="o.move_type == 'in_invoice'">
-                <tr class="border-black o_subtotal">
-                    <td style="border-left: 1px solid black; width:46%">
-                        <strong>Total W/D</strong>
-                    </td>
-                    <td class="text-right"
-                        style="border-left: 1px solid black; border-right: 1px solid black; margin: auto;">
-                        <!--                        <t t-esc="o.line_ids.purchase_order_id.without_disc_amount_untaxed"/>-->
-                        <t t-foreach="request.env['purchase.order'].sudo().search([('name', '=', o.invoice_origin)])"
-                           t-as="purchase">
-                            <t t-esc="purchase.without_disc_amount_untaxed"
-                               t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                        </t>
-                    </td>
-                </tr>
-                <tr class="border-black o_subtotal">
-                    <td style="border-left: 1px solid black;">
-                        <strong>Discount</strong>
-                    </td>
-                    <td class="text-right" style="border-left: 1px solid black;border-right: 1px solid black;">
-                        <span t-esc="o.invoice_line_ids.purchase_order_id.total_discount_amount"
-                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                    </td>
-                </tr>
-            </t>
-            <t t-if="'groups_by_subtotal' in tax_totals and len(tax_totals['groups_by_subtotal']) == 0">
-                <t t-if="o.move_type == 'in_invoice'">
-                    <tr class="border-black o_subtotal">
-                        <td style="border-left: 1px solid black; border-right: 1px solid black;">
-                            <strong>Subtotal</strong>
-                        </td>
-                        <td class="text-right" style="border-right: 1px solid black;">
-                            <span t-esc="o.invoice_line_ids.purchase_order_id.without_disc_amount_untaxed + o.line_ids.purchase_order_id.total_discount_amount"
-                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                        </td>
-                    </tr>
-                </t>
-                <t t-if="o.move_type == 'out_invoice'">
-                    <tr class="border-black o_subtotal">
-                        <td style="border-left: 1px solid black; border-right: 1px solid black; border-right: 1px solid black;">
-                            <strong>Subtotal</strong>
-                        </td>
-                        <td class="text-right" style="border-left: 1px solid black; border-right: 1px solid black;">
-                            <span t-esc="o.amount_untaxed"
-                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                        </td>
-                    </tr>
-                </t>
-                <tr class="border-black o_subtotal">
-                    <td style="border-left: 1px solid black; border-right: 1px solid black;">
-                        <strong>Tax</strong>
-                    </td>
-                    <td class="text-right" style="border-right: 1px solid black;">
-                        <span t-esc="0.0" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                    </td>
-                </tr>
-            </t>
-        </xpath>
-        <xpath expr="//tr[hasclass('o_total')]" position="before">
-            <tr class="border-black o_subtotal">
-                <td style="border-left: 1px solid black; border-right: 1px solid black;  border-top: 1px solid black;">
-                    <strong>Shipping</strong>
-                </td>
-                <td class="text-right" style="border-right: 1px solid black;border-top: 1px solid black;">
-                    <div>
-                        <span t-esc="0.0" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                    </div>
-                </td>
-            </tr>
-        </xpath>
-        <xpath expr="//tr[hasclass('o_total')]/td[1]" position="attributes">
-            <attribute name="style">border-left: 1px solid black; ;border-right: 1px solid black;border-bottom: 1px
-                solid black;
-                background-color:#CC5500;
-            </attribute>
-        </xpath>
-        <xpath expr="//tr[hasclass('o_total')]/td[2]" position="attributes">
-            <attribute name="style">border-right: 1px solid black;border-bottom: 1px solid black;
-                background-color:#CC5500;font-weight: bold;
-            </attribute>
-        </xpath>
-    </template>
-    <template id="tax_groups_totals_extended" inherit_id="account.tax_groups_totals">
-        <xpath expr="//t[@t-else='']//td[2]" position="attributes">
-            <attribute name="class">text-right o_price_total bg-light</attribute>
-            <attribute name="style">margin-right: 2px; border-left: 1px solid black;border-right: 1px solid
-                black;border-top: 1px solid black;
-            </attribute>
-        </xpath>
-        <xpath expr="//t[@t-else='']//td[1]/span" position="replace">
-            <strong class="text-nowrap" t-esc="amount_by_group['tax_group_name']"/>
-        </xpath>
-        <xpath expr="//t[@t-else='']//td[1]" position="attributes">
-            <attribute name="style">border-left: 1px solid black;</attribute>
-        </xpath>
-    </template>
+
 </odoo>
