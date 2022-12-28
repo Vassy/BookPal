@@ -19,7 +19,8 @@
     'depends': [
                 'sale',
                 'sale_stock',
-                'purchase_stock'],
+                'purchase_stock',
+                'bista_sale'],
     'data': [
         'security/ir.model.access.csv',
         'wizard/order_status_report_wiz.xml',
