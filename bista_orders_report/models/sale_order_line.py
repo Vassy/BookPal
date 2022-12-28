@@ -111,14 +111,14 @@ class SaleOrderLine(models.Model):
                     noback_move_lines.mapped('product_uom_qty')) if \
                     noback_move_lines else 0.0
                 line.qty_shortclose = shortclose_qty
-                line.delivery_value = line.qty_delivered * line.price_unit
-                line.short_close_value = line.qty_shortclose * line.price_unit
+                line.delivery_value = line.qty_delivered * line.discounted_price
+                line.short_close_value = line.qty_shortclose * line.discounted_price
                 if (abs(line.refund_qty) + line.qty_delivered +
-                    line.qty_shortclose) == line.product_uom_qty and abs(
+                    line.qty_shortclose) == line.product_uom_qty or abs(
                     line.refund_qty) > 0:
                     line.qty_shortclose += abs(line.refund_qty)
                     line.short_close_value = line.qty_shortclose * \
-                                             line.price_unit
+                                             line.discounted_price
             else:
                 line.qty_shortclose = 0.0
                 line.delivery_value = line.short_close_value = 0.0
@@ -129,7 +129,7 @@ class SaleOrderLine(models.Model):
         for rec in self:
             returnqty = self.get_return_quantity()
             rec.remaining_qty = (rec.product_uom_qty - rec.qty_delivered) - rec.qty_shortclose
-            rec.pending_value = rec.remaining_qty * rec.price_unit or 0.0
+            rec.pending_value = rec.remaining_qty * rec.discounted_price or 0.0
             # if rec.qty_delivered + rec.remaining_qty >= rec.product_uom_qty:
             #     rec.order_status = 'pending'
             # if returnqty == abs(rec.refund_qty):
@@ -141,7 +141,7 @@ class SaleOrderLine(models.Model):
             else:
                 rec.order_status = 'completed'
 
-            if rec.qty_delivered == rec.qty_invoiced and (rec.remaining_qty and rec.qty_shortclose):
-                rec.qty_shortclose += rec.remaining_qty
-                rec.remaining_qty = 0.0
+            # if rec.qty_delivered == rec.qty_invoiced and (rec.remaining_qty and rec.qty_shortclose):
+            #     rec.qty_shortclose += rec.remaining_qty
+            #     rec.remaining_qty = 0.0
 
