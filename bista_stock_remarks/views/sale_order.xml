@@ -14,7 +14,15 @@
                 <group name="common_note" col="6" class="mt-2 mt-md-0">
                     <group colspan="4">
                         <field name="common_pick_note" class="oe-bordered-editor"
-                            nolabel="1" placeholder="Special Instructions and Notes..."/>
+                               nolabel="1" placeholder="Special Instructions and Notes..."/>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//group[@name='common_note']" position="after">
+                <group name="internal_note">
+                    <group colspan="4">
+                        <field name="internal_note" placeholder="Add an internal note..." nolabel="1" class="text-break"
+                               height="50"/>
                     </group>
                 </group>
             </xpath>
