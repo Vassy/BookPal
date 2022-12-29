@@ -6,7 +6,9 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//page[@name='sales_purchases']//field[@name='team_id']" position="after">
-                 <field name="account_order_standing"  decoration-danger="account_order_standing == 'high'"  decoration-warning="account_order_standing == 'medium'" decoration-success="account_order_standing == 'low'"/>
+                <field name="account_order_standing" decoration-danger="account_order_standing == 'high'"
+                       decoration-warning="account_order_standing == 'medium'"
+                       decoration-success="account_order_standing == 'low'"/>
             </xpath>
             <xpath expr="//notebook" position="inside">
                 <page name="contact_details" string="Contact Details">
@@ -33,7 +35,7 @@
                             <field name="first_order_date"/>
                             <field name="last_order_date"/>
                             <separator string="Products Sale"/>
-                            <field name="sale_product_ids" nolabel="1" widget="many2many_tags"/>
+
                         </group>
                     </group>
                 </page>
@@ -46,10 +48,20 @@
                             <field name="source_notes"/>
                             <field name="referal_source"/>
                             <separator string="Products Purchase"/>
+                        </group>
+                    </group>
+                </page>
+                <page name="product_page" string="Product Page">
+                    <group>
+                        <group name="customer" string="Products Ordered"  attrs="{'invisible':[('sale_product_ids','=',[])]}">
+                           <field name="sale_product_ids" nolabel="1" widget="many2many_tags"/>
+                        </group>
+                        <group name="vendor" string="Product Purchased" attrs="{'invisible':[('purchase_product_ids','=',[])]}">
                             <field name="purchase_product_ids" nolabel="1" widget="many2many_tags"/>
                         </group>
                     </group>
                 </page>
+
             </xpath>
             <xpath expr="//notebook" position="inside">
                 <page name="Status" string="Block Reason" attrs="{'invisible':[('block','==',False)]}">
@@ -60,9 +72,6 @@
                     </group>
                 </page>
             </xpath>
-<!--            <xpath expr="//page[@name='sales_purchases']//field[@name='property_payment_term_id']" position="after">-->
-<!--                <field name="account_order_standing"/>-->
-<!--            </xpath>-->
         </field>
     </record>
     <record model="ir.ui.view" id="res_partner_tree_views">

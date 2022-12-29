@@ -66,11 +66,12 @@ class SaleOrder(models.Model):
     is_report = fields.Boolean(string='Report', default=True, tracking=True)
     reason = fields.Char(string='Reason')
     report_type = fields.Selection([
-                    ('individual', 'Individual'),
-                    ('bulk', 'Bulk'),
-                    ('mixed', 'Mixed'),
-                ], string='Report Type')
+        ('individual', 'Individual'),
+        ('bulk', 'Bulk'),
+        ('mixed', 'Mixed'),
+    ], string='Report Type')
     report_notes = fields.Text(string='Reporting Notes')
+    order_processing_time = fields.Integer(compute="compute_order_process_time", string='Process Time')
 
     @api.depends("order_line.price_total")
     def _amount_all(self):
@@ -104,6 +105,13 @@ class SaleOrder(models.Model):
     def onchange_fulfilment_project(self):
         if self.fulfilment_project:
             self.report_type = 'individual'
+
+    def compute_order_process_time(self):
+        for order in self:
+            order.order_processing_time = 0
+            if order.date_approve:
+                order_date = order.date_approve.date() - order.date_order.date()
+                order.order_processing_time = order_date.days
 
 
 class SaleOrderLine(models.Model):
@@ -171,7 +179,8 @@ class SaleOrderLine(models.Model):
                 lambda s: not s.company_id or s.company_id == self.company_id
             )[:1]
             if vendor:
-                self.supplier_id = vendor.filtered(lambda x: x.name.is_primary).name.id if vendor.filtered(lambda x: x.name.is_primary) else vendor[:1].name.id
+                self.supplier_id = vendor.filtered(lambda x: x.name.is_primary).name.id if vendor.filtered(
+                    lambda x: x.name.is_primary) else vendor[:1].name.id
         return res
 
     @api.model
