@@ -117,44 +117,33 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    tracking_ref = fields.Char(
-        "Tracking Refrence", compute="get_tracking_ref"
-    )
-    saving_amount = fields.Float(
-        "Saving Amount", compute="_compute_amount", store=True
-    )
+    tracking_ref = fields.Char("Tracking Refrence", compute="get_tracking_ref")
+    saving_amount = fields.Float("Saving Amount", compute="_compute_prices", store=True)
     discounted_price = fields.Float(
-        "Quote Price", compute="_compute_amount", store=True,
-        # inverse="_inverse_discounted_price",
+        "Quote Price",
+        compute="_compute_prices",
+        store=True,
+        inverse="_inverse_discounted_price",
     )
-    attachment_ids = fields.Many2many('ir.attachment', string="Attach File")
+    attachment_ids = fields.Many2many("ir.attachment", string="Attach File")
 
-    # def _inverse_discounted_price(self):
-    #     for line in self:
-    #         if line.price_unit:
-    #             line.discount = 100 - (line.discounted_price / line.price_unit * 100)
-    #         else:
-    #             line.discount = 0
-    #         line.saving_amount = line.price_unit * line.discount / 100 * line.product_uom_qty
+    def _inverse_discounted_price(self):
+        for line in self:
+            line.discount = 0
+            if line.price_unit:
+                line.discount = 100 - (line.discounted_price / line.price_unit * 100)
+            line.saving_amount = (
+                line.price_unit * line.discount / 100 * line.product_uom_qty
+            )
+        self._compute_amount()
 
-    @api.depends("product_uom_qty", "discount", "price_unit", "tax_id")
-    def _compute_amount(self):
-        super()._compute_amount()
+    @api.depends("product_uom_qty", "price_unit")
+    def _compute_prices(self):
         for line in self:
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            taxes = line.tax_id.compute_all(
-                price,
-                line.order_id.currency_id,
-                line.product_uom_qty,
-                product=line.product_id,
-                partner=line.order_id.partner_shipping_id
-            )
             line_data = {
-                "discounted_price": int(price * 10 ** 2) / 10 ** 2,
-                "saving_amount": line.price_unit * line.discount / 100 * line.product_uom_qty,
-                "price_tax": sum(t.get("amount", 0.0) for t in taxes.get("taxes", [])),
-                "price_total": taxes["total_included"],
-                "price_subtotal": taxes["total_excluded"],
+                "discounted_price": int(price * 10**2) / 10**2,
+                "saving_amount": (line.price_unit - price) * line.product_uom_qty,
             }
             line.update(line_data)
 
