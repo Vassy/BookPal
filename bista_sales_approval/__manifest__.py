@@ -18,6 +18,7 @@
         "security/sale_security.xml",
         "security/ir.model.access.csv",
         "data/sale_approval_data.xml",
+        "data/quote_approve_email_template.xml",
         "views/sale_order_approval_button_view.xml",
         "views/sale_portal_template.xml",
         "wizard/so_reject_reason_view.xml",

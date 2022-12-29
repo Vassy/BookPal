@@ -5,6 +5,7 @@
 # Copyright (C) 2022 (https://www.bistasolutions.com)
 #
 ##############################################################################
+from datetime import datetime
 
 from odoo import api, models, fields, _
 from lxml import etree
@@ -26,6 +27,7 @@ class SaleOrder(models.Model):
     state = fields.Selection(selection_add=AddState)
     sale_approval_log_ids = fields.One2many("sale.approval.log", "sale_id")
     is_order = fields.Boolean()
+    date_approve = fields.Datetime()
 
     @api.depends("state")
     def _compute_type_name(self):
@@ -69,26 +71,26 @@ class SaleOrder(models.Model):
 
     def has_to_be_signed(self, include_draft=False):
         display_state = self.state == "sent" or (
-            self.state in ["draft", "quote_approval", "quote_confirm"] and include_draft
+                self.state in ["draft", "quote_approval", "quote_confirm"] and include_draft
         )
         return (
-            display_state
-            and not self.is_expired
-            and self.require_signature
-            and not self.signature
+                display_state
+                and not self.is_expired
+                and self.require_signature
+                and not self.signature
         )
 
     def has_to_be_paid(self, include_draft=False):
         transaction = self.get_portal_last_transaction()
         display_state = self.state == "sent" or (
-            self.state in ["draft", "quote_approval", "quote_confirm"] and include_draft
+                self.state in ["draft", "quote_approval", "quote_confirm"] and include_draft
         )
         return (
-            display_state
-            and not self.is_expired
-            and self.require_payment
-            and transaction.state != "done"
-            and self.amount_total
+                display_state
+                and not self.is_expired
+                and self.require_payment
+                and transaction.state != "done"
+                and self.amount_total
         )
 
     def write(self, vals):
@@ -107,9 +109,12 @@ class SaleOrder(models.Model):
             sale._create_sale_approval_log("Quote Sent for Approval")
 
     def action_quote_confirm(self):
+        approve_template = self.env.ref('bista_sales_approval.email_template_sale_quote_approve')
         for sale in self:
-            sale.state = "quote_confirm"
+            self.state = "quote_confirm"
+            approve_template.send_mail(sale.id, force_send=True)
             sale._create_sale_approval_log("Quote Confirmed")
+
 
     def action_send_for_approval(self):
         for rec in self:
@@ -119,6 +124,7 @@ class SaleOrder(models.Model):
     def action_approval(self):
         for rec in self:
             rec.action_confirm()
+            rec.date_approve = datetime.now()
             rec._create_sale_approval_log("Order Approved")
 
     def action_reject(self):
@@ -143,7 +149,7 @@ class SaleOrder(models.Model):
 
     @api.model
     def _fields_view_get(
-        self, view_id=None, view_type="form", toolbar=False, submenu=False
+            self, view_id=None, view_type="form", toolbar=False, submenu=False
     ):
         result = super()._fields_view_get(view_id, view_type, toolbar, submenu)
         if view_type != "form":
@@ -169,11 +175,11 @@ class SaleOrder(models.Model):
             ]:
                 field.attrib["attrs"] = attrs
             if (
-                field.attrib.get("invisible") == "1"
-                or field.attrib.get("readonly") == "1"
-                or field.attrib["name"] not in self._fields
-                or field.attrib.get("attrs")
-                or field.attrib["name"] == "sale_multi_ship_qty_lines"
+                    field.attrib.get("invisible") == "1"
+                    or field.attrib.get("readonly") == "1"
+                    or field.attrib["name"] not in self._fields
+                    or field.attrib.get("attrs")
+                    or field.attrib["name"] == "sale_multi_ship_qty_lines"
             ):
                 continue
             field.attrib["attrs"] = attrs

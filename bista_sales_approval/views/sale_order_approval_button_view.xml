@@ -18,10 +18,10 @@
             </xpath>
             <xpath expr="//button[@name='action_quotation_send']" position="after">
                 <field name="is_order" invisible="1" />
-                <button name="action_quote_confirm" string="Approve Quotation" type="object" class="btn-primary" states="draft" groups="bista_sales_approval.group_approve_sale_quote" />
+                <button name="action_quote_confirm" string="Approve Quotation" type="object" class="btn-primary" states="draft" groups="bista_sales_approval.group_approve_sale_quote" confirm="Your quotation has been Approved!!" />
                 <button name="action_send_quote_approval" string="Send For Quotation Approval" type="object" class="btn-primary" states="draft" groups="bista_sales_approval.group_create_sale_quote" />
                 <button name="action_quote_confirm" string="Quote Approve" type="object" states="quote_approval"
-                    groups="bista_sales_approval.group_approve_sale_quote" class="btn-primary" />
+                    groups="bista_sales_approval.group_approve_sale_quote" class="btn-primary"  />
                 <button name="action_reject" string="Reject" type="object" states="quote_approval"
                     groups="bista_sales_approval.group_approve_sale_quote" class="btn-primary" />
                 <button name="action_order_booked" string="Book Order" type="object" class="btn-primary"
@@ -46,6 +46,10 @@
             <xpath expr="//header/button[@name='action_confirm'][1]" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
+            <xpath expr="//field[@name='commitment_date']" position="after">
+                <field name="date_approve" invisible="1"/>
+            </xpath>
+
             <notebook position="inside">
                 <page name="sale_approval_log_ids" string="Approval Status">
                     <field name="sale_approval_log_ids">

@@ -17,8 +17,8 @@
                 <attribute name="optional">show</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
-                <field name="discounted_price" optional="show" />
-                <field name="saving_amount" optional="show" readonly="1" />
+                <field name="discounted_price" optional="show"/>
+                <field name="saving_amount" optional="show" readonly="1"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='discount']" position="attributes">
                 <attribute name="readonly">1</attribute>
@@ -31,12 +31,14 @@
                 <attribute name="attrs">{'invisible': 0 }</attribute>
             </xpath>
             <xpath expr="//group[@name='order_details']//div[hasclass('o_td_label')][1]" position="replace">
-            
-            <div class="o_td_label" >
-                <label for="date_order" string="Quotation Date" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel', 'order_booked',  'pending_for_approval', 'credit_for_review'])]}"/>
-                <label for="date_order" string="Order Date" attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'quote_confirm', 'quote_approval'])]}"/>
-            </div>
-            <field name="date_order" nolabel="1" required="1"/>
+
+                <div class="o_td_label">
+                    <label for="date_order" string="Quotation Date"
+                           attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel', 'order_booked',  'pending_for_approval', 'credit_for_review'])]}"/>
+                    <label for="date_order" string="Order Date"
+                           attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'quote_confirm', 'quote_approval'])]}"/>
+                </div>
+                <field name="date_order" nolabel="1" required="1"/>
                 <!-- <div class="o_td_label" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel', 'order_booked',  'pending_for_approval', 'credit_for_review'])]}">
                     <label for="date_order" string="Quotation Date"/>
                 </div> -->
@@ -46,9 +48,9 @@
                        attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel', 'order_booked',  'pending_for_approval', 'credit_for_review'])]}"/> -->
             </xpath>
             <xpath expr="//group[@name='order_details']//div[hasclass('o_td_label')][2]" position="replace">
-               <!--  <div class="o_td_label" attrs="{'invisible': [('state', 'not in', ['sale', 'done', 'cancel', 'order_booked',  'pending_for_approval', 'credit_for_review'])]}">
-                    <label for="date_order" string="Order Date"/>
-                </div> -->
+                <!--  <div class="o_td_label" attrs="{'invisible': [('state', 'not in', ['sale', 'done', 'cancel', 'order_booked',  'pending_for_approval', 'credit_for_review'])]}">
+                     <label for="date_order" string="Order Date"/>
+                 </div> -->
             </xpath>
             <xpath expr="//group[@name='order_details']//field[@name='date_order'][2]" position="replace">
                 <!-- <field name="date_order" nolabel="1"
@@ -74,7 +76,10 @@
                     <field name="expected_date" widget="date"/>
                 </span>
             </xpath>
-            <xpath expr="//group[@name='sale_reporting']" position="attributes">
+            <xpath expr="//group[@name='utm_link']/field[@name='source_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//group[@name='utm_link']/field[@name='medium_id']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//notebook/page[@name='other_information']" position="after">
@@ -83,7 +88,15 @@
                         <group name="order_details">
                             <field name='refer_by_company'/>
                             <field name='refer_by_person'/>
+                            <!--                            <field name='order_processing_time'/>-->
                         </group>
+                        <group class="o_row">
+                            <group>
+                                <field name="order_processing_time" no_label="1"/>
+                            </group>
+                            <span class="oe_read_only">Days</span>
+                        </group>
+
                         <group>
                             <field name="account_order_standing" decoration-danger="account_order_standing == 'high'"
                                    decoration-warning="account_order_standing == 'medium'"
@@ -93,13 +106,9 @@
                     </group>
                     <group>
                         <group string="Tracking" name="sale_reporting">
-                            <group name="technical" colspan="2" class="mb-0">
-                                <field name="origin"/>
-                            </group>
                             <group name="utm_link" colspan="2" class="mt-0">
-                                <field name="campaign_id"/>
-                                <field name="medium_id"/>
-                                <field name="source_id"/>
+                                <field name="medium_id" readonly="0"/>
+                                <field name="source_id" readonly="0"/>
                             </group>
                         </group>
                     </group>
@@ -140,7 +149,7 @@
                         <group>
                             <field name="shipping_account"/>
                             <field name="so_shipping_cost" widget="monetary"/>
-                            <field name="artwork_status_id" />
+                            <field name="artwork_status_id"/>
                             <field name="death_type_id"/>
                             <field name="existing_death_order"/>
                             <field name="customization_cost" widget="monetary"/>
@@ -189,12 +198,23 @@
             <xpath expr="//notebook/page[last()]" position="after">
                 <page name='best_seller_report' string='Best Seller Report'>
                     <group>
-                        <field name="is_report" />
-                        <field name="reason" attrs="{'invisible': [('is_report', '=', True)], 'required': [('is_report', '=', False)]}"/>
-                        <field name="report_type" />
-                        <field name="report_notes" />
+                        <field name="is_report"/>
+                        <field name="reason"
+                               attrs="{'invisible': [('is_report', '=', True)], 'required': [('is_report', '=', False)]}"/>
+                        <field name="report_type"/>
+                        <field name="report_notes"/>
                     </group>
                 </page>
+            </xpath>
+        </field>
+    </record>
+    <record id="bista_sale_sale_quotation_delivery_tree_view" model="ir.ui.view">
+        <field name="name">bista.sale.sale.quotation.tree.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="before">
+                <field name="order_processing_time" optional="hide"/>
             </xpath>
         </field>
     </record>
