@@ -6,6 +6,7 @@ class SaleOrder(models.Model):
     _inherit = "sale.order"
 
     common_pick_note = fields.Html('Common Notes',)
+    internal_note = fields.Html(string='Intenal Note', store=True, readonly=False)
 
 
 class SaleOrderLine(models.Model):

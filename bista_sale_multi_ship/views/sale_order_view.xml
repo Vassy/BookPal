@@ -87,6 +87,7 @@
                                 <field name="product_id" invisible="1"/>
                                 <field name="product_uom_qty" optional="show"/>
                                 <field name="product_qty" optional="show" default="remain_qty" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="product_weight"/>
                                 <field name="product_uom" optional="hide"/>
                                 <!-- below fields are used in the widget qty_at_date_widget -->
                                 <field name="product_type" invisible="1"/>
