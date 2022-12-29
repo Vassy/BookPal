@@ -29,7 +29,7 @@
     "website": "https://www.cybrosys.com",
     "category": "Sales",
     "version": "15.0.1.0.0",
-    "depends": ["sale_stock", "sale_management", "bista_sale"],
+    "depends": ["sale_stock", "sale_management"],
     "data": ["views/sales_order.xml"],
     "images": ["static/description/banner.png"],
     "license": "LGPL-3",

@@ -88,7 +88,7 @@
                         <group name="order_details">
                             <field name='refer_by_company'/>
                             <field name='refer_by_person'/>
-<!--                            <field name='order_processing_time'/>-->
+                            <!--                            <field name='order_processing_time'/>-->
                         </group>
                         <group class="o_row">
                             <group>
@@ -209,7 +209,7 @@
         </field>
     </record>
 
-    <!-- <record id="bista_sale_sale_quotation_delivery_tree_view" model="ir.ui.view">
+    <record id="bista_sale_sale_quotation_delivery_tree_view" model="ir.ui.view">
         <field name="name">bista.sale.sale.quotation.tree.inherit</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
@@ -218,7 +218,7 @@
                 <field name="order_processing_time" optional="hide"/>
             </xpath>
         </field>
-    </record> -->
+    </record>
 
     <record id="view_order_tree_inherit_add_tags" model="ir.ui.view">
         <field name="name">Sale order Tree</field>
