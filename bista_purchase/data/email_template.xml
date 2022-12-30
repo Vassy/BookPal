@@ -105,10 +105,18 @@
                     <span t-out="object.order_id.name"/>
                     has been shipped.
                     <t t-if="object.tracking_ref_ids">
-                        Your tracking reference is<a t-att-href="object.tracking_ref_ids[0].tracking_url"
-                                                     t-out="object.tracking_ref_ids[0].name"/>.
+                        Your tracking reference
+                        <t t-if="len(object.tracking_ref_ids)==1">
+                            is
+                            <a t-att-href="object.tracking_ref_ids[0].tracking_url" t-out="object.tracking_ref_ids[0].name"/><br/>
+                        </t>
+                        <t t-else="">
+                            are<br/>
+                            <t t-foreach="object.tracking_ref_ids" t-as="tracking">
+                                <a t-att-href="tracking.tracking_url" t-out="tracking.name"/><br/>
+                            </t>
+                        </t>
                     </t>
-                    <br/>
                     <br/>
                     Please contact Customer Service at 888-645-2628 for any additional questions regarding this
                     shipment.
