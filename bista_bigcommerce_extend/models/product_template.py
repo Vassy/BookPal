@@ -44,6 +44,70 @@ class ProductTemplate(models.Model):
                 template.write(related_vals)
         return templates
 
+    def create_product_template(self, record, store_id):
+        """ Overwrite the method to update the description of product in new 
+            Big commerce product description field
+        """
+        product_attribute_obj = self.env['product.attribute']
+        product_attribute_value_obj = self.env['product.attribute.value']
+        product_template_obj = self.env['product.template']
+        template_title = ''
+        if record.get('name', ''):
+            template_title = record.get('name')
+        attrib_line_vals = []
+        _logger.info("{}".format(record.get('categories')))
+        if record.get('variants'):
+            for attrib in record.get('variants'):
+                if not attrib.get('option_values'):
+                    continue
+                attrib_name = attrib.get('option_display_name')
+                attrib_values = attrib.get('label')
+                attribute = product_attribute_obj.get_product_attribute(attrib_name, type='radio',
+                                                                        create_variant='always')
+                attribute_val_ids = []
+
+                attrib_value = product_attribute_value_obj.get_product_attribute_values(attrib_values, attribute.id)
+                attribute_val_ids.append(attrib_value.id)
+
+                if attribute_val_ids:
+                    attribute_line_ids_data = [0, False, {'attribute_id': attribute.id,
+                                                          'value_ids': [[6, False, attribute_val_ids]]}]
+                    attrib_line_vals.append(attribute_line_ids_data)
+        category_id = self.env['product.category'].sudo().search([('bigcommerce_product_category_id','in',record.get('categories'))],limit=1)
+        if not category_id:
+            category_id = self.env.ref('product.product_category_all')
+        if not category_id:
+            message = "Category not found!"
+            _logger.info("Category not found: {}".format(category_id))
+            return False, message
+        public_category_ids = self.env['product.category'].sudo().search(
+            [('bigcommerce_product_category_id', 'in', record.get('categories'))])
+        brand_id = self.env['bc.product.brand'].sudo().search([('bc_brand_id', '=', record.get('brand_id'))], limit=1)
+        _logger.info("BRAND : {0}".format(brand_id))
+        inven_location_id = self.env['stock.location'].search(
+            [('name', '=', 'Inventory adjustment'), ('usage', '=', 'inventory')], limit=1)
+        vals = {
+            'name': template_title,
+            'type': 'product',
+            'categ_id': category_id and category_id.id,
+            "weight": record.get("weight"),
+            "list_price": record.get("price"),
+            "standard_price":record.get('cost_price'),
+            "is_visible": record.get("is_visible"),
+            "public_categories_ids": [(6, 0, public_category_ids.ids)],
+            "bigcommerce_product_id": record.get('id'),
+            "bigcommerce_store_id": store_id.id,
+            "default_code": record.get("sku"),
+            "is_imported_from_bigcommerce": True,
+            "x_studio_manufacturer": brand_id and brand_id.id,
+            "description_sale": "",
+            "bigcommerce_description": record.get('description'),
+            "property_stock_inventory": inven_location_id.id
+        }
+        product_template = product_template_obj.with_user(1).create(vals)
+        _logger.info("Product Created: {}".format(product_template))
+        return True, product_template
+
 
 class ProductExtend(models.Model):
     _inherit = "product.product"
