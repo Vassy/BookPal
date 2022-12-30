@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="usd_transaction_payment_acquirer" model="payment.acquirer">
+            <field name="name">Bigcommerce Payment Acquier</field>
+            <field name="sequence">2</field>
+            <field name="state">test</field>
+            <field name="image_128"
+               type="base64"
+               file="payment_transfer/static/src/img/transfer_icon.png"/>
+            <field name="module_id" ref="base.module_payment_transfer"/>
+            <field name="pending_msg">&lt;i&gt;Pending&lt;/i&gt;... The order will be validated after the payment.</field>
+            <field name="description" type="html">
+                <p>
+                    Provide instructions to customers so that they can pay their orders manually.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

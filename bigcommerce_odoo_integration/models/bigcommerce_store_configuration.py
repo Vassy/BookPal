@@ -434,6 +434,7 @@ class BigCommerceStoreConfiguration(models.Model):
             # market_id.total_product_count = self.env['product.template'].sudo().search_count(
             #     [('bigcommerce_store_id', '=', market_id.id)])
             market_id.total_product_count = self.env['bc.store.listing'].sudo().search_count([('bigcommerce_store_id', '=', market_id.id)])
+
     def action_redirect_to_process(self):
         action = self.env.ref('bigcommerce_odoo_integration.action_bigcommerce_operation').read()[0]
         return action
