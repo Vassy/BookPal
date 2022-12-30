@@ -17,6 +17,7 @@
     'data': [
         'data/delivery_demo.xml',
         'data/ir_cron.xml',
+        'data/payment_acquire.xml',
         'security/ir.model.access.csv',
         'wizard/export_and_update_product_to_bc.xml',
         'wizard/bigcommerce_import_operation.xml',
