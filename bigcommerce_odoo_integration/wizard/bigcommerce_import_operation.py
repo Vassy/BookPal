@@ -82,4 +82,3 @@ class BigCommerceImportOperation(models.TransientModel):
                     t.start()
         elif self.import_operation_of_bc == 'import_order':
             self.bc_store_instance_id.bigcommerce_to_odoo_import_orders_main(self.from_order_date, self.to_order_date, self.bigcommerce_order_status)
-        pass
