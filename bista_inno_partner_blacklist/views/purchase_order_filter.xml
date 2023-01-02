@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_purchase_order_filter_inherit" model="ir.ui.view">
+            <field name="name">purchase.order.view.form.inherit</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.view_purchase_order_filter"/>
+            <field name="arch" type="xml">
+                <filter name="my_purchases" position="replace"></filter>
+                <filter name="starred"  position="replace"></filter>
+                <filter name="draft" position="replace"></filter>
+                <filter name="order_date" position="replace"></filter>
+                <filter name="draft_rfqs" position="replace"></filter>
+                <filter name="waiting_rfqs" position="replace"></filter>
+                <filter name="late_rfqs" position="replace"></filter>
+                <filter name="activities_exception" position="replace"></filter>
+                <xpath expr="//filter[@name='to_approve']" position="after">
+                    <separator/>
+                    <filter name="not_invoiced" string="Waiting Bills" domain="[('invoice_status','=', 'to invoice')]" help="Purchase orders that include lines not invoiced."/>
+                    <filter name="invoiced" string="Bills Received" domain="[('invoice_status','=', 'invoiced')]" help="Purchase orders that have been invoiced."/>
+                    <filter string="Unread Messages" name="message_needaction" domain="[('message_needaction','=',True)]"/> 
+                </xpath>
+            </field>
+        </record> 
+
+        <record id="view_purchase_req_filter_inherit1" model="ir.ui.view">
+            <field name="name">purchase.order.req.form.inherit1</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase_requisition.purchase_order_search_inherit"/>
+            <field name="arch" type="xml">
+                <filter name="requisition" position="replace"></filter>
+                <xpath expr="//filter[@name='approved']" position="before">
+                    <filter string="Quotations" name="requisition" domain="[('requisition_id', '!=', False)]" help="Purchase Orders with requisition"/>
+                </xpath>
+            </field>
+        </record>         
+        
+        <record id="view_purchase_order_filter_inherit1" model="ir.ui.view">
+            <field name="name">purchase.order.view.form.inherit1</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='order_date']" position="after">
+                    <separator/>
+                    <filter name="not_invoiced" string="Waiting Bills" domain="[('invoice_status','=', 'to invoice')]" help="Purchase orders that include lines not invoiced."/>
+                    <filter name="invoiced" string="Bills Received" domain="[('invoice_status','=', 'invoiced')]" help="Purchase orders that have been invoiced."/>
+                    <filter string="Unread Messages" name="message_needaction" domain="[('message_needaction','=',True)]"/> 
+                </xpath>
+            </field>
+        </record> 
+    </data>
+</odoo>

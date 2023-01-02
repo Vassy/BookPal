@@ -112,7 +112,10 @@
                                 <field name="tracking_ref" optional="hide"/>
                                 <field name="partner_state" invisible="1"/>
                                 <field name="order_id" invisible="1"/>
-                                
+                                <field name="delivery_method_id"/>
+                                <field name="delivery_charges" readonly="1"/>
+                                <button name="get_shipping_charge"  type = "object" class="fa fa-fw o_button_icon fa-truck">
+                                    </button>
                                 <button name="cancel_shipment"
                                     type="object"
                                     icon="fa-close"

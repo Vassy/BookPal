@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="l10n_us_check_printing.ckus_stub">
+            <div t-attf-class="ckus_stub ckus_stub_{{ stub_num }}" style="padding: 0 .25in;">
+                    <div class="row summary_line" style="padding-top:20mm">
+                        <div style="width: 50%;">
+                            <span t-esc="page['partner_name']"/>
+                        </div>
+                        <div style="text-align: right !important;width: 50%;font-size: 8pt">
+                            <span t-field="o.date" t-options="{&quot;widget&quot;: &quot;date&quot;,&quot;format&quot;: &quot;dd/MMM/yyyy&quot;}"/>
+                        </div>
+                    </div>
+                <t t-set="vals" t-value="o.get_bank_lines()" />
+                <t t-foreach="vals" t-as="line">
+                    <div class="row col-12">
+                        <t t-foreach="line" t-as="stub_line">
+                            <t t-if="not stub_line.get('header')">
+                                <div class="col-4 text-nowrap" style="font-size: 8pt" >
+                                    <span class="pull-left">
+                                        <t t-esc="stub_line['number']"/>
+                                    </span>
+                                    <span class="pull-right">
+                                        <t t-esc="stub_line['amount_total']"/>
+                                    </span>
+                                    <div style="clear:both; width: 100%; border-bottom: 1px black dotted;">
+                                    </div>
+                                </div>
+                            </t>    
+                        </t>
+                    </div>
+                </t>
+                    <div class="stub_total_amount text-nowrap">Check Amount:
+                        <t t-if="isinstance(page['amount'], float)">
+                            <t t-esc="formatLang(page['amount'], monetary=True, currency_obj=page['currency'])"/>
+                        </t>
+                        <t t-if="isinstance(page['amount'], str)">
+                            <t t-esc="page['amount']"/>
+                        </t>
+                    </div>
+                </div>      
+        </template>
+
+        <template id = "ckus_check_inherit" inherit_id="l10n_us_check_printing.ckus_check">
+            <xpath expr="div[hasclass('ckus_check')]" position="replace">
+                <div class="ckus_check">
+
+                    <div style="position:absolute; left:142mm; top:14mm; font-size:10pt; font-family: monospace;">
+                        CHEQUE NO.
+                    </div>
+
+                    <div style="position:absolute; left:160mm; width:45mm; top:14mm; text-align:right; font-size:10pt; font-family: monospace; padding-right:2mm;">
+                        <span class="sequence_number" t-esc="o.check_number"/>
+                    </div>
+
+                    <div style="position:absolute; left:142mm; top:21mm; font-size: 10pt; font-family: monospace;">
+                        DATE
+                    </div>
+                    <div style="position:absolute; left:160mm; width:45mm; top:21mm; font-family: monospace; letter-spacing:2mm; font-size:10pt; text-align:right;">
+                        <span t-field="o.date" t-options='{"widget": "date","format": "ddMMyyyy"}'/>
+                    </div>
+                    <div style="position:absolute; left:160mm; width:45mm; top:26mm; font-family: monospace; letter-spacing:2mm; font-size:10pt; text-align:right;">
+                        DDMMYYYY
+                    </div>
+
+                    <div style="position:absolute; top:40mm; left:160mm; text-align: right;">
+                        *<span t-esc="page['amount']" t-esc-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/>
+                    </div>
+
+                    <div style="position:absolute; left:14mm; top:30mm; height:10mm; width:5.5in; overflow:hidden">
+                        *<span t-esc="page['amount_in_word']"/>
+                    </div>
+
+                    <div name="partner" style="position:absolute; left:16mm; top:45mm; width:110mm; height:20mm;">
+                        <address t-field="o.partner_id"  t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
+                    </div>
+                 </div>
+            </xpath>
+        </template>
+    
+    </data>
+    
+    
+
+</odoo>
