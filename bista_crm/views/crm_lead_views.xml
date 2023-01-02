@@ -209,6 +209,33 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="crm_lead_view_tree_opportunity_inherited" model="ir.ui.view">
+        <field name="name">crm.lead.view.tree.opportunity.inherit.iap.mine</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='expected_revenue']" position="before">
+                <field name="quotation_count"/>
+                <field name="sale_order_count"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="crm_case_kanban_view_leads_inherited" model="ir.ui.view">
+        <field name="name">crm.lead.view.kanban.opportunity.inherit.iap.mine</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_kanban_content')]/div[last()]" position="after">
+                <div>
+                    Quotations : <field name="quotation_count"/>
+                </div>
+                <div>
+                    Sale Orders : <field name="sale_order_count"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
 
     <menuitem id="special_pricing_type_menu" name="Special Pricing Type" action="bista_crm.special_pricing_type_action"
               parent="bista_crm.bookpal_menu_crm" sequence="21"/>
