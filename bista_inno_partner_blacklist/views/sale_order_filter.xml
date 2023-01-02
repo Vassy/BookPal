@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_sales_order_filter_inherit" model="ir.ui.view">
+            <field name="name">sale.order.view.form.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.sale_order_view_search_inherit_sale"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='my_sale_orders_filter']" position="before">
+                    <separator/>
+                    <filter string="Not Cancelled" name="not_cancel" domain="[('state','!=','cancel')]"/>
+                    <!-- <filter string="Sales" name="sales" domain="[('state','in',('progress','done'))]"/>
+                    <filter string="Not Paid" name="not_invoice" domain="[('invoice_status','!=','paid')]"/>  -->
+                </xpath>
+                <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
+                    <separator/>
+                    <filter string="Sales" name="sales" domain="[('state','in',('progress','done'))]"/>
+                    <filter string="Not Paid" name="not_invoice" domain="[('invoice_status','!=','invoiced')]"/> 
+                </xpath>
+
+                <!-- <filter string="Upselling" domain="[('invoice_status','=','upselling')]" /> -->
+            </field>
+        </record>  
+
+        <record id="sale.sale_order_view_search_inherit_sale" model="ir.ui.view">
+            <field name="name">sale.order.search.inherit.sale</field>
+            <field name="model">sale.order</field>
+            <field name="mode">primary</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
+                    <separator/>
+                    <filter string="To Invoice" name="to_invoice" domain="[('invoice_status','=','to invoice')]" />
+                    <filter string="upselling" name="upselling" domain="[('invoice_status','=','upselling')]" />
+                    <separator/>
+                    <filter string="Unread Messages" name="message_needaction" domain="[('message_needaction','=',True)]"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="view_sales_order_filter_inherit1" model="ir.ui.view">
+            <field name="name">sale.order.view.form.inherit1</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='my_quotation']" position="before">
+                    <separator/>
+                    <filter string="Active Quotations" name="active_quotations" domain="[('state','not in',('cancel','sale','done'))]"/>
+                 </xpath>
+            </field>
+        </record>
+
+        <record id="model_sale_order_action_inv_status_update" model="ir.actions.server">
+            <field name="name">Invoice status update</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="binding_model_id" ref="sale.model_sale_order"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">action = records.action_update_inv_status()</field>
+        </record>
+        
+        <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
+            <field name="name">Quotations</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_id" ref="sale.view_quotation_tree_with_onboarding"/>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity</field>
+            <field name="search_view_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+            <field name="context">{'hide_sale': True, 'search_default_active_quotations':1}</field>
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Create a new quotation, the first step of a new sale!
+              </p><p>
+                Once the quotation is confirmed by the customer, it becomes a sales order.<br/> You will be able to create an invoice and collect the payment.
+              </p>
+            </field>
+        </record>
+
+        <record id="sale.action_orders" model="ir.actions.act_window">
+            <field name="name">Sales Orders</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity</field>
+            <field name="search_view_id" ref="sale.sale_order_view_search_inherit_sale"/>
+            <field name="context">{'search_default_not_cancel': 1, 'search_default_not_invoice': 1}</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new quotation, the first step of a new sale!
+                </p><p>
+                    Once the quotation is confirmed, it becomes a sales order.<br/> You will be able to create an invoice and collect the payment.
+                </p>
+            </field>
+        </record>  
+
+        <record id="model_sale_order_action_inv_status_update" model="ir.actions.server">
+            <field name="name">Invoice status update</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="binding_model_id" ref="sale.model_sale_order"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">action = records.action_update_inv_status()</field>
+        </record>
+
+        <record id="view_order_form_inherit_sale" model="ir.ui.view">
+            <field name="name">sale.view.form.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="client_order_ref" position="replace">
+                    <field name="delivery_status" invisible="1"/>
+                    <field name="client_order_ref" attrs="{'readonly': [('delivery_status','=','delivered')]}"/>
+                </field>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom_qty']" position="replace">
+                    <field name="product_uom_qty" attrs="{'readonly': [('parent.delivery_status','=','delivered')]}" decoration-info="(not display_type and invoice_status == 'to invoice')" decoration-bf="(not display_type and invoice_status == 'to invoice')" context="{'partner_id': parent.partner_id,'quantity': product_uom_qty,'pricelist': parent.pricelist_id,'uom': product_uom,'company_id': parent.company_id}"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

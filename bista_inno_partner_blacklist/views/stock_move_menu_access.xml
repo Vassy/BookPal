@@ -1,0 +1,9 @@
+<odoo>
+    <data>
+
+        <record id="stock.stock_move_menu" model="ir.ui.menu">
+            <field name="groups_id" eval="[(6,0,[ref('stock.group_stock_manager')])]"/>
+        </record>
+
+    </data>
+</odoo>
