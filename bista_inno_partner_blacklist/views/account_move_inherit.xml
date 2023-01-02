@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+
+        <record id="model_account_move_action_update_records" model="ir.actions.server">
+            <field name="name">Update Different Currency Amount</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">action = records.update_records()</field>
+        </record>
+
+        <record id="model_account_move_action_update_method" model="ir.actions.server">
+            <field name="name">Update Payment Method</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="binding_model_id" ref="account.model_account_move"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">action = records.update_payment_method()</field>
+        </record>
+    
+
+        <!-- <record id="view_in_invoice_bill_tree_inherit_account" model="ir.ui.view">
+            <field name="name">account.move.view.form.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_in_invoice_bill_tree"/>
+            <field name="arch" type="xml">
+                <field name="amount_residual" position="replace">
+                    <field name="amount_in_company_currency"/>
+                </field>
+            </field>
+        </record> -->
+
+
+        <record id="view_move_form_inherit_account" model="ir.ui.view">
+            <field name="name">account_move.view.form.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <field name="payment_reference" position = "replace">
+                    <field name="payment_reference" invisible="1"/>
+                </field>
+                <field name="partner_bank_id" position = "replace">
+                    <field name="partner_bank_id" invisible="1"/>
+                </field>
+                <xpath expr="//group[hasclass('oe_invoice_lines_tab')]" position="replace">
+
+                      <group col="12" class="oe_invoice_lines_tab">
+                        <group colspan="8">
+                            <group>
+                                <field name="tax_line_ids" nolabel="1">
+                                  <tree>
+                                    <field name = "tax_id"/>
+                                    <field name = "account_id"/>
+                                    <field name = "account_analytic_id"/>
+                                    <field name = "amount"/>
+                                    <field name="move_id" invisible="1"/>
+                                    <field name="move_line_id"  invisible="1"/>
+                                  </tree>  
+                                </field>
+                            </group>
+                        </group>
+                          <!-- Totals (only invoices / receipts) -->
+                          <group colspan="4">
+                              <group class="oe_subtotal_footer oe_right" attrs="{'invisible': ['|', ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt')),                                                                        ('payment_state' ,'=', 'invoicing_legacy')]}">
+
+                                  <field name="tax_totals_json" widget="account-tax-totals-field" nolabel="1" colspan="2"/>
+
+                                  <field name="invoice_payments_widget" colspan="2" nolabel="1" widget="payment"/>
+                                  <field name="amount_residual" class="oe_subtotal_footer_separator" attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                              </group>
+                              <field name="invoice_outstanding_credits_debits_widget" class="oe_invoice_outstanding_credits_debits" colspan="2" nolabel="1" widget="payment" attrs="{'invisible': ['|', ('state', '!=', 'posted'), ('move_type', 'in', ('out_receipt', 'in_receipt'))]}"/>
+                          </group>
+                          <group colspan="8">
+                            <field name="narration" placeholder="Terms and Conditions" class="oe_inline" nolabel="1"/>
+                        </group>
+                      </group>
+                </xpath>
+            </field>
+        </record>
+    
+        
+    
+    </data>
+    
+
+</odoo>

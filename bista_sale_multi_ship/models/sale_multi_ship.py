@@ -371,6 +371,14 @@ class SaleMultiShipQtyLines(models.Model):
     tracking_ref = fields.Char(
         'Tracking Refrence', compute="get_tracking_ref")
     confirm_date = fields.Datetime('Confirmed Date')
+    delivery_method_id = fields.Many2one( 'delivery.carrier' ,string = 'Shipping Method', related='partner_id.property_delivery_carrier_id')
+    delivery_charges = fields.Float(string = 'Shipping charges' , store = True)
+
+    def get_shipping_charge(self):
+        for line in self:
+            print("111111111111111111111111111111", line)
+            res = line.delivery_method_id.rate_shipment(self.order_id)
+            line.delivery_charges = res['price']
 
     @api.depends('move_ids.state')
     def get_tracking_ref(self):
