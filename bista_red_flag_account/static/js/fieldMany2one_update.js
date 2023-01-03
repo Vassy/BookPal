@@ -110,20 +110,17 @@ odoo.define('bista_red_flag_account.fieldMany2one_update', function (require) {
                     $(this).data('ui-autocomplete')._renderMenu = function(ulWrapper, entries) {
                     var render = this;
                     $.each(entries, function(index, entry) {
-                        console.log("11111111111111111111111111111", entry)
                         render._renderItemData(ulWrapper, entry);
                     });
                     $('ul li > a').each(function(index1, entry) {
                         // $.each(entry, function(index , e1){
                             $.each(entries, function(index2, entry1) {
                                 if(entry1.name == entry.innerHTML && entry1.is_blacklisted){
-                                    console.log(entry1 , "22222222222222222222222222",entry.innerHTML)
                                     $(entry).addClass( "dropdown-item ui-menu-item-wrapper1" );
                                 }
                             });
                         // })
                     });
-                    console.log("xxxxxxxxxxxxxxxxxxx", ulWrapper)
                     $(ulWrapper).find( "li > a" ).addClass( "dropdown-item" );
                     }
                 },
@@ -170,7 +167,6 @@ odoo.define('bista_red_flag_account.fieldMany2one_update', function (require) {
                 if(result.length == 3){
                     is_blacklisted = result[2]                
                 }
-                console.log(result,"aaaaaaaaaaaaaaaaaaaaaaaaaa", id , displayName , data.noDisplayContent , is_blacklisted)
                 return {
                     id,
                     label: escape(displayName) || data.noDisplayContent,
