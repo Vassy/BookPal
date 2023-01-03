@@ -49,7 +49,7 @@
     </record>
 
     <menuitem id="menu_pending_order_report_new"
-                parent="sale.sale_order_menu"
+                parent="sale.menu_sale_report"
                 action="bista_orders_report.action_sale_order_status_wizard"
                 sequence="10"/>
 

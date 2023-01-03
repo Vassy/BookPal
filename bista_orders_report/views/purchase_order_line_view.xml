@@ -12,18 +12,18 @@
                 <field name="date_order"/>
                 <field name="date_planned" string="Expected Receipt Date" optional="show"/>
                 <field name="product_id"/>
-                <field name="price_unit" optional="show" widget="monetary"/>
+                <field name="disc_price_unit" string="Unit Price" optional="show" widget="monetary"/>
                 <field name="currency_id" optional="hide"/>
                 <field name="uom_id" optional="show"/>
                 <field name="origin" optional="show"/>
                 <field name="product_uom_qty" string="Order Qty" optional="show"/>
                 <field name="qty_received_uom" optional="show"/>
-                <field name="qty_received_value" optional="show" widget="monetary"/>
                 <field name="qty_remain_receive" optional="show"/>
-                <field name="qty_remain_receive_value" optional="show" widget="monetary"/>
                 <field name="qty_shortclose" optional="show"/>
+                <field name="qty_received_value" optional="show" widget="monetary"/>
+                <field name="qty_remain_receive_value" optional="show" widget="monetary"/>
                 <field name="short_close_price" optional="show" widget="monetary"/>
-                <field name="price_subtotal" string="Untaxed Amount" optional="show" widget="monetary"/>
+                <field name="price_subtotal" string="Order Value" optional="show" widget="monetary"/>
                 <field name="line_status" optional="show"/>
                 <field name="taxes_id" widget="many2many_tags" optional="hide"/>
                 <field name="price_tax" optional="hide" widget="monetary"/>
