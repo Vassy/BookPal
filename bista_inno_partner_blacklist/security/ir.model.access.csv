@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-bista_inno_extend.access_account_move_tax,access_account_move_tax,bista_inno_extend.model_account_move_tax,base.group_user,1,1,1,1
-bista_inno_extend.access_payment_method_improve,access_payment_method_improve,bista_inno_extend.model_payment_method_improve,base.group_user,1,1,1,1
