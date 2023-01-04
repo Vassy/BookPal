@@ -80,10 +80,10 @@
                                                 <div class="oe_kanban_global_click" style="width:auto;">
                                                     <div class="o_kanban_record_body">
                                                         <a t-if="!read_only_mode" type="delete"
-                                                           class="fa fa-times pull-right"/>
+                                                           class="fa fa-times pull-right" title="Image"/>
                                                         <img t-if="record.bigcommerce_product_image.raw_value"
                                                              t-att-src="'data:image/png;base64,'+record.bigcommerce_product_image.raw_value"
-                                                             style="width:150px;"/>
+                                                             style="width:150px;" alt="Product Image"/>
                                                     </div>
                                                     <div class="o_kanban_record_bottom">
                                                         <div class="oe_kanban_bottom_left">

@@ -10,7 +10,7 @@ class BigcommerceProductImage(models.Model):
     _name = "bigcommerce.product.image"
     _description = "BC Product Image"
 
-    name = fields.Char(string="Product Image Id")
+    name = fields.Char(string="Product Image")
     bigcommerce_product_image_id = fields.Char(string="Product Image Id")
     bigcommerce_product_image = fields.Binary(string="Bigcommerce Product Image")
     bigcommerce_product_id = fields.Char(string='BigCommerce Product Id')
