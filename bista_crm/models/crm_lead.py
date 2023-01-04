@@ -34,10 +34,10 @@ class CrmLead(models.Model):
     order_notes = fields.Text(string='Order Notes')
     shipping_notes = fields.Text(string='Shipping Notes')
     shipping_to = fields.Boolean('Shipping to Hotel or Event Venue')
-    potential_pallets = fields.Char(string='Potential Pallets')
-    accept_pallets = fields.Char(string='Accept Pallets')
-    has_loading_dock = fields.Char(string='Has Loading Dock')
-    inside_delivery_req = fields.Char(string='Inside Delivery Required')
+    potential_pallets = fields.Selection([('yes', 'Yes'),('no', 'No')],string='Potential Pallets')
+    accept_pallets = fields.Selection([('yes', 'Yes'),('no', 'No')],string='Accept Pallets')
+    has_loading_dock =fields.Selection([('yes', 'Yes'),('no', 'No')],string='Has Loading Dock')
+    inside_delivery_req = fields.Selection([('yes', 'Yes'),('no', 'No')],string='Inside Delivery Required')
 
     # Journal Info fields
     journal_customization_ids = fields.Many2many('journal.customization', string='Journal Customization')
@@ -102,6 +102,12 @@ class CrmLead(models.Model):
             'default_order_notes': self.order_notes,
             'default_payment_notes': self.payment_notes,
             'default_product_status_notes': self.product_status_notes,
+            'default_shipping_to': self.shipping_to,
+            'default_potential_pallets': self.potential_pallets,
+            'default_accept_pallets': self.accept_pallets,
+            'default_has_loading_dock': self.has_loading_dock,
+            'default_inside_delivery_req': self.inside_delivery_req,
+            'default_shipping_notes': self.shipping_notes,
 
 
         })
