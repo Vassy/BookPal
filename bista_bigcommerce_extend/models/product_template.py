@@ -1,6 +1,10 @@
 
+import logging
+
 from odoo import api, fields, models
 from odoo.addons.product.models.product import ProductProduct
+
+_logger = logging.getLogger("BigCommerce")
 
 
 class ProductTemplate(models.Model):
