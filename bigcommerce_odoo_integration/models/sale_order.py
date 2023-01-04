@@ -19,6 +19,58 @@ class SaleOrderVts(models.Model):
     payment_method = fields.Char(string='Payment Method')
     bigcommerce_customer_id = fields.Char("Bigcommerce Customer ID", related="partner_id.bigcommerce_customer_id", copy=False)
 
+    def get_order_transaction(self, through_order_cron=False):
+        if (through_order_cron and self.payment_status == 'paid') or self.payment_status == 'not_paid':
+            bigcommerce_store_hash = self.bigcommerce_store_id.bigcommerce_store_hash
+            bigcommerce_client_seceret = self.bigcommerce_store_id.bigcommerce_x_auth_client
+            bigcommerce_x_auth_token = self.bigcommerce_store_id.bigcommerce_x_auth_token
+            headers = {"Accept": "application/json",
+                       "X-Auth-Client": "{}".format(bigcommerce_client_seceret),
+                       "X-Auth-Token": "{}".format(bigcommerce_x_auth_token),
+                       "Content-Type": "application/json"}
+
+            url = "%s%s/v3/orders/%s/transactions" % (
+                self.bigcommerce_store_id.bigcommerce_api_url, bigcommerce_store_hash, self.big_commerce_order_id)
+            try:
+                response = request(method="GET", url=url, headers=headers)
+                response = response.json()
+                if response and response.get('data'):
+                    _logger.info("Get Sucessful : {}".format(response.get('data')))
+                    for response_data in response.get('data'):
+                        if response_data.get('gateway_transaction_id') and response_data.get(
+                                'gateway_transaction_id') != 'null' or response_data.get('gateway') == 'custom':
+                            if response_data.get('payment_method_id') == 'paypalcommerce.paypal':
+                                acquirer_id = self.env['payment.acquirer'].search([('provider', '=', 'paypal')],
+                                                                                  limit=1)
+                            else:
+                                acquirer_id = self.env.ref('bigcommerce_odoo_integration.usd_transaction_payment_acquirer')
+                            self.payment_method = response_data.get('payment_method_id')
+                            self.payment_status = 'paid'
+                            # acquirer_id = self.env.ref('payment.payment_acquirer_transfer')
+                            currency_id = self.env['res.currency'].search(
+                                [('name', '=', response_data.get('currency'))])
+                            payment_transaction_vals = {
+                                'acquirer_id': acquirer_id.id,
+                                'amount': response_data.get('amount'),
+                                'currency_id': currency_id.id,
+                                'sale_order_ids': [(6, 0, self.ids)],
+                                'partner_id': self.partner_id.id,
+                                'reference': self.name,
+                                'state': 'done',
+                                'currency_id': currency_id.id
+                            }
+                            transaction_id = self.env['payment.transaction'].create(payment_transaction_vals)
+                            #transaction_id._post_process_after_done()
+                            #post_message = transaction_id._get_payment_transaction_received_message()
+                            #self.message_post(body=post_message)
+                            #self._cr.commit()
+                            #_logger.info("Transaction Created : {}".format(transaction_id))
+                            self.message_post(body=_("Payment Transaction Created : {}".format(transaction_id.reference)))
+                            time.sleep(2)
+                            transaction_id.payment_id.ref = ",".join(transaction_id.mapped('sale_order_ids').mapped('payment_method'))
+            except Exception as e:
+                _logger.info("Getting an Error : {}".format(e))
+
     def get_shipped_qty(self):
         bigcommerce_store_hash = self.bigcommerce_store_id.bigcommerce_store_hash
         bigcommerce_client_seceret  = self.bigcommerce_store_id.bigcommerce_x_auth_client
@@ -116,7 +168,7 @@ class SaleOrderVts(models.Model):
             'date_order': vals.get('date_order', ''),
             'state': 'draft',
             'carrier_id': vals.get('carrier_id', ''),
-            'currency_id':vals.get('currency_id',False),
+            'currency_id': vals.get('currency_id',False),
             'pricelist_id': vals.get('pricelist_id'),
             'note': vals.get('customer_message', ''),
             'fiscal_position_id': fpos,
@@ -357,7 +409,7 @@ class SaleOrderVts(models.Model):
                                 order_vals = self.create_sales_order_from_bigcommerce(vals)
                                 order_vals.update({'big_commerce_order_id': big_commerce_order_id,
                                                    'bigcommerce_store_id': bigcommerce_store_id.id,
-                                                   'payment_status': 'paid' if order.get('payment_status') == "captured" else 'not_paid',
+                                                   'payment_status': 'paid' if order.get('payment_status') in ["captured","paid"]  else 'not_paid',
                                                    'payment_method': order.get('payment_method'),
                                                    'bigcommerce_shipment_order_status': order.get('status')
                                                    })
@@ -403,8 +455,11 @@ class SaleOrderVts(models.Model):
                                         line_id = self.env['sale.order.line'].sudo().create(taxline_vals)
                                         _logger.info("Tax Line Vals : {0},Line ID :{1}".format(taxline_vals, line_id))
                                         order_id.sudo()._amount_all()
-                                        if len(order_id.order_line) > 0:
-                                            order_id.action_confirm()
+                                        if order.get('payment_status') in ["captured","paid"]:
+                                        #     # order_id.action_confirm()
+                                            order_id.get_order_transaction(through_order_cron=True)
+                                        # if len(order_id.order_line) > 0:
+                                        #     order_id.action_confirm()
                                         self._cr.commit()
                                 except Exception as e:
                                     _logger.info("Getting an Error In Import Order Line Response {}".format(e))

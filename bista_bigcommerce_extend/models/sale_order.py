@@ -234,8 +234,11 @@ class SaleOrderVts(models.Model):
                     _logger.info("Tax Line Vals : {0},Line ID :{1}".format(
                         taxline_vals, line_id))
                 order_id.sudo()._amount_all()
-                if len(order_id.order_line) > 0:
-                    order_id.action_confirm()
+                if order.get('payment_status') in ["captured", "paid"]:
+                    print ("\n get order get_order_transaction >>>>>>>>")
+                    order_id.get_order_transaction(through_order_cron=True)
+                # if len(order_id.order_line) > 0:
+                #     order_id.action_confirm()
                 self._cr.commit()
         except Exception as e:
             _logger.info(
@@ -552,7 +555,8 @@ class SaleOrderVts(models.Model):
                                      'bigcommerce_store_id':
                                      bigcommerce_store_id.id,
                                      'payment_status': 'paid' if
-                                     order.get('payment_status') == "captured"
+                                     order.get('payment_status') in
+                                     ["captured", "paid"]
                                      else 'not_paid',
                                      'payment_method':
                                      order.get('payment_method'),

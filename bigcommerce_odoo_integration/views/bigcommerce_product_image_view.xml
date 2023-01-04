@@ -46,9 +46,9 @@
                                         <field name="bigcommerce_product_image"></field>
                                         <t t-name="kanban-box">
                                             <div class="oe_kanban_global_click">
-                                                <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                                <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right" title="Image"/>
                                                 <div class="o_kanban_image " style="box-shadow: 2px 2px 10px #888888;">
-                                                    <img t-if="record.bigcommerce_product_image.raw_value"
+                                                    <img alt="BC Product Image" t-if="record.bigcommerce_product_image.raw_value"
                                                          t-att-src="'data:image/png;base64,'+record.bigcommerce_product_image.raw_value"
                                                          style="heigh:50px;width:50px;"/>
                                                 </div>

@@ -211,6 +211,7 @@ class BigCommerceStoreConfiguration(models.Model):
             product_brand_obj = self.env['bc.product.brand']
             import_brand = product_brand_obj.bigcommerce_to_odoo_import_product_brands(self.warehouse_id,
                                                                                        self)
+            self._cr.close()
             return import_brand
 
     def bigcommerce_to_odoo_import_product_categories_main(self):
@@ -230,6 +231,7 @@ class BigCommerceStoreConfiguration(models.Model):
             product_category_obj = self.env['product.category']
             import_categories = product_category_obj.bigcommerce_to_odoo_import_product_categories(self.warehouse_id,
                                                                                                    self)
+            self._cr.close()
             return import_categories
 
     def import_product_from_bigcommerce_main(self):
@@ -248,6 +250,7 @@ class BigCommerceStoreConfiguration(models.Model):
             self = self.with_env(self.env(cr=new_cr))
             product_obj = self.env['product.template']
             import_product = product_obj.import_product_from_bigcommerce(self.warehouse_id, self,source_page=source_page,destination_page=destination_page)
+            self._cr.close()
             return import_product
 
     def bigcommerce_to_odoo_import_customers_main(self):
@@ -266,6 +269,7 @@ class BigCommerceStoreConfiguration(models.Model):
             self = self.with_env(self.env(cr=new_cr))
             customer_obj = self.env['res.partner']
             import_customer = customer_obj.bigcommerce_to_odoo_import_customers(self.warehouse_id, self,source_page=source_page,destination_page=destination_page)
+            self._cr.close()
             return import_customer
 
     # def bigcommerce_to_odoo_import_inventory_main(self):
@@ -289,6 +293,7 @@ class BigCommerceStoreConfiguration(models.Model):
             self = self.with_env(self.env(cr=new_cr))
             sale_order_obj = self.env['sale.order']
             import_order = sale_order_obj.with_user(1).bigcommerce_to_odoo_import_orders(self.warehouse_id, self,last_modification_date=from_date,today_date=to_date,bigcommerce_order_status=bigcommerce_order_status)
+            self._cr.close()
             return import_order
 
     def bigcommerce_customers(self):

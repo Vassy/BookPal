@@ -30,7 +30,7 @@
                                     <br/>
                                 </div>
                                 <div class="o_kanban_manage_button_section">
-                                    <a class="o_kanban_manage_toggle_button" href="#">
+                                    <a class="o_kanban_manage_toggle_button" href="#" title="">
                                         <i class="fa fa-ellipsis-v" aria-label="Selection" role="img"
                                            title="Selection"/>
                                     </a>
@@ -88,9 +88,9 @@
                                     </div>
                                     <div class="col-2">
                                         <a name="action_redirect_to_process"
-                                           type="object" class="d-flex flex-column align-items-center">
+                                           type="object" class="d-flex flex-column align-items-center" title="">
                                             <span class="font-weight-bold">
-                                                <i class="fa fa-book"/>
+                                                <i class="fa fa-book" title="Logs"/>
                                             </span>
                                             <span class="text-muted">Logs</span>
                                         </a>

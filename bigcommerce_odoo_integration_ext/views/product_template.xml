@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_update_product_pricelist" model="ir.ui.view">
+        <field name="name">Update Pricelist</field>
+        <field name="model">export.and.update.product.to.bc</field>
+        <field name="arch" type="xml">
+            <form string="Export/Update Product in Bigcommerce">
+                <group>
+                    <field name="bigcommerce_store_ids" widget="many2many_tags" required="1"/>
+                </group>
+                <footer>
+                    <button name="update_product_pricelist_from_bc_to_odoo" id="update_product_pricelist_from_bc_to_odoo_btn"
+                            string="Update Pricelist To Odoo" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_view_update_product_pricelist" model="ir.actions.act_window">
+        <field name="name">Update Pricelist</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">export.and.update.product.to.bc</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_update_product_pricelist"></field>
+        <field name="binding_model_id" ref="product.model_product_template"/>
+        <field name="binding_view_types">list,form</field>
+    </record>
+</odoo>
