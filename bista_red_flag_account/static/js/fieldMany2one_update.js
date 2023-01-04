@@ -131,6 +131,7 @@ odoo.define('bista_red_flag_account.fieldMany2one_update', function (require) {
         _search: async function (searchValue = "") {
             const value = searchValue.trim();
             const domain = this.record.getDomain(this.recordParams);
+            this.additionalContext['custom_code'] = true
             const context = Object.assign(
                 this.record.getContext(this.recordParams),
                 this.additionalContext
