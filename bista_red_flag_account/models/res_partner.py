@@ -16,6 +16,13 @@ class ResPartnerInherit(models.Model):
     def name_get(self):
         '''Pass custom parameter for red flag account'''
         result = []
-        for bbd_type in self:
-            result.append((bbd_type.id, bbd_type.display_name, bbd_type.block))
+        if self.env.context.get('custom_code'):
+            for partner in self:
+                if partner.is_multi_ship:
+                    result.append((partner.id, partner.name, partner.block))
+                else:
+                    result.append(
+                        (partner.id, partner.display_name, partner.block))
+        else:
+            result = super(ResPartnerInherit, self).name_get()
         return result
