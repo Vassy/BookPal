@@ -46,6 +46,12 @@
                     <h4>
                         <t t-esc="o.picking_type_id.warehouse_id.name"/>
                     </h4>
+                    <div class="text-right" style="padding-bottom: 20px; margin-left:150px;">
+                        <t t-esc="o.name"
+                           t-options="{'widget': 'barcode', 'width': 310, 'height': 100, 'img_style': 'width:350px;height:55px;'}"
+                        />
+                        <br/>
+                    </div>
                 </t>
             </t>
         </xpath>
@@ -59,6 +65,7 @@
                 <span style="font-weight:normal" t-field="o.product_id.product_format"/>
             </td>
         </xpath>
+        <xpath expr="//div[@name='right_box']" position="replace"/>
         <xpath expr="//div[hasclass('page')]/div[2]" position="replace">
             <div class="row mb-1">
                 <div class="col-4" name="div_outgoing_address">
@@ -136,6 +143,7 @@
                 </div>
             </div>
         </xpath>
+        <xpath expr="//h1" position="replace"/>
     </template>
     <template id="report_purchaseorder_deliveryslip_report"
               inherit_id="stock.report_delivery_document">
@@ -182,6 +190,12 @@
                     <h4>
                         <t t-esc="o.picking_type_id.warehouse_id.name"/>
                     </h4>
+                    <div class="row offset-md-4 col-6" style="padding-bottom: 20px;">
+                        <t t-esc="o.name"
+                           t-options="{'widget': 'barcode', 'width': 500, 'height': 100, 'img_style': 'width:500px;height:55px;'}"
+                        />
+                        <br/>
+                    </div>
                 </t>
                 <t t-set="address">
                     <div name="div_outgoing_address">
@@ -264,6 +278,7 @@
             </t>
         </xpath>
         <xpath expr="//t[@t-set='address']" position="replace"/>
+        <xpath expr="//h2" position="replace"/>
         <xpath expr="//t[@t-set='information_block']" position="replace"/>
         <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[1]" position="after">
             <th name="th_format">

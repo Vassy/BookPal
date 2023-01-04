@@ -235,7 +235,7 @@
                     <t t-if="o.move_type == 'in_invoice'">
                         <tr class="border-black o_subtotal">
                             <td style="border-left: 1px solid black;  width: 111px;padding-left:10px;">
-                                <strong>Total W / D</strong>
+                                <strong>Total W/D</strong>
                             </td>
                             <td class="text-right"
                                 style=" border-left: 1px solid black; border-right: 1px solid black; margin: auto; padding-right:8px;">
