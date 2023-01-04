@@ -158,6 +158,20 @@
                 </page>
             </xpath>
             <xpath expr="//notebook/page[@name='journal_details']" position="after">
+                <page name="shipping_requirement" string="Shipping Requirements">
+                    <group>
+                        <group name="shipping_details">
+                            <field name="shipping_to"/>
+                            <field name="potential_pallets" />
+                            <field name="accept_pallets"/>
+                            <field name="has_loading_dock"/>
+                            <field name="inside_delivery_req"/>
+                            <field name="shipping_notes" style="max-height: 25px;"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+            <xpath expr="//notebook/page[@name='shipping_requirement']" position="after">
                 <page string="Fulfillment Project" name="project_fulfilment_trac">
                     <group>
                         <group name="project_fulfilment_tracking">
@@ -205,6 +219,13 @@
                         <field name="report_notes"/>
                     </group>
                 </page>
+            </xpath>
+            <xpath expr="//group[@name='note_group']" position="before">
+                <label for="product_weight" string="Product Weight"/>
+                <div class="o_row">
+                    <field name="product_weight" readonly="1"/>
+                    <span><field name="weight_uom_name"/></span>
+                </div>
             </xpath>
         </field>
     </record>
