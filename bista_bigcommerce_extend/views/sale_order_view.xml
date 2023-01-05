@@ -6,6 +6,11 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                    <button name="action_redirect_to_payment_transaction" type="object"
+                            class="oe_stat_button" icon="fa-money" string="Payment Transaction">
+                    </button>
+                </xpath>
                 <xpath expr="//button[@name='get_shipped_qty']" position="attributes">
                     <attribute name="attrs">{'invisible': [('bigcommerce_store_id', '=', False)]}</attribute>
                 </xpath>
@@ -19,9 +24,6 @@
                         {'column_invisible': ['|',('parent.bigcommerce_store_id', '=', False), ('parent.fiscal_position_id', '!=', False), ]}
                     </attribute>
                     <attribute name="optional">hide</attribute>
-                </xpath>
-                <xpath expr="//button[@name='exportordertobigcommerce']" position="attributes">
-                    <attribute name="invisible">1</attribute>
                 </xpath>
             </field>
         </record>

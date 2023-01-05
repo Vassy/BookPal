@@ -22,6 +22,11 @@ class SaleOrderVts(models.Model):
     #         order.bc_tax_total = sum(
     #             order.order_line.mapped('big_commerce_tax'))
 
+    def action_redirect_to_payment_transaction(self):
+        action = self.env.ref('account.action_account_payments').read()[0]
+        action['domain'] = [('id', 'in', self.account_payment_ids.ids)]
+        return action
+
 
     def get_coupon_response_data(self, order_data, bigcommerce_store_id):
         """Method return coupon api respons."""
@@ -113,6 +118,10 @@ class SaleOrderVts(models.Model):
             'discount': vals.get('discount', 0.0),
             'state': 'draft',
         })
+        if float(vals.get('big_commerce_tax')) <= 0.0:
+            order_line.update({
+                'tax_id': False
+            })
         return order_line
 
     def create_bigcommerce_operation(
@@ -235,10 +244,10 @@ class SaleOrderVts(models.Model):
                         taxline_vals, line_id))
                 order_id.sudo()._amount_all()
                 if order.get('payment_status') in ["captured", "paid"]:
-                    print ("\n get order get_order_transaction >>>>>>>>")
+                    #     # order_id.action_confirm()
                     order_id.get_order_transaction(through_order_cron=True)
-                if len(order_id.order_line) > 0:
-                    order_id.action_confirm()
+                # if len(order_id.order_line) > 0:
+                #     order_id.action_confirm()
                 self._cr.commit()
         except Exception as e:
             _logger.info(
@@ -627,7 +636,6 @@ class SaleOrderVts(models.Model):
             operation_id=False, warehouse_id=False, order_data=False,
             bigcommerce_store_id=False):
         """Prepare sale order line."""
-        print("\n sale order lines >>>>>>>custom >>")
         for order_line in product_details:
             product_bigcommerce_id = order_line.get('product_id')
             listing_id = self.env['bc.store.listing'].search(

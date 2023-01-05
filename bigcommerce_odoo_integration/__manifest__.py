@@ -12,7 +12,7 @@
     We also Provide the fedex,usps,easyship,stamp.com,ebay
 """,
 
-    'depends': ['delivery','sale_management','product','sale_stock'],
+    'depends': ['delivery','sale_management','product','sale_stock','sale_advance_payment'],
 
     'data': [
         'data/delivery_demo.xml',
@@ -23,6 +23,7 @@
         'wizard/bigcommerce_import_operation.xml',
         'wizard/bigcommerce_export_operation.xml',
         'views/warehouse.xml',
+        'views/res_company.xml',
         'views/bc_store_listing.xml',
         'views/bc_store_listing_items.xml',
         'views/bigcommerce_store_configuration_view.xml',
