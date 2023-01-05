@@ -348,6 +348,39 @@ class ProductTemplate(models.Model):
                                                                                                                 bigcommerce_store_id)
                                 self.env['bigcommerce.product.image'].with_user(1).import_multiple_product_image(
                                     bigcommerce_store_id, product_template_id, listing_id)
+                                custom_field_api_operation = "v3/catalog/products/{}/custom-fields".format(
+                                    record.get('id'))
+                                custom_field_response_data = bigcommerce_store_id.with_user(
+                                    1).send_get_request_from_odoo_to_bigcommerce(custom_field_api_operation)
+                                _logger.info("Custom Field Response : {0}".format(custom_field_response_data))
+                                if custom_field_response_data.status_code in [200, 201]:
+                                    custom_field_response_data = custom_field_response_data.json()
+                                    custom_field_datas = custom_field_response_data.get('data')
+                                    for custom_field_data in custom_field_datas:
+                                        if custom_field_data.get('name') in ['publisher', 'Publisher']:
+                                            product_template_id.publisher_id = custom_field_data.get('value')
+                                        elif custom_field_data.get('name') in ['supplier', 'Supplier']:
+                                            product_template_id.supplier = custom_field_data.get('value')
+                                        elif custom_field_data.get('name') in ['Publication Date', 'publication date']:
+                                            product_template_id.publication_date = custom_field_data.get('value')
+                                        elif custom_field_data.get('name') in ['pricing profile', 'Pricing Profile']:
+                                            product_template_id.pricing_profile = custom_field_data.get('value')
+                                        elif custom_field_data.get('name') in ['Special Title', 'special title']:
+                                            product_template_id.special_title = custom_field_data.get('value')
+                                        elif custom_field_data.get('name') in ['full title', 'Full Title']:
+                                            product_template_id.full_title = custom_field_data.get('value')
+                                        elif custom_field_data.get('name') in ['Short Title', 'short title']:
+                                            product_template_id.short_title = custom_field_data.get('value')
+                                        elif custom_field_data.get('name') in ['Format']:
+                                            product_template_id.product_format = custom_field_data.get('value')
+                                        elif custom_field_data.get('name') in ['Author','author']:
+                                            product_template_id.author_ids = custom_field_data.get('value')
+                                else:
+                                    api_operation_custom_field_response_data = custom_field_response_data.json()
+                                    error_msg = api_operation_custom_field_response_data.get('errors')
+                                    self.create_bigcommerce_operation_detail('product', 'import', '',
+                                                                             error_msg, operation_id, warehouse_id,
+                                                                             True, error_msg)
                                 if product_template_id.product_variant_count > 1:
                                     api_operation_variant = "/v3/catalog/products/{}/variants".format(
                                         product_template_id.bigcommerce_product_id)
