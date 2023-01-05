@@ -4,7 +4,7 @@
     'category': 'integration',
     'author': "Bista Solutions Pvt Ltd.",
     'website': "http://www.bistasolutions.com",
-    'version': '15.0.1.0.0',
+    'version': '15.0.1.1.1',
     'summary': """""",
     'description': """
         Update the bigcommerce functionality.
