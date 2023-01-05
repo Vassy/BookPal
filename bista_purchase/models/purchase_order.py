@@ -413,10 +413,7 @@ class PurchaseOrderLine(models.Model):
         ''' can show the purchase order line history in purchase order line. where user can see back order qty
         details '''
         if self.order_id.date_approve:
-            date_approve = str(self.order_id.date_approve.date()) + ' ' + str(
-                datetime.timedelta(hours=0, minutes=0, seconds=0))
             domain = [('display_type', '=', False),
-                      ('order_id.date_approve', '>=', date_approve),
                       ('product_id', '=', self.product_id.id),
                       ('order_id.partner_id', '=', self.order_id.partner_id.id),
                       ('order_id.state', 'not in', ['draft', 'cancel'])]
@@ -424,10 +421,7 @@ class PurchaseOrderLine(models.Model):
             action.update({'domain': domain})
             return action
         if self.order_id.date_order:
-            date_order = str(self.order_id.date_order.date()) + ' ' + str(
-                datetime.timedelta(hours=0, minutes=0, seconds=0))
             domain = [('display_type', '=', False),
-                      ('order_id.date_order', '>=', date_order),
                       ('product_id', '=', self.product_id.id),
                       ('order_id.partner_id', '=', self.order_id.partner_id.id),
                       ('order_id.state', 'not in', ['done', 'cancel'])]

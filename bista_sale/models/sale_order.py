@@ -125,8 +125,9 @@ class SaleOrder(models.Model):
     @api.depends('order_line.product_uom_qty', 'order_line.product_id')
     def _compute_product_weight(self):
         for order in self:
-            final = sum([line.product_id.weight * line.product_uom_qty for line in order.order_line])
-        order.product_weight = final
+            final_weight = sum(line.product_id.weight * line.product_uom_qty for line in order.order_line.filtered(lambda l: l.product_id.type in ('product')))
+        order.product_weight = final_weight
+
 
     def _compute_weight_uom(self):
         self.weight_uom_name = self.env['product.template']._get_weight_uom_name_from_ir_config_parameter()
