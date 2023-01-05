@@ -12,7 +12,8 @@
     We also Provide the fedex,usps,easyship,stamp.com,ebay
 """,
 
-    'depends': ['delivery','sale_management','product','sale_stock','sale_advance_payment'],
+    'depends': ['delivery', 'sale_management', 'product',
+                'sale_stock', 'sale_advance_payment'],
 
     'data': [
         'data/delivery_demo.xml',
