@@ -36,7 +36,7 @@ class SaleOrderVts(models.Model):
                 response = request(method="GET", url=url, headers=headers)
                 response = response.json()
                 if response and response.get('data'):
-                    _logger.info("Get Sucessful : {}".format(response.get('data')))
+                    _logger.info("Get Sucessfull : {}".format(response.get('data')))
                     for response_data in response.get('data'):
                         if response_data.get('gateway_transaction_id') and response_data.get(
                                 'gateway_transaction_id') != 'null' or response_data.get('gateway') == 'custom':
@@ -50,7 +50,7 @@ class SaleOrderVts(models.Model):
                                 'amount': response_data.get('amount'),
                                 'date': self.date_order,
                                 'ref': self.name,
-                                'partner_id': self.partner_id.id,
+                                'partner_id': self.partner_id.parent_id.id if self.partner_id.parent_id else self.partner_id.id,
                                 'partner_type': 'customer',
                                 'currency_id': currency_id.id,
                                 'journal_id': self.company_id.payment_journal_id.id,
@@ -216,6 +216,7 @@ class SaleOrderVts(models.Model):
         }
         operation_detail_id = bigcommerce_operation_details_obj.create(vals)
         return operation_detail_id
+
     def bigcommerce_shipping_address_api_method(self, order=False, bigcommerce_store_id=False):
         """
         :return:  this method return shipping address of given order number

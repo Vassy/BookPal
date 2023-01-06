@@ -1,5 +1,6 @@
 # from . import product_image
 from . import res_company
+from . import bigcommerce_order_status
 from . import bc_store_listing
 from . import bc_store_listing_item
 from . import payment_transaction

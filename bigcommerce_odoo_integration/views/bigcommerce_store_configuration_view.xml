@@ -30,7 +30,7 @@
                                     <br/>
                                 </div>
                                 <div class="o_kanban_manage_button_section">
-                                    <a class="o_kanban_manage_toggle_button" href="#" title="">
+                                    <a class="o_kanban_manage_toggle_button" href="#">
                                         <i class="fa fa-ellipsis-v" aria-label="Selection" role="img"
                                            title="Selection"/>
                                     </a>
@@ -88,7 +88,7 @@
                                     </div>
                                     <div class="col-2">
                                         <a name="action_redirect_to_process"
-                                           type="object" class="d-flex flex-column align-items-center" title="">
+                                           type="object" class="d-flex flex-column align-items-center">
                                             <span class="font-weight-bold">
                                                 <i class="fa fa-book" title="Logs"/>
                                             </span>
@@ -285,6 +285,20 @@
                                         <div class="text-muted">
                                             <b>
                                                 <field name="auto_import_orders" widget="boolean_toggle"/>
+                                            </b>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-md-6 o_setting_box" id="auto_import_orders_status"
+                                     name="auto_import_orders_status">
+                                    <div class="o_setting_right_pane">
+                                        <label string="Order Status" for="bigcommerce_order_status_ids"/>
+                                        <div class="text-muted">
+                                            Selected Status Orders Imported in odoo.
+                                        </div>
+                                        <div class="text-muted">
+                                            <b>
+                                                <field name="bigcommerce_order_status_ids" widget="many2many_tags" required="1"/>
                                             </b>
                                         </div>
                                     </div>
