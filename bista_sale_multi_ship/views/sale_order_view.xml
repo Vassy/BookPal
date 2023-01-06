@@ -27,6 +27,9 @@
                 <field name='partner_shipping_id' position="attributes">
                     <attribute name="attrs">{'invisible': [('split_shipment', '=', True)]}</attribute>
                 </field>
+                <field name='partner_shipping_id' position="attributes">
+                    <attribute name="string">Shipping Address</attribute>
+                </field>
                 <xpath expr="//page/field[@name='order_line']/tree/field[@name='name']" position="attributes">
                     <attribute name="optional">hide</attribute>
                 </xpath>
@@ -87,7 +90,6 @@
                                 <field name="product_id" invisible="1"/>
                                 <field name="product_uom_qty" optional="show"/>
                                 <field name="product_qty" optional="show" default="remain_qty" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                                <field name="product_weight"/>
                                 <field name="product_uom" optional="hide"/>
                                 <!-- below fields are used in the widget qty_at_date_widget -->
                                 <field name="product_type" invisible="1"/>

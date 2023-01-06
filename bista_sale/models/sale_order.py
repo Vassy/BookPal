@@ -32,6 +32,13 @@ class SaleOrder(models.Model):
     so_shipping_cost = fields.Monetary(string=" Our Shipping Cost")
     death_type_id = fields.Many2one('death.type', string='Die Type')
     existing_death_order = fields.Char(string="Existing Die Order #")
+    # Shipping Info.
+    shipping_notes = fields.Text(string='Shipping Notes')
+    shipping_to = fields.Boolean('Shipping to Hotel or Event Venue')
+    potential_pallets = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Potential Pallets')
+    accept_pallets = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Accept Pallets')
+    has_loading_dock = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Has Loading Dock')
+    inside_delivery_req = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Inside Delivery Required')
     # Project & Fulfilment Tracking.
     fulfilment_project = fields.Boolean('Fulfilment Project')
     am_owner = fields.Char(string="AM Owner")
@@ -72,6 +79,8 @@ class SaleOrder(models.Model):
     ], string='Report Type')
     report_notes = fields.Text(string='Reporting Notes')
     order_processing_time = fields.Integer(compute="compute_order_process_time", string='Process Time')
+    product_weight = fields.Float(compute="_compute_product_weight", readonly=True)
+    weight_uom_name = fields.Char(string='Weight unit of measure label', compute="_compute_weight_uom")
 
     @api.depends("order_line.price_total")
     def _amount_all(self):
@@ -113,6 +122,16 @@ class SaleOrder(models.Model):
                 order_date = order.date_approve.date() - order.date_order.date()
                 order.order_processing_time = order_date.days
 
+    @api.depends('order_line.product_uom_qty', 'order_line.product_id')
+    def _compute_product_weight(self):
+        for order in self:
+            final_weight = sum(line.product_id.weight * line.product_uom_qty for line in order.order_line.filtered(lambda l: l.product_id.type in ('product')))
+        order.product_weight = final_weight
+
+
+    def _compute_weight_uom(self):
+        self.weight_uom_name = self.env['product.template']._get_weight_uom_name_from_ir_config_parameter()
+
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -133,7 +152,7 @@ class SaleOrderLine(models.Model):
             if line.price_unit:
                 line.discount = 100 - (line.discounted_price / line.price_unit * 100)
             line.saving_amount = (
-                line.price_unit * line.discount / 100 * line.product_uom_qty
+                    line.price_unit * line.discount / 100 * line.product_uom_qty
             )
         self._compute_amount()
 
@@ -142,7 +161,7 @@ class SaleOrderLine(models.Model):
         for line in self:
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
             line_data = {
-                "discounted_price": int(price * 10**2) / 10**2,
+                "discounted_price": int(price * 10 ** 2) / 10 ** 2,
                 "saving_amount": (line.price_unit - price) * line.product_uom_qty,
             }
             line.update(line_data)
