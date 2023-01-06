@@ -7,7 +7,7 @@
     'author': "Bista Solutions Pvt Ltd.",
     'website': "http://www.bistasolutions.com",
     'category': "Purchase",
-    'version': '15.0.1.0.1',
+    'version': '15.0.2.1.1',
     'depends': ['bista_purchase'],
     'data': [
         'security/ir.model.access.csv',
