@@ -10,18 +10,43 @@
                 <attribute name="context">{'res_partner_search_mode': 'supplier', 'show_address': 1, 'show_vat': True}</attribute>
             </xpath>
             <xpath expr="//button[@id='draft_confirm']" position="replace">
-                <!-- <button name="button_confirm" type="object" states="sent" string="Confirmmmmm Order" class="oe_highlight" id="bid_confirm" data-hotkey="v"/> -->
                 <button name="button_confirm" type="object" states="draft" string="Send for Approval" id="draft_confirm"/>
             </xpath>
             <xpath expr="//button[@id='bid_confirm']" position="attributes">
                 <attribute name="context">{'skip_approval': True}</attribute>
+                <attribute name="string">Approve Orders</attribute>
             </xpath>
             <xpath expr="//button[@name='button_approve']" position="after">
-                <button name="button_confirm" type="object" states="draft" string="Confirm Orders" context="{'skip_approval': True}"/>
+                <button name="button_confirm" type="object" states="draft" string="Approve Orders" context="{'skip_approval': True}"/>
                 <button name="button_reject" type="object" states='to approve' string="Reject Order" class="oe_highlight" groups="purchase.group_purchase_manager" />
             </xpath>
+            <xpath expr="//button[@name='print_quotation'][1]" position="attributes">
+                <attribute name="string">Print Purchase Orders</attribute>
+            </xpath>
+            <xpath expr="//button[@name='print_quotation'][2]" position="attributes">
+                <attribute name="string">Print Purchase Orders</attribute>
+            </xpath>
             <xpath expr="//button[@name='button_draft']" position="attributes">
+                <attribute name="string">Set to Purchase Order</attribute>
                 <attribute name="states">cancel,reject</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_rfq_send'][1]" position="attributes">
+                <attribute name="string">Send PO by Email</attribute>
+                <attribute name="states">draft,sent,to approve</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_rfq_send'][2]" position="replace">
+            </xpath>
+            <xpath expr="//button[@name='action_rfq_send'][2]" position="attributes">
+                <attribute name="string">Send PO by Email</attribute>
+            </xpath>
+            <xpath expr="//field[@name='state']" position="attributes">
+                <attribute name="statusbar_visible">draft,purchase</attribute>
+            </xpath>
+            <xpath expr="//span[hasclass('o_form_label')]" position="replace">
+               <span class="o_form_label" attrs="{'invisible': [('state','not in',('draft','sent'))]}">Purchase Order </span>
+            </xpath>
+            <xpath expr="//span[hasclass('o_form_label')][2]" position="replace">
+                <span class="o_form_label" attrs="{'invisible': [('state','in',('draft','sent'))]}">Approved Order </span>
             </xpath>
             <xpath expr="//field[@name='order_line']//tree" position="inside">
                 <field name="tracking_ref" optional="show"/>
@@ -61,7 +86,6 @@
                     </field>
                     <group>
                         <group name="po_conf">
-<!--                            <field name="po_name"/>-->
                             <field name="po_conf" style="max-height: 25px;"/>
                             <field name="hours_process" style="max-height: 20px;"/>
                         </group>
@@ -203,6 +227,29 @@
         </field>
     </record>
 
+    <record id="purchase_order_view_tree_added_custom_field" model="ir.ui.view">
+        <field name="name">purchase.order.list.inherit.added.custom.fields</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_status']" position="before">
+                <field name="is_email_sent"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_order_kpis_tree_added_custom_field" model="ir.ui.view">
+        <field name="name">purchase.order.list.inherit.added.custom.fields</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="before">
+                <field name="is_email_sent"/>
+            </xpath>
+        </field>
+    </record>
+
+
     <record id="purchase_order_line_form" model="ir.ui.view">
         <field name="name">purchase.order.line.form</field>
         <field name="model">purchase.order.line</field>
@@ -253,6 +300,7 @@
             </form>
         </field>
     </record>
+
     <record id="po_status_line_form_view" model="ir.ui.view">
         <field name="name">po_status_line_form_view</field>
         <field name="model">po.status.line</field>
@@ -273,6 +321,7 @@
             </form>
         </field>
     </record>
+
     <record id="po_status_line_tree_view" model="ir.ui.view">
         <field name="name">po.status.tree.view</field>
         <field name="model">po.status.line</field>
@@ -284,11 +333,13 @@
             </tree>
         </field>
     </record>
+
     <record id="po_status_line_action" model="ir.actions.act_window">
         <field name="name">Product Line Status</field>
         <field name="res_model">po.status.line</field>
         <field name="view_mode">tree,form</field>
     </record>
+
     <record id="rush_status_form_view" model="ir.ui.view">
         <field name="name">rush.status.form.view</field>
         <field name="model">rush.status</field>
@@ -318,6 +369,7 @@
         <field name="res_model">rush.status</field>
         <field name="view_mode">tree,form</field>
     </record>
+
     <record id="shipping_instruction_form_view" model="ir.ui.view">
         <field name="name">shipping.instruction.form.view</field>
         <field name="model">shipping.instruction</field>
@@ -347,6 +399,7 @@
         <field name="res_model">shipping.instruction</field>
         <field name="view_mode">tree,form</field>
     </record>
+
     <record id="purchase_line_status_form_view" model="ir.ui.view">
         <field name="name">purchase line status form view</field>
         <field name="model">purchase.line.status</field>
@@ -383,53 +436,59 @@
         <field name="inherit_id" ref="purchase.view_purchase_order_filter" />
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='draft']" position="attributes">
-                <attribute name="string">Orders</attribute>
+                <attribute name="string">Purchase Orders</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='approved']" position="attributes">
+                <attribute name="string">Approved Orders</attribute>
             </xpath>
             <xpath expr="//filter[@name='draft_rfqs']" position="attributes">
-                <attribute name="string">Draft Orders</attribute>
+                <attribute name="string">Draft Purchase Orders</attribute>
             </xpath>
             <xpath expr="//filter[@name='waiting_rfqs']" position="attributes">
-                <attribute name="string">Waiting Orders</attribute>
+                <attribute name="string">Waiting Purchase Orders</attribute>
             </xpath>
             <xpath expr="//filter[@name='late_rfqs']" position="attributes">
-                <attribute name="string">Late Orders</attribute>
+                <attribute name="string">Late Purchase Orders</attribute>
             </xpath>
         </field>
     </record>
 
     <record id="purchase.action_rfq_form" model="ir.actions.act_window">
-        <field name="name">Book Order</field>
+        <field name="name">Purchase Orders</field>
     </record>
 
     <record id="purchase.purchase_action_dashboard_kanban" model="ir.actions.act_window">
-        <field name="name">Book Order</field>
+        <field name="name">Purchase Orders</field>
     </record>
 
     <record id="purchase.purchase_action_dashboard_list" model="ir.actions.act_window">
-        <field name="name">Book Order</field>
+        <field name="name">Purchase Orders</field>
     </record>
 
     <record id="purchase.purchase_rfq" model="ir.actions.act_window">
-        <field name="name">Book Order</field>
+        <field name="name">Purchase Orders</field>
+    </record>
+
+    <record model="ir.ui.menu" id="purchase.menu_purchase_rfq">
+        <field name="name">Purchase Orders</field>
+        <field name="action" ref="bista_purchase.request_for_quotation_action" />
+    </record>
+
+    <record id="purchase.purchase_form_action" model="ir.actions.act_window">
+        <field name="name">Approved Orders</field>
     </record>
 
     <record model="ir.ui.menu" id="purchase.menu_purchase_form_action">
         <field name="groups_id" eval="[(6,0,[ref('purchase.group_purchase_manager')])]"/>
+        <field name="name">Approved Orders</field>
     </record>
-
-    <record model="ir.ui.menu" id="purchase.menu_purchase_rfq">
-        <field name="name">Book Order</field>
-        <field name="action" ref="bista_purchase.request_for_quotation_action" />
-    </record>
-
-
 
     <menuitem
             id="po_status_line_menu"
             action="po_status_line_action"
             parent="purchase.menu_product_in_config_purchase"
             sequence="4"/>
-     <menuitem id="menu_bista_purchase_line_status"
+    <menuitem id="menu_bista_purchase_line_status"
               name="Status"
               parent="purchase.menu_purchase_config"
               action="purchase_line_status_action"

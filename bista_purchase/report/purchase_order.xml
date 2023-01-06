@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+
+    <record id="purchase.action_report_purchase_order" model="ir.actions.report">
+        <field name="name">Approved Order</field>
+        <field name="print_report_name">
+                (object.state in ('draft', 'sent') and 'Purchase Order - %s' % (object.name) or
+                'Approved Order - %s' % (object.name))</field>
+    </record>
+
+    <record id="purchase.report_purchase_quotation" model="ir.actions.report">
+        <field name="name">Purchase Order</field>
+        <field name="print_report_name">'Purchase Order - %s' % (object.name)</field>
+    </record>
     <template id="report_purchaseorder_document_extended" inherit_id="purchase.report_purchaseorder_document">
         <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
             <attribute name="t-call">bista_report_header_footer.shipment_custom_header</attribute>
@@ -26,7 +38,8 @@
                     </t>
                 </div>
                 <t t-set="report_info" class="col-6 text-right mb4">
-                    <h3 t-if="o.state in ['draft','sent','purchase','done']">Purchase Order</h3>
+                    <h3 t-if="o.state in ['draft','sent']">Purchase Order</h3>
+                    <h3 t-if="o.state in ['purchase','done']">Approved Order</h3>
                     <h3 t-if="o.state == 'cancel'">Cancelled Purchase Quotation/Order</h3>
                     <h4>
                         <strong>
@@ -36,7 +49,7 @@
                     <strong t-if="o.state in ['purchase','done']">Order Date:
                         <t t-esc="o.date_approve" t-options='{"widget": "date"}'/>
                     </strong>
-                    <strong t-if="o.state in ['draft','sent']">RFQ Date:
+                    <strong t-if="o.state in ['draft','sent']">Purchase Order Date:
                         <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                     </strong>
                     <br/>
@@ -63,17 +76,17 @@
                 <t t-set="custom_information_block">
                     <div>
                         <t t-if="o.state in ['draft','sent']">
-                            <strong>RFQ #:</strong>
+                            <strong>Purchase Order #:</strong>
                             <t t-esc="o.name"/>
                             <br/>
                         </t>
                         <t t-if="o.state not in ['draft','sent']">
-                            <strong>Purchase Order:</strong>
+                            <strong>Approved Order:</strong>
                             <t t-esc="o.name"/>
                             <br/>
                         </t>
                         <t t-if="o.state in ['draft','sent']">
-                            <strong>RFQ Date:</strong>
+                            <strong>Purchase Order Date:</strong>
                             <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                             <br/>
                         </t>
@@ -85,7 +98,7 @@
                             </div>
                         </t>
                         <t t-elif="xmlid == 'purchase.report_purchasequotation' and o.state not in ['draft','sent']">
-                            <strong>RFQ Date:</strong>
+                            <strong>Purchase Order Date:</strong>
                             <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                             <br/>
                         </t>
