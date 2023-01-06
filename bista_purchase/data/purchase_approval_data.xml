@@ -9,12 +9,19 @@ action = model.trigger_rfq_action()
         </field>
     </record>
 
-    <!-- <record id="purchase_order_action" model="ir.actions.server">
-        <field name="name">Purchase Order</field>
-        <field name="model_id" ref="purchase.model_purchase_order"/>
-        <field name="state">code</field>
-        <field name="code">
-        action = model.trigger_order_action()
-        </field>
-    </record> -->
+    <function name="write" model="ir.model.data">
+        <function name="search" model="ir.model.data">
+            <value eval="[('name', 'in', ['email_template_edi_purchase','email_template_edi_purchase_done']), ('module', '=', 'purchase')]" />
+        </function>
+        <value eval="{'noupdate': False}" />
+    </function>
+
+    <record id="purchase.email_template_edi_purchase" model="mail.template">
+        <field name="name">Purchase Order: Send Purchase Order</field>
+        <field name="report_name">PO_{{ (object.name or '').replace('/','_') }}</field>
+    </record>
+
+    <record id="purchase.email_template_edi_purchase_done" model="mail.template">
+        <field name="name">Approved Order: Send Approved Order</field>
+    </record>
 </odoo>

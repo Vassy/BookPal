@@ -22,17 +22,17 @@
             <t t-if="not o" t-set="o" t-value="doc"/>
             <t t-if="doc_model == 'purchase.order'">
                 <t t-if="o.state in ['draft','sent']">
-                    <strong>RFQ #:</strong>
+                    <strong>Purchase Order #:</strong>
                     <t t-esc="o.name"/>
                     <br/>
                 </t>
                 <t t-if="o.state not in ['draft','sent']">
-                    <strong>Purchase Order:</strong>
+                    <strong>Approved Order:</strong>
                     <t t-esc="o.name"/>
                     <br/>
                 </t>
                 <t t-if="o.state in ['draft','sent']">
-                    <strong>RFQ Date:</strong>
+                    <strong>Purchase Order Date:</strong>
                     <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                     <br/>
                 </t>
@@ -42,7 +42,7 @@
                     <br/>
                 </t>
                 <t t-elif="xmlid == 'purchase.report_purchasequotation' and o.state not in ['draft','sent']">
-                    <strong>RFQ Date:</strong>
+                    <strong>Purchase Order Date:</strong>
                     <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                     <br/>
                 </t>
