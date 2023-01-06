@@ -8,11 +8,11 @@ from odoo import models, fields, _, api
 from odoo.exceptions import ValidationError
 
 AddState = [
-        ('draft', 'Order'),
+        ('draft', 'Purchase Order'),
         ('sent', 'Order Sent'),
         ('to approve', 'To Approve'),
         ('reject', 'Rejected'),
-        ('purchase', 'Purchase Order'),
+        ('purchase', 'Approved Order'),
         ('done', 'Locked'),
         ('cancel', 'Cancelled')
     ]
@@ -90,6 +90,7 @@ class PurchaseOrder(models.Model):
         compute="compute_order_process_time", string="Order Processing Time")
     purchase_approval_log_ids = fields.One2many("purchase.approval.log", "order_id")
     state = fields.Selection(selection_add=AddState)
+    is_email_sent = fields.Boolean(string="Email Sent", default=False)
 
     def button_cancel(self):
         # Chanage orderline status on cancel order
@@ -237,9 +238,9 @@ class PurchaseOrder(models.Model):
         result = super()._fields_view_get(view_id, view_type, toolbar, submenu)
         if view_type != "form":
             return result
+        doc = etree.XML(result["arch"])
         if not self.env.user.has_group("purchase.group_purchase_manager"):
             attrs = "{'readonly': [('state', 'not in', ['draft', 'sent'])]}"
-            doc = etree.XML(result["arch"])
             for field in doc.xpath("//field"):
                 if (
                         field.attrib.get("invisible") == "1"
@@ -248,7 +249,10 @@ class PurchaseOrder(models.Model):
                 ):
                     continue
                 field.attrib["attrs"] = attrs
-            result["arch"] = etree.tostring(doc)
+        else:
+            for node in doc.xpath("//button[@id='draft_confirm']"):
+                node.set('invisible', "1")
+        result["arch"] = etree.tostring(doc)
         return result
 
     @api.model
@@ -276,6 +280,13 @@ class PurchaseOrder(models.Model):
                 "search_default_draft_rfqs": 1,
             }
         return action
+
+    @api.returns('mail.message', lambda value: value.id)
+    def message_post(self, **kwargs):
+        rec = super(PurchaseOrder, self).message_post(**kwargs)
+        if self.env.context.get('mark_rfq_as_sent'):
+            self.filtered(lambda o: o.state == 'sent').write({'state': 'draft', 'is_email_sent': True})
+        return rec
 
 
 class RushStatus(models.Model):

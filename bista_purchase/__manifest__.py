@@ -43,5 +43,10 @@
     ],
     'auto_install': False,
     'installable': True,
-    'application': True
+    'application': True,
+    'assets': {
+        'web.assets_qweb': [
+            'bista_purchase/static/src/xml/**/*',
+        ],
+    },
 }
