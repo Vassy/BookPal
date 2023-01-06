@@ -63,8 +63,8 @@
                     </group>
                 </page>
                 <page name="shipping_info" string="Shipping Info">
-                    <group name="shipping_info" string="Shipping Info">
-                        <group>
+                    <group>
+                        <group name="shipping_info" string="Shipping Info">
                             <field name="shipping_address"/>
                             <field name="carrier_id" options="{'no_open': True}"/>
                             <field name="event_date"/>
@@ -72,23 +72,24 @@
                             <field name="international_shipping"/>
                             <field name="order_notes" style="max-height: 25px;"/>
                         </group>
-                        <group>
-                            <field name="shipping_notes" style="max-height: 25px;"/>
-                            <field name="shipping_to"/>
-                            <field name="potential_pallets"/>
-                            <field name="accept_pallets"/>
-                            <field name="has_loading_dock"/>
-                            <field name="inside_delivery_req"/>
+                        <group string="Shipping Requirements">
+                                <field name="shipping_to"/>
+                                <field name="potential_pallets"/>
+                                <field name="accept_pallets"/>
+                                <field name="has_loading_dock"/>
+                                <field name="inside_delivery_req"/>
+                                <field name="shipping_notes" style="max-height: 25px;"/>
                         </group>
                     </group>
                 </page>
                 <page name="journal_details" string="Journal Details">
                     <group name="journal_details" string="Journal Details">
                         <group>
-                            <field name="journal_customization_ids" options="{'color_field': 'color', 'no_open': True}" widget="many2many_tags"/>
+                            <field name="journal_customization_ids" options="{'color_field': 'color', 'no_open': True}"
+                                   widget="many2many_tags"/>
                             <field name="currency_id" invisible="1"/>
-                            <field name="customization_cost" />
-                            <field name="link_to_art_files" />
+                            <field name="customization_cost"/>
+                            <field name="link_to_art_files"/>
                             <field name="artwork_status_id" options="{'no_open': True}"/>
                         </group>
                         <group>
@@ -212,7 +213,7 @@
     <record id="crm_lead_view_tree_opportunity_inherited" model="ir.ui.view">
         <field name="name">crm.lead.view.tree.opportunity.inherit.iap.mine</field>
         <field name="model">crm.lead</field>
-        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor" />
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='expected_revenue']" position="before">
                 <field name="quotation_count"/>
@@ -224,14 +225,16 @@
     <record id="crm_case_kanban_view_leads_inherited" model="ir.ui.view">
         <field name="name">crm.lead.view.kanban.opportunity.inherit.iap.mine</field>
         <field name="model">crm.lead</field>
-        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads" />
+        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
         <field name="arch" type="xml">
             <xpath expr="//div[hasclass('oe_kanban_content')]/div[last()]" position="after">
                 <div>
-                    Quotations : <field name="quotation_count"/>
+                    Quotations :
+                    <field name="quotation_count"/>
                 </div>
                 <div>
-                    Sale Orders : <field name="sale_order_count"/>
+                    Sale Orders :
+                    <field name="sale_order_count"/>
                 </div>
             </xpath>
         </field>
@@ -239,6 +242,7 @@
 
     <menuitem id="special_pricing_type_menu" name="Special Pricing Type" action="bista_crm.special_pricing_type_action"
               parent="bista_crm.bookpal_menu_crm" sequence="21"/>
-    <menuitem id="fulfillment_warehouse_menu" name="Fulfillment Warehouse" action="bista_crm.fulfillment_warehouse_action"
+    <menuitem id="fulfillment_warehouse_menu" name="Fulfillment Warehouse"
+              action="bista_crm.fulfillment_warehouse_action"
               parent="bista_crm.bookpal_menu_crm" sequence="22"/>
 </odoo>
