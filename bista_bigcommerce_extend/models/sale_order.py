@@ -27,7 +27,6 @@ class SaleOrderVts(models.Model):
         action['domain'] = [('id', 'in', self.account_payment_ids.ids)]
         return action
 
-
     def get_coupon_response_data(self, order_data, bigcommerce_store_id):
         """Method return coupon api respons."""
         api_url = order_data.get('coupons').get('url')
@@ -289,67 +288,72 @@ class SaleOrderVts(models.Model):
                 todaytime = today_date.strftime("%H:%M:%S")
                 last_modification_date = last_date + " " + last_time
                 today_date = todaydate + " " + todaytime
-                for page_no in range(1, total_pages):
-                    api_operation = "/v2/orders?max_date_created="\
-                        "{0}&min_date_created={1}&status_id={2}&page={3}"\
-                        "&limit={4}".format(
-                            today_date,
-                            last_modification_date,
-                            bigcommerce_order_status,
-                            page_no,
-                            250)
-                    # api_operation = "/v2/orders?max_date_created="\
-                    #     "{0}&min_date_created={1}&page={2}&limit={3}"\
-                    #     .format(
-                    #         today_date, last_modification_date,
-                    #         page_no, 250)
-                    response_data = bigcommerce_store_id.\
-                        send_get_request_from_odoo_to_bigcommerce(
-                            api_operation)
-                    if response_data.status_code in [200, 201]:
-                        response_data = response_data.json()
-                        _logger.info(
-                            "Order Response Data : {0}".format(
-                                response_data))
-                        for order in response_data:
-                            if order.get('status') == 'Pending' or \
-                                    order.get('status') == 'Cancelled' or \
-                                    order.get('status') == 'Incomplete':
-                                continue
-                            big_commerce_order_id = order.get('id')
-                            sale_order = self.env['sale.order'].search(
-                                [('big_commerce_order_id',
-                                  '=',
-                                  big_commerce_order_id)])
-                            if not sale_order:
-                                partner_parent_id = False
-                                shipping_address_api_respons = \
-                                    self.bigcommerce_shipping_address_api_method(
-                                        order, bigcommerce_store_id)
-                                date_time_str = order.get('orderDate')
-                                customerEmail = order.get(
-                                    'billing_address').get('email')
-                                company_name = order.get(
-                                    'billing_address').get('company')
-                                city = order.get('billing_address').get('city')
-                                first_name = order.get(
-                                    'billing_address').get('first_name')
-                                last_name = order.get(
-                                    'billing_address').get('last_name')
-                                country_iso2 = order.get(
-                                    'billing_address').get('country_iso2')
-                                street = order.get(
-                                    'billing_address').get('street_1', '')
-                                street_2 = order.get(
-                                    'billing_address').get('street_2', '')
-                                country_obj = self.env['res.country'].search(
-                                    [('code', '=', country_iso2)], limit=1)
-                                state_obj = self.env['res.country.state'].\
-                                    search(
-                                    [('name', '=',
-                                      order.get('billing_address').get(
-                                          'state'))], limit=1)
-
+                for bigcommerce_order_status in bigcommerce_order_status_ids:
+                    for page_no in range(1, total_pages):
+                        api_operation = "/v2/orders?max_date_created="\
+                            "{0}&min_date_created={1}&status_id={2}&page={3}"\
+                            "&limit={4}".format(
+                                today_date,
+                                last_modification_date,
+                                bigcommerce_order_status.key,
+                                page_no,
+                                250)
+                        # api_operation = "/v2/orders?max_date_created="\
+                        #     "{0}&min_date_created={1}&page={2}&limit={3}"\
+                        #     .format(
+                        #         today_date, last_modification_date,
+                        #         page_no, 250)
+                        response_data = bigcommerce_store_id.\
+                            send_get_request_from_odoo_to_bigcommerce(
+                                api_operation)
+                        if response_data.status_code == 204:
+                            break
+                        if response_data.status_code in [200, 201]:
+                            response_data = response_data.json()
+                            _logger.info(
+                                "Order Response Data : {0}".format(
+                                    response_data))
+                            for order in response_data:
+                                if order.get('status') == 'Pending' or \
+                                        order.get('status') == 'Cancelled' or \
+                                        order.get('status') == 'Incomplete':
+                                    continue
+                                big_commerce_order_id = order.get('id')
+                                sale_order = self.env['sale.order'].search(
+                                    [('big_commerce_order_id',
+                                      '=',
+                                      big_commerce_order_id)])
+                                if not sale_order:
+                                    partner_parent_id = False
+                                    shipping_address_api_respons = \
+                                        self.bigcommerce_shipping_address_api_method(
+                                            order, bigcommerce_store_id)
+                                    date_time_str = order.get('orderDate')
+                                    customerEmail = order.get(
+                                        'billing_address').get('email')
+                                    company_name = order.get(
+                                        'billing_address').get('company')
+                                    city = order.get(
+                                        'billing_address').get('city')
+                                    first_name = order.get(
+                                        'billing_address').get('first_name')
+                                    last_name = order.get(
+                                        'billing_address').get('last_name')
+                                    country_iso2 = order.get(
+                                        'billing_address').get('country_iso2')
+                                    street = order.get(
+                                        'billing_address').get('street_1', '')
+                                    street_2 = order.get(
+                                        'billing_address').get('street_2', '')
+                                    country_obj = self.env['res.country'].\
+                                        search(
+                                            [('code', '=', country_iso2)],
+                                            limit=1)
+                                    state_obj = self.env['res.country.state'].\
+                                        search(
+                                        [('name', '=',
+                                          order.get('billing_address').get(
+                                              'state'))], limit=1)
                                 phone = order.get(
                                     'billing_address').get('phone')
                                 zip = order.get('billing_address').get('zip')

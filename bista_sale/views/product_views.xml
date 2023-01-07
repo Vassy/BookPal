@@ -37,5 +37,17 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="bista_sale_product_pricelist_list_view" model="ir.ui.view">
+            <field name="name">bista.sale.product.pricelist.list.view</field>
+            <field name="model">product.pricelist.item</field>
+            <field name="inherit_id" ref="product.product_pricelist_item_tree_view_from_product"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='fixed_price']" position="after">
+                    <field name="price"/>
+                </xpath>
+            </field>
+        </record>
+
     </data>
 </odoo>
