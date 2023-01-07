@@ -27,7 +27,6 @@ class SaleOrderVts(models.Model):
         action['domain'] = [('id', 'in', self.account_payment_ids.ids)]
         return action
 
-
     def get_coupon_response_data(self, order_data, bigcommerce_store_id):
         """Method return coupon api respons."""
         api_url = order_data.get('coupons').get('url')
@@ -334,7 +333,8 @@ class SaleOrderVts(models.Model):
                                         'billing_address').get('email')
                                     company_name = order.get(
                                         'billing_address').get('company')
-                                    city = order.get('billing_address').get('city')
+                                    city = order.get(
+                                        'billing_address').get('city')
                                     first_name = order.get(
                                         'billing_address').get('first_name')
                                     last_name = order.get(
@@ -345,8 +345,10 @@ class SaleOrderVts(models.Model):
                                         'billing_address').get('street_1', '')
                                     street_2 = order.get(
                                         'billing_address').get('street_2', '')
-                                    country_obj = self.env['res.country'].search(
-                                        [('code', '=', country_iso2)], limit=1)
+                                    country_obj = self.env['res.country'].\
+                                        search(
+                                            [('code', '=', country_iso2)],
+                                            limit=1)
                                     state_obj = self.env['res.country.state'].\
                                         search(
                                         [('name', '=',
@@ -638,7 +640,6 @@ class SaleOrderVts(models.Model):
             operation_id=False, warehouse_id=False, order_data=False,
             bigcommerce_store_id=False):
         """Prepare sale order line."""
-        print("\n sale order lines >>>>>>>custom >>")
         for order_line in product_details:
             product_bigcommerce_id = order_line.get('product_id')
             listing_id = self.env['bc.store.listing'].search(
