@@ -1,10 +1,11 @@
-from odoo import fields, models, api
+from odoo import fields, models, api, _
 import json
 from datetime import datetime
 from requests import request
 from odoo.exceptions import ValidationError,UserError
 from odoo.addons.sale.models.sale_order import SaleOrder
 import logging
+import time
 _logger = logging.getLogger("BigCommerce")
 
 class SaleOrderVts(models.Model):
@@ -35,7 +36,7 @@ class SaleOrderVts(models.Model):
                 response = request(method="GET", url=url, headers=headers)
                 response = response.json()
                 if response and response.get('data'):
-                    _logger.info("Get Sucessful : {}".format(response.get('data')))
+                    _logger.info("Get Sucessfull : {}".format(response.get('data')))
                     for response_data in response.get('data'):
                         if response_data.get('gateway_transaction_id') and response_data.get(
                                 'gateway_transaction_id') != 'null' or response_data.get('gateway') == 'custom':
@@ -49,7 +50,7 @@ class SaleOrderVts(models.Model):
                                 'amount': response_data.get('amount'),
                                 'date': self.date_order,
                                 'ref': self.name,
-                                'partner_id': self.partner_id.id,
+                                'partner_id': self.partner_id.parent_id.id if self.partner_id.parent_id else self.partner_id.id,
                                 'partner_type': 'customer',
                                 'currency_id': currency_id.id,
                                 'journal_id': self.company_id.payment_journal_id.id,
@@ -215,6 +216,7 @@ class SaleOrderVts(models.Model):
         }
         operation_detail_id = bigcommerce_operation_details_obj.create(vals)
         return operation_detail_id
+
     def bigcommerce_shipping_address_api_method(self, order=False, bigcommerce_store_id=False):
         """
         :return:  this method return shipping address of given order number
@@ -238,6 +240,16 @@ class SaleOrderVts(models.Model):
                 return None
         except Exception as error:
             _logger.info(">>>>> Getting an Error {}".format(error))
+
+    def update_order_payment_status(self):
+        order_ids = self.env['sale.order'].search([('big_commerce_order_id','!=',False),('payment_status','=','not_paid'),('invoice_ids.payment_state','not in',['paid','in_payment'])],order='id desc')
+        for order in order_ids:
+            try:
+                _logger.info("ORDER : {}".format(order.name))
+                order.get_order_transaction()
+                self._cr.commit()
+            except Exception as e:
+                _logger.info("Getting an Error in Order : {0} and {1}".format(order,e))
 
     def bigcommerce_to_odoo_import_orders(self,warehouse_id=False, bigcommerce_store_ids=False, last_modification_date =False, today_date=False, total_pages=20, bigcommerce_order_status=False):
         for bigcommerce_store_id in bigcommerce_store_ids:

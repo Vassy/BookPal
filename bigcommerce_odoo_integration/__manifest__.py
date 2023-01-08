@@ -3,21 +3,23 @@
     'name': 'BigCommerce Odoo Integration',
     'category': 'Website',
     'author': "Vraja Technologies",
-    'version': '15.0.30.08.2022',
+    'version': '15.0.1.2.1',
     'summary': """""",
     'description': """
-    BigCommerce Odoo Integration will help you connect with Bigcommerce and Easily Perform Import and Export Operation. 
-    Import Order,Product Customer,Product Category,Multiple Images From Bigcommerce to odoo.
+    BigCommerce Odoo Integration will help you connect with Bigcommerce and
+    Easily Perform Import and Export Operation.
+    Import Order,Product Customer,Product Category,Multiple Images From
+    Bigcommerce to odoo.
     Export Order,Shipment,Product,Inventory From Odoo to Bigcommerce.
     We also Provide the fedex,usps,easyship,stamp.com,ebay
 """,
-
     'depends': ['delivery', 'sale_management', 'product',
                 'sale_stock', 'sale_advance_payment'],
-
     'data': [
         'data/delivery_demo.xml',
         'data/ir_cron.xml',
+        'data/bigcommerce_order_status.xml',
+        'data/payment_acquire.xml',
         'security/ir.model.access.csv',
         'wizard/export_and_update_product_to_bc.xml',
         'wizard/bigcommerce_import_operation.xml',

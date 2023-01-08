@@ -47,6 +47,7 @@ class BigCommerceImportOperation(models.TransientModel):
                                                  ('12', '12 - Manual Verification Required'),
                                                  ('13', '13 - Disputed'),
                                                  ('14', '14 - Partially Refunded')], default='11')
+    bigcommerce_order_status_ids = fields.Many2many('bigcommerce.order.status',string='Order Status')
 
     def do_import_operations(self):
         dbname = self.env.cr.dbname
@@ -81,5 +82,4 @@ class BigCommerceImportOperation(models.TransientModel):
                                args=(self.source_of_import_data, self.destination_of_import_data))
                     t.start()
         elif self.import_operation_of_bc == 'import_order':
-            self.bc_store_instance_id.bigcommerce_to_odoo_import_orders_main(self.from_order_date, self.to_order_date, self.bigcommerce_order_status)
-        pass
+            self.bc_store_instance_id.bigcommerce_to_odoo_import_orders_main(self.from_order_date, self.to_order_date, self.bigcommerce_order_status_ids)

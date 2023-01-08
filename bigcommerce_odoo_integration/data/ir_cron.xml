@@ -29,7 +29,7 @@
             <field name="name">Auto Import BigCommerce Order</field>
             <field name="model_id" ref="model_bigcommerce_store_configuration"/>
             <field name="state">code</field>
-            <field name="code">model.auto_import_bigcommerce_orders('11')</field>
+            <field name="code">model.auto_import_bigcommerce_orders()</field>
             <field name="active" eval="False"/>
             <field name="user_id" ref="base.user_root"/>
             <field name="interval_number">1</field>
@@ -48,6 +48,18 @@
             <field name="state">code</field>
             <field name="code">model.delete_unwanted_crons_of_update_stock_in_bc()
             </field>
+        </record>
+        <record forcecreate="True" id="auto_update_order_payment_status" model="ir.cron">
+            <field name="name">Auto Update Order Payment Status BC ---> Odoo </field>
+            <field name="model_id" ref="model_sale_order"/>
+            <field name="state">code</field>
+            <field name="code">model.update_order_payment_status()</field>
+            <field name="active" eval="False"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">10</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
         </record>
     </data>
 </odoo>
