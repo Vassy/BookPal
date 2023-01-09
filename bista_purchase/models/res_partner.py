@@ -7,6 +7,7 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     is_primary = fields.Boolean(string="Primary Contact")
+    glove_type_ids = fields.Many2many("white.glove.type")
 
     # Supplier Details
     customer_service_email = fields.Char(string="Customer Service Email")

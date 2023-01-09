@@ -11,7 +11,7 @@
     "version": "15.0.1.1.1",
     "category": "Partner",
     # Dependent module required for this module to be installed
-    "depends": ["delivery", "bista_sales_approval"],
+    "depends": ["delivery", "bista_sales_approval", "account_accountant"],
     "author": "Bista Solutions Pvt. Ltd.",
     "maintainer": "Bista Solutions Pvt. Ltd.",
     "summary": "Set credit limit for customer.",

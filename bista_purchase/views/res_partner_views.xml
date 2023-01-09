@@ -31,7 +31,8 @@
                 </button>
             </xpath>
             <xpath expr="//field[@name='website']" position="before">
-                <field name="cc_email" widget="email" context="{'gravatar_image': True}"/>
+                <!-- <field name="cc_email" widget="email" context="{'gravatar_image': True}"/> -->
+                <field name="glove_type_ids" widget="many2many_tags" />
             </xpath>
             <xpath expr="//group" position="inside">
                 <group name="customer_service" string="Customer Service">
