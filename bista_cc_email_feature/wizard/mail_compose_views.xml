@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="email_compose_form_cc_email" model="ir.ui.view">
+        <field name="name">mail.compose.message.form.cc.email</field>
+        <field name="model">mail.compose.message</field>
+        <field name="inherit_id" ref="mail.email_compose_message_wizard_form"/>
+        <field name="arch" type="xml">
+            <field name="subject" position="before">
+                <field name="cc_partner_ids" string="CC Emails" widget="many2many_tags_email" context="{'force_email': True, 'show_email': True}" />
+            </field>
+        </field>
+    </record>
+</odoo>
