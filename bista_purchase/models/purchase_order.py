@@ -92,6 +92,15 @@ class PurchaseOrder(models.Model):
     state = fields.Selection(selection_add=AddState)
     is_email_sent = fields.Boolean(string="Email Sent", default=False)
 
+    def action_rfq_send(self):
+        result = super().action_rfq_send()
+        event_glove = self.env.ref("bista_sale.white_glove_type")
+        if event_glove in self.sale_order_ids.mapped("white_glove_id"):
+            cc_partner_ids = self.partner_id.child_ids.filtered(lambda p: p.is_primary)
+            cc_partner_ids |= self.partner_id.child_ids.filtered(lambda p: event_glove in p.glove_type_ids)
+            result["context"].update({"default_cc_partner_ids": cc_partner_ids.ids})
+        return result
+
     def button_cancel(self):
         # Chanage orderline status on cancel order
         res = super(PurchaseOrder, self).button_cancel()
