@@ -2,21 +2,18 @@
 <odoo>
     <record id="email_template_sale_quote_approve" model="mail.template">
         <field name="name">Sale order : Quote Approval</field>
-        <field name="model_id" ref="model_sale_order"/>
-        <field name="email_to">{{ (object.partner_id.email)}}</field>
-        <field name="email_from">{{ object.user_id.email_formatted or user.email_formatted or ''}}</field>
-        <field name="email_cc">{{object.partner_id.cc_email}}</field>
-        <field name="subject">Quotation Approved {{object.partner_id.name}}</field>
+        <field name="model_id" ref="model_sale_order" />
+        <field name="email_to">{{object.user_id.email_formatted}}</field>
+        <field name="email_from">{{user.email_formatted or ''}}</field>
+        <field name="subject">Quotation Approved {{object.name}}</field>
         <field name="body_html" type="html">
-            <body>
-                <p style="margin: 0px; padding: 0px; font-size: 13px;">
-                    Dear
-                    <t t-out="object.partner_id.name" data-oe-t-inline="true" contenteditable="false"></t>
-                    I hope you are well.
-                   This Is Inform To, Your Quotation  <strong t-out="object.name or ''"/> Request Has Been Approved!!
-                    <t t-out="object.date_order"/>
-                </p>
-            </body>
+            <p>
+                Dear<span t-out="object.user_id.name" />,<br/><br/>
+                I hope you are well.<br/>
+                This is to inform you, Your quotation <strong t-out="object.name" /> request has been approved!<br/><br/>
+            </p>
         </field>
+        <field name="report_template" ref="sale.action_report_saleorder"/>
+        <field name="report_name">{{ (object.name or '').replace('/','_') }}</field>
     </record>
 </odoo>
