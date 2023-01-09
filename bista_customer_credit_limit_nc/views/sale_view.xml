@@ -93,6 +93,8 @@
     
     <menuitem id="menu_so_credit_review"
         name="Credit Review"
-        parent="account.menu_finance_reports"
-        action="bista_customer_credit_limit_nc.action_orders_credit_review" />
+        parent="account_accountant.menu_accounting"
+        action="bista_customer_credit_limit_nc.action_orders_credit_review"
+        groups="bista_customer_credit_limit_nc.group_credit_limit"
+        sequence="1" />
 </odoo>
