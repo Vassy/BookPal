@@ -7,14 +7,19 @@
 ##############################################################################
 
 from odoo import models, fields, _
+import datetime
 
 
 class BestSellerReport(models.TransientModel):
     _name = "best.seller.report.wiz"
     _description = "Best Seller Report"
 
-    start_date = fields.Date(string="Start Date")
-    end_date = fields.Date(string="End Date")
+    start_date = fields.Date(
+        string="Start Date",
+        default=datetime.datetime.today().replace(day=1))
+    end_date = fields.Date(
+        string="End Date",
+        default=fields.Date.context_today)
     report_type = fields.Selection([
                 ('individual', 'Individual'),
                 ('bulk', 'Bulk'),
