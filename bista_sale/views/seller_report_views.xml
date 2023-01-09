@@ -39,11 +39,29 @@
             </field>
         </record>
 
+        <record id="view_best_seller_report_filter" model="ir.ui.view">
+            <field name="name">best.seller.report.filter</field>
+            <field name="model">best.seller.report</field>
+            <field name="priority" eval="15"/>
+            <field name="arch" type="xml">
+                <search string="Search Best Seller Report">
+                    <field name="order_number" string="Order" filter_domain="[('order_number', 'ilike', self)]"/>
+                    <field name="product_id" string="Product" filter_domain="[('product_id', 'ilike', self)]"/>
+                    <field name="order_status" string="Order Status"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Order" name="order_number" domain="[]" context="{'group_by': 'order_number'}"/>
+                        <filter string="Product" name="product_id" domain="[]" context="{'group_by': 'product_id'}"/>
+                        <filter string="Order Status" name="order_status" domain="[]" context="{'group_by': 'order_status'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
         <record id="action_view_seller_report" model="ir.actions.act_window">
             <field name="name">Best Seller Report</field>
             <field name="res_model">best.seller.report</field>
             <field name="view_mode">tree,pivot</field>
-            <!-- <field name="view_id" ref="view_seller_report"/> -->
+            <field name="search_view_id" ref="view_best_seller_report_filter"/>
             <field name="target">new</field>
         </record>
     </data>
