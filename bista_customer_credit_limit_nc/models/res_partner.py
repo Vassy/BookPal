@@ -20,7 +20,7 @@ class ResPartner(models.Model):
         help="Available Credit limit for the Customer",
     )
 
-    @api.constrains("check_over_credit")
+    @api.constrains("check_over_credit", "credit_limit")
     def _check_credit_limit(self):
         for partner in self:
             if partner.check_over_credit and partner.credit_limit < 1:
@@ -52,5 +52,5 @@ class ResPartner(models.Model):
                     lambda inv: inv.payment_state in ["in_payment", "paid", "partial"]
                 )._get_reconciled_payments()
                 paid_payment = payments.filtered(lambda p: p.is_matched)
-                amount += amount_total - sum(paid_payment.mapped("amount"))
+                amount += amount_total - sum(paid_payment.mapped("amount_signed"))
             partner.available_credit_limit = partner.credit_limit - amount
