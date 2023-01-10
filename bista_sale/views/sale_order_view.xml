@@ -91,10 +91,7 @@
                             <!--                            <field name='order_processing_time'/>-->
                         </group>
                         <group class="o_row">
-                            <group>
-                                <field name="order_processing_time" no_label="1"/>
-                            </group>
-                            <span class="oe_read_only">Days</span>
+                                <field name="order_processing_time" />
                         </group>
 
                         <group>
