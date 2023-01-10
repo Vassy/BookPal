@@ -27,7 +27,7 @@ class CrmLead(models.Model):
 
     # Shipping Info fields
     shipping_address = fields.Char(string='Shipping Address')
-    carrier_id = fields.Many2one('delivery.carrier', string='Shipping Method')
+    carrier_id = fields.Many2one('delivery.carrier', string='Shipping Method',related='partner_id.property_delivery_carrier_id')
     event_date = fields.Date(string="Event Date")
     need_date = fields.Date(string="Need By Date")
     international_shipping = fields.Char(string='International Shipping')
@@ -106,7 +106,10 @@ class CrmLead(models.Model):
             'default_has_loading_dock': self.has_loading_dock,
             'default_inside_delivery_req': self.inside_delivery_req,
             'default_shipping_notes': self.shipping_notes,
-
+            'default_internal_note': self.description,
+            'default_refer_by_person': self.referred,
+            'default_project_description': self.project_details,
+            'default_carrier_id': self.carrier_id.id,
 
         })
 
