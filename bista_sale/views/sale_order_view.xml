@@ -246,6 +246,9 @@
             <field name="invoice_status" position="after">
                 <field name="tag_ids" widget="many2many_tags"/>
             </field>
+            <xpath expr="//field[@name='state']" position="before">
+                <field name="order_processing_time" optional="hide"/>
+            </xpath>
         </field>
     </record>
 </odoo>
