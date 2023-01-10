@@ -135,7 +135,6 @@ class ProductTemplateExtend(models.Model):
             self, record, bigcommerce_store_id,
             operation_id, warehouse_id):
         """Update custom field."""
-        print ("\n update custom fields >>>>>>.")
         product_template_id = self
         custom_field_api_operation = \
             "/v3/catalog/products/{}/custom-fields".format(
@@ -151,7 +150,6 @@ class ProductTemplateExtend(models.Model):
             custom_field_datas = custom_field_response_data.get(
                 'data')
             for custom_field_data in custom_field_datas:
-                print ("\n custom >>>", custom_field_data)
                 if custom_field_data.get('name') in ['publisher', 'Publisher']:
                     product_template_id.publisher_id = custom_field_data.get(
                         'value')
@@ -323,7 +321,6 @@ def import_product_from_bigcommerce(
         bigcommerce_product_id=False, add_single_product=False, source_page=1,
         destination_page=1):
     """Import product from bigcommerce."""
-    print("\n 22  bista >>>>>>>> >")
     for bigcommerce_store_id in bigcommerce_store_ids:
         req_data = False
         bigcommerce_store_id.bigcommerce_product_import_status = \

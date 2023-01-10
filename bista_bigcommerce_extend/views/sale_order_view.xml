@@ -40,8 +40,11 @@
                 <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
                     <filter string="Odoo Order" name="normal_order" domain="[('big_commerce_order_id', '=', False)]"/>
                     <filter string="Big commerce Order" name="big_commere_order" domain="[('big_commerce_order_id', '!=', False)]"/>
-
                 </xpath>
+                <xpath expr="//filter[@name='order_month']" position="after">
+                    <filter string="Bigcommerce Payment Status" name="big_commere_order"  domain="[]" context="{'group_by': 'payment_status'}"/>
+                </xpath>
+
             </field>
         </record>
     </data>

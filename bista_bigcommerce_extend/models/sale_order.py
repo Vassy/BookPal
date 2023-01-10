@@ -243,7 +243,6 @@ class SaleOrderVts(models.Model):
                         taxline_vals, line_id))
                 order_id.sudo()._amount_all()
                 if order.get('payment_status') in ["captured", "paid"]:
-                    #     # order_id.action_confirm()
                     order_id.get_order_transaction(through_order_cron=True)
                 # if len(order_id.order_line) > 0:
                 #     order_id.action_confirm()
