@@ -8,15 +8,10 @@
         <field name="email_cc">{{object.partner_id.cc_email}}</field>
         <field name="subject">Quotation Approved {{object.partner_id.name}}</field>
         <field name="body_html" type="html">
-            <body>
-                <p style="margin: 0px; padding: 0px; font-size: 13px;">
-                    Dear
-                    <t t-out="object.partner_id.name" data-oe-t-inline="true" contenteditable="false"></t>
-                    I hope you are well.
-                   This Is Inform To, Your Quotation  <strong t-out="object.name or ''"/> Request Has Been Approved!!
-                    <t t-out="object.date_order"/>
-                </p>
-            </body>
+            <p>
+                Dear <span t-out="object.user_id.name" />,<br/><br/>
+                This is to inform you that your Quotation no. <strong t-out="object.name" /> is now approved.<br/><br/>
+            </p>
         </field>
     </record>
 </odoo>
