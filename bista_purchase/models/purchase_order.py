@@ -320,6 +320,9 @@ class PurchaseOrder(models.Model):
             self.filtered(lambda o: o.state == 'sent').write({'state': 'draft', 'is_email_sent': True})
         return rec
 
+    def print_quotation(self):
+        return self.env.ref('purchase.report_purchase_quotation').report_action(self)
+
 
 class RushStatus(models.Model):
     _name = "rush.status"
