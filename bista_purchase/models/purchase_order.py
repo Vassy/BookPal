@@ -189,39 +189,16 @@ class PurchaseOrder(models.Model):
     #     res.update({'note': self.special_pick_note})
     #     return res
 
-    @api.constrains('order_line')
-    def _check_exist_product_in_line(self, vals=False):
-        for purchase in self:
-            exist_product_list = []
-            products_in_lines = [
-                product.id for product in purchase.mapped('order_line.product_id')]
-            products_list = ''
-            product_name = ''
-            for line in purchase.order_line:
-                if not vals:
-                    if line.product_id.id in exist_product_list:
-                        product_ref = '' if not line.product_id.default_code else '[' + line.product_id.default_code + '] '
-                        products_list = products_list + '\n' + \
-                                        product_ref + \
-                                        line.product_id.name
-                else:
-                    if vals.id in products_in_lines:
-                        if vals.id == line.product_id.id:
-                            product_ref = '' if not line.product_id.default_code else '[' + line.product_id.default_code + ']'
-                            product_name = product_name + \
-                                           product_ref + \
-                                           line.product_id.name
-                exist_product_list.append(line.product_id.id)
-            duplicate_product_list = set([x for x in exist_product_list if exist_product_list.count(x) > 1])
-            if duplicate_product_list and len(list(duplicate_product_list)) > 1:
-                raise ValidationError(
-                    _(' Following products are already added in line, you can Update the qty there. ' + products_list))
-            elif duplicate_product_list:
-                raise ValidationError(
-                    _(products_list + ' is already added in line, you can Update the qty there.'))
-            if product_name:
-                raise ValidationError(
-                    _(product_name + ' is already added in line, you can Update the qty there.'))
+    @api.onchange('order_line')
+    def onchange_product_is_exist(self):
+        if self.order_line.product_id:
+            prod_list = [line.product_id.id for line in self.order_line]
+            for line in self.order_line:
+                product_name = ''
+                product_ref = '' if not line.product_id.default_code else '[' + line.product_id.default_code + '] '
+                if prod_list.count(line.product_id.id) > 1:
+                    product_name = product_ref + product_name + line.product_id.name
+                    raise ValidationError(product_name + ' is already added in line, you can Update the qty there.')
 
     def compute_lead_time(self):
         for rec in self:
@@ -422,12 +399,24 @@ class PurchaseOrderLine(models.Model):
             result = {'warning': warning_mess}
         return result
 
-    @api.onchange('product_id')
-    def onchange_product_is_exist(self):
-        product_order = self.order_id._origin._check_exist_product_in_line(
-            self.product_id)
-        if self.product_id and product_order:
-            return product_order
+    @api.constrains('product_id')
+    def _check_exist_product_in_line(self):
+        exist_product_list = []
+        products_list = ''
+        for line in self:
+            if line.product_id.id in exist_product_list:
+                product_ref = '' if not line.product_id.default_code else '[' + line.product_id.default_code + '] '
+                products_list = products_list + '\n' + \
+                                product_ref + \
+                                line.product_id.name
+            exist_product_list.append(line.product_id.id)
+        duplicate_product_list = set([x for x in exist_product_list if exist_product_list.count(x) > 1])
+        if duplicate_product_list and len(list(duplicate_product_list)) > 1:
+            raise ValidationError(
+                _(' Following products are already added in line, you can Update the qty there. ' + products_list))
+        elif duplicate_product_list:
+            raise ValidationError(
+                _(products_list + ' is already added in line, you can Update the qty there.'))
 
     def action_purchase_history(self):
         ''' can show the purchase order line history in purchase order line. where user can see back order qty
