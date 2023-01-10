@@ -18,12 +18,14 @@ class SaleOrderRejectReason(models.TransientModel):
 
     def update_reject_reason(self):
         state = "order_booked"
+        done_action = "Order Rejected"
         if self.sale_id.state == "quote_approval":
             state = "draft"
+            done_action = "Quote Rejected"
         self.sale_id.write({"state": state})
         log_data = {
             "sale_id": self.sale_id.id,
-            "done_action": "Quote Rejected",
+            "done_action": done_action,
             "note": self.note,
         }
         self.env["sale.approval.log"].create(log_data)
