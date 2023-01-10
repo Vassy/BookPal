@@ -38,7 +38,9 @@ class SaleOrderVts(models.Model):
                 if response and response.get('data'):
                     _logger.info("Get Sucessfull : {}".format(response.get('data')))
                     for response_data in response.get('data'):
-                        if response_data.get('gateway_transaction_id') and response_data.get(
+                        if response_data.get('gateway_transaction_id') and \
+                            response_data.get('event') == 'capture' and \
+                            response_data.get(
                                 'gateway_transaction_id') != 'null' or response_data.get('gateway') == 'custom':
                             self.payment_method = response_data.get('payment_method_id')
                             self.payment_status = 'paid'
