@@ -79,7 +79,7 @@ class SaleOrder(models.Model):
     ], string='Report Type')
     report_notes = fields.Text(string='Reporting Notes')
     order_processing_time = fields.Integer(compute="compute_order_process_time", string='Process Time')
-    product_weight = fields.Float(compute="_compute_product_weight", readonly=True)
+    product_weight = fields.Float(compute="_compute_product_weight")
     weight_uom_name = fields.Char(string='Weight unit of measure label', compute="_compute_weight_uom")
 
     @api.depends("order_line.price_total")
@@ -127,7 +127,6 @@ class SaleOrder(models.Model):
         for order in self:
             final_weight = sum(line.product_id.weight * line.product_uom_qty for line in order.order_line.filtered(lambda l: l.product_id.type in ('product')))
         order.product_weight = final_weight
-
 
     def _compute_weight_uom(self):
         self.weight_uom_name = self.env['product.template']._get_weight_uom_name_from_ir_config_parameter()

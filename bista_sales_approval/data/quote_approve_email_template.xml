@@ -8,9 +8,8 @@
         <field name="subject">Quotation Approved {{object.name}}</field>
         <field name="body_html" type="html">
             <p>
-                Dear<span t-out="object.user_id.name" />,<br/><br/>
-                I hope you are well.<br/>
-                This is to inform you, Your quotation <strong t-out="object.name" /> request has been approved!<br/><br/>
+                Dear <span t-out="object.user_id.name" />,<br/><br/>
+                This is to inform you that your Quotation no. <strong t-out="object.name" /> is now approved.<br/><br/>
             </p>
         </field>
         <field name="report_template" ref="sale.action_report_saleorder"/>

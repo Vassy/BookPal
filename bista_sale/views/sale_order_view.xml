@@ -221,10 +221,12 @@
                 </page>
             </xpath>
             <xpath expr="//group[@name='note_group']" position="before">
-                <label for="product_weight" string="Product Weight"/>
-                <div class="o_row">
-                    <field name="product_weight" readonly="1"/>
-                    <span><field name="weight_uom_name"/></span>
+                <div class="oe_left">
+                    <label for="product_weight" />
+                    <div class="o_row">
+                        <field name="product_weight" readonly="1" />
+                        <field name="weight_uom_name" readonly="1" />
+                    </div>
                 </div>
             </xpath>
         </field>
