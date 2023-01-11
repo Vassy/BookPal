@@ -11,7 +11,8 @@
                     <group colspan="4">
                         <field name="special_pick_note"
                                class="oe-bordered-editor" nolabel="1"
-                               placeholder="Special Picking Notes..."/>
+                               placeholder="Special Picking Notes..."
+                               required="1"/>
                     </group>
                 </group>
             </xpath>

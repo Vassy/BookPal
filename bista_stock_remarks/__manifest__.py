@@ -1,6 +1,6 @@
 {
     'name': 'Bista Stock Remarks',
-    'version': '15.0.1.0.0',
+    'version': '15.0.1.1.0',
     'description': 'Manage Sale order and Purchase Order custom'
     'field "Remark" to stock',
     'category': '',
