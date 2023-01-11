@@ -204,25 +204,6 @@ class ResPartner(models.Model):
             vals['phone'] = company_phone
         return super(ResPartner, self).create(vals)
 
-    @api.model
-    def name_search(self, name='', args=None, operator='ilike', limit=100):
-        """User can serach tax based on name and description."""
-        if not args:
-            args = []
-        if self.env.context.get('shipment_contact'):
-            args += expression.OR(
-                [args, [('is_multi_ship', '=', True)]])
-        elif self.env.context.get('vendor_multi_ship'):
-            vendors = self.get_vendors()
-            args = ['|', ('id', 'in', vendors), ('parent_id', 'in', vendors)]
-        elif self.env.user.has_group(
-                'bista_sale_multi_ship.show_multi_ship_contact'):
-            args = expression.OR([args, [('is_multi_ship', '=', True)]])
-        else:
-            args = expression.AND([args, [('is_multi_ship', '=', False)]])
-        ids = self.with_context(name_search=True)._name_search(name, args, operator, limit=limit)
-        return self.browse(ids).sudo().name_get()
-
     def name_get(self):
         """Updated display name."""
         res = []
@@ -248,43 +229,39 @@ class ResPartner(models.Model):
         return res
 
     def get_vendors(self):
-        """Get vendors."""
-        if self.env.context.get('vendor_multi_ship'):
-            prod_tmpl = self.env['product.product'].browse(
-                self.env.context.get('product_id')).product_tmpl_id
-            vendors = prod_tmpl.seller_ids.mapped('name').ids
-        return vendors
+        """Get vendors from specific product."""
+        return self.env["product.product"].browse(
+            self._context.get("vendor_product_id")
+        ).seller_ids.mapped("name").ids
 
     @api.model
-    def _search(self, args, offset=0, limit=None,
-                order=None, count=False, access_rights_uid=None):
-        if not self.env.context.get('name_search'):
-            if self.env.context.get('shipment_contact'):
-                args += expression.OR(
-                    [args, [('is_multi_ship', '=', True)]])
-            elif self.env.context.get('vendor_multi_ship'):
-                vendors = self.get_vendors()
-                args = ['|', ('id', 'in', vendors), ('parent_id', 'in', vendors)]
-            elif self.env.user.has_group(
-                    'bista_sale_multi_ship.show_multi_ship_contact'):
-                args = expression.AND([[('is_multi_ship', 'in', [True, False])], args])
-            else:
-                args = expression.AND([args, [('is_multi_ship', '=', False)]])
-
-        return super(ResPartner, self)._search(
-            args, offset, limit, order, count=count,
-            access_rights_uid=access_rights_uid)
+    def _search(
+        self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None
+    ):
+        """Select specific contacts based on different context and user access"""
+        if self._context.get("shipment_contact"):
+            args += expression.OR([args, [("is_multi_ship", "=", True)]])
+        elif self._context.get("vendor_product_id"):
+            vendors = self.get_vendors()
+            args = expression.AND(
+                [args, ["|", ("id", "in", vendors), ("parent_id", "in", vendors)]]
+            )
+        elif self.env.user.has_group("bista_sale_multi_ship.show_multi_ship_contact"):
+            args = expression.AND([[("is_multi_ship", "in", [True, False])], args])
+        else:
+            args = expression.AND([args, [("is_multi_ship", "=", False)]])
+        return super()._search(args, offset, limit, order, count, access_rights_uid)
 
     @api.model
-    def read_group(self, domain, fields, groupby,
-                   offset=0, limit=None, orderby=False, lazy=True):
+    def read_group(
+        self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True
+    ):
         """Updated search more domain when open vendors in shipping line."""
         if not domain:
             domain = []
-        if self.env.context.get('vendor_multi_ship'):
+        if self._context.get("vendor_product_id"):
             vendors = self.get_vendors()
-            domain += ['|', ('id', 'in', vendors),
-                       ('parent_id', 'in', vendors)]
-        return super(ResPartner, self).read_group(
-            domain, fields, groupby, offset=offset,
-            limit=limit, orderby=orderby, lazy=lazy)
+            domain = expression.AND(
+                [domain, ["|", ("id", "in", vendors), ("parent_id", "in", vendors)]]
+            )
+        return super().read_group(domain, fields, groupby, offset, limit, orderby, lazy)

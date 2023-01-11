@@ -44,7 +44,7 @@
                     <field name="remain_so_qty" optional="hide" readonly="1" force_save="1"/>
                 </xpath>
                  <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom']" position="after">
-                    <field name="supplier_id" context="{'product_id': product_id, 'vendor_multi_ship': True}" attrs="{'readonly': [('state', '!=', 'draft')]}" optional="show"/>
+                    <field name="supplier_id" context="{'vendor_product_id': product_id}" attrs="{'readonly': [('state', '!=', 'draft')]}" optional="show"/>
                  </xpath>
                 <xpath expr="//page[last()]" position="after">
                     <page name="shipping_lines" string="Shipping"
@@ -105,7 +105,7 @@
                                 <field name="qty_delivered" sum="Total" optional="hide" readonly="1" force_save="1"/>
                                 <field name="qty_short_close" optional="hide"/>
                                 <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]" attrs="{'readonly': [('state', '!=', 'draft')]}" context="{'partner_id': partner_id}" options="{'no_open': 1, 'no_create':1}"/>
-                                <field name="supplier_id" context="{'product_id': product_id, 'vendor_multi_ship': True}" attrs="{'readonly': [('state', '!=', 'draft')]}" optional="show"/>
+                                <field name="supplier_id" context="{'vendor_product_id': product_id}" attrs="{'readonly': [('state', '!=', 'draft')]}" optional="show"/>
                                 <field name="state" optional="hide" readonly="1" force_save="1"/>
                                 <field name="attention" optional="hide" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="confirm_date" readonly="1" optional="hide"/>
