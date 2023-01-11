@@ -92,7 +92,7 @@
                         </t>
                         <t t-if="xmlid == 'purchase.report_purchaseorder' and o.state not in ['draft','sent']" >
                             <div class="text-danger">
-                                <strong >Order Arrive By Date:</strong>
+                                <strong >Order Need By Date:</strong>
                                 <t t-esc="o.date_approve" t-options='{"widget": "date"}'/>
                                 <br/>
                             </div>
