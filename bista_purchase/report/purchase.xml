@@ -56,9 +56,9 @@
                     <br/>
                 </t>
 
-                <strong>Shipping Method :</strong>
+                <!-- <strong>Shipping Method :</strong>
                 <span>Free Delivery Method</span>
-                <br/>
+                <br/> -->
                 <t t-if="o.shipping_instructions">
                     <strong>Shipping Instructions :</strong>
                     <t t-esc="o.shipping_instructions"/>
