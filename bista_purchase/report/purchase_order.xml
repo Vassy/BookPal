@@ -58,10 +58,12 @@
                             <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                             <br/>
                         </t>
-                        <t t-if="xmlid == 'purchase.report_purchaseorder' and o.state not in ['draft','sent']">
-                            <strong>Order Arrive By Date:</strong>
-                            <t t-esc="o.date_approve" t-options='{"widget": "date"}'/>
-                            <br/>
+                        <t t-if="xmlid == 'purchase.report_purchaseorder' and o.state not in ['draft','sent']" >
+                            <div class="text-danger">
+                                <strong >Order Need By Date:</strong>
+                                <t t-esc="o.date_approve" t-options='{"widget": "date"}'/>
+                                <br/>
+                            </div>
                         </t>
                         <t t-elif="xmlid == 'purchase.report_purchasequotation' and o.state not in ['draft','sent']">
                             <strong>RFQ Date:</strong>
