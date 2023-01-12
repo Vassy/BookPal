@@ -19,7 +19,17 @@ class SellerReport(models.Model):
     # order_account = fields.Char(string='Order Account')
     order_company = fields.Many2one('res.company', string='Order Company')
     # customer_segment = fields.Char(string='Order Customer Segment')
-    order_status = fields.Char(string='Order Status')
+    order_status = fields.Selection([
+        ("draft", "Draft Quotation"),
+        ("sent", "Quotation Sent"),
+        ("done", "Sales Done"),
+        ("cancel", "Cancelled"),
+        ("quote_approval", "Quotation In Approval"),
+        ("quote_confirm", "Approved Quotation"),
+        ("order_booked", "Order Booked"),
+        ("pending_for_approval", "Order In Approval"),
+        ("sale", "Approved Order")
+        ], string='Order Status')
 
     def init(self):
         """ Fetch the data from sale order line based on report type and start and end date """

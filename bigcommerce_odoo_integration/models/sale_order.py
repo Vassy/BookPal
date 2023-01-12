@@ -38,7 +38,9 @@ class SaleOrderVts(models.Model):
                 if response and response.get('data'):
                     _logger.info("Get Sucessfull : {}".format(response.get('data')))
                     for response_data in response.get('data'):
-                        if response_data.get('gateway_transaction_id') and response_data.get(
+                        if response_data.get('gateway_transaction_id') and \
+                            response_data.get('event') == 'capture' and \
+                            response_data.get(
                                 'gateway_transaction_id') != 'null' or response_data.get('gateway') == 'custom':
                             self.payment_method = response_data.get('payment_method_id')
                             self.payment_status = 'paid'
@@ -159,7 +161,7 @@ class SaleOrderVts(models.Model):
             'partner_shipping_id': vals.get('partner_shipping_id'),
             'partner_id': vals.get('partner_id'),
             'date_order': vals.get('date_order', ''),
-            'state': 'draft',
+            'state': 'order_booked',
             'carrier_id': vals.get('carrier_id', ''),
             'currency_id':vals.get('currency_id',False),
             'pricelist_id': vals.get('pricelist_id'),
@@ -186,7 +188,7 @@ class SaleOrderVts(models.Model):
             'product_uom_qty': vals.get('order_qty', 0.0),
             'price_unit': vals.get('price_unit', 0.0),
             'discount': vals.get('discount', 0.0),
-            'state': 'draft',
+            'state': 'order_booked',
         })
         return order_line
 

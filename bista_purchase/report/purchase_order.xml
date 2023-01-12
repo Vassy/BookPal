@@ -38,9 +38,8 @@
                     </t>
                 </div>
                 <t t-set="report_info" class="col-6 text-right mb4">
-                    <h3 t-if="o.state in ['draft','sent']">Purchase Order</h3>
-                    <h3 t-if="o.state in ['purchase','done']">Approved Order</h3>
-                    <h3 t-if="o.state == 'cancel'">Cancelled Purchase Quotation/Order</h3>
+                    <h3 t-if="o.state != 'cancel'">Approved Order</h3>
+                    <h3 t-if="o.state == 'cancel'">Cancelled Purchase Order/Approved Order</h3>
                     <h4>
                         <strong>
                             <t t-esc="o.name"/>
@@ -92,7 +91,7 @@
                         </t>
                         <t t-if="xmlid == 'purchase.report_purchaseorder' and o.state not in ['draft','sent']" >
                             <div class="text-danger">
-                                <strong >Order Arrive By Date:</strong>
+                                <strong >Order Need By Date:</strong>
                                 <t t-esc="o.date_approve" t-options='{"widget": "date"}'/>
                                 <br/>
                             </div>
@@ -112,9 +111,9 @@
                             <br/>
                         </t>
 
-                        <strong>Shipping Method :</strong>
+                        <!-- <strong>Shipping Method :</strong>
                         <span>Free Delivery Method</span>
-                        <br/>
+                        <br/> -->
                         <t t-if="o.shipping_instructions">
                             <strong>Shipping Instructions :</strong>
                             <t t-esc="o.shipping_instructions.name"/>
@@ -128,7 +127,7 @@
             <t t-if="doc_model == 'purchase.order' and o.state in ['draft','sent'] and xmlid == 'purchase.report_purchaseorder'">
                 <div class="watermark"
                      style="top:450px; left: 90px; border: 2px solid green; font-size:7em; position:fixed; text-align:center; width:70%; opacity:0.25; -webkit-transform: rotate(-30deg);">
-                    <p>Draft</p>
+                    <p>Purchase Order</p>
                 </div>
             </t>
         </xpath>
