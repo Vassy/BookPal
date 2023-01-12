@@ -72,33 +72,31 @@
                             <field name="international_shipping"/>
                             <field name="order_notes" style="max-height: 25px;"/>
                         </group>
-                        <group string="Shipping Requirements">
-                                <field name="shipping_to"/>
-                                <field name="potential_pallets"/>
-                                <field name="accept_pallets"/>
-                                <field name="has_loading_dock"/>
-                                <field name="inside_delivery_req"/>
-                                <field name="shipping_notes" style="max-height: 25px;"/>
+                        <group name="shipping_requirements" string="Shipping Requirements">
+                            <field name="shipping_to"/>
+                            <field name="potential_pallets"/>
+                            <field name="accept_pallets"/>
+                            <field name="has_loading_dock"/>
+                            <field name="inside_delivery_req"/>
+                            <field name="shipping_notes"  style="word-wrap: break-word;max-height: 25px;"/>
                         </group>
                     </group>
                 </page>
                 <page name="journal_details" string="Journal Details">
-                    <group name="journal_details" string="Journal Details">
-                        <group>
-                            <field name="journal_customization_ids" options="{'color_field': 'color', 'no_open': True}"
-                                   widget="many2many_tags"/>
-                            <field name="currency_id" invisible="1"/>
-                            <field name="customization_cost"/>
-                            <field name="link_to_art_files"/>
-                            <field name="artwork_status_id" options="{'no_open': True}"/>
-                        </group>
-                        <group>
-                            <field name="journal_notes" style="max-height: 25px;"/>
-                            <field name="journal_setup_fee"/>
-                            <!-- <field name="shipping_account" /> -->
-                            <field name="death_type_id" options="{'no_open': True}"/>
-                            <field name="existing_death_order"/>
-                        </group>
+                    <group>
+                        <field name="journal_customization_ids" options="{'color_field': 'color', 'no_open': True}"
+                               widget="many2many_tags"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="customization_cost"/>
+                        <field name="link_to_art_files"/>
+                        <field name="artwork_status_id" options="{'no_open': True}"/>
+                    </group>
+                    <group>
+                        <field name="journal_notes" style="max-height: 25px;"/>
+                        <field name="journal_setup_fee"/>
+                        <!-- <field name="shipping_account" /> -->
+                        <field name="death_type_id" options="{'no_open': True}"/>
+                        <field name="existing_death_order"/>
                     </group>
                 </page>
                 <page name="fulfilment_project" string="Fulfilment Project">
