@@ -301,6 +301,12 @@ class PurchaseOrder(models.Model):
     def print_quotation(self):
         return self.env.ref('purchase.report_purchase_quotation').report_action(self)
 
+    @api.constrains('date_approve', 'date_planned')
+    def warning_on_reciept_date(self):
+        for order in self:
+            if order.state == 'purchase':
+                if order.date_planned.date() and (order.date_planned.date() < order.date_approve.date()):
+                    raise ValidationError(_('Receipt date cannot be earlier than confirmation date'))
 
 class RushStatus(models.Model):
     _name = "rush.status"
