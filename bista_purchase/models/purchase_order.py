@@ -317,7 +317,8 @@ class PurchaseOrder(models.Model):
     def message_post(self, **kwargs):
         rec = super(PurchaseOrder, self).message_post(**kwargs)
         if self.env.context.get('mark_rfq_as_sent'):
-            self.filtered(lambda o: o.state == 'sent').write({'state': 'draft', 'is_email_sent': True})
+            self.is_email_sent = True
+            self.filtered(lambda o: o.state == 'sent').write({'state': 'draft'})
         return rec
 
     def print_quotation(self):
