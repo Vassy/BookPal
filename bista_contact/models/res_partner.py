@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+from pkg_resources import _
+
 from odoo import fields, models
+from odoo.odoo import api
 
 
 class ResPartner(models.Model):
@@ -24,19 +27,34 @@ class ResPartner(models.Model):
     source = fields.Char('Source')
     referal_source = fields.Char('Referral Source')
     source_notes = fields.Char('Source Notes')
+    product_order_count = fields.Integer('Product Sale' , compute="_compute_sale_product_count")
+    product_purchase_count = fields.Integer('Product Purchase', compute="_compute_purchase_product_count")
 
     # Order Information
     avg_order_value = fields.Char('Average Order Value', compute='get_avg_order_value')
     first_order_date = fields.Datetime('First Order Date', compute='get_first_order_date')
     last_order_date = fields.Datetime('Last Order Date', compute='get_first_order_date')
-    sale_product_ids = fields.Many2many('product.product', string='Sale Products', compute='get_ordered_product')
-    purchase_product_ids = fields.Many2many('product.product', string='Purchase Products', compute='get_vendor_ordered_product')
+    # sale_product_ids = fields.Many2many('product.product', string='Sale Products', compute='get_ordered_product')
+    # purchase_product_ids = fields.Many2many('product.product', string='Purchase Products',
+    #                                         compute='get_vendor_ordered_product')
     block_reason = fields.Char('Reason')
     block = fields.Boolean('Block')
     account_order_standing = fields.Selection([
         ('high', 'High'),
         ('medium', 'Medium'),
         ('low', 'Low')], string='Account Order Standing')
+
+    def _compute_purchase_product_count(self):
+        for partner_id in self:
+            product_list = self.purchase_line_ids.filtered(
+                lambda a: a.product_id.detailed_type != 'service').mapped('product_id').ids
+            partner_id.product_purchase_count = len(product_list)
+
+    def _compute_sale_product_count(self):
+        for partner_id in self:
+            product_list = self.sale_order_ids.mapped('order_line').filtered(
+                lambda a: a.product_id.detailed_type != 'service').mapped('product_id').ids
+            partner_id.product_order_count = len(product_list)
 
     def get_first_order_date(self):
         """To get first order date and last order date"""
@@ -56,13 +74,14 @@ class ResPartner(models.Model):
             amount = self.sale_order_ids.mapped('amount_total')
             self.avg_order_value = sum(amount) / self.sale_order_count
 
-    def get_ordered_product(self):
+    def get_vendor_ordered_product(self):
         """To get Sale Products"""
-        self.sale_product_ids = False
-        if self.sale_order_count > 0:
-            product_list = self.sale_order_ids.mapped('order_line').filtered(
-                lambda a: a.product_id.detailed_type != 'service').mapped('product_id')
-            self.sale_product_ids = [(6, 0, product_list.ids)]
+        product_list = self.sale_order_ids.mapped('order_line').filtered(
+            lambda a: a.product_id.detailed_type != 'service').mapped('product_id')
+        val = [rec.id for rec in product_list]
+        action = self.env.ref("product.product_normal_action_sell").read()[0]
+        action['domain'] = [('id', 'in', val), ('active', 'in', (True, False))]
+        return action
 
     def _avatar_get_placeholder_path(self):
         if self.type == 'return':
@@ -128,10 +147,13 @@ class ResPartner(models.Model):
             name = "%s ‒ %s" % (name, partner.vat)
         return name
 
-    def get_vendor_ordered_product(self):
-        """To get Purchase Products"""
-        self.purchase_product_ids = False
-        if self.purchase_order_count > 0:
-            product_list = self.purchase_line_ids.filtered(
-                lambda a: a.product_id.detailed_type != 'service').mapped('product_id')
-            self.purchase_product_ids = [(6, 0, product_list.ids)]
+    def get_vendor_purchased_product(self):
+        """To get Purchased Products"""
+        product_list = self.purchase_line_ids.filtered(
+            lambda a: a.product_id.detailed_type != 'service').mapped('product_id')
+        val = [rec.id for rec in product_list]
+        action = self.env.ref("purchase.product_product_action").read()[0]
+        action['domain'] = [('id', 'in', val), ('active', 'in', (True, False))]
+        return action
+
+

@@ -5,6 +5,31 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
+<!--            <xpath expr="//div[@name='button_box']" position="inside">-->
+<!--                    <button class="oe_stat_button" type="object"  icon="fa-usd">-->
+<!--                        <field string=" Products Sale" name="product_order_count" widget="statinfo"/>-->
+<!--                    </button>-->
+<!--            </xpath>-->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" name="get_vendor_ordered_product" icon="fa-usd" type="object">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="product_order_count"/>
+                        </span>
+                        <span class="o_stat_text">Product Sale</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" name="get_vendor_purchased_product" icon="fa-shopping-cart" type="object">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="product_purchase_count"/>
+                        </span>
+                        <span class="o_stat_text">Product Purchased</span>
+                    </div>
+                </button>
+            </xpath>
             <xpath expr="//page[@name='sales_purchases']//field[@name='team_id']" position="after">
                 <field name="account_order_standing" decoration-danger="account_order_standing == 'high'"
                        decoration-warning="account_order_standing == 'medium'"
@@ -51,16 +76,16 @@
                         </group>
                     </group>
                 </page>
-                <page name="product_page" string="Product Page">
-                    <group>
-                        <group name="customer" string="Products Ordered"  attrs="{'invisible':[('sale_product_ids','=',[])]}">
-                           <field name="sale_product_ids" nolabel="1" widget="many2many_tags"/>
-                        </group>
-                        <group name="vendor" string="Product Purchased" attrs="{'invisible':[('purchase_product_ids','=',[])]}">
-                            <field name="purchase_product_ids" nolabel="1" widget="many2many_tags"/>
-                        </group>
-                    </group>
-                </page>
+<!--                <page name="product_page" string="Product Page">-->
+<!--                    <group>-->
+<!--                        <group name="customer" string="Products Ordered"  attrs="{'invisible':[('sale_product_ids','=',[])]}">-->
+<!--&lt;!&ndash;                           <field name="sale_product_ids" nolabel="1" widget="many2many_tags"/>&ndash;&gt;-->
+<!--                        </group>-->
+<!--                        <group name="vendor" string="Product Purchased" attrs="{'invisible':[('purchase_product_ids','=',[])]}">-->
+<!--&lt;!&ndash;                            <field name="purchase_product_ids" nolabel="1" widget="many2many_tags"/>&ndash;&gt;-->
+<!--                        </group>-->
+<!--                    </group>-->
+<!--                </page>-->
 
             </xpath>
             <xpath expr="//notebook" position="inside">
