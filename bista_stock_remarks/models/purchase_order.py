@@ -5,7 +5,7 @@ from odoo import models, fields, _, api
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
-    special_pick_note = fields.Html('Special Instructions and Notes')
+    special_pick_note = fields.Html('Notes')
 
     def _prepare_picking(self):
         res = super(PurchaseOrder, self)._prepare_picking()
