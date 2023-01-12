@@ -43,6 +43,11 @@
                 <attribute name="confirm">Please check your carrier details. 
                 Are you sure with the carrier details?</attribute>          
             </xpath>
+            <xpath expr="//field[@name='date_deadline']" position="attributes">
+                <attribute name="readonly">0</attribute>
+                <attribute name="attrs">{'invisible': ['|', ('state', 'in', ('cancel')),
+                ('date_deadline', '=', False)],'readonly': [('state', '=', 'done')]} </attribute>
+            </xpath>
         </field>
     </record>
     <record model="ir.ui.view" id="stock_view__quant_tree_editable_inherit">
