@@ -20,7 +20,7 @@
                 <field name="discounted_price" optional="show"/>
                 <field name="saving_amount" optional="show" readonly="1"/>
             </xpath>
-            <xpath expr="//field[@name='order_line']/tree/field[@name='discount']" position="attributes">
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
                 <attribute name="readonly">1</attribute>
             </xpath>
             <field name="tax_totals_json" position="after">
