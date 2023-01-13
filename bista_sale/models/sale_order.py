@@ -129,7 +129,7 @@ class SaleOrderLine(models.Model):
             )
         self._compute_amount()
 
-    @api.depends("product_uom_qty", "price_unit")
+    @api.depends("product_uom_qty", "price_unit", "discount")
     def _compute_prices(self):
         for line in self:
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
