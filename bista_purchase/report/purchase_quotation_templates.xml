@@ -111,7 +111,7 @@
             <t t-if="o.special_pick_note">
                 <div class='row mt-4'>
                     <div class="col-12" style="margin-left: 5px; margin-bottom: 20px; ">
-                        <strong>Special Instructions and Notes</strong>
+                        <strong>Notes</strong>
                         <!--                        <div clas="text-center" style="border-top: 1px solid black;">-->
                         <!--                        </div>-->
                         <p t-field="o.special_pick_note"
