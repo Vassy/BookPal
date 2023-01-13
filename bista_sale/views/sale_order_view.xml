@@ -30,31 +30,17 @@
                 <attribute name="string">Valid Until</attribute>
                 <attribute name="attrs">{'invisible': 0 }</attribute>
             </xpath>
-            <xpath expr="//group[@name='order_details']//div[hasclass('o_td_label')][1]" position="replace">
-
+            <xpath expr="//group[@name='order_details']/field[@name='date_order'][2]" position="replace" />
+            <xpath expr="//group[@name='order_details']/div[hasclass('o_td_label')][2]" position="replace" />
+            <xpath expr="//group[@name='order_details']/field[@name='date_order'][1]" position="replace" />
+            <xpath expr="//group[@name='order_details']/div[hasclass('o_td_label')][1]" position="replace">
                 <div class="o_td_label">
                     <label for="date_order" string="Quotation Date"
-                           attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel', 'order_booked',  'pending_for_approval', 'credit_for_review'])]}"/>
+                        attrs="{'invisible': [('state', 'not in', ['draft', 'quote_approval', 'quote_confirm', 'sent'])]}" />
                     <label for="date_order" string="Order Date"
-                           attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'quote_confirm', 'quote_approval'])]}"/>
+                        attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'quote_confirm', 'quote_approval'])]}" />
                 </div>
-                <field name="date_order" nolabel="1" required="1"/>
-                <!-- <div class="o_td_label" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel', 'order_booked',  'pending_for_approval', 'credit_for_review'])]}">
-                    <label for="date_order" string="Quotation Date"/>
-                </div> -->
-            </xpath>
-            <xpath expr="//group[@name='order_details']//field[@name='date_order'][1]" position="replace">
-                <!-- <field name="date_order" nolabel="1"
-                       attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel', 'order_booked',  'pending_for_approval', 'credit_for_review'])]}"/> -->
-            </xpath>
-            <xpath expr="//group[@name='order_details']//div[hasclass('o_td_label')][2]" position="replace">
-                <!--  <div class="o_td_label" attrs="{'invisible': [('state', 'not in', ['sale', 'done', 'cancel', 'order_booked',  'pending_for_approval', 'credit_for_review'])]}">
-                     <label for="date_order" string="Order Date"/>
-                 </div> -->
-            </xpath>
-            <xpath expr="//group[@name='order_details']//field[@name='date_order'][2]" position="replace">
-                <!-- <field name="date_order" nolabel="1"
-                       attrs="{'invisible': [('state', 'in', ['draft', 'sent', 'quote_confirm', 'quote_approval'])]}"/> -->
+                <field name="date_order" nolabel="1" required="1" />
             </xpath>
             <xpath expr="//field[@name='payment_term_id']" position="before">
                 <field name="commitment_date"/>

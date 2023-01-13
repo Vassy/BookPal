@@ -115,7 +115,6 @@ class SaleOrder(models.Model):
             approve_template.send_mail(sale.id, force_send=True)
             sale._create_sale_approval_log("Quote Confirmed")
 
-
     def action_send_for_approval(self):
         for rec in self:
             rec.state = "pending_for_approval"
