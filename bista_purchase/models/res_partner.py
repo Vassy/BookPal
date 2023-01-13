@@ -109,6 +109,7 @@ class ResPartner(models.Model):
 
 class ResPartnerShipping(models.Model):
     _name = 'res.partner.shipping'
+    _description = 'ResPartner Shipping'
 
     partner_id = fields.Many2one('res.partner', string="Vendor")
     # delivery_carrier_id = fields.Many2one('delivery.carrier', string="Delivery Carrier")
