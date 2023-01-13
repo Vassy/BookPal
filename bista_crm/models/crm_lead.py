@@ -34,10 +34,10 @@ class CrmLead(models.Model):
     order_notes = fields.Text(string='Order Notes')
     shipping_notes = fields.Text(string='Shipping Notes')
     shipping_to = fields.Boolean('Shipping to Hotel or Event Venue')
-    potential_pallets = fields.Selection([('yes', 'Yes'),('no', 'No')],string='Potential Pallets')
-    accept_pallets = fields.Selection([('yes', 'Yes'),('no', 'No')],string='Accept Pallets')
-    has_loading_dock =fields.Selection([('yes', 'Yes'),('no', 'No')],string='Has Loading Dock')
-    inside_delivery_req = fields.Selection([('yes', 'Yes'),('no', 'No')],string='Inside Delivery Required')
+    potential_pallets = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Potential Pallets')
+    accept_pallets = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Accept Pallets')
+    has_loading_dock = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Has Loading Dock')
+    inside_delivery_req = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Inside Delivery Required')
 
     # Journal Info fields
     journal_customization_ids = fields.Many2many('journal.customization', string='Journal Customization')
@@ -108,11 +108,24 @@ class CrmLead(models.Model):
             'default_has_loading_dock': self.has_loading_dock,
             'default_inside_delivery_req': self.inside_delivery_req,
             'default_shipping_notes': self.shipping_notes,
-
+            'default_internal_note': self.description,
+            'default_refer_by_person': self.referred,
+            'default_project_description': self.project_details,
+            'default_carrier_id': self.carrier_id.id,
 
         })
 
         return res
+
+    @api.onchange('carrier_id')
+    def onchange_shipping_method_crm_to_partner_id(self):
+        "new customer created in lead if we add shipping method that data should automatically fethced in partner shipping method"
+        self.partner_id.property_delivery_carrier_id = self.carrier_id.id
+
+    @api.onchange('partner_id')
+    def onchange_shipping_method_partner_id_to_crm(self):
+        "partner shipping method values automatically fetched in crm shipping method"
+        self.carrier_id = self.partner_id.property_delivery_carrier_id.id
 
 
 class SpecialPricingType(models.Model):
