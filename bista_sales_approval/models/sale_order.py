@@ -39,7 +39,7 @@ class SaleOrder(models.Model):
     def default_get(self, fields_list):
         result = super().default_get(fields_list)
         if self._context.get("order_booked"):
-            result["state"] = "order_booked"
+            result.update({"state": "order_booked", "is_order": True})
         return result
 
     def trigger_quote_action(self):
