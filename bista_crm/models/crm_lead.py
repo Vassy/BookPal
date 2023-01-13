@@ -74,9 +74,7 @@ class CrmLead(models.Model):
     # deal_close_lost_reason = fields.Char(string='Close Lost Reason')
     split_order_number = fields.Char(string='Number of Orders Split On')
     currency_id = fields.Many2one('res.currency', string="Currency",
-                                  related='company_id.currency_id',
-                                  default=lambda
-                                      self: self.env.user.company_id.currency_id.id)
+                                  related='company_id.currency_id')
 
     # sale_order_count = fields.Char(string="Orders Count", compute="compute_sale_order_ids")
 
