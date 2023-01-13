@@ -71,26 +71,26 @@ class SaleOrder(models.Model):
 
     def has_to_be_signed(self, include_draft=False):
         display_state = self.state == "sent" or (
-                self.state in ["draft", "quote_approval", "quote_confirm"] and include_draft
+            self.state in ["draft", "quote_approval", "quote_confirm"] and include_draft
         )
         return (
-                display_state
-                and not self.is_expired
-                and self.require_signature
-                and not self.signature
+            display_state
+            and not self.is_expired
+            and self.require_signature
+            and not self.signature
         )
 
     def has_to_be_paid(self, include_draft=False):
         transaction = self.get_portal_last_transaction()
         display_state = self.state == "sent" or (
-                self.state in ["draft", "quote_approval", "quote_confirm"] and include_draft
+            self.state in ["draft", "quote_approval", "quote_confirm"] and include_draft
         )
         return (
-                display_state
-                and not self.is_expired
-                and self.require_payment
-                and transaction.state != "done"
-                and self.amount_total
+            display_state
+            and not self.is_expired
+            and self.require_payment
+            and transaction.state != "done"
+            and self.amount_total
         )
 
     def write(self, vals):
@@ -100,7 +100,12 @@ class SaleOrder(models.Model):
 
     def action_order_booked(self):
         for sale in self:
-            sale.write({"state": "order_booked", "is_order": True})
+            sale_data = {
+                "state": "order_booked",
+                "is_order": True,
+                "date_order": fields.Datetime.now(),
+            }
+            sale.write(sale_data)
             sale._create_sale_approval_log("Sale Order Booked")
 
     def action_send_quote_approval(self):
@@ -109,7 +114,9 @@ class SaleOrder(models.Model):
             sale._create_sale_approval_log("Quote Sent for Approval")
 
     def action_quote_confirm(self):
-        approve_template = self.env.ref('bista_sales_approval.email_template_sale_quote_approve')
+        approve_template = self.env.ref(
+            "bista_sales_approval.email_template_sale_quote_approve"
+        )
         for sale in self:
             self.state = "quote_confirm"
             approve_template.send_mail(sale.id, force_send=True)
@@ -148,7 +155,7 @@ class SaleOrder(models.Model):
 
     @api.model
     def _fields_view_get(
-            self, view_id=None, view_type="form", toolbar=False, submenu=False
+        self, view_id=None, view_type="form", toolbar=False, submenu=False
     ):
         result = super()._fields_view_get(view_id, view_type, toolbar, submenu)
         if view_type != "form":
@@ -174,11 +181,11 @@ class SaleOrder(models.Model):
             ]:
                 field.attrib["attrs"] = attrs
             if (
-                    field.attrib.get("invisible") == "1"
-                    or field.attrib.get("readonly") == "1"
-                    or field.attrib["name"] not in self._fields
-                    or field.attrib.get("attrs")
-                    or field.attrib["name"] == "sale_multi_ship_qty_lines"
+                field.attrib.get("invisible") == "1"
+                or field.attrib.get("readonly") == "1"
+                or field.attrib["name"] not in self._fields
+                or field.attrib.get("attrs")
+                or field.attrib["name"] == "sale_multi_ship_qty_lines"
             ):
                 continue
             field.attrib["attrs"] = attrs
