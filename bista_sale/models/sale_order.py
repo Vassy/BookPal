@@ -40,7 +40,7 @@ class SaleOrder(models.Model):
     has_loading_dock = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Has Loading Dock')
     inside_delivery_req = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Inside Delivery Required')
     # Project & Fulfilment Tracking.
-    fulfilment_project = fields.Boolean('Fulfilment Project')
+    fulfilment_project = fields.Boolean('Fulfillment Project')
     am_owner = fields.Char(string="AM Owner")
     project_description = fields.Char(string="Project Description")
     project_status = fields.Char(string="Project Status")

@@ -50,7 +50,7 @@ class CrmLead(models.Model):
     existing_death_order = fields.Char(string="Existing Die Order #")
 
     # Fulfillment Fields
-    fulfilment_project = fields.Boolean('Fulfilment Project')
+    fulfilment_project = fields.Boolean('Fulfillment Project')
     customization_type_ids = fields.Many2many('customization.type', string="Customization Type")
     project_details = fields.Char(string="Project Details")
 
