@@ -239,17 +239,18 @@ class ResPartner(models.Model):
         self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None
     ):
         """Select specific contacts based on different context and user access"""
-        if self._context.get("shipment_contact"):
-            args += expression.OR([args, [("is_multi_ship", "=", True)]])
-        elif self._context.get("vendor_product_id"):
-            vendors = self.get_vendors()
-            args = expression.AND(
-                [args, ["|", ("id", "in", vendors), ("parent_id", "in", vendors)]]
-            )
-        elif self.env.user.has_group("bista_sale_multi_ship.show_multi_ship_contact"):
-            args = expression.AND([[("is_multi_ship", "in", [True, False])], args])
-        else:
-            args = expression.AND([args, [("is_multi_ship", "=", False)]])
+        if not "active_test" in self._context:
+            if self._context.get("shipment_contact"):
+                args += expression.OR([args, [("is_multi_ship", "=", True)]])
+            elif self._context.get("vendor_product_id"):
+                vendors = self.get_vendors()
+                args = expression.AND(
+                    [args, ["|", ("id", "in", vendors), ("parent_id", "in", vendors)]]
+                )
+            elif self.env.user.has_group("bista_sale_multi_ship.show_multi_ship_contact"):
+                args = expression.AND([[("is_multi_ship", "in", [True, False])], args])
+            else:
+                args += [("is_multi_ship", "=", False)]
         return super()._search(args, offset, limit, order, count, access_rights_uid)
 
     @api.model
