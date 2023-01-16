@@ -28,7 +28,11 @@ class SaleOrder(models.Model):
     journal_notes = fields.Text(string='Journal Notes')
     journal_setup_fee = fields.Monetary(string="Journal Set Up Fee")
     journal_setup_fee_waived = fields.Monetary(string="Journal Set Up Fee Waived")
-    shipping_account = fields.Char(string="Shipping Account")
+    # shipping_account = fields.Char(string="Shipping Account")
+    shipping_account = fields.Selection([
+            ("our_account", "Our Account"),
+            ("castelli_account", "Castelli's Account")]
+            , string='Shipping Account')
     so_shipping_cost = fields.Monetary(string=" Our Shipping Cost")
     death_type_id = fields.Many2one('death.type', string='Die Type')
     existing_death_order = fields.Char(string="Existing Die Order #")
