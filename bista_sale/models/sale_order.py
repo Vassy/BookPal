@@ -49,7 +49,12 @@ class SaleOrder(models.Model):
     project_description = fields.Char(string="Project Description")
     project_status = fields.Char(string="Project Status")
     status_notes = fields.Text(string='Status Notes')
-    delivery_location = fields.Char(string="Delivery Location")
+    # delivery_location = fields.Char(string="Delivery Location")
+    delivery_location = fields.Selection([
+            ("domestic", "Domestic"),
+            ("international", "International"),
+            ("domestic_int", "Domestic/Int")]
+            ,string='Delivery Location')
     shipping_instruction = fields.Text(string='Shipping Instruction')
     customization_type_ids = fields.Many2many(
         'customization.type', string="Customization Type")
