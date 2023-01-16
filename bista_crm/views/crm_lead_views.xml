@@ -99,8 +99,8 @@
                         <field name="existing_death_order"/>
                     </group>
                 </page>
-                <page name="fulfilment_project" string="Fulfilment Project">
-                    <group name="fulfilment_project" string="Fulfilment Project">
+                <page name="fulfilment_project" string="Fulfillment Project">
+                    <group name="fulfilment_project" string="Fulfillment Project">
                         <group>
                             <field name="fulfilment_project"/>
                             <field name="customization_type_ids" widget="many2many_tags"/>

@@ -155,7 +155,7 @@
                 </page>
             </xpath>
             <xpath expr="//notebook/page[@name='shipping_requirement']" position="after">
-                <page string="Fulfilment Project" name="project_fulfilment_trac">
+                <page string="Fulfillment Project" name="project_fulfilment_trac">
                     <group>
                         <group name="project_fulfilment_tracking">
                             <field name="fulfilment_project"/>
