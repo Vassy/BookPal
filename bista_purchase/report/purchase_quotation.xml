@@ -46,9 +46,9 @@
                 </t>
 
                 <t t-set="report_info" class="col-6 text-right mb4">
-                    <h3 t-if="o.state in ['draft','sent']">Purchase Order</h3>
-                    <h3 t-if="o.state in ['purchase','done']">Approved Order</h3>
+                    <h3 t-if="o.state not in ['cancel','reject']">Purchase Order</h3>
                     <h3 t-if="o.state == 'cancel'">Cancelled Purchase Order/Approved Order</h3>
+                    <h3 t-if="o.state == 'reject'">Rejected Purchase Order/Approved Order</h3>
                     <h4>
                         <strong>
                             <t t-esc="o.name"/>
