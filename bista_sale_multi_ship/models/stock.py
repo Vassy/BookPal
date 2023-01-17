@@ -176,7 +176,7 @@ class StockMove(models.Model):
     shipping_partner_id = fields.Many2one(
         'res.partner', string="Shipping Customer")
     multi_ship_line_id = fields.Many2one(
-        'sale.multi.ship.qty.lines', 'Multi Shipments')
+        'sale.multi.ship.qty.lines', 'Shipment Plan')
 
     def _get_new_picking_values(self):
         """_get_new_picking_values.

@@ -50,7 +50,7 @@
                     <field name="supplier_id" context="{'vendor_product_id': product_id}" attrs="{'readonly': [('state', '!=', 'draft')]}" optional="show"/>
                  </xpath>
                 <xpath expr="//page[last()]" position="after">
-                    <page name="shipping_lines" string="Shipping"
+                    <page name="shipping_lines" string="Shipment Plan"
                           attrs="{'invisible': ['|', ('split_shipment', '=', False), ('id', '=', False)]}">
                         <!-- <div>
                             <group>
