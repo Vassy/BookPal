@@ -119,6 +119,7 @@ class SaleOrder(models.Model):
         )
         for sale in self:
             self.state = "quote_confirm"
+            sale.date_approve = datetime.now()
             approve_template.send_mail(sale.id, force_send=True)
             sale._create_sale_approval_log("Quote Confirmed")
 
@@ -130,7 +131,6 @@ class SaleOrder(models.Model):
     def action_approval(self):
         for rec in self:
             rec.action_confirm()
-            rec.date_approve = datetime.now()
             rec._create_sale_approval_log("Order Approved")
 
     def action_reject(self):
