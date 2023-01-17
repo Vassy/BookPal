@@ -155,7 +155,7 @@
                 </page>
             </xpath>
             <xpath expr="//notebook/page[@name='shipping_requirement']" position="after">
-                <page string="Fulfillment Project" name="project_fulfilment_trac">
+                <page string="Fulfilment Project" name="project_fulfilment_trac">
                     <group>
                         <group name="project_fulfilment_tracking">
                             <field name="fulfilment_project"/>
@@ -214,7 +214,6 @@
             </xpath>
         </field>
     </record>
-
     <record id="bista_sale_sale_quotation_delivery_tree_view" model="ir.ui.view">
         <field name="name">bista.sale.sale.quotation.tree.inherit</field>
         <field name="model">sale.order</field>
@@ -225,7 +224,6 @@
             </xpath>
         </field>
     </record>
-
     <record id="view_order_tree_inherit_add_tags" model="ir.ui.view">
         <field name="name">Sale order Tree</field>
         <field name="model">sale.order</field>

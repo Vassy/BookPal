@@ -308,7 +308,6 @@ class PurchaseOrder(models.Model):
                 if order.date_planned.date() and (order.date_planned.date() < order.date_approve.date()):
                     raise ValidationError(_('Receipt date cannot be earlier than confirmation date'))
 
-
 class RushStatus(models.Model):
     _name = "rush.status"
     _description = 'Rush Status model details.'
