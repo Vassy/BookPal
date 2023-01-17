@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="payment_acquirer_braintree" model="payment.acquirer">
+            <field name="name">Braintree</field>
+            <field name="provider">braintree</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="image_128" type="base64" file="payment_braintree/static/description/icon.png"/>
+            <field name="redirect_form_view_id" ref="payment_braintree.braintree_form"/>
+            <!-- <field name="state">test</field> -->
+            <field name="brt_merchant_id">dummy</field>
+            <field name="brt_public_key">dummy</field>
+            <field name="brt_private_key">dummy</field>
+            <field name="brt_merchant_account_id">dummy</field>
+            <field name="brt_tokenization_key">dummy</field>
+        </record>
+
+        <record id="payment_method_braintree" model="account.payment.method">
+            <field name="name">Braintree</field>
+            <field name="code">braintree</field>
+            <field name="payment_type">inbound</field>
+        </record>
+    </data>
+</odoo>

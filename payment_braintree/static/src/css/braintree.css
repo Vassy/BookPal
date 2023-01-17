@@ -1,0 +1,15 @@
+.check_availability_loader {
+    position: relative;
+    pointer-events: none;
+}
+
+.check_availability_loader i.fa-spinner{
+    position: absolute;
+    top: 37%;
+    left: 48%;
+}
+
+.braintree_disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
