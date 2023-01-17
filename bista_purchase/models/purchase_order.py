@@ -214,7 +214,7 @@ class PurchaseOrder(models.Model):
     def compute_order_process_time(self):
         for rec in self:
             rec.order_process_time = 0
-            if rec.sale_order_ids.split_shipment and rec.date_approve:
+            if rec.sale_order_ids.split_shipment and rec.date_approve and rec.sale_order_ids.sale_multi_ship_qty_lines:
                 rec.order_process_time = False
                 vals = min(
                     rec.sale_order_ids.sale_multi_ship_qty_lines.mapped('confirm_date'))
