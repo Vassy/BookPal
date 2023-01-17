@@ -12,7 +12,7 @@ class ResPartner(models.Model):
     _inherit = "res.partner"
     bigcommerce_store_id = fields.Many2one('bigcommerce.store.configuration', string="Bigcommerce Store", copy=False)
     bigcommerce_customer_id = fields.Char("Bigcommerce Customer ID", copy=False)
-    is_available_in_bigcommerce = fields.Boolean(string='Is Exported to BigCommerce', default=False)
+    is_available_in_bigcommerce = fields.Boolean(string='Is Exported to BigCommerce', default=False, copy=False)
     bigcommerce_customer_group_id = fields.Many2one('bigcommerce.customer.group', string="Bigcommerce Customer Group")
     bc_companyname = fields.Char(string='BC Company Name')
 
@@ -216,3 +216,112 @@ class ResPartner(models.Model):
                                                      "For Adderss Import, Not Getting Customer In odoo.")
         customer_operation_id and customer_operation_id.write({'bigcommerce_message': customer_process_message})
         self._cr.commit()
+
+    def export_customer_to_bigcommerce(self):
+        """
+        :return: this method export customer to bigcommerce
+        """
+
+        address = []
+        if not self.bigcommerce_store_id:
+            raise ValidationError(_("Please select the bigcommerce store id"))
+
+        if not self.name and self.email:
+            raise ValidationError(_('Please enter the name of customer and email address before the export '))
+
+        if self.email:
+            email = self.email and self.email.split('@')[1]
+            partners = self.env['res.partner'].search([])
+            b = [pp for pp in partners if (pp.email and len(pp.email.split('@')) > 1 and pp.email.split('@')[1] == email and email != 'gmail.com' and pp.bigcommerce_customer_id)]
+            if b:
+                raise ValidationError(_("{0} Customer Already There in Bigcommerce With Domain:{1}".format(b[0].name,email)))
+
+        # preparing dict for sending data to bigcommerce
+        partner = self.parent_id if self.parent_id else self
+        parent_address_data = {
+                        "first_name": partner.name,
+                        "last_name": " ",
+                        "address1": partner.street or '',
+                        "city": partner.city or '',
+                        "state_or_province": "{}".format(partner.state_id and partner.state_id.name or " "),
+                        "postal_code": "{}".format(partner.zip),
+                        "country_code": "{}".format(partner.country_id and partner.country_id.code or " "),
+                        "phone": partner.mobile or partner.phone or "",
+                        "address_type": "residential",
+                    }
+        address.append(parent_address_data)
+        for child_id in partner.child_ids:
+            address.append({
+                "first_name": child_id.name,
+                "last_name": " ",
+                "address1": child_id.street or '',
+                "city": child_id.city or '',
+                "state_or_province": "{}".format(child_id.state_id and child_id.state_id.name or " "),
+                "postal_code": "{}".format(child_id.zip),
+                "country_code": "{}".format(child_id.country_id and child_id.country_id.code or " "),
+                "phone": child_id.mobile or child_id.phone or "",
+                "address_type": "residential"
+            })
+        res_partner_data = [
+            {
+                "email": partner.email or '',
+                "first_name": partner.name,
+                "last_name": " ",
+                "company": self.parent_id.name if self.parent_id and self.parent_id.company_type=='company' else '',
+                "phone": "{}".format(self.phone if self.phone else ''),
+                "customer_group_id": int(
+                    self.bigcommerce_customer_group_id and self.bigcommerce_customer_group_id.customer_group_id) or None,
+                # "addresses": [
+                #     {
+                #         "first_name": self.name,
+                #         "last_name": " ",
+                #         "address1": self.street or '',
+                #         "city": self.city or '',
+                #         "state_or_province": "{}".format(self.state_id and self.state_id.name or " "),
+                #         "postal_code": "{}".format(self.zip),
+                #         "country_code": "{}".format(self.country_id and self.country_id.code or " "),
+                #         "phone": self.mobile or self.phone,
+                #         "address_type": "residential",
+                #     }
+                # ],
+                "addresses":address,
+                # "authentication": {
+                #     "force_password_reset": False,
+                #     "new_password": "santoro_123"
+                # }
+            }
+        ]
+
+        api_url = self.bigcommerce_store_id and self.bigcommerce_store_id.bigcommerce_api_url
+        store_id = self.bigcommerce_store_id and self.bigcommerce_store_id.bigcommerce_store_hash
+        url = "%s%s/v3/customers" % (api_url, store_id)
+        headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-Auth-Client': '{}'.format(self.bigcommerce_store_id.bigcommerce_x_auth_client),
+            'X-Auth-Token': "{}".format(self.bigcommerce_store_id.bigcommerce_x_auth_token)
+        }
+        try:
+            _logger.info(">>> sending post request to {}".format(api_url, headers, ))
+            response_data = requests.post(url=url, headers=headers, data=json.dumps(res_partner_data))
+            if response_data.status_code in [200, 201]:
+                _logger.info(">>>> get successfully response from {}".format(response_data.json()))
+                response_data = response_data.json()
+                for data in response_data.get('data'):
+                    customer_id = data.get('id')
+                    partner.bigcommerce_customer_id = customer_id
+                    partner.is_available_in_bigcommerce = True
+                    if partner.child_ids:
+                        partner.child_ids.write({'is_available_in_bigcommerce':True})#'bigcommerce_customer_id':customer_id,
+                return {
+                    'effect': {
+                        'fadeout': 'slow',
+                        'message': "Yeah! successfully export customer  .",
+                        'img_url': '/web/static/src/img/smile.svg',
+                        'type': 'rainbow_man',
+                    }
+                }
+            else:
+                raise ValidationError(response_data.text)
+        except Exception as error:
+            raise ValidationError(error)
