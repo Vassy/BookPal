@@ -87,7 +87,7 @@ class SaleOrder(models.Model):
         ('mixed', 'Mixed'),
     ], string='Report Type')
     report_notes = fields.Text(string='Reporting Notes')
-    order_processing_time = fields.Char(compute="compute_order_process_time", string='Process Days')
+    quote_processing_time = fields.Char(compute="compute_quote_process_time", string='Quotation Process Days', readonly=True)
     product_weight = fields.Float(compute="_compute_product_weight")
     weight_uom_name = fields.Char(string='Weight unit of measure label', compute="_compute_weight_uom")
     product_use = fields.Char(string='Product Use')
@@ -125,14 +125,13 @@ class SaleOrder(models.Model):
         if self.fulfilment_project:
             self.report_type = 'individual'
 
-    def compute_order_process_time(self):
-        for order in self:
-            process_time = 0
-            # order.order_processing_time = 0
-            if order.date_approve:
-                order_date = order.date_approve.date() - order.date_order.date()
-                process_time =order_date.days
-            order.order_processing_time = str(process_time) + ' Days'
+    def compute_quote_process_time(self):
+        for quote in self:
+            quote_process_time = 0
+            if quote.date_approve:
+                quote_date = quote.date_approve.date() - quote.create_date.date()
+                quote_process_time = quote_date.days
+            quote.quote_processing_time = str(quote_process_time) + ' Days'
 
     @api.depends('order_line.product_uom_qty', 'order_line.product_id')
     def _compute_product_weight(self):

@@ -76,8 +76,8 @@
                             <field name='refer_by_person'/>
                             <!--                            <field name='order_processing_time'/>-->
                         </group>
-                        <group class="o_row">
-                                <field name="order_processing_time" />
+                        <group>
+                                <field name="quote_processing_time"  readonly="1"  attrs="{'invisible':[('state','not in',['draft','quote_approval','quote_confirm','sent'])]}"/>
                         </group>
 
                         <group>
@@ -221,7 +221,7 @@
         <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='state']" position="before">
-                <field name="order_processing_time" optional="hide"/>
+                <field name="quote_processing_time" optional="hide"/>
             </xpath>
         </field>
     </record>
@@ -233,9 +233,9 @@
             <field name="invoice_status" position="after">
                 <field name="tag_ids" widget="many2many_tags"/>
             </field>
-            <xpath expr="//field[@name='state']" position="before">
-                <field name="order_processing_time" optional="hide"/>
-            </xpath>
+<!--            <xpath expr="//field[@name='state']" position="before">-->
+<!--                <field name="order_processing_time" optional="hide"/>-->
+<!--            </xpath>-->
         </field>
     </record>
 </odoo>
