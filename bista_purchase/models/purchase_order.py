@@ -94,10 +94,12 @@ class PurchaseOrder(models.Model):
 
     def action_rfq_send(self):
         result = super().action_rfq_send()
-        event_glove = self.env.ref("bista_sale.white_glove_type")
-        if event_glove in self.sale_order_ids.mapped("white_glove_id"):
+        glove_id = self.sale_order_ids.mapped("white_glove_id")
+        if glove_id:
             cc_partner_ids = self.partner_id.child_ids.filtered(lambda p: p.is_primary)
-            cc_partner_ids |= self.partner_id.child_ids.filtered(lambda p: event_glove in p.glove_type_ids)
+            cc_partner_ids |= self.partner_id.child_ids.filtered(
+                lambda p: glove_id in p.glove_type_ids
+            )
             result["context"].update({"default_cc_partner_ids": cc_partner_ids.ids})
         return result
 
