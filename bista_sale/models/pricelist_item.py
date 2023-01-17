@@ -16,4 +16,5 @@ class ProductPricelistItem(models.Model):
                     item.percent_price:
                 dis_amt = (item.product_tmpl_id.list_price *
                            item.percent_price) / 100
-            item.discount_amount = item.product_tmpl_id.list_price - dis_amt
+                item.discount_amount = item.product_tmpl_id.list_price - \
+                    dis_amt
