@@ -125,6 +125,12 @@ class PurchaseOrder(models.Model):
         ordered_status_id = self.env.ref('bista_purchase.status_line_ordered')
         self = self.filtered(lambda order: order._approval_allowed())
         self.order_line.write({'status_id': ordered_status_id.id})
+        if not self.shipping_instructions and is_html_empty(self.special_pick_note):
+            raise ValidationError(_('Please select the shipping instructions and add the notes'))
+        if not self.shipping_instructions:
+            raise ValidationError(_('Please select the shipping instructions'))
+        if is_html_empty(self.special_pick_note):
+            raise ValidationError(_('Please add the Notes'))
         return super(PurchaseOrder, self).button_approve(force)
 
     def button_confirm(self):
@@ -135,6 +141,8 @@ class PurchaseOrder(models.Model):
             for order in self:
                 if not order._approval_allowed():
                     order.order_line.write({'status_id': ready_status_id.id})
+        if not self.shipping_instructions and is_html_empty(self.special_pick_note):
+            raise ValidationError(_('Please select the shipping instructions and add the notes'))
         if not self.shipping_instructions:
             raise ValidationError(_('Please select the shipping instructions'))
         if is_html_empty(self.special_pick_note):
@@ -314,6 +322,7 @@ class PurchaseOrder(models.Model):
             if order.state == 'purchase':
                 if order.date_planned.date() and (order.date_planned.date() < order.date_approve.date()):
                     raise ValidationError(_('Receipt date cannot be earlier than confirmation date'))
+
 
 class RushStatus(models.Model):
     _name = "rush.status"
