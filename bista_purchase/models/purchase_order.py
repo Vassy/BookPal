@@ -303,9 +303,9 @@ class PurchaseOrder(models.Model):
 
     @api.constrains('date_approve', 'date_planned')
     def warning_on_reciept_date(self):
-        for order in self:
-            if order.state == 'purchase':
-                if order.date_planned.date() and (order.date_planned.date() < order.date_approve.date()):
+        for record in self:
+            if record.date_approve and record.date_planned:
+                if record.date_planned <= record.date_approve:
                     raise ValidationError(_('Receipt date cannot be earlier than confirmation date'))
 
 class RushStatus(models.Model):
