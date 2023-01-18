@@ -126,9 +126,9 @@ class PurchaseOrder(models.Model):
         self = self.filtered(lambda order: order._approval_allowed())
         self.order_line.write({'status_id': ordered_status_id.id})
         if not self.shipping_instructions and is_html_empty(self.special_pick_note):
-            raise ValidationError(_('Please select the shipping instructions and add the notes'))
+            raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab and add the Notes'))
         if not self.shipping_instructions:
-            raise ValidationError(_('Please select the shipping instructions'))
+            raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab.'))
         if is_html_empty(self.special_pick_note):
             raise ValidationError(_('Please add the Notes'))
         return super(PurchaseOrder, self).button_approve(force)
@@ -142,9 +142,9 @@ class PurchaseOrder(models.Model):
                 if not order._approval_allowed():
                     order.order_line.write({'status_id': ready_status_id.id})
         if not self.shipping_instructions and is_html_empty(self.special_pick_note):
-            raise ValidationError(_('Please select the shipping instructions and add the notes'))
+            raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab and add the Notes'))
         if not self.shipping_instructions:
-            raise ValidationError(_('Please select the shipping instructions'))
+            raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab.'))
         if is_html_empty(self.special_pick_note):
             raise ValidationError(_('Please add the Notes'))
         return res
