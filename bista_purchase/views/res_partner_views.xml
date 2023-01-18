@@ -8,14 +8,23 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='child_ids']//kanban//field[@name='display_name']" position="after">
                 <field name="is_primary"/>
+                <field name="glove_type_ids"/>
             </xpath>
             <xpath expr="//field[@name='child_ids']//kanban//templates/t//field[@name='name']" position="after">
                 <span t-if="record.is_primary.raw_value" style="float:right;color:#f3cc00;">
                     <i class="fa fa-star" role="img" aria-label="Primary Contact" title="Primary Contact"/>
                 </span>
             </xpath>
+            <xpath expr="//field[@name='child_ids']/kanban//div[hasclass('oe_kanban_details')]" position="inside">
+                <div t-if="record.glove_type_ids.raw_value">
+                    <field name="glove_type_ids" widget="many2many_tags" />
+                </div>
+            </xpath>
             <xpath expr="//field[@name='child_ids']//form//field[@name='name']" position="attributes">
                 <attribute name="string">Name</attribute>
+            </xpath>
+            <xpath expr="//field[@name='child_ids']/form//field[@name='mobile']" position="after">
+                <field name="glove_type_ids" widget="many2many_tags" />
             </xpath>
             <xpath expr="//field[@name='child_ids']//form//field[@name='name']" position="after">
                 <field name="is_primary" attrs="{'invisible':[('type','not in',['contact'])]}"/>
@@ -178,6 +187,9 @@
             <filter name="group_country" position="after">
                 <filter string="Primary Contact" name="is_primary" context="{'group_by': 'is_primary'}"/>
             </filter>
+            <field name="name" position="after">
+                <field name="name" filter_domain="[('parent_id.name', 'ilike', self)]" string="Child Of" />
+            </field>
         </field>
     </record>
 </odoo>
