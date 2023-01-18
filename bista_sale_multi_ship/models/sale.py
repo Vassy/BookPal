@@ -36,7 +36,7 @@ class SaleOrder(models.Model):
     #     string="Multi Ship Lines")
 
     split_shipment = fields.Boolean(
-        'Multi Shipments?', default=False, copy=False,
+        'Shipment Plan?', default=False, copy=False,
         help="Check this box if you have multiple shipment \
         locations for products on the same order.\
         Clicking this checkbox will make the Multi-Ship \
@@ -150,7 +150,7 @@ class SaleOrder(models.Model):
         """Action confirm."""
         msg = ""
         if self.split_shipment and not self.sale_multi_ship_qty_lines:
-            msg = _("Please add shipment lines to confirm the sale order.\n")
+            msg = _("Please add shipment plan to confirm the sale order.\n")
         else:
             verified_shipment_lines = self.sale_multi_ship_qty_lines.filtered(
                 lambda msl: msl.partner_id.state != 'verified')
