@@ -28,7 +28,11 @@ class SaleOrder(models.Model):
     journal_notes = fields.Text(string='Journal Notes')
     journal_setup_fee = fields.Monetary(string="Journal Set Up Fee")
     journal_setup_fee_waived = fields.Monetary(string="Journal Set Up Fee Waived")
-    shipping_account = fields.Char(string="Shipping Account")
+    # shipping_account = fields.Char(string="Shipping Account")
+    shipping_account = fields.Selection([
+            ("our_account", "Our Account"),
+            ("castelli_account", "Castelli's Account")]
+            , string='Shipping Account')
     so_shipping_cost = fields.Monetary(string=" Our Shipping Cost")
     death_type_id = fields.Many2one('death.type', string='Die Type')
     existing_death_order = fields.Char(string="Existing Die Order #")
@@ -40,12 +44,17 @@ class SaleOrder(models.Model):
     has_loading_dock = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Has Loading Dock')
     inside_delivery_req = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Inside Delivery Required')
     # Project & Fulfilment Tracking.
-    fulfilment_project = fields.Boolean('Fulfilment Project')
+    fulfilment_project = fields.Boolean('Fulfillment Project')
     am_owner = fields.Char(string="AM Owner")
     project_description = fields.Char(string="Project Description")
     project_status = fields.Char(string="Project Status")
     status_notes = fields.Text(string='Status Notes')
-    delivery_location = fields.Char(string="Delivery Location")
+    # delivery_location = fields.Char(string="Delivery Location")
+    delivery_location = fields.Selection([
+            ("domestic", "Domestic"),
+            ("international", "International"),
+            ("domestic_int", "Domestic/International")]
+            ,string='Delivery Location')
     shipping_instruction = fields.Text(string='Shipping Instruction')
     customization_type_ids = fields.Many2many(
         'customization.type', string="Customization Type")
@@ -81,6 +90,7 @@ class SaleOrder(models.Model):
     quote_processing_time = fields.Char(compute="compute_quote_process_time", string='Quotation Process Days', readonly=True)
     product_weight = fields.Float(compute="_compute_product_weight", string="Product Weight")
     weight_uom_name = fields.Char(string='Weight unit of measure label', compute="_compute_weight_uom")
+    product_use = fields.Char(string='Product Use')
 
     @api.depends("order_line.price_total")
     def _amount_all(self):

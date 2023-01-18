@@ -804,6 +804,11 @@ class SaleOrderVts(models.Model):
                     "zip": "{}".format(self.partner_shipping_id.zip),
                     "country": "{}".format(self.partner_shipping_id.country_id and self.partner_shipping_id.country_id.name),
                     "email": "{}".format(self.partner_shipping_id.email)}})
+            if (self.partner_id and self.partner_id.bigcommerce_customer_id) or self.partner_id.parent_id.bigcommerce_customer_id:
+                bigcommerce_customer_id = self.partner_id.bigcommerce_customer_id or self.partner_id.parent_id.bigcommerce_customer_id
+                request_data.update({'customer_id':bigcommerce_customer_id})
+            else:
+                self.partner_id.export_customer_to_bigcommerce()
         operation_id = self.create_bigcommerce_operation('order', 'export', self.bigcommerce_store_id, 'Processing...',
                                                          self.warehouse_id)
         self._cr.commit()
@@ -921,7 +926,8 @@ class SaleOrderLineVts(models.Model):
     #             'price_subtotal': taxes['total_excluded'],
     #         })
 
-# Bug #18822:- Comment code due issue of order date not changes for normal sales quote/order
+# Bug #18822:- Comment code due issue of order date not changes
+# for normal sales quote/order
 # def action_confirm(self):
 #     if self._get_forbidden_state_confirm() & set(self.mapped('state')):
 #         raise UserError(_(

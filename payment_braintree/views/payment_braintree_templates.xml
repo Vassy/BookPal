@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="braintree_form">
+        <input type="hidden" name="tx_url" t-att-value="tx_url"/>
+        <input type="hidden" name="reference" t-att-value="reference"/>
+        <input type="hidden" name="amount" t-att-value="amount or '0.0'"/>
+        <input type="hidden" name="email" t-att-value="billing_partner_email"/>
+        <input type="hidden" name="currency" t-att-value="currency"/>
+        <input type="hidden" name="enable3ds" t-att-value="enable_3d_secure"/>
+        <input type="hidden" name="merchant_account_id" t-att-value="merchant_account_id"/>
+        <input type="hidden" name="paypalEnabled" t-att-value="paypal_enabled"/>
+        <input type="hidden" name="brtVersion" t-att-value="brt_version"/>
+        <input type="hidden" name="givenName" t-att-value="billing_partner_first_name"/>
+        <input type="hidden" name="surname" t-att-value="billing_partner_last_name"/>
+        <input type="hidden" name="phoneNumber" t-att-value="billing_partner_phone"/>
+        <input type="hidden" name="streetAddress" t-att-value="billing_partner_address"/>
+        <input type="hidden" name="locality" t-att-value="billing_partner_city"/>
+        <input type="hidden" name="region" t-att-value="billing_partner_state"/>
+        <input type="hidden" name="postalCode" t-att-value="billing_partner_zip"/>
+        <input type="hidden" name="countryCodeAlpha2" t-att-value="billing_partner_country"/>
+        <input type="hidden" name="token" t-att-value="token"/>
+        <t t-if="message">
+            <input type="hidden" name="message" t-att-value="message"/>
+        </t>
+        <div class="showPrice d-none" t-if="amount">
+            <span t-esc="amount" t-options="{'widget': 'monetary', 'display_currency': display_currency}"/>
+        </div>
+        <script type="text/javascript" src="/payment_braintree/static/src/js/braintree.js"></script>
+    </template>
+
+    <template id="barintree_error" name="Braintree Error">
+        <t t-call="web.layout">
+            <div id="braintree_error">
+                <t t-esc="error_message"/>
+            </div>
+        </t>
+    </template>
+
+</odoo>

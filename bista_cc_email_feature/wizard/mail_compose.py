@@ -7,11 +7,7 @@ class MailComposer(models.TransientModel):
     _inherit = "mail.compose.message"
 
     cc_partner_ids = fields.Many2many(
-        "res.partner",
-        "mail_compose_message_cc_partner_rel",
-        "wizard_id",
-        "partner_id",
-        domain=[("type", "!=", "private")],
+        "res.partner", "mail_compose_message_cc_partner_rel", "wizard_id", "partner_id"
     )
 
     def get_mail_values(self, res_ids):

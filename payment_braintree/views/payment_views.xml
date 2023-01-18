@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="acquirer_form_braintree" model="ir.ui.view">
+        <field name="name">acquirer.form.braintree</field>
+        <field name="model">payment.acquirer</field>
+        <field name="inherit_id" ref="payment.payment_acquirer_form"/>
+        <field name="arch" type="xml">
+            <xpath expr='//group[@name="acquirer"]' position='after'>
+                <group attrs="{'invisible': [('provider', '!=', 'braintree')]}">
+                    <field name="brt_merchant_id"/>
+                    <field name="brt_public_key"/>
+                    <field name="brt_private_key"/>
+                    
+                    <field name="brt_version"  widget='radio' options="{'horizontal': true}" invisible="1"/>
+                    <field name="authorization_process" widget='radio' options="{'horizontal': true}"/>
+                    <field name="brt_tokenization_key" attrs="{'invisible': [('authorization_process', '!=', 'auth_token')], 'required': [('authorization_process', '=', 'auth_token')]}"/>
+                    <field name="enable_3d_secure" attrs="{'invisible': [('authorization_process', '=', 'auth_token')]}"/>
+                    <field name="brt_paypal_enabled" attrs="{'invisible': [('brt_version', '=', 'old')]}"/>
+                    <field name="brt_multicurrency"/>
+                    <field name="brt_merchant_account_id" attrs="{'invisible': [('brt_multicurrency', '=', True)], 'required': [('brt_multicurrency', '!=', True), ('provider', '=', 'braintree')]}"/>
+                    <field name="multicurrency_ids" attrs="{'invisible': [('brt_multicurrency', '=', False)]}">
+                        <tree editable="bottom">
+                            <field name="id" invisible="1"/>
+                            <field name="braintree_merchant_id"/>
+                            <field name="braintree_merchant_currency"/>
+                            <field name="braintree_merchant_validate" readonly="1"/>
+                            <button name="merchant_id_validate" type="object" string="Validate" class="oe_highlight" attrs="{'invisible': ['|', ('id', '=', False), ('braintree_merchant_validate', '=', True)]}"/>
+                            <button name="merchant_id_un_validate" type="object" string="UnValidate" attrs="{'invisible': ['|', ('id', '=', False), ('braintree_merchant_validate', '=', False)]}"/>
+                        </tree>
+                    </field>
+                </group>
+            </xpath>
+            <xpath expr='//field[@name="payment_icon_ids"]' position='after'>
+                <field name="allow_tokenization"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="transaction_form_braintree" model="ir.ui.view">
+        <field name="name">acquirer.transaction.form.braintree</field>
+        <field name="model">payment.transaction</field>
+        <field name="inherit_id" ref="payment.payment_transaction_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="/form/sheet/group[2]" position="after">
+                <notebook>
+                    <page string="Braintree Transaction Details">
+                        <group>
+                            <field name="brt_txnid"/>
+                            <field name="brt_txcurrency"/>
+                        </group>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- <record id="payment_token_form_inherit" model="ir.ui.view">
+        <field name='name'>Braintree Token Form</field>
+        <field name='model'>payment.token</field>
+        <field name="inherit_id" ref="payment.payment_token_form"/>
+        <field name="arch" type="xml">
+            <xpath expr='//field[@name="acquirer_ref"]' position='before'>
+                <field name="braintree_payment_method" attrs="{'invisible': [('provider', '!=', 'braintree')]}"/>
+            </xpath>
+        </field>
+    </record> -->
+
+    
+</odoo>

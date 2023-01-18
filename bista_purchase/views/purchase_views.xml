@@ -122,7 +122,7 @@
                 </page>
                 <page name="ops_project_owner" string="Steps and Nuances">
                     <group>
-                        <field name="shipping_instructions" class="oe_inline" required="1"/>
+                        <field name="shipping_instructions" class="oe_inline"/>
                     </group>
                     <group>
                         <group name="ops_project_owner" string="Ops Project Owner">

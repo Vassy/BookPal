@@ -6,6 +6,7 @@ from lxml import etree
 
 from odoo import models, fields, _, api
 from odoo.exceptions import ValidationError
+from odoo.tools import is_html_empty
 
 AddState = [
         ('draft', 'Purchase Order'),
@@ -29,7 +30,7 @@ class PurchaseOrder(models.Model):
     # Review Order Notes and Requirements
     status = fields.Many2one('purchase.line.status', string='Status')
     order_notes = fields.Text(string='Order Notes')
-    fulfilment_project = fields.Boolean(string="Fulfilment Project")
+    fulfilment_project = fields.Boolean(string="Fulfillment Project")
     ordered_by = fields.Many2one(
         related="order_line.partner_id", string="Ordered By")
     ops_project_owner_id = fields.Many2one(
@@ -94,10 +95,12 @@ class PurchaseOrder(models.Model):
 
     def action_rfq_send(self):
         result = super().action_rfq_send()
-        event_glove = self.env.ref("bista_sale.white_glove_type")
-        if event_glove in self.sale_order_ids.mapped("white_glove_id"):
+        glove_id = self.sale_order_ids.mapped("white_glove_id")
+        if glove_id:
             cc_partner_ids = self.partner_id.child_ids.filtered(lambda p: p.is_primary)
-            cc_partner_ids |= self.partner_id.child_ids.filtered(lambda p: event_glove in p.glove_type_ids)
+            cc_partner_ids |= self.partner_id.child_ids.filtered(
+                lambda p: glove_id in p.glove_type_ids
+            )
             result["context"].update({"default_cc_partner_ids": cc_partner_ids.ids})
         return result
 
@@ -122,6 +125,12 @@ class PurchaseOrder(models.Model):
         ordered_status_id = self.env.ref('bista_purchase.status_line_ordered')
         self = self.filtered(lambda order: order._approval_allowed())
         self.order_line.write({'status_id': ordered_status_id.id})
+        if not self.shipping_instructions and is_html_empty(self.special_pick_note):
+            raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab and add the Notes'))
+        if not self.shipping_instructions:
+            raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab.'))
+        if is_html_empty(self.special_pick_note):
+            raise ValidationError(_('Please add the Notes'))
         return super(PurchaseOrder, self).button_approve(force)
 
     def button_confirm(self):
@@ -132,6 +141,12 @@ class PurchaseOrder(models.Model):
             for order in self:
                 if not order._approval_allowed():
                     order.order_line.write({'status_id': ready_status_id.id})
+        if not self.shipping_instructions and is_html_empty(self.special_pick_note):
+            raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab and add the Notes'))
+        if not self.shipping_instructions:
+            raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab.'))
+        if is_html_empty(self.special_pick_note):
+            raise ValidationError(_('Please add the Notes'))
         return res
 
     def _approval_allowed(self):
@@ -307,6 +322,7 @@ class PurchaseOrder(models.Model):
             if record.date_approve and record.date_planned:
                 if record.date_planned <= record.date_approve:
                     raise ValidationError(_('Receipt date cannot be earlier than confirmation date'))
+
 
 class RushStatus(models.Model):
     _name = "rush.status"
