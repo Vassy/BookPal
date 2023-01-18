@@ -36,7 +36,7 @@ class SaleOrder(models.Model):
     #     string="Multi Ship Lines")
 
     split_shipment = fields.Boolean(
-        'Shipment Plan?', default=False, copy=False,
+        'Multi Shipments?', default=False, copy=False,
         help="Check this box if you have multiple shipment \
         locations for products on the same order.\
         Clicking this checkbox will make the Multi-Ship \
