@@ -502,10 +502,14 @@ class SaleOrderLine(models.Model):
                 name = '[' + sline.product_id.default_code + '] ' + \
                     sline.product_id.name if sline.product_id.default_code else sline.product_id.name
                 if sline.product_id.product_template_attribute_value_ids:
-                    name += "(" + ','.join(
-                        sline.product_id.product_template_attribute_value_ids.
-                        mapped('name')) + ")" + " - " + str(
-                        sline.product_qty)
+                    if sline.product_id.type == "consu":
+                        variant_name = ", ".join([variant[:variant.find('(')] for variant in sline.product_id.product_template_attribute_value_ids.mapped('name')])
+                        name = variant_name and "%s (%s) - %s" % (sline.product_id.name, variant_name, sline.product_qty) or sline.product_id.name
+                    else:
+                        name += "(" + ','.join(
+                            sline.product_id.product_template_attribute_value_ids.
+                            mapped('name')) + ")" + " - " + str(
+                            sline.product_qty)
                 else:
                     name += " - " + str(sline.product_qty)
                 res.append((sline.id, name))
