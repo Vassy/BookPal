@@ -77,7 +77,7 @@
                             <!--                            <field name='order_processing_time'/>-->
                         </group>
                         <group>
-                                <field name="quote_processing_time"  readonly="1"  attrs="{'invisible':[('state','not in',['draft','quote_approval','quote_confirm','sent'])]}"/>
+                                <field name="quote_processing_time"  readonly="1"/>
                         </group>
 
                         <group>
@@ -204,13 +204,13 @@
                 </page>
             </xpath>
             <xpath expr="//group[@name='note_group']" position="before">
-                <div class="oe_left">
-                    <label for="product_weight" />
-                    <div class="o_row">
-                        <field name="product_weight" readonly="1" />
-                        <field name="weight_uom_name" readonly="1" />
+                <group>
+                    <div name="product_weight">
+                        <label for="product_weight"  style="font-weight: bold;"/>
+                        <field name="product_weight" class="oe_inline" readonly="1"/>
+                        <span><field name="weight_uom_name" class="oe_inline" readonly="1" style="margin-left:5px;"/></span>
                     </div>
-                </div>
+                </group>
             </xpath>
         </field>
     </record>
