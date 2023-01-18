@@ -39,7 +39,7 @@ class AccountMove(models.Model):
         for inv in self:
             inv.inv_confirm_check = False
             if (
-                inv.partner_id
+                inv.partner_id.check_over_credit
                 and inv.move_type in ["out_invoice", "out_receipt"]
                 and not inv.sale_order_id
                 and inv.partner_id.available_credit_limit - inv.amount_total < 0
