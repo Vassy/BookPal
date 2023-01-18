@@ -53,7 +53,7 @@ class SaleOrder(models.Model):
     delivery_location = fields.Selection([
             ("domestic", "Domestic"),
             ("international", "International"),
-            ("domestic_int", "Domestic/Int")]
+            ("domestic_int", "Domestic/International")]
             ,string='Delivery Location')
     shipping_instruction = fields.Text(string='Shipping Instruction')
     customization_type_ids = fields.Many2many(
