@@ -197,6 +197,28 @@ class SaleOrder(models.Model):
             raise ValidationError(msg)
         return super(SaleOrder, self).action_confirm()
 
+    def action_send_for_approval(self):
+        """Based on customer set delivery in shipping line."""
+        msg = ""
+        order_lines = self.order_line.filtered(
+            lambda a: a.product_id.detailed_type == 'product')
+        for order_line in order_lines:
+            product_uom_qty = sum(order_line.mapped('product_uom_qty'))
+            product_qty = sum(
+                order_line.sale_multi_ship_qty_lines.mapped('product_qty'))
+            if self.split_shipment and product_uom_qty < product_qty:
+                msg += _("For %s shipping qty %s is more than ordered "
+                         "qty %s.\n" % (
+                             order_line.product_id.name +
+                             '(' + ','.join(
+                                 order_line.product_id.
+                                 product_template_attribute_value_ids.
+                                 mapped('name')) + ')',
+                             product_qty, product_uom_qty))
+        if msg:
+            raise ValidationError(msg)
+        return super(SaleOrder, self).action_send_for_approval()
+
     def action_verify_customer_data(self):
         """Verify customer data."""
         for customer_line in self.sale_multi_ship_qty_lines.filtered(
@@ -299,6 +321,7 @@ class SaleOrder(models.Model):
 
     def confirm_shipment(self):
         """Confirm shipment after confirmed sale order."""
+        msg = ""
         for so in self:
             if so.sale_multi_ship_qty_lines.filtered(
                     lambda x: x.state == 'draft' and
@@ -311,6 +334,21 @@ class SaleOrder(models.Model):
             order_lines = so.sale_multi_ship_qty_lines.filtered(
                 lambda li: li.state == 'draft').mapped('so_line_id').filtered(
                 lambda line: line.state == 'sale')
+            for order_line in order_lines:
+                product_uom_qty = sum(order_line.mapped('product_uom_qty'))
+                product_qty = sum(
+                    order_line.sale_multi_ship_qty_lines.mapped('product_qty'))
+                if self.split_shipment and product_uom_qty < product_qty:
+                    msg += _("For %s shipping qty %s is more than ordered "
+                             "qty %s.\n" % (
+                                 order_line.product_id.name +
+                                 '(' + ','.join(
+                                     order_line.product_id.
+                                     product_template_attribute_value_ids.
+                                     mapped('name')) + ')',
+                                 product_qty, product_uom_qty))
+            if msg:
+                raise ValidationError(msg)
             order_lines._action_launch_stock_rule()
 
     def print_shipment(self):
