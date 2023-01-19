@@ -142,6 +142,14 @@ class SaleOrder(models.Model):
     def _compute_weight_uom(self):
         self.weight_uom_name = self.env['product.template']._get_weight_uom_name_from_ir_config_parameter()
 
+    def action_open_delivery_wizard(self):
+        res = super(SaleOrder, self).action_open_delivery_wizard()
+        if self.opportunity_id.carrier_id.id:
+            res['context'].update({
+                'default_carrier_id': self.opportunity_id.carrier_id.id
+            })
+        return res
+
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
