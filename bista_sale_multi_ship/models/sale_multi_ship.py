@@ -440,9 +440,11 @@ class SaleMultiShipQtyLines(models.Model):
         """Compute the visibility of the inventory widget."""
         for line in self:
             line.qty_to_deliver = line.product_qty - line.qty_delivered
-            if line.state in ('draft', 'sent', 'sale') and \
-                    line.product_type == 'product' and \
-                    line.qty_to_deliver > 0:
+            if (
+                line.state not in ("done", "cancel") and
+                line.product_type == "product" and
+                line.qty_to_deliver > 0
+            ):
                 if line.state == 'sale' and not line.move_ids:
                     line.display_qty_widget = False
                 else:
