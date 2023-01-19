@@ -88,7 +88,7 @@ class SaleOrder(models.Model):
     ], string='Report Type')
     report_notes = fields.Text(string='Reporting Notes')
     quote_processing_time = fields.Char(compute="compute_quote_process_time", string='Quotation Process Days', readonly=True)
-    product_weight = fields.Float(compute="_compute_product_weight")
+    product_weight = fields.Float(compute="_compute_product_weight", string="Product Weight")
     weight_uom_name = fields.Char(string='Weight unit of measure label', compute="_compute_weight_uom")
     product_use = fields.Char(string='Product Use')
 
