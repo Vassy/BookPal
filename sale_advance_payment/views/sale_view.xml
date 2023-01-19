@@ -24,7 +24,8 @@
                     />
                 </page>
             </notebook>
-            <field name="tax_totals_json" position="after">
+            <!-- Bug #18924 - Hide Residual Amount -->
+            <!-- <field name="tax_totals_json" position="after">
                 <div class="oe_subtotal_footer_separator oe_inline o_td_label">
                     <label for="amount_residual" />
                 </div>
@@ -35,7 +36,7 @@
                     widget="monetary"
                     options="{'currency_field': 'currency_id'}"
                 />
-            </field>
+            </field> -->
             <field name="tag_ids" position="after">
                 <field name="advance_payment_status" />
             </field>
