@@ -205,13 +205,11 @@
                 </page>
             </xpath>
             <xpath expr="//group[@name='note_group']" position="before">
-                <group>
-                    <div name="product_weight">
-                        <label for="product_weight"  style="font-weight: bold;"/>
-                        <field name="product_weight" class="oe_inline" readonly="1"/>
-                        <span><field name="weight_uom_name" class="oe_inline" readonly="1" style="margin-left:5px;"/></span>
-                    </div>
-                </group>
+                <div class="oe_left">
+                    <label for="product_weight" />
+                    <field name="product_weight" readonly="1" style="padding-right: 5px;" />
+                    <field name="weight_uom_name" readonly="1" />
+                </div>
             </xpath>
         </field>
     </record>
