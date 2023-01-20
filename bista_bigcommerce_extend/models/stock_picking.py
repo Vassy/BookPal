@@ -1,7 +1,7 @@
 
 import logging
 
-from odoo import models
+from odoo import fields, models
 from odoo.addons.bigcommerce_odoo_integration.models.\
     stock import StockPicking
 
@@ -24,3 +24,10 @@ class StockPickingExtend(models.Model):
         return res
 
     StockPicking._action_done = _action_done
+
+
+class ResPartner(models.Model):
+    _inherit = "res.partner"
+
+    is_author = fields.Boolean()
+    is_publisher = fields.Boolean()
