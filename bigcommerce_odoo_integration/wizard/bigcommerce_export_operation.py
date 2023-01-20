@@ -37,3 +37,11 @@ class BigCommerceExportOperation(models.TransientModel):
                 product_obj.export_product_in_bigcommerce_from_product(bc_store, products_to_export)
         # elif self.export_operation_of_bc == 'update_product':
         #     pass
+
+    def do_export_customer(self):
+        if not self.bc_store_instance_ids:
+            raise UserError(_("Please select bigcommerce store to process."))
+        partner_obj = self.env['res.partner']
+        partner_ids = partner_obj.browse(self._context.get('active_ids'))
+        partner_ids.export_customer_to_bigcommerce(bc_store_ids=self.bc_store_instance_ids)
+

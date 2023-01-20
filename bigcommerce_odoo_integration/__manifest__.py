@@ -38,6 +38,7 @@
         # "views/bigcommerce_product_image_view.xml",
         'views/bigcommerce_stock_picking_view.xml',
         'views/bc_product_brand.xml',
+        'views/bc_payment_journal.xml',
         'views/menuitem.xml',
     ],
 
