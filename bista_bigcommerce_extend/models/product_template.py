@@ -1,9 +1,13 @@
 
-from odoo.addons.bigcommerce_odoo_integration.models.product_template import \
-    ProductTemplate
 import base64
 import requests
 import logging
+
+from datetime import datetime
+
+from odoo.addons.bigcommerce_odoo_integration.models.product_template import \
+    ProductTemplate
+
 from odoo import api, fields, models
 _logger = logging.getLogger("BigCommerce")
 
@@ -13,7 +17,7 @@ class ProductTemplateExtend(models.Model):
 
     product_format = fields.Char('Format')
     publisher_id = fields.Char(string='Publisher', tracking=True)
-    publication_date = fields.Char(string='Publication Date', tracking=True)
+    publication_date = fields.Date(string='Publication Date', tracking=True)
     supplier = fields.Char(string='Supplier', tracking=True)
     pricing_profile = fields.Char(string='Pricing Profile', tracking=True)
     special_title = fields.Char(string='Special Title', tracking=True)
@@ -159,7 +163,9 @@ class ProductTemplateExtend(models.Model):
                 elif custom_field_data.get('name') in ['Publication Date',
                                                        'publication date']:
                     product_template_id.publication_date = \
-                        custom_field_data.get('value')
+                        datetime.strptime(
+                            custom_field_data.get('value'),
+                            "%d/%m/%Y").date()
                 elif custom_field_data.get('name') in ['pricing profile',
                                                        'Pricing Profile']:
                     product_template_id.pricing_profile = \

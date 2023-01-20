@@ -51,6 +51,9 @@
         <menuitem id="menu_bigcommerce_product_brand" name="Product Brand"
                   parent="bigcommerce_odoo_integration_store_menuitem" sequence="10"
                   action="action_bigcommerce_product_brand"/>
+        <menuitem id="menu_bigcommerce_payment_journal" name="Payment Gateway"
+                  parent="bigcommerce_odoo_integration_store_menuitem" sequence="10"
+                  action="action_bigcommerce_payment_journal"/>
 
     </data>
 </odoo>

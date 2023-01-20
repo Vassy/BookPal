@@ -31,6 +31,22 @@
             </form>
         </field>
     </record>
+    <record id="bigcommerce_operation_export_customer_form_view" model="ir.ui.view">
+        <field name="name">bc operation export Customer form view</field>
+        <field name="model">bigcommerce.export.operation</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="bc_store_instance_ids" required="1" widget="many2many_tags"
+                           options='{"no_open": True, "no_create": True}'/>
+                </group>
+                <footer>
+                    <button string="Export" type="object" class="btn-primary" name="do_export_customer"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 
     <!--        action for form view of export operation-->
     <record id="action_bc_export_operation" model="ir.actions.act_window">
@@ -40,5 +56,16 @@
         <field name="context"></field>
         <field name="view_id" ref="bigcommerce_operation_export_form_view"/>
         <field name="target">new</field>
+    </record>
+    <record id="action_view_export_customer_to_bc_wizard" model="ir.actions.act_window">
+        <field name="name">Export Customers</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">bigcommerce.export.operation</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <!-- TODO: check if we need this -->
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="view_id" ref="bigcommerce_operation_export_customer_form_view" />
     </record>
 </odoo>
