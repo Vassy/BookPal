@@ -9,12 +9,11 @@
     'description': """
         Update the bigcommerce functionality.
         """,
-    'depends': ['bigcommerce_odoo_integration',
+    'depends': ['bigcommerce_odoo_integration_ext',
                 'account_avatax_sale'],
 
     'data': [
         'views/product_template.xml',
-        'views/res_partner_view_extend.xml',
         'views/bigcommerce_configuration_view.xml',
         'views/bigcommerce_operation_view.xml',
         'views/sale_order_view.xml',
