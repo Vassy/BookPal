@@ -23,6 +23,10 @@
         "views/sale_portal_template.xml",
         "wizard/so_reject_reason_view.xml",
     ],
+    "assets": {
+        "web.assets_backend": ["bista_sales_approval/static/src/js/**/*"],
+        "web.assets_qweb": ["bista_sales_approval/static/src/xml/**/*"],
+    },
     "installable": True,
     "application": False,
     "auto_install": False,
