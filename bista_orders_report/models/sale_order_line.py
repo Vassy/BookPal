@@ -47,7 +47,8 @@ class SaleOrderLine(models.Model):
     def get_return_quantity(self):
         for sline in self:
             return_pickings = sline.order_id.picking_ids.filtered(
-                lambda x: 'Return of' in x.origin)
+                lambda x: x.origin and "Return of" in x.origin
+            )
             return_lines = return_pickings.move_ids_without_package.filtered(
                 lambda x: x.product_id == sline.product_id and x.state in (
                     'done'))

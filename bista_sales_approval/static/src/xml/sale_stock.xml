@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-inherit="sale_stock.QtyDetailPopOver">
+        <xpath expr="//tbody/t[1]" position="attributes">
+            <attribute name="t-if">!data.is_mto and !['sale', 'done', 'cancel'].includes(data.state)</attribute>
+        </xpath>
+        <xpath expr="//tbody/t[2]" position="attributes">
+            <attribute name="t-elif">data.is_mto and !['sale', 'done', 'cancel'].includes(data.state)</attribute>
+        </xpath>
+    </t>
+</templates>
