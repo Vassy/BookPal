@@ -73,10 +73,10 @@ try:
             percentage = row_values[2].split('%')[0]
             if not percentage.isdigit():
                 # output.write(str(row_values) + '\n')
-                output.write('Percentage not available : ' +
-                             str(row_values[0]) + ' prodId: ' +
-                             str(prod_id) +
-                             '\n' + 'Vendor' + str(vendor_id))
+                output.write('\n Percentage not available ;' +
+                             str(row_values[0]) + ';' +
+                             str(row_values[1]) + ';' +
+                             str(row_values[2]) + ';')
                 continue
             pricelist_vals = {
                 'name': row_values[2],
