@@ -26,7 +26,7 @@ class SaleOrder(models.Model):
 
     state = fields.Selection(selection_add=AddState)
     sale_approval_log_ids = fields.One2many("sale.approval.log", "sale_id")
-    is_order = fields.Boolean()
+    is_order = fields.Boolean(copy=False)
     date_approve = fields.Datetime()
 
     @api.depends("state")
@@ -144,6 +144,9 @@ class SaleOrder(models.Model):
         }
 
     def action_cancel(self):
+        for sale in self:
+            if sale.state == "sale":
+                sale.is_order = True
         res = super().action_cancel()
         self._create_sale_approval_log("Cancelled")
         return res
@@ -170,6 +173,8 @@ class SaleOrder(models.Model):
             attrs = "{'readonly': [('state', 'not in', ['draft'])]}"
         doc = etree.XML(result["arch"])
         for field in doc.xpath("//field"):
+            if field.attrib["name"] in ["purchase_order_count"]:
+                field.attrib["readonly"] = "1"
             if field.attrib["name"] in [
                 "order_line",
                 "partner_shipping_id",
