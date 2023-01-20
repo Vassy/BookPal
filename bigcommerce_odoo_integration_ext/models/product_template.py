@@ -1,7 +1,10 @@
 
 import logging
+import base64
+import requests
+from datetime import datetime
 
-from odoo import models
+from odoo import fields, models
 
 from odoo.addons.bigcommerce_odoo_integration.models.product_template \
     import ProductTemplate
@@ -291,6 +294,266 @@ ProductTemplate.import_product_from_bigcommerce = \
 class ProductTemplateExtend(models.Model):
     _inherit = 'product.template'
 
+    product_format = fields.Char('Format')
+    publisher_id = fields.Char(string='Publisher', tracking=True)
+    publication_date = fields.Date(string='Publication Date', tracking=True)
+    supplier = fields.Char(string='Supplier', tracking=True)
+    pricing_profile = fields.Char(string='Pricing Profile', tracking=True)
+    special_title = fields.Char(string='Special Title', tracking=True)
+    full_title = fields.Char(string='Full Title', tracking=True)
+    short_title = fields.Char(string='Short Title', tracking=True)
+    author_ids = fields.Char(string='Author(s)', tracking=True)
+    origin = fields.Char('Origin', tracking=True)
+
+    def create_product_template(self, record, store_id):
+        """Create product template.
+
+        Overwrite the method to update the description
+        of product in new Big commerce product description field
+        """
+        product_attribute_obj = self.env['product.attribute']
+        product_attribute_value_obj = self.env['product.attribute.value']
+        product_template_obj = self.env['product.template']
+        template_title = ''
+        if record.get('name', ''):
+            template_title = record.get('name')
+        attrib_line_vals = []
+        _logger.info("{}".format(record.get('categories')))
+        if record.get('variants'):
+            for attrib in record.get('variants'):
+                if not attrib.get('option_values'):
+                    continue
+                attrib_name = attrib.get('option_display_name')
+                attrib_values = attrib.get('label')
+                attribute = product_attribute_obj.get_product_attribute(
+                    attrib_name, type='radio',
+                    create_variant='always')
+                attribute_val_ids = []
+
+                attrib_value = product_attribute_value_obj.\
+                    get_product_attribute_values(
+                        attrib_values, attribute.id)
+                attribute_val_ids.append(attrib_value.id)
+
+                if attribute_val_ids:
+                    attribute_line_ids_data = [
+                        0, False,
+                        {'attribute_id': attribute.id,
+                         'value_ids': [[6, False, attribute_val_ids]]}]
+                    attrib_line_vals.append(attribute_line_ids_data)
+        category_id = self.env['product.category'].sudo().search(
+            [('bigcommerce_product_category_id', 'in', record.get(
+                'categories'))], limit=1)
+        if not category_id:
+            category_id = self.env.ref('product.product_category_all')
+        if not category_id:
+            message = "Category not found!"
+            _logger.info("Category not found: {}".format(category_id))
+            return False, message
+        public_category_ids = self.env['product.category'].sudo().search(
+            [('bigcommerce_product_category_id', 'in',
+              record.get('categories'))])
+        brand_id = self.env['bc.product.brand'].sudo().search(
+            [('bc_brand_id', '=', record.get('brand_id'))], limit=1)
+        _logger.info("BRAND : {0}".format(brand_id))
+        inven_location_id = self.env['stock.location'].search(
+            [('name', '=', 'Inventory adjustment'),
+             ('usage', '=', 'inventory')], limit=1)
+        vals = {
+            'name': template_title,
+            'type': 'product',
+            'categ_id': category_id and category_id.id,
+            "weight": record.get("weight"),
+            "list_price": record.get("price"),
+            "standard_price": record.get('cost_price'),
+            "is_visible": record.get("is_visible"),
+            "public_categories_ids": [(6, 0, public_category_ids.ids)],
+            "bigcommerce_product_id": record.get('id'),
+            "bigcommerce_store_id": store_id.id,
+            "default_code": record.get("sku"),
+            "is_imported_from_bigcommerce": True,
+            "x_studio_manufacturer": brand_id and brand_id.id,
+            "description_sale": "",
+            "description": "",
+            "bigcommerce_description": record.get('description'),
+            "property_stock_inventory": inven_location_id.id
+        }
+        product_template = product_template_obj.with_user(1).create(vals)
+        _logger.info("Product Created: {}".format(product_template))
+        return True, product_template
+
+    def update_custom_field(
+            self, record, bigcommerce_store_id,
+            operation_id, warehouse_id):
+        """Update custom field."""
+        product_template_id = self
+        custom_field_api_operation = \
+            "/v3/catalog/products/{}/custom-fields".format(
+                str(record.get('id')))
+        custom_field_response_data = \
+            bigcommerce_store_id.with_user(1).\
+            send_get_request_from_odoo_to_bigcommerce(
+                custom_field_api_operation)
+        _logger.info("Custom Field Response : {0}".format(
+            custom_field_response_data))
+        if custom_field_response_data.status_code in [200, 201]:
+            custom_field_response_data = custom_field_response_data.json()
+            custom_field_datas = custom_field_response_data.get(
+                'data')
+            for custom_field_data in custom_field_datas:
+                if custom_field_data.get('name') in ['publisher', 'Publisher']:
+                    product_template_id.publisher_id = custom_field_data.get(
+                        'value')
+                elif custom_field_data.get('name') in ['supplier', 'Supplier']:
+                    product_template_id.supplier = custom_field_data.get(
+                        'value')
+                elif custom_field_data.get('name') in ['Publication Date',
+                                                       'publication date']:
+                    product_template_id.publication_date = \
+                        datetime.strptime(
+                            custom_field_data.get('value'),
+                            "%d/%m/%Y").date()
+                elif custom_field_data.get('name') in ['pricing profile',
+                                                       'Pricing Profile']:
+                    product_template_id.pricing_profile = \
+                        custom_field_data.get('value')
+                elif custom_field_data.get('name') in \
+                        ['Special Title', 'special title']:
+                    product_template_id.special_title = custom_field_data.get(
+                        'value')
+                elif custom_field_data.get('name') in \
+                        ['full title', 'Full Title']:
+                    product_template_id.full_title = custom_field_data.get(
+                        'value')
+                elif custom_field_data.get('name') in \
+                        ['Short Title', 'short title']:
+                    product_template_id.short_title = custom_field_data.get(
+                        'value')
+                elif custom_field_data.get('name') in ['Format']:
+                    product_template_id.product_format = custom_field_data.get(
+                        'value')
+                elif custom_field_data.get('name') in ['Author', 'author']:
+                    product_template_id.author_ids = custom_field_data.get(
+                        'value')
+                import_product_from_bigcommerce
+        elif custom_field_response_data.status_code in [400, 404, 500]:
+            error_msg = custom_field_response_data.content
+            self.create_bigcommerce_operation_detail(
+                'product', 'import', '',
+                error_msg, operation_id, warehouse_id,
+                True, error_msg)
+        else:
+            api_operation_custom_field_response_data = \
+                custom_field_response_data.json()
+            error_msg = api_operation_custom_field_response_data.get(
+                'errors')
+            self.create_bigcommerce_operation_detail(
+                'product', 'import', '',
+                error_msg, operation_id, warehouse_id,
+                True, error_msg)
+
+    def import_product_variant(
+            self, bigcommerce_store_id, record,
+            listing_id, operation_id, warehouse_id):
+        """Import product variant."""
+        product_template_id = self
+        if product_template_id.product_variant_count > 1:
+            api_operation_variant = "/v3/catalog/products/{}/variants".format(
+                product_template_id.bigcommerce_product_id)
+            variant_response_data = bigcommerce_store_id.with_user(
+                1).send_get_request_from_odoo_to_bigcommerce(
+                api_operation_variant)
+            _logger.info(
+                "BigCommerce Get Product Variant Response : {0}".
+                format(variant_response_data))
+            _logger.info(
+                "Response Status: {0}".format(
+                    variant_response_data.status_code))
+            if variant_response_data.status_code in [200, 201]:
+                api_operation_variant_response_data = \
+                    variant_response_data.json()
+                variant_datas = api_operation_variant_response_data.get(
+                    'data')
+                for variant_data in variant_datas:
+                    option_labales = []
+                    option_values = variant_data.get(
+                        'option_values')
+                    for option_value in option_values:
+                        option_labales.append(
+                            option_value.get('label'))
+                    v_id = variant_data.get('id')
+                    product_sku = variant_data.get('sku')
+                    _logger.info(
+                        "Total Product Variant : {0} Option Label : {1}".
+                        format(product_template_id.product_variant_ids,
+                               option_labales))
+                    for product_variant_id in \
+                            product_template_id.product_variant_ids:
+                        if product_variant_id.mapped(lambda pv: pv.with_user(
+                            1).product_template_attribute_value_ids.
+                                mapped('name') == option_labales)[0]:
+                            _logger.info(
+                                "Inside If Condition option Label =====> {0} "
+                                "Product Template "
+                                "Attribute Value ====> {1}"
+                                " variant_id====>{2}".
+                                format(
+                                    option_labales,
+                                    product_variant_id.with_user(1).
+                                    mapped(
+                                        'product_template_attribute_value_ids')
+                                    .mapped('name'),
+                                    product_variant_id))
+                            if variant_data.get('price'):
+                                price = variant_data.get(
+                                    'price')
+                            else:
+                                price = variant_data.get(
+                                    'calculated_price')
+                            vals = {'default_code': product_sku,
+                                    'bc_sale_price': price,
+                                    'bigcommerce_product_variant_id': v_id,
+                                    'standard_price':
+                                    variant_data.get('cost_price', 0.0)}
+                            variant_product_img_url = variant_data.get(
+                                'image_url')
+                            if variant_product_img_url:
+                                image = base64.b64encode(
+                                    requests.get(
+                                        variant_product_img_url).content)
+                                vals.update(
+                                    {'image_1920': image})
+                            product_variant_id.with_user(
+                                1).write(vals)
+                            _logger.info(
+                                "Product Variant Updated : {0}".format(
+                                    product_variant_id.default_code))
+                            listing_item_id = \
+                                self.env['bc.store.listing.item'].search(
+                                    [('bc_product_id', '=',
+                                      variant_data.get('id')),
+                                     ('bigcommerce_store_id', '=',
+                                        bigcommerce_store_id.id)])
+                            if not listing_item_id:
+                                self.env[
+                                    'bc.store.listing.item'].\
+                                    create_or_update_bc_store_listing_item(
+                                    record, variant_data, product_template_id,
+                                    bigcommerce_store_id, listing_id,
+                                    product_variant_id)
+                            self._cr.commit()
+
+            else:
+                api_operation_variant_response_data = \
+                    variant_response_data.json()
+                error_msg = api_operation_variant_response_data.get(
+                    'errors')
+                self.create_bigcommerce_operation_detail(
+                    'product_attribute', 'import', '',
+                    error_msg, operation_id, warehouse_id,
+                    True, error_msg)
+        self._cr.commit()
+
     def create_or_update_product_pricelist(
             self, bigcommerce_store_id, product_tmpl_ids):
         """Create or update pricelist rule."""
@@ -424,3 +687,9 @@ class ProductTemplateExtend(models.Model):
                 process_message, operation_id,
                 warehouse_id, True,
                 product_process_message)
+
+
+class ProductExtend(models.Model):
+    _inherit = "product.product"
+
+    isbn = fields.Char('ISBN')
