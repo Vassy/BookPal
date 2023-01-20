@@ -14,7 +14,7 @@
     We also Provide the fedex,usps,easyship,stamp.com,ebay
 """,
 
-    'depends': ['bista_bigcommerce_extend'],
+    'depends': ['bigcommerce_odoo_integration'],
 
     'data': [
         'views/product_template.xml',
