@@ -89,23 +89,31 @@ class StockRule(models.Model):
         res = super(StockRule, self)._prepare_purchase_order(
             company_id, origins, values)
         val = values[0]
-        if val.get('supplier_id'):
-            res.update({'partner_id': val.get('supplier_id').id})
-        elif val.get('ship_line') and val.get('ship_line').supplier_id:
+        # if val.get('supplier_id'):
+        #     res.update({'partner_id': val.get('supplier_id').id})
+        if val.get('ship_line') and val.get('ship_line').supplier_id:
             res.update({
                 'partner_id': val.get('ship_line').supplier_id.id,
                 'dest_address_id': val.get('ship_line').partner_id.id})
-        elif val.get('sale_line_id'):
+        elif not val.get('ship_line') and val.get('sale_line_id'):
             sale_line_id = self.env['sale.order.line'].browse(
                 val.get('sale_line_id'))
             if sale_line_id.supplier_id:
                 res.update({'partner_id': sale_line_id.supplier_id.id})
+        elif val.get('supplier_id'):
+            res.update({'partner_id': val.get('supplier_id').id})
         return res
 
     def _make_po_get_domain(self, company_id, values, partner):
-        """Override method to update partner as per sale or shipment."""
-        if values.get('supplier_id'):
-            partner = values.get('supplier_id')
+    #     """Override method to update partner as per sale or shipment."""
+        if values.get('ship_line'):
+            if values.get('ship_line').supplier_id:
+                partner = values.get('ship_line').supplier_id
+        elif not values.get('ship_line') and values.get('sale_line_id'):
+            sale_line_id = self.env['sale.order.line'].browse(
+                values.get('sale_line_id'))
+            if sale_line_id.supplier_id:
+                partner = sale_line_id.supplier_id
         dom = super(StockRule, self)._make_po_get_domain(
             company_id, values, partner)
         if values.get('ship_line'):
@@ -118,6 +126,23 @@ class StockRule(models.Model):
             dom += (('date_order', '=', shipping_date),)
         dom += (("date_order", "=", values.get("date_planned")),)
         return dom
+
+    # def _make_po_get_domain(self, company_id, values, partner):
+    #     """Override method to update partner as per sale or shipment."""
+    #     if values.get('supplier_id'):
+    #         partner = values.get('supplier_id')
+    #     dom = super(StockRule, self)._make_po_get_domain(
+    #         company_id, values, partner)
+    #     if values.get('ship_line'):
+    #         dom += (('dest_address_id', '=',
+    #                  values.get('ship_line').partner_id.id),)
+    #     if values.get('ship_line') and \
+    #        values.get('ship_line').route_id.name == 'Dropship':
+    #         shipping_date = fields.Datetime.to_string(
+    #             values.get('ship_line').shipping_date)
+    #         dom += (('date_order', '=', shipping_date),)
+    #     dom += (("date_order", "=", values.get("date_planned")),)
+    #     return dom
 
 
 class StockPicking(models.Model):
@@ -285,12 +310,12 @@ class StockMove(models.Model):
 
     def _prepare_procurement_values(self):
         proc_values = super()._prepare_procurement_values()
-        if self.sale_line_id and self.sale_line_id.supplier_id:
-            proc_values.update({'supplier_id': self.sale_line_id.supplier_id})
         if self.multi_ship_line_id and self.multi_ship_line_id.supplier_id:
             proc_values.update(
                 {'supplier_id': self.multi_ship_line_id.supplier_id,
                  'dest_address_id': self.multi_ship_line_id.partner_id.id})
+        if not self.multi_ship_line_id and self.sale_line_id and self.sale_line_id.supplier_id:
+            proc_values.update({'supplier_id': self.sale_line_id.supplier_id})
         if self.restrict_partner_id:
             proc_values['supplierinfo_name'] = self.restrict_partner_id
             self.restrict_partner_id = False
