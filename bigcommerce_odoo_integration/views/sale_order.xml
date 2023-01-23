@@ -11,7 +11,7 @@
                             attrs="{'invisible': ['|',('state', '!=','sale'),('big_commerce_order_id','!=',False)]}"/>
                     <button name="get_shipped_qty" type="object" string="Shipped Qty"/>
                     <button name="update_order_from_bc_to_odoo" type="object" string="Update Order"
-                            attrs="{'invisible': [('big_commerce_order_id','!=',False)]}"/>
+                            attrs="{'invisible': [('big_commerce_order_id','=',False)]}"/>
                 </header>
                 <xpath expr="//field[@name='payment_term_id']" position="after">
                     <field name="bigcommerce_store_id"/>
