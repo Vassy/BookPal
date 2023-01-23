@@ -19,7 +19,7 @@ class SaleOrderVts(models.Model):
     payment_status = fields.Selection([('paid', 'Paid'), ('not_paid', 'Not Paid')], string='Payment Status',
                                       default='not_paid')
     bigcommerce_shipment_address_id = fields.Char(string='Shipping Order Address ID')
-    payment_method = fields.Char(string='Payment Method')
+    payment_method = fields.Char(string='Bigcommerce Payment Method')
     bigcommerce_customer_id = fields.Char("Bigcommerce Customer ID", related="partner_id.bigcommerce_customer_id",
                                           copy=False)
 
