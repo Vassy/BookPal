@@ -33,7 +33,7 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_sales_order_filter"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='order_line']" position="after">
+                <xpath expr="//field[@name='name']" position="after">
                     <field name="big_commerce_order_id"/>
                     <field name="bigcommerce_shipment_order_status"/>
                 </xpath>
