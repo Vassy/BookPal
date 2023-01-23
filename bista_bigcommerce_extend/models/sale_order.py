@@ -27,7 +27,6 @@ class SaleOrderVts(models.Model):
         action['domain'] = [('id', 'in', self.account_payment_ids.ids)]
         return action
 
-
     def get_coupon_response_data(self, order_data, bigcommerce_store_id):
         """Method return coupon api respons."""
         api_url = order_data.get('coupons').get('url')
@@ -105,7 +104,8 @@ class SaleOrderVts(models.Model):
             'product_id': vals.get('product_id', ''),
             'company_id': vals.get('company_id', ''),
             'name': vals.get('description'),
-            'product_uom': vals.get('product_uom')
+            'product_uom': vals.get('product_uom'),
+            'big_commerce_tax': vals.get('big_commerce_tax', 0),
         }
         new_order_line = sale_order_line.new(order_line)
         new_order_line.product_id_change()
@@ -640,6 +640,7 @@ class SaleOrderVts(models.Model):
             operation_id=False, warehouse_id=False, order_data=False,
             bigcommerce_store_id=False):
         """Prepare sale order line."""
+        response_msg = ''
         for order_line in product_details:
             product_bigcommerce_id = order_line.get('product_id')
             listing_id = self.env['bc.store.listing'].search(
@@ -673,17 +674,19 @@ class SaleOrderVts(models.Model):
                 [('order_id', '=', order_id.id), ('product_id', '=', product_id.id),
                  ('product_uom_qty', '=', float(vals.get('order_qty')))])
             order_line_vals = self.create_sale_order_line_from_bigcommerce(vals)
-            order_line_vals.update({'order_line.big_commerce_tax': total_tax})
             if not order_line:
                 order_line = self.env['sale.order.line'].create(order_line_vals)
                 _logger.info("Sale Order line Created".format(
                     order_line and order_line.product_id and order_line.product_id.name))
+                response_msg = "Sale order line created %s" % order_line.product_id.name
                 self.create_bigcommerce_operation_detail('order', 'import', '', '', operation_id, warehouse_id, False,
                                                          response_msg)
             else:
+                order_line_vals.update({'order_line.big_commerce_tax': total_tax})
                 order_line.write(order_line_vals)
                 _logger.info("Sale Order line Updated".format(
                     order_line and order_line.product_id and order_line.product_id.name))
+                response_msg = "Sale order line updated %s" % order_line.product_id.name
                 self.create_bigcommerce_operation_detail('order', 'update', '', '', operation_id, warehouse_id, False,
                                                          response_msg)
             # order_line = self.create_sale_order_line_from_bigcommerce(vals)
@@ -695,9 +698,9 @@ class SaleOrderVts(models.Model):
             #     order_line.product_id.name))
             # response_msg = "Sale Order line Created For Order  : {0}".format(
             #     order_id.name)
-            self.create_bigcommerce_operation_detail(
-                'order', 'import', '', '', operation_id,
-                warehouse_id, False, response_msg)
+            # self.create_bigcommerce_operation_detail(
+            #     'order', 'import', '', '', operation_id,
+            #     warehouse_id, False, response_msg)
         coupon_sale_order = self.get_coupon_response_data(
             order_data, bigcommerce_store_id)
         if coupon_sale_order:
