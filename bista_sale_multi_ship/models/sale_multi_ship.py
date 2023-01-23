@@ -498,7 +498,8 @@ class SaleMultiShipQtyLines(models.Model):
         # We first loop over the SO lines to group them by
         # warehouse and schedule
         # date in order to batch the read of the quantities computed field.
-        for line in self.filtered(lambda l: l.state in ('draft', 'sent')):
+        """ Bug #18863 - Override code for display proper stock qty widget """
+        for line in self.filtered(lambda l: l.state not in ("sale", "done", "cancel")):
             if not (line.product_id and line.display_qty_widget):
                 continue
             grouped_lines[(

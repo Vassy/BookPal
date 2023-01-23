@@ -51,7 +51,7 @@
                  </xpath>
                 <xpath expr="//page[last()]" position="after">
                     <page name="shipping_lines" string="Shipment Plan"
-                          attrs="{'invisible': ['|', ('split_shipment', '=', False), ('id', '=', False)]}">
+                        attrs="{'invisible': ['|', ('state', 'in', ['draft', 'quote_approval', 'quote_confirm', 'sent', 'cancel']), ('split_shipment', '=', False)]}">
                         <!-- <div>
                             <group>
                                 <group name="third_party_billing" string="Third Party Billing"

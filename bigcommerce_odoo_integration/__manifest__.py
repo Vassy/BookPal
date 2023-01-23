@@ -3,7 +3,7 @@
     'name': 'BigCommerce Odoo Integration',
     'category': 'Website',
     'author': "Vraja Technologies",
-    'version': '15.0.1.2.1',
+    'version': '15.0.2.3.1',
     'summary': """""",
     'description': """
     BigCommerce Odoo Integration will help you connect with Bigcommerce and
@@ -38,6 +38,7 @@
         # "views/bigcommerce_product_image_view.xml",
         'views/bigcommerce_stock_picking_view.xml',
         'views/bc_product_brand.xml',
+        'views/bc_payment_journal.xml',
         'views/menuitem.xml',
     ],
 

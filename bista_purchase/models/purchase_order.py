@@ -320,7 +320,7 @@ class PurchaseOrder(models.Model):
     def warning_on_reciept_date(self):
         for record in self:
             if record.date_approve and record.date_planned:
-                if record.date_planned <= record.date_approve:
+                if record.date_planned.date() < record.date_approve.date():
                     raise ValidationError(_('Receipt date cannot be earlier than confirmation date'))
 
 

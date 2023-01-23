@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+	<data>
+		<record id="view_bigcommerce_bc_payment_journal_tree_view" model="ir.ui.view">
+			<field name="name">BigCommerce Payment Journal</field>
+			<field name="model">bc.payment.journal</field>
+			<field name="type">tree</field>
+			<field name="arch" type="xml">
+				<tree string="Bigcommerce Payment Journal">
+					<field name="name" />
+					<field name="journal_id" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="view_bigcommerce_bc_payment_journal_form_view" model="ir.ui.view">
+			<field name="name">BigCommerce Payment Journal</field>
+			<field name="model">bc.payment.journal</field>
+			<field name="type">form</field>
+			<field name="arch" type="xml">
+				<form string="Payment Journal">
+					<sheet>
+						<group>
+							<group>
+								<field name="name" required="1"/>
+					            <field name="journal_id" required="1"/>
+							</group>
+						</group>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="action_bigcommerce_payment_journal" model="ir.actions.act_window">
+			<field name="name">BigCommerce Payment Journal</field>
+			<field name="res_model">bc.payment.journal</field>
+			<field name="view_id" ref="view_bigcommerce_bc_payment_journal_tree_view" />
+		</record>
+
+	</data>
+</odoo>
