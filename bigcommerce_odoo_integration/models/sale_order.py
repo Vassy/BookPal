@@ -981,10 +981,12 @@ class SaleOrderVts(models.Model):
                 order_line = self.env['sale.order.line'].create(order_line_vals)
                 _logger.info("Sale Order line Created".format(
                     order_line and order_line.product_id and order_line.product_id.name))
+                response_msg = "Sale order line created %s" % order_line.product_id.name
                 self.create_bigcommerce_operation_detail('order', 'import', '', '', operation_id, warehouse_id, False,
                                                          response_msg)
             else:
                 order_line.write(order_line_vals)
+                response_msg = "Sale order line updated %s" % order_line.product_id.name
                 _logger.info("Sale Order line Updated".format(
                     order_line and order_line.product_id and order_line.product_id.name))
                 self.create_bigcommerce_operation_detail('order', 'update', '', '', operation_id, warehouse_id, False,
