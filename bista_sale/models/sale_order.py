@@ -187,7 +187,7 @@ class SaleOrderLine(models.Model):
         for line in self:
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
             line_data = {
-                "discounted_price": int(price * 10 ** 2) / 10 ** 2,
+                "discounted_price": int(price * 10 ** 3) / 10 ** 3,
                 "saving_amount": (line.price_unit - price) * line.product_uom_qty,
             }
             line.update(line_data)
