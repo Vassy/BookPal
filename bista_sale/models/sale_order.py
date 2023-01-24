@@ -87,10 +87,11 @@ class SaleOrder(models.Model):
         ('mixed', 'Mixed'),
     ], string='Report Type')
     report_notes = fields.Text(string='Reporting Notes')
-    quote_processing_time = fields.Char(compute="compute_quote_process_time", string='Quotation Process Days', readonly=True)
+    quote_processing_time = fields.Char(string='Quotation Process Days', default="0 Days")
     product_weight = fields.Float(compute="_compute_product_weight", string="Product Weight")
     weight_uom_name = fields.Char(string='Weight unit of measure label', compute="_compute_weight_uom")
     product_use = fields.Char(string='Product Use')
+    # compurl = fields.Char(string="compute url", compute="compute_url")
 
     @api.depends("order_line.price_total")
     def _amount_all(self):
@@ -125,13 +126,20 @@ class SaleOrder(models.Model):
         if self.fulfilment_project:
             self.report_type = 'individual'
 
-    def compute_quote_process_time(self):
-        for quote in self:
-            quote_process_time = 0
-            if quote.date_approve:
-                quote_date = quote.date_approve.date() - quote.create_date.date()
-                quote_process_time = quote_date.days
-            quote.quote_processing_time = str(quote_process_time) + ' Days'
+    # def compute_quote_process_time(self):
+    #     for quote in self:
+    #         print("quote_confirm", quote)
+    #         print("quote_confirm", quote.state, quote.quote_processing_time)
+    #         if quote.state in ('draft', 'quote_confirm'):
+    #             print("\n\n\ninside----------")
+    #             quote_process_time = 0
+    #             print("date_order.date()", quote.date_order)
+    #             print("date_order.date()", quote.create_date)
+    #             if quote.date_approve:
+    #                 quote_date = quote.date_approve.date() - quote.date_order.date()
+    #                 quote_process_time = quote_date.days
+    #             quote.quote_processing_time = str(quote_process_time)
+
 
     @api.depends('order_line.product_uom_qty', 'order_line.product_id')
     def _compute_product_weight(self):
@@ -149,7 +157,6 @@ class SaleOrder(models.Model):
                 'default_carrier_id': self.opportunity_id.carrier_id.id
             })
         return res
-
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
