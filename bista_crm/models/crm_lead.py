@@ -115,6 +115,12 @@ class CrmLead(models.Model):
 
         return res
 
+    @api.onchange('partner_id')
+    def onchange_shipping_method_partner_id_to_crm(self):
+        "partner shipping method values automatically fetched in crm shipping method"
+        if self.partner_id.property_delivery_carrier_id:
+            self.carrier_id = self.partner_id.property_delivery_carrier_id.id
+
 
 class SpecialPricingType(models.Model):
     _name = "special.pricing.type"
@@ -130,11 +136,11 @@ class FulfillmentWarehouse(models.Model):
     name = fields.Char('Name')
 
 
-class Lead(models.Model):
-    _inherit = "crm.lead"
+class ResPartner(models.Model):
+    _inherit = "res.partner"
 
     def create(self, vals_list):
-        res = super(Lead, self).create(vals_list)
-        if res.partner_id:
-            res.partner_id.property_delivery_carrier_id = res.carrier_id.id
+        res = super(ResPartner, self).create(vals_list)
+        if res.opportunity_ids.carrier_id:
+            res.opportunity_ids.carrier_id = res.property_delivery_carrier_id.id
         return res
