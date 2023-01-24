@@ -98,13 +98,19 @@ class DocumentsDocument(models.Model):
         return res
 
     def _azure_doc_connector(self):
-        company_id = self.env['res.company'].browse(self._context.get('allowed_company_ids'))
-        azure_endpoint = company_id.azure_end_point
-        azure_key = company_id.azure_key
-        azureDocObj = DocumentAnalysisClient(endpoint=azure_endpoint,
-                                             credential=AzureKeyCredential(azure_key))
+        azure_end_point = self.env['ir.config_parameter'].sudo().get_param(
+            'bista_odoo_azure.azure_end_point')
+        azure_key = self.env['ir.config_parameter'].sudo().get_param(
+            'bista_odoo_azure.azure_key')
+        if azure_end_point and azure_key:
+            azure_endpoint = azure_end_point
+            azure_key = azure_key
+            azureDocObj = DocumentAnalysisClient(endpoint=azure_endpoint,
+                                                 credential=AzureKeyCredential(azure_key))
 
-        return azureDocObj
+            return azureDocObj
+        else:
+            raise Exception("Azure end point or key not set")
 
     def _azure_doc_parser(self, result):
 
@@ -201,8 +207,7 @@ class DocumentsDocument(models.Model):
                 continue
             data = base64.b64decode(document.attachment_id.datas)
             if document.partner_id.azuremodel_id:
-                azure_model = document.partner_id.azuremodel_id.azure_model or \
-                              self.company_id.azure_model
+                azure_model = document.partner_id.azuremodel_id.azure_model
             else:
                 document.update({
                     "folder_id": unntrained_pdf_folder.id,
