@@ -139,6 +139,16 @@ class CrmLead(models.Model):
         if self.partner_id.property_delivery_carrier_id:
             self.carrier_id = self.partner_id.property_delivery_carrier_id.id
 
+    def _prepare_customer_values(
+            self, partner_name, is_company=False, parent_id=False):
+        """Update carrier in partner from lead."""
+        res = super(CrmLead, self)._prepare_customer_values(
+            partner_name, is_company, parent_id)
+        res.update({
+            'property_delivery_carrier_id': self.carrier_id.id,
+        })
+        return res
+
 
 class SpecialPricingType(models.Model):
     _name = "special.pricing.type"
