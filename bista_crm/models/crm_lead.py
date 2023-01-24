@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import api, _, fields, models
+
+from odoo import api, fields, models
 
 
 class CrmLead(models.Model):
@@ -14,7 +15,8 @@ class CrmLead(models.Model):
     pre_release = fields.Boolean(string="Pre-Release")
     product_use = fields.Char(string='Product Use')
     product_status_notes = fields.Text(string='Product Status Notes')
-    special_pricing_type_id = fields.Many2one('special.pricing.type', string='Special Pricing Type')
+    special_pricing_type_id = fields.Many2one(
+        'special.pricing.type', string='Special Pricing Type')
     special_pricing_notes = fields.Text(string='Special Pricing Notes')
 
     # Billing Fields
@@ -34,33 +36,44 @@ class CrmLead(models.Model):
     order_notes = fields.Text(string='Order Notes')
     shipping_notes = fields.Text(string='Shipping Notes')
     shipping_to = fields.Boolean('Shipping to Hotel or Event Venue')
-    potential_pallets = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Potential Pallets')
-    accept_pallets = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Accept Pallets')
-    has_loading_dock = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Has Loading Dock')
-    inside_delivery_req = fields.Selection([('yes', 'Yes'), ('no', 'No')], string='Inside Delivery Required')
+    potential_pallets = fields.Selection(
+        [('yes', 'Yes'), ('no', 'No')], string='Potential Pallets')
+    accept_pallets = fields.Selection(
+        [('yes', 'Yes'), ('no', 'No')], string='Accept Pallets')
+    has_loading_dock = fields.Selection(
+        [('yes', 'Yes'), ('no', 'No')], string='Has Loading Dock')
+    inside_delivery_req = fields.Selection(
+        [('yes', 'Yes'), ('no', 'No')], string='Inside Delivery Required')
 
     # Journal Info fields
-    journal_customization_ids = fields.Many2many('journal.customization', string='Journal Customization')
+    journal_customization_ids = fields.Many2many(
+        'journal.customization', string='Journal Customization')
     customization_cost = fields.Monetary('Our Customization Cost')
-    link_to_art_files = fields.Char(string='Link to Art Files')
-    artwork_status_id = fields.Many2one('artwork.status', string='Artwork Status')
+    link_to_art_files = fields.Char(
+        string='Link to Art Files')
+    artwork_status_id = fields.Many2one(
+        'artwork.status', string='Artwork Status')
     journal_notes = fields.Text(string='Journal Notes')
-    journal_setup_fee = fields.Monetary(string="Journal Set Up Fee")
+    journal_setup_fee = fields.Monetary(
+        string="Journal Set Up Fee")
     death_type_id = fields.Many2one('death.type', string='Die Type')
     existing_death_order = fields.Char(string="Existing Die Order #")
 
     # Fulfillment Fields
     fulfilment_project = fields.Boolean('Fulfillment Project')
-    customization_type_ids = fields.Many2many('customization.type', string="Customization Type")
+    customization_type_ids = fields.Many2many(
+        'customization.type', string="Customization Type")
     project_details = fields.Char(string="Project Details")
 
     shipping_instructions = fields.Char(string='Shipping Instructions')
     special_insert_note = fields.Text(string='Special Insert Notes')
-    fulfilment_warehouse = fields.Many2one('fulfillment.warehouse', string='FullFilment WareHouse')
-    order_shipping_type = fields.Selection([('international', 'International'),
-                                            ('domestic', 'Domestic'),
-                                            ('both', 'Both'),
-                                            ], string="International or Domestic")
+    fulfilment_warehouse = fields.Many2one(
+        'fulfillment.warehouse', string='FullFilment WareHouse')
+    order_shipping_type = fields.Selection(
+        [('international', 'International'),
+         ('domestic', 'Domestic'),
+         ('both', 'Both'),
+         ], string="International or Domestic")
     ind_mailer_return_address = fields.Char(string="Ind Mailer Return Address")
     attachment_note = fields.Char(string="Attachment Notes")
 
@@ -68,7 +81,8 @@ class CrmLead(models.Model):
     # close_won_order = fields.Char('Close Won Order #')
     close_won_order_time = fields.Datetime('Close Won Order Time')
     # actual_close_amount = fields.Datetime('Actual Close Amount')
-    deal_close_amount_override = fields.Char(string='Deal Close Amount Override')
+    deal_close_amount_override = fields.Char(
+        string='Deal Close Amount Override')
     # created_by = fields.Char(string='Created By')
     # deal_close_lost_date = fields.Date(string='Close Lost Date')
     # deal_close_lost_reason = fields.Char(string='Close Lost Reason')
@@ -76,14 +90,13 @@ class CrmLead(models.Model):
     currency_id = fields.Many2one('res.currency', string="Currency",
                                   related='company_id.currency_id')
 
-    # sale_order_count = fields.Char(string="Orders Count", compute="compute_sale_order_ids")
-
     def action_new_quotation(self):
         res = super(CrmLead, self).action_new_quotation()
         res['context'].update({
             'default_link_to_art_files': self.link_to_art_files,
             'default_journal_notes': self.journal_notes,
-            'default_journal_customization_ids': self.journal_customization_ids.ids,
+            'default_journal_customization_ids':
+            self.journal_customization_ids.ids,
             'default_customization_cost': self.customization_cost,
             'default_artwork_status_id': self.artwork_status_id.id,
             'default_journal_setup_fee': self.journal_setup_fee,
@@ -93,7 +106,8 @@ class CrmLead(models.Model):
             'default_customization_type_ids': self.customization_type_ids.ids,
             'default_fulfilment_project': self.fulfilment_project,
             'default_special_insert_note': self.special_insert_note,
-            'default_individual_mailer_return_receiver': self.ind_mailer_return_address,
+            'default_individual_mailer_return_receiver':
+            self.ind_mailer_return_address,
             'default_attachment_note': self.attachment_note,
             'default_commitment_date': self.need_date,
             'default_event_date': self.event_date,
@@ -117,7 +131,11 @@ class CrmLead(models.Model):
 
     @api.onchange('partner_id')
     def onchange_shipping_method_partner_id_to_crm(self):
-        "partner shipping method values automatically fetched in crm shipping method"
+        """Oncnage shipping method.
+
+        Partner shipping method values automatically fetched
+        in crm shipping method
+        """
         if self.partner_id.property_delivery_carrier_id:
             self.carrier_id = self.partner_id.property_delivery_carrier_id.id
 
@@ -134,13 +152,3 @@ class FulfillmentWarehouse(models.Model):
     _description = 'fulfillment warehouse'
 
     name = fields.Char('Name')
-
-
-class ResPartner(models.Model):
-    _inherit = "res.partner"
-
-    def create(self, vals_list):
-        res = super(ResPartner, self).create(vals_list)
-        if res.opportunity_ids.carrier_id:
-            res.opportunity_ids.carrier_id = res.property_delivery_carrier_id.id
-        return res
