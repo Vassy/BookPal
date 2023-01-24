@@ -109,21 +109,17 @@ class CrmLead(models.Model):
             'default_internal_note': self.description,
             'default_refer_by_person': self.referred,
             'default_project_description': self.project_details,
-            'default_carrier_id': self.carrier_id.id,
+            # 'default_carrier_id': self.carrier_id.id,
 
         })
 
         return res
 
-    @api.onchange('carrier_id')
-    def onchange_shipping_method_crm_to_partner_id(self):
-        "new customer created in lead if we add shipping method that data should automatically fethced in partner shipping method"
-        self.partner_id.property_delivery_carrier_id = self.carrier_id.id
-
     @api.onchange('partner_id')
     def onchange_shipping_method_partner_id_to_crm(self):
         "partner shipping method values automatically fetched in crm shipping method"
-        self.carrier_id = self.partner_id.property_delivery_carrier_id.id
+        if self.partner_id.property_delivery_carrier_id:
+            self.carrier_id = self.partner_id.property_delivery_carrier_id.id
 
 
 class SpecialPricingType(models.Model):
@@ -138,3 +134,13 @@ class FulfillmentWarehouse(models.Model):
     _description = 'fulfillment warehouse'
 
     name = fields.Char('Name')
+
+
+class ResPartner(models.Model):
+    _inherit = "res.partner"
+
+    def create(self, vals_list):
+        res = super(ResPartner, self).create(vals_list)
+        if res.opportunity_ids.carrier_id:
+            res.opportunity_ids.carrier_id = res.property_delivery_carrier_id.id
+        return res
