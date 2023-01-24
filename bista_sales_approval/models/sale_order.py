@@ -7,7 +7,6 @@
 ##############################################################################
 from datetime import datetime
 from collections import defaultdict
-
 from odoo import api, models, fields, _
 from lxml import etree
 
@@ -123,6 +122,9 @@ class SaleOrder(models.Model):
             sale.date_approve = datetime.now()
             approve_template.send_mail(sale.id, force_send=True)
             sale._create_sale_approval_log("Quote Confirmed")
+            quote_approve_days = datetime.now().date() - sale.date_order.date()
+            quote_days = quote_approve_days.days
+            sale.quote_processing_time = str(quote_days) + ' Days'
 
     def action_send_for_approval(self):
         for rec in self:
