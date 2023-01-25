@@ -198,8 +198,8 @@
                 <page name="shipment_tracking" string="Shipment Tracking"
                       attrs="{'invisible':[('state','not in',['purchase','done'])]}">
                     <button name="open_tracking" type="object" string="Create Tracking" class="btn btn-primary" />
-                    <field name="purchase_tracking_ids" readonly="0">
-                        <tree string="Purchase Tracking Tree" create="0" write="0">
+                    <field name="purchase_tracking_ids" readonly="1">
+                        <tree string="Purchase Tracking Tree">
                             <field name="name" readonly="1"/>
                             <field name="shipment_date" required="1" optional="show" readonly="1"/>
                             <field name="carrier_id" optional="show" readonly="1"/>
