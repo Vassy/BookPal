@@ -24,12 +24,15 @@
         </xpath>
         <xpath expr="//table[@id='sales_order_table']//td[5]" position="after">
             <td class="text-right">
-                <span t-field="line.saving_amount" t-options="{'decimal_precision': 'Product Price'}" />
+                <span t-field="line.saving_amount" t-options="{'widget': 'monetary', 'display_currency': line.currency_id , 'decimal_precision': 'Product Price'}" />
             </td>
+        </xpath>
+        <xpath expr="//table[@id='sales_order_table']//td[3]/div[1]" position="attributes">
+            <attribute name="t-options">{'widget': 'monetary', 'display_currency': line.currency_id}</attribute>
         </xpath>
         <xpath expr="//table[@id='sales_order_table']//th[5]" position="replace" />
         <xpath expr="//table[@id='sales_order_table']//td[5]" position="replace" />
-        <xpath expr="//div[@name='total']/div" position="before">
+        <xpath expr="//div[@name='total']/div" position="after">
             <div class="col-6">
                 <table class="table table-sm">
                     <tr>
