@@ -26,7 +26,7 @@
         <t t-set="company" t-value="user.company_id"/>
         <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
             <div class="o_boxed_header">
-                <div class="row mb-3">
+                <div class="row mb-2 mt-0">
                     <div class="col-6">
                         <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo"/>
 <!--                        <div t-field="company.partner_id"-->
@@ -41,7 +41,10 @@
         </div>
 
         <div class="article o_report_layout_standard" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
-            <div class="pt-4">
+            <div name="report_tagline">
+                <t t-out="report_tagline"/>
+            </div>
+            <div class="pt-4" >
                 <!-- This div ensures that the address is not cropped by the header. -->
                 <t t-call="bista_report_header_footer.custom_address_layout"/>
             </div>
