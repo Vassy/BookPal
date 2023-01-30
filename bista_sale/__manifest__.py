@@ -9,6 +9,7 @@
     'depends': ['contacts',
                 'bista_sale_multi_ship',
                 'bista_bigcommerce_extend',
+                'sale_margin',  # change margin string
                 'stock_dropshipping',
                 # added dpendancy for compute picking based on dropshipping
                 'account_followup',
