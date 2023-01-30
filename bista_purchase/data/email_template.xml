@@ -98,20 +98,21 @@
             <field name="subject">Purchase Tracking of {{object.order_id.name}}</field>
             <field name="body_html" type="html">
                 <p style="margin: 0px; padding: 0px; font-size: 13px;">
-                    Hello<span t-out="object.order_id.dest_address_id.name"/>,
+                    Hello <span t-out="object.order_id.dest_address_id.name"/>,
                     <br/>
                     <br/>
                     We are glad to inform you that your purchase order
-                    <span t-out="object.order_id.name"/>
+                    <span t-out="object.order_id.sale_order_ids[0].client_order_ref"/>
+                    (Our <span t-out="object.order_id.sale_order_ids[0].name"/>)
                     has been shipped.
                     <t t-if="object.tracking_ref_ids">
-                        Your tracking reference
+                        Your tracking
                         <t t-if="len(object.tracking_ref_ids)==1">
-                            is
-                            <a t-att-href="object.tracking_ref_ids[0].tracking_url" t-out="object.tracking_ref_ids[0].name"/><br/>
+                            reference is
+                            <a t-att-href="object.tracking_ref_ids[0].tracking_url" t-out="object.tracking_ref_ids[0].name"/>.<br/>
                         </t>
                         <t t-else="">
-                            are<br/>
+                            references are<br/>
                             <t t-foreach="object.tracking_ref_ids" t-as="tracking">
                                 <a t-att-href="tracking.tracking_url" t-out="tracking.name"/><br/>
                             </t>
