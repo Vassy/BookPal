@@ -32,7 +32,7 @@
         </xpath>
         <xpath expr="//table[@id='sales_order_table']//th[5]" position="replace" />
         <xpath expr="//table[@id='sales_order_table']//td[5]" position="replace" />
-        <xpath expr="//div[@name='total']/div" position="after">
+        <!-- <xpath expr="//div[@name='total']/div" position="after">
             <div class="col-6">
                 <table class="table table-sm">
                     <tr>
@@ -43,9 +43,26 @@
                     </tr>
                 </table>
             </div>
-        </xpath>
+        </xpath> -->
         <xpath expr="//div[@name='total']/div" position="attributes">
             <attribute name="class">col-6</attribute>
+        </xpath>
+        <td id="product_name" position="inside">
+            <br /><br />
+            <b><span>Product Notes:</span></b>
+            <br/>
+            <span t-field="line.picking_note"/>
+        </td>
+    </template>
+
+    <template id="inherit_sale_order_portal_content_totals_table" inherit_id="account.document_tax_totals">
+        <xpath expr="//tr[hasclass('o_total')]" position="after">
+            <tr>
+                <td><strong>Total Saving Amount</strong></td>
+                <td class="text-right">
+                    <span t-esc="sale_order.saving_amount" t-options="{'widget': 'monetary', 'display_currency': line.currency_id}"/>
+                </td>
+            </tr>
         </xpath>
     </template>
 </odoo>
