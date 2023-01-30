@@ -236,4 +236,34 @@
 <!--            </xpath>-->
         </field>
     </record>
+
+    <!-- Change string of margin in order line field -->
+    <record id="sale_order_marign_extend" model="ir.ui.view">
+        <field name="name">sale.order.margin.extend</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_margin.sale_margin_sale_order_line_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/tree//field[@name='margin']" position="attributes">
+                <attribute name="string">Profit</attribute>
+                <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='margin_percent']" position="attributes">
+                <attribute name="string">Profit(%)</attribute>
+            </xpath>
+            <xpath expr="//group[@name='sale_total']//label[@for='margin']" position="attributes">
+                <attribute name="string"> Profit </attribute>
+            </xpath>
+            <xpath expr="//group[@name='sale_total']//field[@name='margin']" position="attributes">
+                <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
+            </xpath>
+            <xpath expr="//group[@name='sale_total']//field[@name='margin_percent']" position="attributes">
+                <attribute name="string"> Profit(%) </attribute>
+                <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>
