@@ -20,6 +20,7 @@
         'data/ir_cron.xml',
         'data/bigcommerce_order_status.xml',
         'data/payment_acquire.xml',
+        'security/security_view.xml',
         'security/ir.model.access.csv',
         'wizard/export_and_update_product_to_bc.xml',
         'wizard/bigcommerce_import_operation.xml',
