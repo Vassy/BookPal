@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <header>
                     <button name="exportordertobigcommerce" type="object" string="Export Order"
-                            attrs="{'invisible': ['|',('state', '!=','sale'),('big_commerce_order_id','!=',False)]}"/>
+                            attrs="{'invisible': ['|',('state', '!=','sale'),('big_commerce_order_id','!=',False)]}" groups="bigcommerce_odoo_integration.group_hide_export_button"/>
                     <button name="get_shipped_qty" type="object" string="Shipped Qty"/>
                     <button name="update_order_from_bc_to_odoo" type="object" string="Update Order"
                             attrs="{'invisible': [('big_commerce_order_id','=',False)]}"/>
