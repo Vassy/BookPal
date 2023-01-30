@@ -2,6 +2,12 @@
 from odoo import models, fields, _, api
 
 
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+
+    invoice_pick_note = fields.Html('Common Notes')
+
+
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
