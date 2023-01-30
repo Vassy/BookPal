@@ -3,7 +3,7 @@
     <template id="report_saleorder_document_note" inherit_id="sale.report_saleorder_document">
         <xpath expr="//div[hasclass('oe_structure')]" position="after">
             <div>
-                <h5 style="margin-top:50px;border-bottom:solid 1px;">Special Instructions and Notes</h5>
+                <h5 style="margin-top:50px;border-bottom:solid 1px;">Notes</h5>
                 <div>
                     <span class="mb4" t-field="doc.common_pick_note"/>
                 </div>
