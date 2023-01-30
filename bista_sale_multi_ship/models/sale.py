@@ -184,13 +184,13 @@ class SaleOrder(models.Model):
             product_qty = sum(
                 order_line.sale_multi_ship_qty_lines.mapped('product_qty'))
             if self.split_shipment and product_uom_qty < product_qty:
+                product_name  = order_line.product_id.name
+                if order_line.product_id.product_template_attribute_value_ids:
+                    product_name = product_name + '(' + ','.join(order_line.product_id.product_template_attribute_value_ids.
+                                 mapped('name')) + ')'
                 msg += _("For %s shipping qty %s is more than ordered "
                          "qty %s.\n" % (
-                             order_line.product_id.name +
-                             '(' + ','.join(
-                                 order_line.product_id.
-                                 product_template_attribute_value_ids.
-                                 mapped('name')) + ')',
+                             product_name,
                              product_qty, product_uom_qty))
 
         if msg:
@@ -207,13 +207,13 @@ class SaleOrder(models.Model):
             product_qty = sum(
                 order_line.sale_multi_ship_qty_lines.mapped('product_qty'))
             if self.split_shipment and product_uom_qty < product_qty:
+                product_name  = order_line.product_id.name
+                if order_line.product_id.product_template_attribute_value_ids:
+                    product_name = product_name + '(' + ','.join(order_line.product_id.product_template_attribute_value_ids.
+                                 mapped('name')) + ')'
                 msg += _("For %s shipping qty %s is more than ordered "
                          "qty %s.\n" % (
-                             order_line.product_id.name +
-                             '(' + ','.join(
-                                 order_line.product_id.
-                                 product_template_attribute_value_ids.
-                                 mapped('name')) + ')',
+                             product_name ,
                              product_qty, product_uom_qty))
         if msg:
             raise ValidationError(msg)
@@ -331,6 +331,14 @@ class SaleOrder(models.Model):
                     lambda x: x.state == 'draft' and
                     not x.product_qty):
                 raise ValidationError("Please enter the shipment qty.")
+            if self.split_shipment and self.sale_multi_ship_qty_lines.filtered(
+            lambda sp: not sp.route_id and sp.product_id.type != "service"
+            ):
+                raise ValidationError("Please set routes on shipment lines.")
+            if not self.split_shipment and self.order_line.filtered(
+                lambda l: not l.route_id and l.product_id.type != "service"
+            ):
+                raise ValidationError("Please set routes on order lines.")
             order_lines = so.sale_multi_ship_qty_lines.filtered(
                 lambda li: li.state == 'draft').mapped('so_line_id').filtered(
                 lambda line: line.state == 'sale')
@@ -339,13 +347,13 @@ class SaleOrder(models.Model):
                 product_qty = sum(
                     order_line.sale_multi_ship_qty_lines.mapped('product_qty'))
                 if self.split_shipment and product_uom_qty < product_qty:
+                    product_name  = order_line.product_id.name
+                    if order_line.product_id.product_template_attribute_value_ids:
+                        product_name = product_name + '(' + ','.join(order_line.product_id.product_template_attribute_value_ids.
+                                     mapped('name')) + ')'
                     msg += _("For %s shipping qty %s is more than ordered "
                              "qty %s.\n" % (
-                                 order_line.product_id.name +
-                                 '(' + ','.join(
-                                     order_line.product_id.
-                                     product_template_attribute_value_ids.
-                                     mapped('name')) + ')',
+                                 product_name ,
                                  product_qty, product_uom_qty))
             if msg:
                 raise ValidationError(msg)
