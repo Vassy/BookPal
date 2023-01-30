@@ -123,7 +123,7 @@ class CrmLead(models.Model):
             'default_internal_note': self.description,
             'default_refer_by_person': self.referred,
             'default_project_description': self.project_details,
-            'default_carrier_id': self.carrier_id.id,
+            # 'default_carrier_id': self.carrier_id.id,
 
         })
 

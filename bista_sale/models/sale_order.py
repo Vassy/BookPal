@@ -164,7 +164,6 @@ class SaleOrder(models.Model):
         url = base_url + '/my/orders/' + str(self.id) + "?" + access_token
         return url
 
-
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
