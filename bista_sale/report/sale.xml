@@ -445,11 +445,11 @@
 
         <xpath expr="//p[@t-field='doc.note']" position="after">
             <div>
-                <div style="font-color: white;">
-                    <div class="text-center bg-light" style="margin-top:10px;">
-                        <p class="mt-5" style="margin-left: 325px;width:26%; height:40pt;background-color:red;">
-                            <a t-att-href="doc.compute_customer_preview_url()" class="btn btn-link" role="button">Proceed to
-                                Checkout
+                <div>
+                    <div class="text-center" style="margin-top:10px;">
+                        <p class="mt-5" style="margin-left: 325px;width:26%; height:50pt;background-color:red;">
+                            <a t-att-href="doc.compute_customer_preview_url()" class="btn btn-link" role="button" style="margin-top:15px;">
+                                 <strong style="color: #FFFFFF;">Proceed to Checkout</strong>
                             </a>
                         </p>
                     </div>
@@ -458,9 +458,9 @@
             <div class="text-center">
                 <img src='/bista_sale/static/src/img/payment_logo.png' style="max-height: 45px;"/>
             </div>
-            <div class="text-center mt-1">
+            <div class="text-center mt-0">
                 <div>
-                    <p>ACH / Wire Instructions available upon request.</p>
+                    <p style="margin-bottom:0px;">ACH / Wire Instructions available upon request.</p>
                     <strong>Interested in using a Purchase Order, click here:<a href=" https://bkp.al/PO" class="btn btn-link" role="button"> https://bkp.al/PO</a></strong>
                 </div>
             </div>
@@ -471,7 +471,7 @@
             <div class="row mt-5 mx-3" style="page-break-inside:avoid;" name="price_images">
                 <div class="col-4">
                     <div>
-                        <img src='/bista_sale/static/src/img/price_match_.png' style="max-height: 120px;" class="ml-5"/>
+                        <img src='/bista_sale/static/src/img/price_match_.png' style="max-height: 100px;" class="ml-5"/>
                         <a href="https://bookpal.com/price-match-guarantee" class="btn btn-link" role="button">Price
                             Match
                             Available
