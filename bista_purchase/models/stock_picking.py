@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 from time import strftime
 
 from odoo import models, fields, _, api
+from odoo.exceptions import ValidationError
+
 
 
 class StockPicking(models.Model):
@@ -80,3 +82,11 @@ class StockPicking(models.Model):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         url = base_url + '/web#id=' + str(self.id) + '&model=stock.picking&view_type=form'
         return url
+
+    @api.constrains('date_deadline')
+    def warning_on_deadline_date(self):
+        for rec in self:
+            if rec.date_deadline and rec.purchase_id.date_planned:
+                if rec.date_deadline.date() < rec.purchase_id.date_planned.date():
+                    raise ValidationError(_('Deadline date cannot be earlier than Receipt date'))
+

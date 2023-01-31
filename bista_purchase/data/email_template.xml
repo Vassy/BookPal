@@ -66,14 +66,14 @@
                             <br/>
                             Here is a reminder that the Backorder of the purchase order
                             <strong t-out="object.name or ''">P00015</strong>
-                            is expected for
+                            is expected on
                             <t t-if="object.date_deadline">
                                 <strong t-out="format_date(object.date_deadline) or ''">05/05/2021</strong>.
                             </t>
                             <t t-else="">
                                 <strong>undefined</strong>.
                             </t>
-                            Could you please confirm it will be delivered on time?
+                          Would you be able to confirm when it will be delivered?
                         </p>
                     </div>
 <!--                    <div style="margin: 16px 0px 16px 0px;">-->
