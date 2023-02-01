@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import datetime
-
 from lxml import etree
 
 from odoo import models, fields, _, api
@@ -9,14 +7,15 @@ from odoo.exceptions import ValidationError
 from odoo.tools import is_html_empty
 
 AddState = [
-        ('draft', 'Purchase Order'),
-        ('sent', 'Order Sent'),
-        ('to approve', 'To Approve'),
-        ('reject', 'Rejected'),
-        ('purchase', 'Approved Order'),
-        ('done', 'Locked'),
-        ('cancel', 'Cancelled')
-    ]
+    ("draft", "Purchase Order"),
+    ("sent", "Order Sent"),
+    ("to approve", "To Approve"),
+    ("reject", "Rejected"),
+    ("purchase", "Approved Order"),
+    ("done", "Locked"),
+    ("cancel", "Cancelled")
+]
+
 
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
@@ -42,7 +41,8 @@ class PurchaseOrder(models.Model):
     minimum_nuances = fields.Text(
         string="Minimums Nuances", related="partner_id.minimums_nuances")
     pre_approval_nuances = fields.Text(
-        string="Pre Approval Nuances", related="partner_id.pre_approval_nuances")
+        related="partner_id.pre_approval_nuances"
+    )
     transfer_to_bookpal_warehouse = fields.Boolean(
         string="Transfer to BookPal Warehouse")
     type = fields.Selection([('customer', 'Customer'),
@@ -51,7 +51,6 @@ class PurchaseOrder(models.Model):
                              ], string="Type")
     supplier_warehouse = fields.Many2one(
         'stock.warehouse', string='Supplier Warehouse')
-
     future_ship_nuances = fields.Text(
         string="Future Ship Nuances", related="partner_id.future_ship_nuances")
     shipping_nuances = fields.Text(
@@ -316,12 +315,14 @@ class PurchaseOrder(models.Model):
     def print_quotation(self):
         return self.env.ref('purchase.report_purchase_quotation').report_action(self)
 
-    @api.constrains('date_approve', 'date_planned')
+    @api.constrains("date_approve", "date_planned")
     def warning_on_reciept_date(self):
         for record in self:
             if record.date_approve and record.date_planned:
                 if record.date_planned.date() < record.date_approve.date():
-                    raise ValidationError(_('Receipt date cannot be earlier than confirmation date'))
+                    raise ValidationError(
+                        _("The Receipt date cannot be older than the confirmation date.")
+                    )
 
 
 class RushStatus(models.Model):
