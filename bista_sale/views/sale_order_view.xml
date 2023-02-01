@@ -42,12 +42,16 @@
                 </div>
                 <field name="date_order" nolabel="1" required="1" />
             </xpath>
+            <xpath expr="//field[@name='payment_term_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
             <xpath expr="//field[@name='payment_term_id']" position="before">
-                <field name="commitment_date"/>
+                <field name="commitment_date" string="Need By Date"/>
+                <field name="event_date"/>
             </xpath>
-            <xpath expr="//field[@name='commitment_date']" position="attributes">
+            <!-- <xpath expr="//field[@name='commitment_date']" position="attributes">
                 <attribute name="string">Need By Date</attribute>
-            </xpath>
+            </xpath> -->
             <xpath expr="//field[@name='payment_term_id']" position="after">
                 <field name="client_order_ref"/>
             </xpath>
@@ -102,7 +106,7 @@
                     <sheet>
                         <group>
                             <group name="order_notes">
-                                <field name="event_date"/>
+                                
                                 <field name="order_notes" class="bp_text_field"/>
                                 <field name="gorgias_ticket" widget="url" class="bp_text_field"/>
                                 <field name="product_status_notes" class="bp_text_field"/>
@@ -213,6 +217,7 @@
             </xpath>
         </field>
     </record>
+
     <record id="bista_sale_sale_quotation_delivery_tree_view" model="ir.ui.view">
         <field name="name">bista.sale.sale.quotation.tree.inherit</field>
         <field name="model">sale.order</field>
@@ -221,8 +226,15 @@
             <xpath expr="//field[@name='state']" position="before">
                 <field name="quote_processing_time" optional="hide"/>
             </xpath>
+            <xpath expr="//field[@name='create_date']" position="after">
+                <field name="date_order"  widget="date" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='create_date']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
         </field>
     </record>
+
     <record id="view_order_tree_inherit_add_tags" model="ir.ui.view">
         <field name="name">Sale order Tree</field>
         <field name="model">sale.order</field>
