@@ -398,11 +398,11 @@ class PurchaseOrderLine(models.Model):
     def check_bo_transfer(self):
         name = ''
         picking_ids = self.env['stock.picking'].search([('picking_type_code', '=', 'incoming'),
-                                                        ('partner_id', '=',
-                                                         self.order_id.partner_id.id),
-                                                        ('backorder_id',
-                                                         '!=', False),
-                                                        ('state', 'not in', ['done', 'cancel'])])
+                                                        ('partner_id', '=', self.order_id.partner_id.id),
+                                                        ('product_id','=',self.order_id.product_id.id),
+                                                        # ('backorder_id',
+                                                        #  '!=', False),
+                                                        ('state', 'in', ['assigned','confirmed'])])
         pick_id = picking_ids.move_ids_without_package.filtered(
             lambda x: x.product_id == self.product_id)
         if pick_id:
@@ -447,22 +447,16 @@ class PurchaseOrderLine(models.Model):
     def action_purchase_history(self):
         ''' can show the purchase order line history in purchase order line. where user can see back order qty
         details '''
-        if self.order_id.date_approve:
-            domain = [('display_type', '=', False),
-                      ('product_id', '=', self.product_id.id),
-                      ('order_id.partner_id', '=', self.order_id.partner_id.id),
-                      ('order_id.state', 'not in', ['draft', 'cancel'])]
-            action = self.env.ref('bista_orders_report.''action_purchase_order_line_status').read()[0]
-            action.update({'domain': domain})
-            return action
-        if self.order_id.date_order:
-            domain = [('display_type', '=', False),
-                      ('product_id', '=', self.product_id.id),
-                      ('order_id.partner_id', '=', self.order_id.partner_id.id),
-                      ('order_id.state', 'not in', ['done', 'cancel'])]
-            action = self.env.ref('bista_orders_report.''action_purchase_order_line_status').read()[0]
-            action.update({'domain': domain})
-            return action
+        domain = [('display_type', '=', False),
+                  ('product_id', '=', self.product_id.id),
+                  ('order_id.partner_id', '=', self.order_id.partner_id.id),
+                  # ('order_id.state', 'not in', ['draft', 'cancel'])
+                  ]
+        order_line = self.env['purchase.order.line'].search(domain)
+        order_line = order_line.filtered(lambda x:x.product_uom_qty > x.qty_received and x.qty_received)
+        action = self.env.ref('bista_orders_report.''action_purchase_order_line_status').read()[0]
+        action.update({'domain': [('id', 'in', order_line.ids)]})
+        return action
 
 
 class PoStatus(models.Model):
