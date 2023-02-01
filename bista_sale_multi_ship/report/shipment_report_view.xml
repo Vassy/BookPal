@@ -119,6 +119,9 @@
                                 class="text-left">
                                 <strong>Shipment Address</strong>
                             </th>
+                            <th style=" border-collapse: collapse;border: none;" name="th_image"
+                                class="text-left">
+                            </th>
                             <th style=" border-collapse: collapse;border: none;" name="th_description"
                                 class="text-left">
                                 <strong>Description</strong>
@@ -158,6 +161,16 @@
                                         class="text-left">
                                         <span t-field="line.partner_id"/>
                                     </td>
+                                    <td name="image" class="text-center" style="border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;">
+                                        <t t-if="line.product_id.image_1920">
+                                            <img t-attf-src="data:image/*;base64,{{line.product_id.image_1920}}"
+                                                 style="max-height:70px; max-width:70px;"/>
+                                        </t>
+                                        <t t-else="">
+                                            <img src="/web/static/img/placeholder.png"
+                                                 style="max-height:100px; max-width:100px;"/>
+                                        </t>
+                                    </td>
                                     <td name="td_name"
                                         style="width:30%; border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;">
                                         <b>
@@ -171,6 +184,7 @@
                                         </b>
                                         <span t-field="line.picking_note"/>
                                     </td>
+
                                     <td name="td_format"
                                         style="border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
                                         class="text-center">
