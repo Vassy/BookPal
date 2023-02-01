@@ -90,7 +90,6 @@
                                 <field name="product_id" invisible="1"/>
                                 <field name="product_uom_qty" optional="show"/>
                                 <field name="product_qty" optional="show" default="remain_qty" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                                <field name="product_uom" optional="hide"/>
                                 <!-- below fields are used in the widget qty_at_date_widget -->
                                 <field name="product_type" invisible="1"/>
                                 <field name="virtual_available_at_date" invisible="1"/>
@@ -104,6 +103,7 @@
                                 <field name="is_mto" invisible="1"/>
                                 <field name="display_qty_widget" invisible="1"/>
                                 <widget name="qty_at_date_widget" width="20px"/>
+                                <field name="product_uom" optional="hide"/>
                                 <field name="remain_qty" optional="hide" readonly="1" force_save="1"/>
                                 <field name="qty_delivered" sum="Total" optional="hide" readonly="1" force_save="1"/>
                                 <field name="qty_short_close" optional="hide"/>
@@ -117,15 +117,15 @@
                                 <field name="order_id" invisible="1"/>
                                 <field name="delivery_method_id"/>
                                 <field name="delivery_charges" readonly="1"/>
-                                <button name="get_shipping_charge"  type = "object" class="fa fa-fw o_button_icon fa-truck">
-                                    </button>
+                                <button name="get_shipping_charge" type="object" class="fa fa-fw o_button_icon fa-truck" />
                                 <button name="cancel_shipment"
                                     type="object"
                                     icon="fa-close"
                                     class="text-primary"
                                     style="float:right"
                                     confirm="Are you sure to cancel this shipment."
-                                    attrs="{'invisible': ['|',('product_type','=','service'), ('state', '!=', 'sale')]}"/>
+                                    attrs="{'invisible': ['|', ('product_type', '=', 'service'), ('state', '!=', 'sale')]}"
+                                />
                             </tree>
                         </field>
                         <field name="ship_lines_validated" invisible="1"/>
