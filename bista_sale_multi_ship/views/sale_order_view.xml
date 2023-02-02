@@ -140,7 +140,7 @@
             <field name="model">sale.order.line</field>
             <!-- <field name="inherit_id" ref="sale.view_order_form"/> -->
             <field name="arch" type="xml">
-                <form string="Sale Multi Ship" edit="true" create="false">
+                <form string="Sale Multi Ship" edit="false" create="false">
                     <group string="Ship Qty">
                         <field name="sale_multi_ship_qty_lines" nolabel="1" readonly="1">
                             <tree editable="bottom">
@@ -154,6 +154,10 @@
                             </tree>
                         </field>
                     </group>
+                    <footer>
+                    <!-- <button name="action_put_in_pack" type="object" string="Apply Package" class="btn-primary"/> -->
+                    <button string="Discard" special="cancel" data-hotkey="z" class="btn-secondary"/>
+                </footer>
                 </form>
             </field>
         </record>
