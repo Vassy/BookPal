@@ -88,5 +88,5 @@ class StockPicking(models.Model):
         for rec in self:
             if rec.date_deadline and rec.purchase_id.date_planned:
                 if rec.date_deadline.date() < rec.purchase_id.date_planned.date():
-                    raise ValidationError(_('Deadline date cannot be earlier than Receipt date'))
+                    raise ValidationError(_('Deadline date can not be older than the Receipt date'))
 
