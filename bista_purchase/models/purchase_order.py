@@ -451,10 +451,10 @@ class PurchaseOrderLine(models.Model):
         domain = [('display_type', '=', False),
                   ('product_id', '=', self.product_id.id),
                   ('order_id.partner_id', '=', self.order_id.partner_id.id),
-                  # ('order_id.state', 'not in', ['draft', 'cancel'])
+                  ('order_id.picking_ids.state', '=','assigned')
                   ]
         order_line = self.env['purchase.order.line'].search(domain)
-        order_line = order_line.filtered(lambda x:x.product_uom_qty > x.qty_received and x.qty_received)
+        # order_line = order_line.filtered(lambda x:x.product_uom_qty > x.qty_received and x.qty_received and x.state == 'assigned')
         action = self.env.ref('bista_orders_report.''action_purchase_order_line_status').read()[0]
         action.update({'domain': [('id', 'in', order_line.ids)]})
         return action
