@@ -1,54 +1,61 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data>
-        <record model="rush.status" id="rush_status_line_draft">
-            <field name="name">Draft</field>
+         <!--        rush status data file-->
+        <record model="rush.status" id="rush_status_line_none">
+            <field name="name">None</field>
             <field name="sequence">1</field>
         </record>
-        <record model="rush.status" id="rush_status_line_ready">
-            <field name="name">Ready For Preview</field>
+        <record model="rush.status" id="rush_status_line_ground_rush">
+            <field name="name">Ground Rush - Need ASAP</field>
             <field name="sequence">2</field>
         </record>
-        <record model="rush.status" id="rush_status_line_ordered">
-            <field name="name">Ordered</field>
+        <record model="rush.status" id="rush_status_line_nxt_day_air_saver">
+            <field name="name">Next Day Air Saver (by E.O.D)</field>
             <field name="sequence">3</field>
         </record>
-        <record model="rush.status" id="rush_status_line_pending">
-            <field name="name">Pending/In transient</field>
+        <record model="rush.status" id="rush_status_line_nxt_day_air">
+            <field name="name">Next Day Air(by 10:30am)</field>
             <field name="sequence">4</field>
         </record>
-        <record model="rush.status" id="rush_status_line_received">
-            <field name="name">Received</field>
+        <record model="rush.status" id="rush_status_line_ups">
+            <field name="name">UPS Next Day Air Early (by 8:30am)</field>
             <field name="sequence">5</field>
         </record>
-        <record model="rush.status" id="rush_status_line_stocked">
-            <field name="name">Stocked</field>
+        <record model="rush.status" id="rush_status_line_2nd_air">
+            <field name="name">2 Day Air Saver (by E.O.D)</field>
             <field name="sequence">6</field>
         </record>
-        <record model="rush.status" id="rush_status_line_completed">
-            <field name="name">Completed</field>
+        <record model="rush.status" id="rush_status_line_2nd_day">
+            <field name="name">2nd Day Air (by 10:30am)</field>
             <field name="sequence">7</field>
         </record>
-        <record model="rush.status" id="rush_status_line_return">
-            <field name="name">Return created</field>
+        <record model="rush.status" id="rush_status_line_3_day_air">
+            <field name="name">3 Day Air</field>
             <field name="sequence">8</field>
         </record>
-        <record model="rush.status" id="rush_status_line_rush_ordered">
-            <field name="name">Rush Ordered</field>
+        <record model="rush.status" id="rush_status_line_rush_ordered_ww_dhl">
+            <field name="name">Express WW(DHL)</field>
             <field name="sequence">9</field>
         </record>
-        <record model="rush.status" id="rush_status_line_on_hold">
-            <field name="name">On Hold</field>
+        <record model="rush.status" id="rush_status_line_a_m_dhl">
+            <field name="name">Express A.M.(DHL</field>
             <field name="sequence">10</field>
         </record>
-        <record model="rush.status" id="rush_status_line_canceled">
-            <field name="name">Canceled</field>
+        <record model="rush.status" id="rush_status_line_expedi">
+            <field name="name">WW Expedicated(UPS)</field>
             <field name="sequence">11</field>
         </record>
-        <record model="rush.status" id="rush_status_line_invoiced">
-            <field name="name">Invoiced</field>
+        <record model="rush.status" id="rush_status_line_express">
+            <field name="name">WW Express(UPS)</field>
             <field name="sequence">12</field>
         </record>
+        <record model="rush.status" id="rush_status_line_standard">
+            <field name="name">Standard Int'l(UPS)</field>
+            <field name="sequence">13</field>
+        </record>
+
+        <!--        shipping instructions data file-->
         <record model="shipping.instruction" id="shipping_instruction_1">
             <field name="name">FREE Shipping</field>
             <field name="sequence">1</field>
@@ -126,7 +133,7 @@
             <field name="sequence">19</field>
         </record>
 
-
+        <!--purchase line status data file-->
         <record model="purchase.line.status" id="purchase_line_status_1">
             <field name="name">None</field>
             <field name="sequence">1</field>
