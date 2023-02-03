@@ -93,7 +93,35 @@ class PurchaseTracking(models.Model):
     def send_email(self):
         self.ensure_one()
         template_id = self.env.ref("bista_purchase.email_template_purchase_tracking")
-        template_id.send_mail(self.id, force_send=True)
+        ctx = dict(self.env.context or {})
+        try:
+            compose_form_id = self.env.ref("mail.email_compose_message_wizard_form").id
+        except ValueError:
+            compose_form_id = False
+        ctx.update(
+            {
+                "default_model": "purchase.tracking",
+                "active_model": "purchase.tracking",
+                "active_id": self.id,
+                "default_res_id": self.id,
+                "default_use_template": bool(template_id.id),
+                "default_template_id": template_id.id,
+                "default_composition_mode": "comment",
+                "default_partner_ids": self.order_id.dest_address_id.ids,
+                "custom_layout": "mail.mail_notification_paynow",
+                "force_email": True,
+            }
+        )
+        return {
+            "name": _("Compose Email"),
+            "type": "ir.actions.act_window",
+            "view_mode": "form",
+            "res_model": "mail.compose.message",
+            "views": [(compose_form_id, "form")],
+            "view_id": compose_form_id,
+            "target": "new",
+            "context": ctx,
+        }
 
     def edit_tracking_line(self):
         self.ensure_one()
