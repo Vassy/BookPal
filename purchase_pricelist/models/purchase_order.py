@@ -71,10 +71,10 @@ class PurchaseOrderLine(models.Model):
     _inherit = "purchase.order.line"
 
     pricelist_id = fields.Many2one("product.pricelist", "Pricelist")
-    disc_price_unit = fields.Float(
-        string="Discounted Unit Price",
-        store=True,
-        compute="_compute_disc_price_unit",
+    before_disc_price_unit = fields.Float(
+        string="Price",
+        # store=True,
+        # compute="_compute_disc_price_unit",
         digits="Product Price",
     )
     discount = fields.Float(string="Discount (%)", digits="Discount")
@@ -84,11 +84,12 @@ class PurchaseOrderLine(models.Model):
     discount_amount = fields.Monetary(
         compute="_compute_amount", string="Discount Amount", store=True
     )
+    price_unit = fields.Float(compute="_compute_disc_price_unit", store=True)
 
-    @api.depends("price_unit", "discount")
+    @api.depends("before_disc_price_unit", "discount")
     def _compute_disc_price_unit(self):
         for order_line in self:
-            order_line.disc_price_unit = order_line._get_discounted_price_unit()
+            order_line.price_unit = order_line._get_discounted_price_unit()
 
     # adding discount to depends
     @api.depends("discount")
@@ -112,8 +113,9 @@ class PurchaseOrderLine(models.Model):
 
     def _get_discounted_price_unit(self):
         self.ensure_one()
+
         if self.discount:
-            return self.price_unit * (1 - self.discount / 100)
+            return self.before_disc_price_unit * (1 - self.discount / 100)
         return self.price_unit
 
     @api.onchange("product_qty", "product_uom")
@@ -132,6 +134,7 @@ class PurchaseOrderLine(models.Model):
             self._apply_value_from_seller(seller)
 
     def _apply_value_from_seller(self, seller):
+        self.before_disc_price_unit = self.price_unit
         if not seller.vendor_pricelist_id:
             self.discount = 0
             return
@@ -155,14 +158,16 @@ class PurchaseOrderLine(models.Model):
                 seller.price, self.product_uom, self.product_id, self.product_uom_qty
             )
             if self.pricelist_id.discount_policy == "with_discount":
-                self.price_unit = price
+                self.before_disc_price_unit = price
             else:
                 discount = max(0, (seller.price - price) * 100 / seller.price)
         self.discount = discount
+        self._compute_disc_price_unit()
 
     def _prepare_account_move_line(self, move=False):
         vals = super()._prepare_account_move_line(move)
         vals["discount"] = self.discount
+        vals["price_unit"] = self.before_disc_price_unit
         return vals
 
     @api.model
@@ -172,6 +177,7 @@ class PurchaseOrderLine(models.Model):
         res = super()._prepare_purchase_order_line_from_procurement(
             product_id, product_qty, product_uom, company_id, values, po
         )
+        res["before_disc_price_unit"] = res.get("price_unit")
         seller = product_id.with_company(company_id)._select_seller(
             partner_id=po.partner_id,
             quantity=product_qty,
@@ -197,7 +203,7 @@ class PurchaseOrderLine(models.Model):
                 seller.price, product_uom, product_id, product_uom
             )
             if seller.vendor_pricelist_id.discount_policy == "with_discount":
-                res["price_unit"] = price
+                res["before_disc_price_unit"] = price
             else:
                 discount = max(
                     0, (res.get("price_unit") - price) * 100 / res.get("price_unit")
