@@ -46,7 +46,7 @@
                     <h4>
                         <t t-esc="o.picking_type_id.warehouse_id.name"/>
                     </h4>
-                    <div class="text-right" style="padding-bottom: 20px; margin-left:150px;">
+                    <div class="text-right" style="margin-left:150px;">
                         <t t-esc="o.name"
                            t-options="{'widget': 'barcode', 'width': 310, 'height': 100, 'img_style': 'width:350px;height:55px;'}"
                         />

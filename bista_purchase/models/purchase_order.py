@@ -278,10 +278,17 @@ class PurchaseOrder(models.Model):
         result["arch"] = etree.tostring(doc)
         return result
 
-    @api.model
+    @api.model_create_multi
     def create(self, vals_list):
         """Create Purchase Order Approval History """
         rec = super(PurchaseOrder, self).create(vals_list)
+        white_glove = self.env['white.glove.type'].search([
+            ('code', '=', 0),
+            ('name', '=', 'Author Event')])
+        so_ids = [so_rec for so in rec.origin.split(',') if (so_rec :=self.env['sale.order'].search([('name', '=', so)]))]
+        flag = any(so_id.white_glove_id == white_glove for so_id in so_ids)
+        rec.order_notes = '\n'.join(so_id.order_notes for so_id in so_ids if so_id.order_notes)
+        rec.name += " " + "-" + " " + "AA" if flag else ""
         log_data = {
                 "order_id": rec.id,
                 "old_state": rec.state,
@@ -451,10 +458,10 @@ class PurchaseOrderLine(models.Model):
         domain = [('display_type', '=', False),
                   ('product_id', '=', self.product_id.id),
                   ('order_id.partner_id', '=', self.order_id.partner_id.id),
-                  # ('order_id.state', 'not in', ['draft', 'cancel'])
+                  ('order_id.picking_ids.state', '=','assigned')
                   ]
         order_line = self.env['purchase.order.line'].search(domain)
-        order_line = order_line.filtered(lambda x:x.product_uom_qty > x.qty_received and x.qty_received)
+        # order_line = order_line.filtered(lambda x:x.product_uom_qty > x.qty_received and x.qty_received and x.state == 'assigned')
         action = self.env.ref('bista_orders_report.''action_purchase_order_line_status').read()[0]
         action.update({'domain': [('id', 'in', order_line.ids)]})
         return action

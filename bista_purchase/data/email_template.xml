@@ -93,8 +93,6 @@
         <record id="email_template_purchase_tracking" model="mail.template">
             <field name="name">Purchase Tracking: Send by Email</field>
             <field name="model_id" ref="model_purchase_tracking"/>
-            <field name="email_to">{{ object.order_id.dest_address_id.email_formatted }}</field>
-            <field name="email_from">{{ object.partner_id.email_formatted or user.email_formatted or '' }}</field>
             <field name="subject">Purchase Tracking of {{object.order_id.name}}</field>
             <field name="body_html" type="html">
                 <p style="margin: 0px; padding: 0px; font-size: 13px;">
@@ -102,8 +100,10 @@
                     <br/>
                     <br/>
                     We are glad to inform you that your purchase order
-                    <span t-out="object.order_id.sale_order_ids[0].client_order_ref"/>
-                    (Our <span t-out="object.order_id.sale_order_ids[0].name"/>)
+                    <t t-if="object.order_id.sale_order_ids">
+                        <span t-out="object.order_id.sale_order_ids[0].client_order_ref"/>
+                        (Our <span t-out="object.order_id.sale_order_ids[0].name"/>)
+                    </t>
                     has been shipped.
                     <t t-if="object.tracking_ref_ids">
                         Your tracking

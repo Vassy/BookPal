@@ -46,7 +46,7 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//field[@name='payment_term_id']" position="before">
-                <field name="commitment_date" string="Need By Date"/>
+                <field name="commitment_date" string="Need By Date" widget="date"/>
                 <field name="event_date"/>
             </xpath>
             <!-- <xpath expr="//field[@name='commitment_date']" position="attributes">
@@ -129,7 +129,7 @@
                         <group name="journal_details">
                             <field name="journal_customization_ids" widget="many2many_tags"
                                    options="{'color_field': 'color'}"/>
-                            <field name="link_to_art_files" style="max-height: 25px;"/>
+                            <field name="link_to_art_files" widget="url" style="max-height: 25px;"/>
                             <field name="journal_notes" style="max-height: 25px;"/>
                             <field name="journal_setup_fee" widget="monetary"/>
                             <field name="journal_setup_fee_waived" widget="monetary"/>

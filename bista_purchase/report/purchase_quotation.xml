@@ -9,7 +9,7 @@
             <div class="page">
                 <div t-set="address">
                     <span>
-                        <strong>SUPPLIER</strong>
+                        <strong>Supplier Address</strong>
                     </span>
                     <t t-if="o.partner_id.parent_id.name">
                         <div>
@@ -27,7 +27,7 @@
                 </div>
                 <t t-if="o.dest_address_id">
                     <t t-set="information_block">
-                        <strong>Shipping address:</strong>
+                        <strong>Shipping Address:</strong>
                         <t t-if="o.dest_address_id.parent_id.name">
                             <div>
                                 <span t-field="o.dest_address_id.name"/>
@@ -182,7 +182,7 @@
                 </td>
                 <td class="text-right" name="td_cover"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
-                    <span t-field="order_line.price_unit"/>
+                    <span t-field="order_line.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                 </td>
                 <td class="text-right" name="td_discount"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
@@ -223,6 +223,9 @@
         </xpath>
         <xpath expr="//div[@id='informations']" position="replace"/>
         <xpath expr="//t[@t-set='information_block']" position="replace"/>
+         <xpath expr="//t[@t-set='information_block']//strong" position="replace">
+            <strong>Shipping Address</strong>
+        </xpath>
         <xpath expr="//h2[1]" position="replace"/>
     </template>
 </odoo>
