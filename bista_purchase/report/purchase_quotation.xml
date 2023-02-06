@@ -192,7 +192,7 @@
                 </td>
                 <td class="text-right text-danger" name="td_bp_price"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
-                    <span t-field="order_line.disc_price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                    <span t-field="order_line.price_unit"/>
                 </td>
 
                 <td class="text-right"

@@ -279,7 +279,7 @@
         </xpath>
         <xpath expr="//t[@t-set='address']" position="replace"/>
         <xpath expr="//h2" position="replace"/>
-        <xpath expr="//t[@t-set='information_block']" position="replace"/>
+<!--        <xpath expr="//t[@t-set='information_block']" position="replace"/>-->
         <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[1]" position="after">
             <th name="th_format">
                 <strong>Format</strong>

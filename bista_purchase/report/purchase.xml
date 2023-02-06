@@ -204,7 +204,7 @@
                     </div>
                 </td>
                 <td class="text-right text-danger" name="td_bp_price" style="border-bottom: 1px solid black;">
-                    <span t-field="line.disc_price_unit"/>
+                    <span t-field="line.price_unit"/>
                 </td>
                 <!--                <td class="text-center">-->
                 <!--                    <span t-field="line.price_unit"/>-->
