@@ -214,7 +214,7 @@
                 </td>
                 <td class="text-right text-danger" name="td_bp_price"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
-                    <span t-field="line.disc_price_unit"/>
+                    <span t-field="line.price_unit"/>
                 </td>
                 <td class="text-right"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; margin: auto;width: 111px;">
@@ -292,7 +292,7 @@
                 <p class="mb-1" t-field="o.notes" style="margin-left: 50px;"/>
             </div>
         </xpath>
-        <xpath expr="//t[@t-set='information_block']" position="replace"/>
+<!--        <xpath expr="//t[@t-set='information_block']" position="replace"/>-->
         <xpath expr="//div[@id='informations']" position="replace"/>
         <xpath expr="//div[@id='total']" position="replace"/>
         <xpath expr="//h2[1]" position="replace"/>
