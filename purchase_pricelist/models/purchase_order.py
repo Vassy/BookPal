@@ -72,7 +72,7 @@ class PurchaseOrderLine(models.Model):
 
     pricelist_id = fields.Many2one("product.pricelist", "Pricelist")
     before_disc_price_unit = fields.Float(
-        string="Price",
+        string="Cover Price",
         # store=True,
         # compute="_compute_disc_price_unit",
         digits="Product Price",
