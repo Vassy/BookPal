@@ -36,14 +36,17 @@
                     <button name="update_prices" type="object" class="btn-link mb-1 px-0" icon="fa-refresh" string="Update Prices" attrs="{'invisible': [('state', 'in', ['purchase', 'done', 'cancel'])]}" />
                 </div>
             </xpath>
-            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="before">
+                <field name="before_disc_price_unit" optional="hide" />
                 <field name="discount" />
-                <field name="disc_price_unit" optional="hide" />
                 <field name="without_disc_price_subtotal" invisible="1" />
             </xpath>
-            <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="after">
+            <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="before">
+                <field name="before_disc_price_unit" />
                 <field name="discount" />
-                <field name="disc_price_unit" />
             </xpath>
             <xpath expr="//field[@name='tax_totals_json']" position="before">
                 <field name="without_disc_amount_untaxed" colspan="2" string="Amount Untaxed (Without Disc.)" />
