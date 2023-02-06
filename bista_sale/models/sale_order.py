@@ -7,7 +7,7 @@ class SaleOrder(models.Model):
     _inherit = "sale.order"
 
     white_glove_id = fields.Many2one(
-        'white.glove.type', string='White Glove Type')
+        'white.glove.type', string='White Glove')
     event_date = fields.Date(string="Event Date")
     order_notes = fields.Text(string="Order Notes")
     product_status_notes = fields.Text(string="Product Status Notes")
