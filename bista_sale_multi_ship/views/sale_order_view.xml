@@ -156,7 +156,7 @@
                     </group>
                     <footer>
                     <!-- <button name="action_put_in_pack" type="object" string="Apply Package" class="btn-primary"/> -->
-                    <button string="Discard" special="cancel" data-hotkey="z" class="btn-secondary"/>
+                    <button string="Close" special="cancel" data-hotkey="z" class="btn-secondary"/>
                 </footer>
                 </form>
             </field>
