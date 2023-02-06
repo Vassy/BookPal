@@ -63,7 +63,7 @@ class ModCustomerPortal(CustomerPortal):
             return {"error": _("Invalid signature data.")}
 
         if not order_sudo.has_to_be_paid():
-            order_sudo.state = "order_booked"
+            order_sudo.action_order_booked()
 
         report_id = request.env.ref("sale.action_report_saleorder")
         pdf = report_id.with_user(SUPERUSER_ID)._render_qweb_pdf([order_sudo.id])[0]
