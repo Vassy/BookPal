@@ -100,7 +100,7 @@ class PurchaseOrder(models.Model):
             cc_partner_ids |= self.partner_id.child_ids.filtered(
                 lambda p: glove_id in p.glove_type_ids
             )
-            result["context"].update({"default_cc_partner_ids": cc_partner_ids.ids})
+            result["context"].update({"default_cc_recipient_ids": cc_partner_ids.ids})
         return result
 
     def button_cancel(self):

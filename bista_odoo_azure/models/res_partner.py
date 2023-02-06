@@ -30,6 +30,7 @@ class ResPartner(models.Model):
 
 class ResPartnerEmails(models.Model):
     _name = "res.partner.email"
+    _description = "Res Partner Email"
 
     email = fields.Char('Email')
     partner_id = fields.Many2one('res.partner', string='Partner')
