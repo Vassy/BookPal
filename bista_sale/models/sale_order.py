@@ -159,7 +159,7 @@ class SaleOrder(models.Model):
         return res
 
     def compute_customer_preview_url(self):
-        base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         access_token = self._portal_ensure_token()
         url = base_url + '/my/orders/' + str(self.id) + "?" + access_token
         return url
