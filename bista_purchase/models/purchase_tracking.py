@@ -18,11 +18,10 @@ class PurchaseTracking(models.Model):
     picking_type_id = fields.Many2one(related="order_id.picking_type_id")
     dest_address_id = fields.Many2one(related="order_id.dest_address_id")
     carrier_id = fields.Many2one("delivery.carrier", "Carrier")
+    delivery_type = fields.Selection(related="carrier_id.delivery_type")
     shipment_date = fields.Date(string="Shipment Date", tracking=True)
     pro_number = fields.Char("PRO No.", tracking=True)
-    tracking_line_ids = fields.One2many(
-        "purchase.tracking.line", "tracking_id"
-    )
+    tracking_line_ids = fields.One2many("purchase.tracking.line", "tracking_id")
     status = fields.Selection(
         [
             ("draft", "Draft"),
@@ -44,7 +43,7 @@ class PurchaseTracking(models.Model):
     checkbox = fields.Boolean(string="Select All (Pending to Shipped)")
 
     def save(self):
-        return {'type': 'ir.actions.act_window_close'}
+        return {"type": "ir.actions.act_window_close"}
 
     @api.onchange("checkbox")
     def _onchange_checkbox(self):
@@ -126,25 +125,34 @@ class PurchaseTracking(models.Model):
     def edit_tracking_line(self):
         self.ensure_one()
         return {
-            'name': _('Purchase Tracking Line'),
-            'type': 'ir.actions.act_window',
-            'res_model': 'purchase.tracking',
-            'view_mode': 'form',
-            'view_type': 'form',
-            'target': 'new',
-            'res_id': self.id,
-            'view_id': self.env.ref('bista_purchase.purchase_tracking_form_view').id,
+            "name": _("Purchase Tracking Line"),
+            "type": "ir.actions.act_window",
+            "res_model": "purchase.tracking",
+            "view_mode": "form",
+            "view_type": "form",
+            "target": "new",
+            "res_id": self.id,
+            "view_id": self.env.ref("bista_purchase.purchase_tracking_form_view").id,
             # 'context': {'create': False, 'edit': True},
             # 'flags': {'mode': 'readonly'},
         }
+
 
 class PurchaseTrackingRef(models.Model):
     _name = "purchase.tracking.ref"
     _description = "Purchase Tracking Ref"
 
     purchase_tracking_id = fields.Many2one("purchase.tracking")
-    name = fields.Char(string="Name")
+    name = fields.Char(string="Number")
     tracking_url = fields.Char(string="Tracking URL")
+
+    @api.onchange("name")
+    def _onchange_name(self):
+        if self.purchase_tracking_id.delivery_type == "ups" and self.name:
+            self.tracking_url = (
+                "http://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=%s"
+                % self.name.replace("+", "%0D%0A")
+            )
 
 
 class PurchaseTrackingLine(models.Model):
@@ -152,7 +160,9 @@ class PurchaseTrackingLine(models.Model):
     _description = "Purchase Tracking Line"
 
     checkbox = fields.Boolean(string="Checkbox")
-    tracking_id = fields.Many2one("purchase.tracking", string="Tracking", ondelete='cascade')
+    tracking_id = fields.Many2one(
+        "purchase.tracking", string="Tracking", ondelete="cascade"
+    )
     po_line_id = fields.Many2one("purchase.order.line", "PO Line")
     default_code = fields.Char(
         related="po_line_id.product_id.default_code", store=True, string="ISBN"
@@ -185,7 +195,9 @@ class PurchaseTrackingLine(models.Model):
         total_ship_qty = self.po_line_id.purchase_tracking_line_ids.filtered(
             lambda l: l.tracking_id.status != "cancel" and l.id != self._origin.id
         ).mapped("ship_qty")
-        self.pending_shipment_qty = self.ordered_qty - sum(total_ship_qty) - self.ship_qty
+        self.pending_shipment_qty = (
+            self.ordered_qty - sum(total_ship_qty) - self.ship_qty
+        )
 
     @api.onchange("checkbox")
     def _onchange_checkbox(self):
