@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+
 from odoo import models, fields, _, api
+from odoo.exceptions import ValidationError
 
 
 class PurchaseTracking(models.Model):
@@ -91,6 +93,8 @@ class PurchaseTracking(models.Model):
 
     def send_email(self):
         self.ensure_one()
+        if not self.tracking_line_ids.filtered(lambda t: t.ship_qty):
+            raise ValidationError("Please set shipped quantity on tracking line.")
         template_id = self.env.ref("bista_purchase.email_template_purchase_tracking")
         ctx = dict(self.env.context or {})
         try:

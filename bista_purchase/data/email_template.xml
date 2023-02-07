@@ -97,39 +97,64 @@
             <field name="body_html" type="html">
                 <p style="margin: 0px; padding: 0px; font-size: 13px;">
                     Hello <span t-out="object.order_id.dest_address_id.name"/>,
+                    <br/><br/>
+                    Thank you for placing your order from <span style="font-weight: bold;">BookPal!</span> Here are a few things you should know:
+                    <br/><br/>
+                    - Please inspect your order upon arrival. Claims for replacement copies must be submitted within five business days of delivery.
                     <br/>
+                    - You may use the provided tracking number to view shipping and delivery details. Updated tracking information will be posted within 24 hours.
                     <br/>
-                    We are glad to inform you that your purchase order
-                    <t t-if="object.order_id.sale_order_ids">
-                        <span t-out="object.order_id.sale_order_ids[0].client_order_ref"/>
-                        (Our <span t-out="object.order_id.sale_order_ids[0].name"/>)
+                    - Items may be shipped in separate boxes, with no additional shipping charges.
+                    <br/>
+                    - If you have any remaining items, we'll send additional tracking once those ship.
+                    <br/><br/><br/>
+                    <span style="font-weight: bold;">Shipping To:</span>
+                    <br/>
+                    <span t-out="object.order_id.dest_address_id.name"/>
+                    <br/>
+                    <t t-if="object.order_id.dest_address_id.parent_id.name">
+                        <span t-out="object.order_id.dest_address_id.parent_id.name"/>
+                        <br/>
                     </t>
-                    has been shipped.
+                    <t t-if="object.order_id.dest_address_id.street">
+                        <span t-out="object.order_id.dest_address_id.street"/>
+                        <br/>
+                    </t>
+                    <t t-if="object.order_id.dest_address_id.street2">
+                        <span t-out="object.order_id.dest_address_id.street2"/>
+                        <br/>
+                    </t>
+                    <t t-if="object.order_id.dest_address_id.city">
+                        <span t-out="object.order_id.dest_address_id.city"/>,
+                    </t>
+                    <span t-out="object.order_id.dest_address_id.state_id.code"/>
+                    <span t-out="object.order_id.dest_address_id.zip"/>
+                    <span t-out="object.order_id.dest_address_id.country_id.code"/>
+                    <br/><br/><br/>
+                    <span style="font-weight: bold;">This shipment includes the following items:</span>
+                    <br/><br/>
+                    <table style="min-width: 590px;" width="590">
+                        <tr>
+                            <th>Item #</th>
+                            <th>Description</th>
+                            <th>QTY</th>
+                        </tr>
+                        <tr t-foreach="object.tracking_line_ids" t-as="tracking">
+                            <td style="border-top: 1px solid black;"><span t-out="tracking.default_code" /></td>
+                            <td style="border-top: 1px solid black;"><span t-out="tracking.po_line_id.product_id.name" /></td>
+                            <td style="border-top: 1px solid black;"><span t-out="tracking.ship_qty" /></td>
+                        </tr>
+                    </table>
+                    <br/><br/><br/>
+                    <span style="font-weight: bold;">Track Your Shipment:</span>
                     <t t-if="object.tracking_ref_ids">
-                        Your tracking
-                        <t t-if="len(object.tracking_ref_ids)==1">
-                            reference is
-                            <a t-att-href="object.tracking_ref_ids[0].tracking_url" t-out="object.tracking_ref_ids[0].name"/>.<br/>
-                        </t>
-                        <t t-else="">
-                            references are<br/>
-                            <t t-foreach="object.tracking_ref_ids" t-as="tracking">
-                                <a t-att-href="tracking.tracking_url" t-out="tracking.name"/><br/>
-                            </t>
+                        <t t-foreach="object.tracking_ref_ids" t-as="tracking">
+                            <a t-att-href="tracking.tracking_url" t-out="tracking.name"/>
+                            <t t-if="object.tracking_ref_ids[-1] != tracking">,</t>
                         </t>
                     </t>
-                    <br/>
-                    Please contact Customer Service at 888-645-2628 for any additional questions regarding this
-                    shipment.
-                    <br/>
-                    <br/>
-                    We look forward to working with you again soon.
-                    <br/>
-                    <br/>
-                    Thank you,
-                    <br/>
-                    <br/>
-                    <span t-out="object.partner_id.name"/>
+                    <br/><br/>
+                    Thank you for your business and we look forward to serving you in the future!
                 </p>
             </field>
         </record>
