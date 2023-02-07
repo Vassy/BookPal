@@ -22,6 +22,16 @@ class SaleOrderVts(models.Model):
     #         order.bc_tax_total = sum(
     #             order.order_line.mapped('big_commerce_tax'))
 
+    def action_confirm(self):
+        for sale in self:
+            if sale.big_commerce_order_id and not sale.client_order_ref:
+                sale.client_order_ref = sale.big_commerce_order_id
+        if any(self.filtered(lambda s: not s.client_order_ref)):
+            raise ValidationError(
+                "You need to set 'Customer Reference' before approving order."
+            )
+        return super().action_confirm()
+
     def action_redirect_to_payment_transaction(self):
         action = self.env.ref('account.action_account_payments').read()[0]
         action['domain'] = [('id', 'in', self.account_payment_ids.ids)]
