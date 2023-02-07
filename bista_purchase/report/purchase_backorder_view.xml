@@ -105,7 +105,7 @@
                         <br/>
                     </div>
                     <t t-if="o.backorder_id">
-                        <table class="table table-sm " t-if="o.state!='done'" name="stock_move_table">
+                        <table class="table table-sm" name="stock_move_table">
                             <thead>
                                 <tr>
                                     <th name="th_sm_product">
