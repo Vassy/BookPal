@@ -15,7 +15,7 @@
         </xpath>
         <xpath expr="//div[hasclass('page')]" position="inside">
             <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang)"/>
-            <div class="page">
+            <div class="page ">
                 <div t-set="address">
                     <span>
                         <strong>Supplier Address</strong>
@@ -27,11 +27,11 @@
                             <span t-field="o.partner_id.parent_id.name"/>
                         </div>
                         <div t-field="o.partner_id"
-                             t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
+                             t-options='{"widget": "contact", "fields": ["address", "phone","email"], "no_marker": True, "phone_icons": True}'/>
                     </t>
                     <t t-else="">
                         <div t-field="o.partner_id"
-                             t-options='{"widget": "contact", "fields": ["address","name","phone"], "no_marker": True, "phone_icons": True}'/>
+                             t-options='{"widget": "contact", "fields": ["address","name","phone","email"], "no_marker": True, "phone_icons": True}'/>
                     </t>
                 </div>
                 <t t-set="report_info" class="col-6 text-right mb4">
