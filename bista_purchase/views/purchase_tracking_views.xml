@@ -17,6 +17,7 @@
                             <field name="partner_id" />
                             <field name="picking_type_id" />
                             <field name="carrier_id" required="0" attrs="{'readonly': [('is_read_only', '=', True)]}" />
+                            <field name="delivery_type" invisible="1" />
                             <field name="shipment_date" required="1" attrs="{'readonly': [('is_read_only', '=', True)]}" />
                         </group>
                         <group>
@@ -31,7 +32,7 @@
                             <field name="tracking_ref_ids" nolabel="1" attrs="{'readonly': [('is_read_only', '=', True)]}">
                                 <tree editable="bottom">
                                     <field name="name" required="1" />
-                                    <field name="tracking_url" widget="url" required="1" />
+                                    <field name="tracking_url" widget="url" required="1" attrs="{'readonly': [('parent.delivery_type', 'in', ('ups'))]}" force_save="1" />
                                 </tree>
                             </field>
                         </page>
