@@ -264,7 +264,7 @@
                             <span t-esc="0.0" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                         </td>
                     </tr>
-                    <tr style="background-color: #f56343;">
+                    <tr>
                         <td style="border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black; padding-left:10px;">
                             <strong class="border-black o_subtotal;text-right">Total</strong>
                         </td>
