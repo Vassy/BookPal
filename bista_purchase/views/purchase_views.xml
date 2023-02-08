@@ -259,6 +259,17 @@
         </field>
     </record>
 
+    <record id="purchase_order_view_form_inherit_bista" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase_stock.purchase_order_view_form_inherit"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='dest_address_id']" position="attributes">
+                <attribute name="context">{'show_address': 1}</attribute>
+                <attribute name="options">{"always_reload": True}</attribute>
+            </xpath>
+        </field>
+    </record>
 
     <record id="purchase_order_line_form" model="ir.ui.view">
         <field name="name">purchase.order.line.form</field>
