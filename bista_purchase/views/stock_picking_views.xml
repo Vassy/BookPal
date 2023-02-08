@@ -48,8 +48,10 @@
                 <attribute name="attrs">{'invisible': ['|', ('state', 'in', ('cancel')),
                 ('date_deadline', '=', False)],'readonly': [('state', '=', 'done')]} </attribute>
             </xpath>
+            <button name="action_open_label_layout" position="replace" />
         </field>
     </record>
+
     <record model="ir.ui.view" id="stock_view__quant_tree_editable_inherit">
         <field name="name">stock.quant.tree.editable.inherit.view</field>
         <field name="model">stock.quant</field>
