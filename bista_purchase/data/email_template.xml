@@ -158,5 +158,69 @@
                 </p>
             </field>
         </record>
+
+        <record id="email_template_delivery_tracking" model="mail.template">
+            <field name="name">Delivery Tracking: Send by Email</field>
+            <field name="model_id" ref="model_stock_picking"/>
+            <field name="subject">Delivery Tracking of {{object.name}}</field>
+            <field name="body_html" type="html">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Hello <span t-out="object.partner_id.name"/>,
+                    <br/><br/>
+                    Thank you for placing your order from <span style="font-weight: bold;">BookPal!</span> Here are a few things you should know:
+                    <br/><br/>
+                    - Please inspect your order upon arrival. Claims for replacement copies must be submitted within five business days of delivery.
+                    <br/>
+                    - You may use the provided tracking number to view shipping and delivery details. Updated tracking information will be posted within 24 hours.
+                    <br/>
+                    - Items may be shipped in separate boxes, with no additional shipping charges.
+                    <br/>
+                    - If you have any remaining items, we'll send additional tracking once those ship.
+                    <br/><br/><br/>
+                    <span style="font-weight: bold;">Shipping To:</span>
+                    <br/>
+                    <span t-out="object.partner_id.name"/>
+                    <br/>
+                    <t t-if="object.partner_id.parent_id.name">
+                        <span t-out="object.partner_id.parent_id.name"/>
+                        <br/>
+                    </t>
+                    <t t-if="object.partner_id.street">
+                        <span t-out="object.partner_id.street"/>
+                        <br/>
+                    </t>
+                    <t t-if="object.partner_id.street2">
+                        <span t-out="object.partner_id.street2"/>
+                        <br/>
+                    </t>
+                    <t t-if="object.partner_id.city">
+                        <span t-out="object.partner_id.city"/>,
+                    </t>
+                    <span t-out="object.partner_id.state_id.code"/>
+                    <span t-out="object.partner_id.zip"/>
+                    <span t-out="object.partner_id.country_id.code"/>
+                    <br/><br/><br/>
+                    <span style="font-weight: bold;">This shipment includes the following items:</span>
+                    <br/><br/>
+                    <table style="min-width: 590px;" width="590">
+                        <tr>
+                            <th>Item #</th>
+                            <th>Description</th>
+                            <th>QTY</th>
+                        </tr>
+                        <tr t-foreach="object.move_lines" t-as="move">
+                            <td style="border-top: 1px solid black;"><span t-out="move.product_id.default_code" /></td>
+                            <td style="border-top: 1px solid black;"><span t-out="move.product_id.name" /></td>
+                            <td style="border-top: 1px solid black;"><span t-out="move.product_uom_qty" /></td>
+                        </tr>
+                    </table>
+                    <br/><br/><br/>
+                    <span style="font-weight: bold;">Track Your Shipment:</span>
+                    <a t-att-href="object.carrier_tracking_url" t-out="object.carrier_tracking_ref"/>
+                    <br/><br/>
+                    Thank you for your business and we look forward to serving you in the future!
+                </p>
+            </field>
+        </record>
     </data>
 </odoo>
