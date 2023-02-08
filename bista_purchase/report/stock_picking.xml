@@ -67,7 +67,7 @@
         </xpath>
         <xpath expr="//div[@name='right_box']" position="replace"/>
         <xpath expr="//div[hasclass('page')]/div[2]" position="replace">
-            <div class="row mb-2" style="margin-top: 4rem !important;">
+            <div class="row mb-2 pt-5 ">
                 <div class="col-4" name="div_outgoing_address"
                      t-if="(o.move_ids_without_package and o.move_ids_without_package[0].partner_id and o.move_ids_without_package[0].partner_id.id != o.partner_id.id) or (o.picking_type_id.code != 'internal' and (not o.move_ids_without_package or not o.move_ids_without_package[0].partner_id) and o.picking_type_id.warehouse_id.partner_id)">
                     <t t-if="o.move_ids_without_package and o.move_ids_without_package[0].partner_id and o.move_ids_without_package[0].partner_id.id != o.partner_id.id">
@@ -218,7 +218,7 @@
             </t>
         </xpath>
         <xpath expr="//div[hasclass('row','mt32','mb32')]" position="before">
-            <div class="row mb-2 " style="margin-top: 7rem !important;">
+            <div class="row mb-2 pt-5 ">
                 <div name="div_outgoing_address" class="col-4"
                      t-if="o.should_print_delivery_address() or o.picking_type_id.code != 'internal' and o.picking_type_id.warehouse_id.partner_id">
                     <t t-if="o.should_print_delivery_address() ">
