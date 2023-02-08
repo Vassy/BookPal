@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="product_template_tree_view_bista" model="ir.ui.view">
+        <field name="name">product.template.form.bista</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+            <button name="action_open_label_layout" position="replace" />
+        </field>
+    </record>
+
+    <record id="product_template_form_view_bista" model="ir.ui.view">
+        <field name="name">product.template.form.bista</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <button name="action_open_label_layout" position="replace" />
+        </field>
+    </record>
+
+    <record id="product_variant_easy_edit_view_bista" model="ir.ui.view">
+        <field name="name">product.product.form.bista</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+        <field name="arch" type="xml">
+            <button name="action_open_label_layout" position="replace" />
+        </field>
+    </record>
+
+    <record id="product_product_tree_view_bista" model="ir.ui.view">
+        <field name="name">product.product.form.bista</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_product_tree_view"/>
+        <field name="arch" type="xml">
+            <button name="action_open_label_layout" position="replace" />
+        </field>
+    </record>
+</odoo>
