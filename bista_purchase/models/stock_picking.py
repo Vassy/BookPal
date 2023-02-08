@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from time import strftime
 
 from odoo import models, fields, _, api
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 
 
 
@@ -22,6 +22,43 @@ class StockPicking(models.Model):
                                                 related="partner_id.author_event_shipping_naunces")
     applicable_tracking_ids = fields.Many2many('purchase.tracking', compute="_compute_applicable_tracking_ids")
     purchase_tracking_id = fields.Many2one('purchase.tracking', "Purchase Tracking", copy=False)
+
+    def action_picking_send(self):
+        self.ensure_one()
+        if not self.carrier_tracking_url:
+            raise UserError(
+                _("Your delivery method has no redirect on courier provider's website to track this order.")
+            )
+        template_id = self.env.ref("bista_purchase.email_template_delivery_tracking")
+        ctx = dict(self.env.context or {})
+        try:
+            compose_form_id = self.env.ref("mail.email_compose_message_wizard_form").id
+        except ValueError:
+            compose_form_id = False
+        ctx.update(
+            {
+                "default_model": "stock.picking",
+                "active_model": "stock.picking",
+                "active_id": self.id,
+                "default_res_id": self.id,
+                "default_use_template": bool(template_id.id),
+                "default_template_id": template_id.id,
+                "default_composition_mode": "comment",
+                "default_partner_ids": self.partner_id.ids,
+                "custom_layout": "mail.mail_notification_paynow",
+                "force_email": True,
+            }
+        )
+        return {
+            "name": _("Compose Email"),
+            "type": "ir.actions.act_window",
+            "view_mode": "form",
+            "res_model": "mail.compose.message",
+            "views": [(compose_form_id, "form")],
+            "view_id": compose_form_id,
+            "target": "new",
+            "context": ctx,
+        }
 
     def write(self, vals):
         res = super(StockPicking, self).write(vals)

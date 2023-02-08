@@ -49,6 +49,10 @@
                 ('date_deadline', '=', False)],'readonly': [('state', '=', 'done')]} </attribute>
             </xpath>
             <button name="action_open_label_layout" position="replace" />
+            <button name="action_confirm" position="before">
+                <button name="action_picking_send" string="Send By Email" type="object" class="oe_highlight"
+                    attrs="{'invisible': ['|', '|', ('carrier_tracking_ref', '=', False), ('carrier_id', '=', False), ('delivery_type', '=', 'grid')]}" />
+            </button>
         </field>
     </record>
 
