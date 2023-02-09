@@ -67,11 +67,11 @@ class SaleOrder(models.Model):
 
     def action_approval(self):
         if self.split_shipment and self.sale_multi_ship_qty_lines.filtered(
-            lambda sp: not sp.route_id and sp.product_id.type != "service"
+            lambda sp: not sp.route_id and sp.product_id.type != "service" and sp.state in ['draft', 'sent'] 
         ):
             raise ValidationError("Please set routes on shipment lines.")
         if not self.split_shipment and self.order_line.filtered(
-            lambda l: not l.route_id and l.product_id.type != "service"
+            lambda l: not l.route_id and l.product_id.type != "service" and l.state in ['draft', 'sent']
         ):
             raise ValidationError("Please set routes on order lines.")
         return super().action_approval()
@@ -160,7 +160,7 @@ class SaleOrder(models.Model):
                     "confirming the sale order.\n")
             if self.split_shipment and \
                 self.sale_multi_ship_qty_lines.filtered(
-                    lambda x: x.product_qty == 0):
+                    lambda x: x.product_qty == 0 and x.state in ['draft', 'sent'] ):
                 msg = _("Please enter shipping qty.")
 
         # COMMENTED AS ALL THE LINES SHOULD BE VERIFIED WAS STOPPING
@@ -182,7 +182,7 @@ class SaleOrder(models.Model):
         for order_line in order_lines:
             product_uom_qty = sum(order_line.mapped('product_uom_qty'))
             product_qty = sum(
-                order_line.sale_multi_ship_qty_lines.mapped('product_qty'))
+                order_line.sale_multi_ship_qty_lines.filtered(lambda l: l.state in ['draft', 'sent']).mapped('product_qty'))
             if self.split_shipment and product_uom_qty < product_qty:
                 product_name  = order_line.product_id.name
                 if order_line.product_id.product_template_attribute_value_ids:
@@ -205,7 +205,7 @@ class SaleOrder(models.Model):
         for order_line in order_lines:
             product_uom_qty = sum(order_line.mapped('product_uom_qty'))
             product_qty = sum(
-                order_line.sale_multi_ship_qty_lines.mapped('product_qty'))
+                order_line.sale_multi_ship_qty_lines.filtered(lambda l: l.state in ['draft', 'sent']).mapped('product_qty'))
             if self.split_shipment and product_uom_qty < product_qty:
                 product_name  = order_line.product_id.name
                 if order_line.product_id.product_template_attribute_value_ids:
@@ -332,11 +332,11 @@ class SaleOrder(models.Model):
                     not x.product_qty):
                 raise ValidationError("Please enter the shipment qty.")
             if self.split_shipment and self.sale_multi_ship_qty_lines.filtered(
-            lambda sp: not sp.route_id and sp.product_id.type != "service"
+            lambda sp: not sp.route_id and sp.product_id.type != "service" and sp.state in ['draft', 'sent']
             ):
                 raise ValidationError("Please set routes on shipment lines.")
             if not self.split_shipment and self.order_line.filtered(
-                lambda l: not l.route_id and l.product_id.type != "service"
+                lambda l: not l.route_id and l.product_id.type != "service" and l.state in ['draft', 'sent']
             ):
                 raise ValidationError("Please set routes on order lines.")
             order_lines = so.sale_multi_ship_qty_lines.filtered(
@@ -345,7 +345,7 @@ class SaleOrder(models.Model):
             for order_line in order_lines:
                 product_uom_qty = sum(order_line.mapped('product_uom_qty'))
                 product_qty = sum(
-                    order_line.sale_multi_ship_qty_lines.mapped('product_qty'))
+                    order_line.sale_multi_ship_qty_lines.filtered(lambda l: l.state in ['draft', 'sent']).mapped('product_qty'))
                 if self.split_shipment and product_uom_qty < product_qty:
                     product_name  = order_line.product_id.name
                     if order_line.product_id.product_template_attribute_value_ids:
