@@ -70,7 +70,7 @@
             </td>
             <td class="text-right" name="td_bp_price" style="border-bottom: 1px solid black;">
                 <div>
-                    <span t-field="order_line.disc_price_unit"/>
+                    <span t-field="order_line.price_unit"/>
                 </div>
             </td>
             <td class="text-right bg-light" name="td_total" style="border-bottom: 1px solid black;">

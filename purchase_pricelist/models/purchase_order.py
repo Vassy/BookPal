@@ -154,6 +154,7 @@ class PurchaseOrderLine(models.Model):
             )
             if self.pricelist_id.discount_policy == "with_discount":
                 self.before_disc_price_unit = price
+                self.price_unit = price
             else:
                 discount = max(0, (seller.price - price) * 100 / seller.price)
         self.discount = discount
@@ -199,6 +200,7 @@ class PurchaseOrderLine(models.Model):
             )
             if seller.vendor_pricelist_id.discount_policy == "with_discount":
                 res["before_disc_price_unit"] = price
+                res["price_unit"] = price
             else:
                 discount = max(
                     0, (res.get("price_unit") - price) * 100 / res.get("price_unit")
