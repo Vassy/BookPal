@@ -171,9 +171,10 @@ class SaleOrderVts(models.Model):
         return operation_detail_id
 
     def bigcommerce_shipping_address_api_method(
-            self, order=False, bigcommerce_store_id=False):
+            self, order=False, bigcommerce_store_id=False, api_url=False):
         """Bigcommerce shipping_address api_method."""
-        api_url = order.get('shipping_addresses').get('url')
+        if not api_url:
+            api_url = order.get('shipping_addresses').get('url')
         auth_token = bigcommerce_store_id and \
             bigcommerce_store_id.bigcommerce_x_auth_token
         try:
@@ -370,9 +371,7 @@ class SaleOrderVts(models.Model):
                                     zip = order.get('billing_address').get('zip')
 
                                     total_tax = order.get('total_tax')
-                                    customerId = bigcommerce_store_id.\
-                                        bc_customer_prefix + \
-                                        "_" + str(order.get('customer_id'))
+                                    customerId = str(order.get('customer_id')) #bigcommerce_store_id.bc_customer_prefix + "_" +
                                     carrier_id = self.env['delivery.carrier'].\
                                         search(
                                         [('is_bigcommerce_shipping_method',
@@ -410,9 +409,7 @@ class SaleOrderVts(models.Model):
                                             'name': "%s %s (Guest)" % (
                                                 first_name, last_name),
                                             'bigcommerce_customer_id':
-                                            bigcommerce_store_id.
-                                            bc_customer_prefix +
-                                            str(big_commerce_order_id),
+                                            str(big_commerce_order_id),#bigcommerce_store_id.bc_customer_prefix +
                                             'parent_id': partner_parent_id and
                                             partner_parent_id.id
                                         })
@@ -680,19 +677,19 @@ class SaleOrderVts(models.Model):
                     'description': product_bigcommerce_id,
                     'company_id': self.env.user.company_id.id,
                     'big_commerce_tax': total_tax}
-            order_line = self.env['sale.order.line'].search(
+            sale_order_line = self.env['sale.order.line'].search(
                 [('order_id', '=', order_id.id), ('product_id', '=', product_id.id),
                  ('product_uom_qty', '=', float(vals.get('order_qty')))])
             order_line_vals = self.create_sale_order_line_from_bigcommerce(vals)
-            if not order_line:
-                order_line = self.env['sale.order.line'].create(order_line_vals)
+            if not sale_order_line:
+                sale_order_line = self.env['sale.order.line'].create(order_line_vals)
                 _logger.info("Sale Order line Created".format(
-                    order_line and order_line.product_id and order_line.product_id.name))
-                response_msg = "Sale order line created %s" % order_line.product_id.name
+                    sale_order_line and sale_order_line.product_id and sale_order_line.product_id.name))
+                response_msg = "Sale order line created %s" % sale_order_line.product_id.name
                 self.create_bigcommerce_operation_detail('order', 'import', '', '', operation_id, warehouse_id, False,
                                                          response_msg)
             else:
-                order_line_vals.update({'order_line.big_commerce_tax': total_tax})
+                order_line_vals.update({'big_commerce_tax': total_tax})
                 order_line.write(order_line_vals)
                 _logger.info("Sale Order line Updated".format(
                     order_line and order_line.product_id and order_line.product_id.name))

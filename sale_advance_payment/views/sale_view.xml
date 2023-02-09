@@ -14,16 +14,15 @@
                     attrs="{'invisible': [('state', 'in', ['draft', 'sent','quote_confirm', 'quote_approval','done','cancel'])]}"
                 />
             </button>
-            <notebook position="inside">
-                <page string="Payment advances" groups="account.group_account_invoice">
-                    <field
-                        name="account_payment_ids"
-                        nolabel="1"
-                        colspan="4"
-                        context="{'form_view_ref': 'account.view_account_payment_form','tree_view_ref': 'account.view_account_payment_tree'}"
-                    />
-                </page>
-            </notebook>
+            <xpath expr="//notebook//page[@name='payment_details']" position="inside">
+                <separator string="Payment Details"/>
+                <field
+                    name="account_payment_ids"
+                    nolabel="1"
+                    colspan="4"
+                    context="{'form_view_ref': 'account.view_account_payment_form','tree_view_ref': 'account.view_account_payment_tree'}"
+                />
+            </xpath>
             <!-- Bug #18924 - Hide Residual Amount -->
             <!-- <field name="tax_totals_json" position="after">
                 <div class="oe_subtotal_footer_separator oe_inline o_td_label">

@@ -6,9 +6,7 @@
     'summary': 'Manage Sale',
     'website': 'http://www.bistasolutions.com',
     'license': 'AGPL-3',
-    'depends': ['contacts',
-                'bista_sale_multi_ship',
-                'bista_bigcommerce_extend',
+    'depends': ['bista_sale_multi_ship',
                 'sale_margin',  # change margin string
                 'stock_dropshipping',
                 # added dpendancy for compute picking based on dropshipping
@@ -21,13 +19,12 @@
         ]
     },
     'data': [
-        'security/ir.model.access.csv',
         'data/data.xml',
         'report/sale.xml',
-        # 'report/sale_delivery_report.xml',
+        'security/ir.model.access.csv',
+        'security/security_view.xml',
         'views/artwork_status_view.xml',
         'views/sale_order_view.xml',
-        'views/stock_picking_view.xml',
         'views/white_glove_type_view.xml',
         'views/journal_customization_view.xml',
         'views/death_type_view.xml',

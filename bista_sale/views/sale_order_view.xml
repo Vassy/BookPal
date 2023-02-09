@@ -100,8 +100,6 @@
                         </group>
                     </group>
                 </page>
-            </xpath>
-            <xpath expr="//notebook/page[@name='order_details']" position="after">
                 <page string="Order Notes" name="order_notes">
                     <sheet>
                         <group>
@@ -115,15 +113,13 @@
                             <group>
                                 <field name="white_glove_id" options="{'no_create': True, 'no_open': True}"/>
                                 <field name="ce_notes" class="bp_text_field"/>
-                                <field name="payment_notes" class="bp_text_field"/>
+                                
                                 <field name="am_notes" class="bp_text_field"/>
                                 <field name="ce_ops_acct_notes" class="bp_text_field"/>
                             </group>
                         </group>
                     </sheet>
                 </page>
-            </xpath>
-            <xpath expr="//notebook/page[@name='order_notes']" position="after">
                 <page name="journal_details" string="Journal Details">
                     <group>
                         <group name="journal_details">
@@ -144,8 +140,6 @@
                         </group>
                     </group>
                 </page>
-            </xpath>
-            <xpath expr="//notebook/page[@name='journal_details']" position="after">
                 <page name="shipping_requirement" string="Shipping Requirements">
                     <group>
                         <group name="shipping_details">
@@ -158,8 +152,6 @@
                         </group>
                     </group>
                 </page>
-            </xpath>
-            <xpath expr="//notebook/page[@name='shipping_requirement']" position="after">
                 <page string="Fulfillment Project" name="project_fulfilment_trac">
                     <group>
                         <group name="project_fulfilment_tracking">
@@ -184,20 +176,17 @@
                         </group>
                     </group>
                 </page>
-            </xpath>
-            <xpath expr="//notebook/page[@name='project_fulfilment_trac']" position="after">
-                <page string="Payment">
+                <page string="Billing &amp; Payment Details" name="payment_details">
                     <group>
                         <group name="payment_info">
                             <field name="billing_notes" class="bp_text_field"/>
+                            <field name="payment_notes" class="bp_text_field"/>
                         </group>
                         <group>
                             <field name="placed_from_ip"/>
                         </group>
                     </group>
                 </page>
-            </xpath>
-            <xpath expr="//notebook/page[last()]" position="after">
                 <page name='best_seller_report' string='Best Seller Report'>
                     <group>
                         <field name="is_report"/>
@@ -215,6 +204,10 @@
                     <field name="weight_uom_name" readonly="1" />
                 </div>
             </xpath>
+            <xpath expr="//notebook//page[@name='optional_products']" position="attributes">
+                <attribute name="groups">bista_sale.show_optional_product</attribute>
+            </xpath>
+            
         </field>
     </record>
 
@@ -259,6 +252,7 @@
                 <attribute name="string">Profit</attribute>
                 <attribute name="readonly">1</attribute>
                 <attribute name="force_save">1</attribute>
+                <attribute name="widget">monetary</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree//field[@name='margin_percent']" position="attributes">
                 <attribute name="string">Profit(%)</attribute>
@@ -269,6 +263,7 @@
             <xpath expr="//group[@name='sale_total']//field[@name='margin']" position="attributes">
                 <attribute name="readonly">1</attribute>
                 <attribute name="force_save">1</attribute>
+                <attribute name="widget">monetary</attribute>
             </xpath>
             <xpath expr="//group[@name='sale_total']//field[@name='margin_percent']" position="attributes">
                 <attribute name="string"> Profit(%) </attribute>

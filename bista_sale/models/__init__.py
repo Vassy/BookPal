@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from . import sale_order
-from . import stock_move
 from . import white_glove_type
 from . import artwork_status
 from . import death_type
