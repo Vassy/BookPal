@@ -113,7 +113,7 @@
                                 <field name="product_use" class="bp_text_field"/>
                             </group>
                             <group>
-                                <field name="white_glove_id"/>
+                                <field name="white_glove_id" options="{'no_create': True, 'no_open': True}"/>
                                 <field name="ce_notes" class="bp_text_field"/>
                                 <field name="payment_notes" class="bp_text_field"/>
                                 <field name="am_notes" class="bp_text_field"/>

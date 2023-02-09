@@ -100,7 +100,7 @@
         </record>
         <!-- white.glove.type -->
         <record id="white_glove_type" model="white.glove.type">
-            <field name="code">0</field>
+            <field name="code">AA</field>
             <field name="name">Author Event</field>
         </record>
      

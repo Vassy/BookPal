@@ -283,10 +283,9 @@ class PurchaseOrder(models.Model):
         """Create Purchase Order Approval History """
         rec = super(PurchaseOrder, self).create(vals_list)
         white_glove = self.env['white.glove.type'].search([
-            ('code', '=', 0),
-            ('name', '=', 'Author Event')])
+            ('code', '=', 'AA')])
         if rec.origin:
-            so_ids = [so_rec for so in rec.origin.split(',') if (so_rec :=self.env['sale.order'].search([('name', '=', so)]))]
+            so_ids = [so_rec for so in rec.origin.split(',') if (so_rec := self.env['sale.order'].search([('name', '=', so)]))]
             flag = any(so_id.white_glove_id == white_glove for so_id in so_ids)
             rec.order_notes = '\n'.join(so_id.order_notes for so_id in so_ids if so_id.order_notes)
             rec.name += " " + "-" + " " + "AA" if flag else ""

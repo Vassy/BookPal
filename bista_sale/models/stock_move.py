@@ -21,3 +21,4 @@ class StockMoveLine(models.Model):
 
     publisher_id = fields.Char(
         related="product_id.publisher_id", string="Publisher")
+    demand_qty = fields.Float(related="move_id.product_uom_qty", store=True, readonly=True)
