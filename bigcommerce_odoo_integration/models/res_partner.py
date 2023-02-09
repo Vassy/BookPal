@@ -15,6 +15,7 @@ class ResPartner(models.Model):
     is_available_in_bigcommerce = fields.Boolean(string='Is Exported to BigCommerce', default=False, copy=False)
     bigcommerce_customer_group_id = fields.Many2one('bigcommerce.customer.group', string="Bigcommerce Customer Group")
     bc_companyname = fields.Char(string='BC Company Name')
+    shipping_address_id = fields.Char(string='Shipping Address API ID')
 
     def create_bigcommerce_operation(self, operation, operation_type, bigcommerce_store_id, log_message, warehouse_id):
         vals = {
