@@ -13,10 +13,10 @@ class PurchaseOrder(models.Model):
         store=True,
     )
     without_disc_amount_untaxed = fields.Monetary(
-        string="Without Untaxed Amount", store=True, compute="_amount_all"
+        string="Amount Untaxed (Without Disc.)", store=True, compute="_amount_all"
     )
     total_discount_amount = fields.Monetary(
-        string="Total Discount Amount", store=True, compute="_amount_all"
+        string="Discount", store=True, compute="_amount_all"
     )
 
     @api.onchange("partner_id")
@@ -71,12 +71,7 @@ class PurchaseOrderLine(models.Model):
     _inherit = "purchase.order.line"
 
     pricelist_id = fields.Many2one("product.pricelist", "Pricelist")
-    before_disc_price_unit = fields.Float(
-        string="Cover Price",
-        # store=True,
-        # compute="_compute_disc_price_unit",
-        digits="Product Price",
-    )
+    before_disc_price_unit = fields.Float(string="Cover Price", digits="Product Price")
     discount = fields.Float(string="Discount (%)", digits="Discount")
     without_disc_price_subtotal = fields.Monetary(
         compute="_compute_amount", string="Without Disc. Subtotal", store=True
@@ -97,10 +92,10 @@ class PurchaseOrderLine(models.Model):
         res = super()._compute_amount()
         for line in self:
             vals = line._prepare_compute_all_values()
-            vals.update({"price_unit": line.price_unit})
+            vals.update({"price_unit": line.before_disc_price_unit})
             taxes = line.taxes_id.compute_all(**vals)
             line_data = {
-                "discount_amount": line.price_subtotal - taxes["total_excluded"],
+                "discount_amount": taxes["total_excluded"] - line.price_subtotal,
                 "without_disc_price_subtotal": taxes["total_excluded"],
             }
             line.update(line_data)
@@ -116,7 +111,7 @@ class PurchaseOrderLine(models.Model):
 
         if self.discount:
             return self.before_disc_price_unit * (1 - self.discount / 100)
-        return self.price_unit
+        return self.before_disc_price_unit
 
     @api.onchange("product_qty", "product_uom")
     def _onchange_quantity(self):

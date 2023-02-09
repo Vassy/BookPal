@@ -49,8 +49,8 @@
                 <field name="discount" />
             </xpath>
             <xpath expr="//field[@name='tax_totals_json']" position="before">
-                <field name="without_disc_amount_untaxed" colspan="2" string="Amount Untaxed (Without Disc.)" />
-                <field name="total_discount_amount" colspan="2" string="Discount" />
+                <field name="without_disc_amount_untaxed" colspan="2" />
+                <field name="total_discount_amount" colspan="2" />
             </xpath>
         </field>
     </record>
