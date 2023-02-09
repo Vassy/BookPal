@@ -113,24 +113,27 @@
                             <t t-esc="o.invoice_date_due" t-options='{"widget": "date"}'/>
                             <br/>
                         </t>
+                        <strong>Payment Status :</strong>
+                        <t t-esc="o.payment_state"/>
+                        <br/>
                         <strong>BookPal Account # :</strong>
                         <t t-esc="428475"/>
                         <br/>
                         <strong>Client PO Number:</strong>
                         <t t-esc="o.sale_order_id.client_order_ref"/>
                         <br/>
-                        <strong>Payment Terms:</strong>
-                        <t t-esc="o.invoice_payment_term_id.name"/>
-                        <br/>
-                        <strong>Salesperson:</strong>
-                        <t t-esc="o.invoice_user_id.name"/>
-                        <br/>
+<!--                        <strong>Payment Terms:</strong>-->
+<!--                        <t t-esc="o.invoice_payment_term_id.name"/>-->
+<!--                        <br/>-->
+<!--                        <strong>Salesperson:</strong>-->
+<!--                        <t t-esc="o.invoice_user_id.name"/>-->
+<!--                        <br/>-->
                     </t>
                 </t>
             </div>
         </xpath>
         <xpath expr="//thead" position="replace">
-            <thead style="border: 1px solid black; margin-top:20px;">
+            <thead style="border: 1px solid black; margin-top:20px;" class="t-head-class">
                 <span style="color: black; font-weight: bold; margin-bottom: 0px; margin-left: 5px; margin-top: 30px">
                     Product Details
                 </span>
@@ -140,20 +143,20 @@
                         <strong>SKU</strong>
                     </th>
                     <th class="text-center"
-                        style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;">
+                        style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black; ">
                         <strong>Title</strong>
                     </th>
                     <th class="text-center"
-                        style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;">
+                        style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;" >
                         <strong>Product Format</strong>
                     </th>
                     <th class="text-center"
-                        style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;">
+                        style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black; width:10%;">
                         <strong>Quantity</strong>
                     </th>
                     <t t-if="o.move_type == 'out_invoice'">
                         <th class="text-center"
-                            style="border-top: 1px solid black;border-bottom: 1px solid black; border-right: 1px solid black;">
+                            style="border-top: 1px solid black;border-bottom: 1px solid black; border-right: 1px solid black;width:10%;">
                             <strong>Unit Price</strong>
                         </th>
                     </t>
@@ -163,51 +166,57 @@
                             <strong>Cover</strong>
                         </th>
                         <th class="text-center "
-                            style="border-top: 1px solid black;border-bottom: 1px solid black; border-right: 1px solid black;">
+                            style="border-top: 1px solid black;border-bottom: 1px solid black; border-right: 1px solid black; width:10%">
                             <strong>Discount</strong>
                         </th>
                         <th class="text-center text-danger"
-                            style="border-top: 1px solid black;border-bottom: 1px solid black; border-right: 1px solid black;">
+                            style="border-top: 1px solid black;border-bottom: 1px solid black; border-right: 1px solid black; width:10%;">
                             <strong>BP Price</strong>
+                        </th>
+                        <th class="text-center"
+                            style="border-top: 1px solid black;border-bottom: 1px solid black; border-right: 1px solid black; width:15%">
+                            <strong>Total</strong>
                         </th>
                     </t>
                     <th name="th_taxes" style="display:none !important;"
                         t-attf-class="text-left {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
                         <span>Taxes</span>
                     </th>
-                    <th class="text-center"
-                        style="border-top: 1px solid black;border-bottom: 1px solid black; border-right: 1px solid black;">
-                        <strong>Total</strong>
-                    </th>
+                    <t t-if="o.move_type == 'out_invoice'">
+                        <th class="text-center"
+                            style="border-top: 1px solid black;border-bottom: 1px solid black; border-right: 1px solid black; width:15%;">
+                            <strong>Total</strong>
+                        </th>
+                    </t>
                 </tr>
             </thead>
         </xpath>
         <xpath expr="//t[@t-if='not line.display_type']" position="replace">
             <t t-if="not line.display_type">
-                <td id="td_default_code" class="text-left"
+                <td id="td_default_code" class="text-left td_style"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-left: 1px solid black;border-top: 1px solid black;">
-                    <span t-field="line.product_id.isbn"/>
+                    <span t-field="line.product_id.default_code"/>
                 </td>
                 <td id="product"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
                     <span t-field="line.name"/>
                 </td>
                 <td class="text-center" name="td_format"
-                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; ">
+                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
                     <span t-field="line.product_id.product_format"/>
                 </td>
-                <td class="text-right"
-                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
+                <td class="text-center"
+                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; ">
                     <span t-field="line.quantity"/>
                 </td>
                 <t t-if="o.move_type == 'out_invoice'">
-                    <td class="text-right" name="td_cover"
+                    <td class="text-center" name="td_cover"
                         style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
                         <span t-field="line.sale_line_ids.discounted_price" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                     </td>
                 </t>
                 <t t-if="o.move_type == 'in_invoice'">
-                    <td class="text-right" name="td_cover"
+                    <td class="text-center" name="td_cover"
                         style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
                         <span t-field="line.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                     </td>
@@ -221,29 +230,36 @@
                         style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
                         <span t-field="line.purchase_line_id.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                     </td>
+                    <td class="text-right"
+                        style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; margin: auto;">
+                        <span t-field="line.price_subtotal"
+                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                    </td>
                 </t>
                 <td t-attf-class="text-left {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}"
                     style="display:none !important;">
                     <span t-esc="', '.join(map(lambda x: (x.description or x.name), line.tax_ids))" id="line_tax_ids"/>
                 </td>
 
-                <td class="text-right"
-                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; margin: auto; ">
-                    <span t-field="line.price_subtotal"
-                          t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                </td>
+                <t t-if="o.move_type == 'out_invoice'">
+                    <td class="text-right"
+                        style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; margin: auto; ">
+                        <span t-field="line.price_subtotal"
+                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                    </td>
+                </t>
             </t>
         </xpath>
         <xpath expr="//table[@name='invoice_line_table']" position="after">
             <div>
-                <table style="border: 1px solid black; margin-left: auto; width:25%;">
+                <table style="border: 1px solid black; margin-left: auto; width:35%; height:150px; font-size:14px;">
                     <t t-if="o.move_type == 'in_invoice'">
                         <tr class="border-black o_subtotal">
-                            <td style="border-left: 1px solid black;  width: 111px;padding-left:10px;">
+                            <td style="border-left: 1px solid black;width:57.16%; font-size: 15px; padding-left: 10px;">
                                 <strong>Total W/D</strong>
                             </td>
                             <td class="text-right"
-                                style=" border-left: 1px solid black; border-right: 1px solid black; margin: auto; padding-right:8px;">
+                                style=" border-left: 1px solid black;  margin: auto;" >
                                 <!--                        <t t-esc="o.line_ids.purchase_order_id.without_disc_amount_untaxed"/>-->
                                 <t t-foreach="request.env['purchase.order'].sudo().search([('name', '=', o.invoice_origin)])"
                                    t-as="purchase">
@@ -257,44 +273,79 @@
                                 <strong>Discount</strong>
                             </td>
                             <td class="text-right" style="padding-right:8px;border-left: 1px solid black;border-right: 1px solid black;">
-                                <span t-esc="o.invoice_line_ids.purchase_order_id.total_discount_amount"
+                                <strong t-esc="o.invoice_line_ids.purchase_order_id.total_discount_amount"
                                       t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                             </td>
                         </tr>
+                        <tr class="border-black o_subtotal">
+                            <td style="padding-left:10px; ">
+                                <strong>Subtotal</strong>
+                            </td>
+                            <td class="text-right" style="border-left: 1px solid black;">
+                                <strong t-field="o.amount_untaxed"/>
+                            </td>
+                        </tr>
+                        <tr class="border-black o_subtotal">
+                            <td style="padding-left:10px;">
+                                <strong class="text-right">Tax</strong>
+                            </td>
+                            <td class="text-right" style="border-left: 1px solid black;">
+                                <strong t-field="o.amount_tax"/>
+                            </td>
+                        </tr>
+                        <tr class="border-black o_subtotal">
+                            <td style="padding-left:10px;">
+                                <strong class="text-right">Shipping</strong>
+                            </td>
+                            <td class="text-right" style="border-left: 1px solid black;">
+                                <strong t-esc="0.0" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black; padding-left:10px;">
+                                <strong class="border-black o_subtotal;text-right">Total Due</strong>
+                            </td>
+                            <td style="border-top: 1px solid black; padding-left:10px;"
+                                class="text-right">
+                                <strong t-field="o.amount_total"/>
+                            </td>
+                        </tr>
                     </t>
-                    <tr class="border-black o_subtotal">
-                        <td style="padding-left:10px;">
-                            <strong>Subtotal</strong>
-                        </td>
-                        <td class="text-right" style="border-left: 1px solid black; padding-right:8px;">
-                            <span t-field="o.amount_untaxed"/>
-                        </td>
-                    </tr>
-                    <tr class="border-black o_subtotal">
-                        <td style="padding-left:10px;">
-                            <strong class="text-right">Tax</strong>
-                        </td>
-                        <td class="text-right" style="border-left: 1px solid black; padding-right:8px;">
-                            <span t-field="o.amount_tax"/>
-                        </td>
-                    </tr>
-                    <tr class="border-black o_subtotal">
-                        <td style="padding-left:10px;">
-                            <strong class="text-right">Shipping</strong>
-                        </td>
-                        <td class="text-right" style="border-left: 1px solid black; padding-right:8px;">
-                            <span t-esc="0.0" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black; padding-left:10px;">
-                            <strong class="border-black o_subtotal;text-right">Total Due</strong>
-                        </td>
-                        <td style="border-top: 1px solid black; padding-left:10px;padding-right:8px;"
-                            class="text-right">
-                            <strong t-field="o.amount_total"/>
-                        </td>
-                    </tr>
+                    <t t-if="o.move_type == 'out_invoice'">
+                        <tr class="border-black o_subtotal">
+                            <td style="padding-left:10px; width:57.16%; font-size: 15px;">
+                                <strong>Subtotal</strong>
+                            </td>
+                            <td class="text-right" style="border-left: 1px solid black; padding-right:8px;">
+                                <strong t-field="o.amount_untaxed"/>
+                            </td>
+                        </tr>
+                        <tr class="border-black o_subtotal">
+                            <td style="padding-left:10px;">
+                                <strong class="text-right">Tax</strong>
+                            </td>
+                            <td class="text-right" style="border-left: 1px solid black; padding-right:8px;">
+                                <strong t-field="o.amount_tax"/>
+                            </td>
+                        </tr>
+                        <tr class="border-black o_subtotal">
+                            <td style="padding-left:10px;">
+                                <strong class="text-right">Shipping</strong>
+                            </td>
+                            <td class="text-right" style="border-left: 1px solid black; padding-right:8px;">
+                                <strong t-esc="0.0" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black; padding-left:10px;">
+                                <strong class="border-black o_subtotal;text-right">Total Due</strong>
+                            </td>
+                            <td style="border-top: 1px solid black; padding-left:10px;padding-right:8px;"
+                                class="text-right">
+                                <strong t-field="o.amount_total"/>
+                            </td>
+                        </tr>
+                    </t>
                 </table>
             </div>
         </xpath>
@@ -319,18 +370,19 @@
 <!--        <xpath expr="//div[@id='total']/div/table" position="attributes">-->
 <!--            <attribute name="style">width: 50.9% !important; margin-left: 49.2% !important;</attribute>-->
 <!--        </xpath>-->
-        <!--        <xpath expr="//table[@name='invoice_line_table']" position="attributes">-->
-        <!--            <attribute name="style">margin-bottom: 0rem; margin-top: 5px;</attribute>-->
-        <!--        </xpath>-->
+        <xpath expr="//table[@name='invoice_line_table']" position="attributes">
+            <attribute name="style">margin-bottom: 0rem;</attribute>
+        </xpath>
         <xpath expr="//div[@id='informations']" position="replace"/>
         <xpath expr="//h2" position="replace"/>
         <xpath expr="//div[hasclass('page')]" position="attributes">
             <attribute name="style">margin-top: 50px;</attribute>
         </xpath>
         <xpath expr="//div[@id='total']" position="replace"/>
-<!--         <xpath expr="//table[@name='invoice_line_table']" position="attributes">-->
-<!--            <attribute name="style">margin-bottom: 0px;</attribute>-->
-<!--        </xpath>-->
+         <xpath expr="//tbody[hasclass('invoice_tbody')]" position="attributes">
+<!--         <xpath expr="//tbody[hasclass='invoice_line_table']" position="attributes">-->
+            <attribute name="style">font-size:14px !important;</attribute>
+        </xpath>
     </template>
 
 </odoo>
