@@ -156,8 +156,8 @@ class SaleOrder(models.Model):
                 lambda msl: msl.partner_id.state != 'verified')
             if self.split_shipment and verified_shipment_lines:
                 msg = _(
-                    "Please verfiy the shipment details before "
-                    "confirming the sale order.\n")
+                    "Please verify the shipment details before "
+                    "approving the sale order.\n")
             if self.split_shipment and \
                 self.sale_multi_ship_qty_lines.filtered(
                     lambda x: x.product_qty == 0 and x.state in ['draft', 'sent'] ):
