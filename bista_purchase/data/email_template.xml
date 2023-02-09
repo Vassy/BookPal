@@ -108,7 +108,7 @@
                     <br/>
                     - If you have any remaining items, we'll send additional tracking once those ship.
                     <br/><br/><br/>
-                    <span style="font-weight: bold;">Shipping To:</span>
+                    <span style="font-weight: bold;">Shipped To:</span>
                     <br/>
                     <span t-out="object.order_id.dest_address_id.name"/>
                     <br/>
@@ -135,14 +135,14 @@
                     <br/><br/>
                     <table style="min-width: 590px;" width="590">
                         <tr>
-                            <th>Item #</th>
-                            <th>Description</th>
-                            <th>QTY</th>
+                            <th style="border-bottom: 1px solid black;">Item #</th>
+                            <th style="border-bottom: 1px solid black;">Description</th>
+                            <th style="border-bottom: 1px solid black;">QTY</th>
                         </tr>
                         <tr t-foreach="object.tracking_line_ids" t-as="tracking">
-                            <td style="border-top: 1px solid black;"><span t-out="tracking.default_code" /></td>
-                            <td style="border-top: 1px solid black;"><span t-out="tracking.po_line_id.product_id.name" /></td>
-                            <td style="border-top: 1px solid black;"><span t-out="tracking.ship_qty" /></td>
+                            <td style="border-bottom: 1px solid black;"><span t-out="tracking.default_code" /></td>
+                            <td style="border-bottom: 1px solid black;"><span t-out="tracking.po_line_id.product_id.name" /></td>
+                            <td style="border-bottom: 1px solid black;"><span t-out="tracking.ship_qty" /></td>
                         </tr>
                     </table>
                     <br/><br/><br/>
@@ -177,7 +177,7 @@
                     <br/>
                     - If you have any remaining items, we'll send additional tracking once those ship.
                     <br/><br/><br/>
-                    <span style="font-weight: bold;">Shipping To:</span>
+                    <span style="font-weight: bold;">Shipped To:</span>
                     <br/>
                     <span t-out="object.partner_id.name"/>
                     <br/>
@@ -204,14 +204,14 @@
                     <br/><br/>
                     <table style="min-width: 590px;" width="590">
                         <tr>
-                            <th>Item #</th>
-                            <th>Description</th>
-                            <th>QTY</th>
+                            <th style="border-bottom: 1px solid black;">Item #</th>
+                            <th style="border-bottom: 1px solid black;">Description</th>
+                            <th style="border-bottom: 1px solid black;">QTY</th>
                         </tr>
                         <tr t-foreach="object.move_lines" t-as="move">
-                            <td style="border-top: 1px solid black;"><span t-out="move.product_id.default_code" /></td>
-                            <td style="border-top: 1px solid black;"><span t-out="move.product_id.name" /></td>
-                            <td style="border-top: 1px solid black;"><span t-out="move.product_uom_qty" /></td>
+                            <td style="border-bottom: 1px solid black;"><span t-out="move.product_id.default_code" /></td>
+                            <td style="border-bottom: 1px solid black;"><span t-out="move.product_id.name" /></td>
+                            <td style="border-bottom: 1px solid black;"><span t-out="move.product_uom_qty" /></td>
                         </tr>
                     </table>
                     <br/><br/><br/>
