@@ -1,0 +1,8 @@
+<odoo>
+    <data noupdate="1">
+        <!-- Added group to show optional producti in sale order -->
+        <record id="show_optional_product" model="res.groups">
+            <field name="name">Show Optional Product</field>
+        </record>
+    </data>
+</odoo>

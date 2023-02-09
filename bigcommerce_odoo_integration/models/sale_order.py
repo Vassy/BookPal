@@ -233,12 +233,13 @@ class SaleOrderVts(models.Model):
         operation_detail_id = bigcommerce_operation_details_obj.create(vals)
         return operation_detail_id
 
-    def bigcommerce_shipping_address_api_method(self, order=False, bigcommerce_store_id=False):
+    def bigcommerce_shipping_address_api_method(self, order=False, bigcommerce_store_id=False, api_url=False):
         """
         :return:  this method return shipping address of given order number
         :param order, bigcommerce_store_id
         """
-        api_url = order.get('shipping_addresses').get('url')
+        if not api_url:
+            api_url = order.get('shipping_addresses').get('url')
         auth_token = bigcommerce_store_id and bigcommerce_store_id.bigcommerce_x_auth_token
         try:
             if api_url:
@@ -683,6 +684,8 @@ class SaleOrderVts(models.Model):
                     process_message = "Getting an Error In Update Order procecss {}".format(e)
                     self.with_user(1).create_bigcommerce_operation_detail('order', 'import', '', '', operation_id,
                                                                           self.warehouse_id, True, process_message)
+                if carrier_id:
+                    self.set_delivery_line(carrier_id, base_shipping_cost)
                 process_message = "Sale Order Updated {0}".format(self.name)
                 _logger.info("Sale Order Updated {0}".format(self.name))
                 self.message_post(body="Order Successfully Updated From Bigcommerce")
@@ -701,13 +704,13 @@ class SaleOrderVts(models.Model):
                             vat_product_id = self.env.ref(
                                 'bigcommerce_odoo_integration.product_product_bigcommerce_tax')
                             taxline_vals = {'product_id': vat_product_id.id,
-                                            'price_unit': response_data.get('total_tax', 0.0),
+                                            'price_unit': order.get('total_tax', 0.0),
                                             'product_uom_qty': 1,
                                             'order_id': self.id, 'name': vat_product_id.name,
                                             'company_id': self.env.user.company_id.id
                                             }
                             vat_line = self.env['sale.order.line'].search(
-                                [('order_id', '=', self.id), ('product_id', '=', vat_product_id)])
+                                [('order_id', '=', self.id), ('product_id', '=', vat_product_id.id)])
                             if not vat_line:
                                 self.env['sale.order.line'].sudo().create(taxline_vals)
                             else:
@@ -716,7 +719,7 @@ class SaleOrderVts(models.Model):
                         else:
                             product_message = "Product Is not available in order : {0}!".format(self.name)
                             self.with_user(1).create_bigcommerce_operation_detail('order', 'update', req_data,
-                                                                                  response_data,
+                                                                                  order,
                                                                                   operation_id, self.warehouse_id, True,
                                                                                   product_message)
                 except Exception as e:
@@ -1038,7 +1041,8 @@ class SaleOrderVts(models.Model):
                    'X-Auth-Client': "{}".format(bigcommerce_auth_client)}
         ls = []
         #  attribute_id = self.order_line.product_id.attribute_line_ids.attribute_id.bigcommerce_attribute_id
-        for line in self.order_line:
+        vat_product_id = self.env.ref('bigcommerce_odoo_integration.product_product_bigcommerce_tax')
+        for line in self.order_line.filtered(lambda line:not line.is_delivery and line.product_id.id != vat_product_id.id):
             # variant_combination_ids = self.env['product.variant.combination'].search(
             #     [('product_product_id', '=', line.product_id.id)]).mapped('product_template_attribute_value_id')
             product_option = []
@@ -1056,8 +1060,8 @@ class SaleOrderVts(models.Model):
             data = {
                 "product_id": line.product_id.bigcommerce_product_id,
                 "quantity": line.product_uom_qty,
-                "price_inc_tax": line.price_total,
-                "price_ex_tax": line.price_subtotal,
+                "price_inc_tax": line.price_total/line.product_uom_qty,
+                "price_ex_tax": line.price_subtotal/line.product_uom_qty,
                 "product_options": product_option
             }
             ls.append(data)
@@ -1084,8 +1088,7 @@ class SaleOrderVts(models.Model):
                     self.partner_shipping_id.country_id and self.partner_shipping_id.country_id.name),
                 "email": "{}".format(self.partner_shipping_id.email)}],
             'products': ls}
-        if (
-                self.partner_id and self.partner_id.bigcommerce_customer_id) or self.partner_id.parent_id.bigcommerce_customer_id:
+        if (self.partner_id.bigcommerce_customer_id and self.partner_id.bigcommerce_customer_id != 'Guest User') or self.partner_id.parent_id.bigcommerce_customer_id:
             bigcommerce_customer_id = self.partner_id.bigcommerce_customer_id or self.partner_id.parent_id.bigcommerce_customer_id
             request_data.update({'customer_id': bigcommerce_customer_id})
         else:
@@ -1109,6 +1112,120 @@ class SaleOrderVts(models.Model):
             raise ValidationError("Getting Some Error {}".format(response.content))
             process_message = "Getting Some Error {}".format(response.content)
             self.create_bigcommerce_operation_detail('order', 'export', req_data, response_data,
+                                                     operation_id, self.warehouse_id, False,
+                                                     process_message)
+        response_data = response.json()
+        if not response_data.get('id'):
+            raise ValidationError("Order Id Not Found In Response")
+            self.create_bigcommerce_operation_detail('order', 'export', req_data, response_data,
+                                                     operation_id, self.warehouse_id, False,
+                                                     process_message)
+        self.big_commerce_order_id = response_data.get('id')
+        self.message_post(body="Successfully Order Export To odoo")
+        process_message = "Order Id Not Found"
+
+        return {
+            'effect': {
+                'fadeout': 'slow',
+                'message': "Yeah! Successfully Export Order .",
+                'img_url': '/web/static/src/img/smile.svg',
+                'type': 'rainbow_man',
+            }
+        }
+
+    def update_order_from_odoo_to_bc(self):
+        if not self.bigcommerce_store_id:
+            raise ValidationError("Please Select Bigcommerce Store")
+        bigcommerce_store_hash = self.bigcommerce_store_id.bigcommerce_store_hash
+        self.get_order_product_id()
+        ship_api_url = "{0}{1}/v2/orders/{2}/shipping_addresses".format(self.bigcommerce_store_id.bigcommerce_api_url, bigcommerce_store_hash,
+                                                self.big_commerce_order_id)
+        shipping_address_api_response = self.bigcommerce_shipping_address_api_method(order=False,
+                                                                                     bigcommerce_store_id=self.bigcommerce_store_id,
+                                                                                     api_url=ship_api_url)
+        api_url = "{0}{1}/v2/orders/{2}".format(self.bigcommerce_store_id.bigcommerce_api_url, bigcommerce_store_hash,self.big_commerce_order_id)
+        bigcommerce_auth_token = self.bigcommerce_store_id.bigcommerce_x_auth_token
+        bigcommerce_auth_client = self.bigcommerce_store_id.bigcommerce_x_auth_client
+        headers = {'Accept': 'application/json',
+                   'Content-Type': 'application/json',
+                   'X-Auth-Token': "{}".format(bigcommerce_auth_token),
+                   'X-Auth-Client': "{}".format(bigcommerce_auth_client)
+                   }
+        ls = []
+        vat_product_id = self.env.ref('bigcommerce_odoo_integration.product_product_bigcommerce_tax')
+        for line in self.order_line.filtered(lambda line: not line.is_delivery and line.product_id.id != vat_product_id.id):
+            # variant_combination_ids = self.env['product.variant.combination'].search(
+            #     [('product_product_id', '=', line.product_id.id)]).mapped('product_template_attribute_value_id')
+            product_option = []
+            if not line.product_id.bigcommerce_product_id:
+                self.env['product.template'].export_product_in_bigcommerce_from_product(self.bigcommerce_store_id,
+                                                                                        line.product_id.product_tmpl_id)
+            if line.product_id.bigcommerce_product_variant_id and line.product_id.product_template_attribute_value_ids:
+                # self._cr.execute("select product_template_attribute_value_id from product_variant_combination where product_product_id={}".format(line.product_id.id))
+                # res = self._cr.fetchall()
+                attribute_ids = line.product_id.product_template_attribute_value_ids
+                for attribute in attribute_ids:
+                    attribute_value_id = attribute.product_attribute_value_id.bigcommerce_value_id
+                    attribute_id = attribute.attribute_id.bigcommerce_attribute_id
+                    product_option.append({'id': attribute_id, "value": str(attribute_value_id)})
+            data = {
+                "product_id": line.product_id.bigcommerce_product_id,
+                "quantity": line.product_uom_qty,
+                "price_inc_tax": line.price_total/line.product_uom_qty,
+                "price_ex_tax": line.price_subtotal/line.product_uom_qty,
+                "product_options": product_option
+            }
+            if line.order_product_id:
+                data.update({"id": line.order_product_id})
+            ls.append(data)
+        request_data = {
+            'status_id': 1,
+            'billing_address': {
+                "first_name": "{}".format(self.partner_id and self.partner_id.name),
+                "street_1": "{}".format(self.partner_id and self.partner_id.street),
+                "city": "{}".format(self.partner_id and self.partner_id.city),
+                "state": "{}".format(self.partner_id and self.partner_id.state_id.name),
+                "zip": "{}".format(self.partner_id and self.partner_id.zip),
+                "country": "{}".format(self.partner_id and self.partner_id.country_id.name),
+                "email": "{}".format(self.partner_id and self.partner_id.email)},
+            'shipping_addresses': [{
+                "id":"{}".format(shipping_address_api_response.get('id')),
+                "first_name": "{}".format(self.partner_shipping_id.name or ""),
+                "street_1": "{}".format(self.partner_shipping_id.street or ""),
+                "street_2": "{}".format(self.partner_shipping_id.street2 or ""),
+                "city": "{}".format(self.partner_shipping_id.city or ""),
+                "state": "{}".format(
+                    self.partner_shipping_id.state_id and self.partner_shipping_id.state_id.name or ""),
+                "zip": "{}".format(self.partner_shipping_id.zip),
+                "country": "{}".format(
+                    self.partner_shipping_id.country_id and self.partner_shipping_id.country_id.name),
+                "email": "{}".format(self.partner_shipping_id.email)}],
+            'products': ls}
+
+        if (self.partner_id.bigcommerce_customer_id and self.partner_id.bigcommerce_customer_id != 'Guest User') or self.partner_id.parent_id.bigcommerce_customer_id:
+            bigcommerce_customer_id = self.partner_id.bigcommerce_customer_id or self.partner_id.parent_id.bigcommerce_customer_id
+            request_data.update({'customer_id': bigcommerce_customer_id})
+        else:
+            self.partner_id.export_customer_to_bigcommerce(bc_store_ids=self.bigcommerce_store_id)
+        operation_id = self.create_bigcommerce_operation('order', 'update', self.bigcommerce_store_id, 'Processing...',
+                                                         self.warehouse_id)
+        self._cr.commit()
+        try:
+            response = request(method="PUT", url=api_url, data=json.dumps(request_data), headers=headers)
+            _logger.info("Sending Post Request To {}".format(api_url))
+            response_data = response.json()
+            req_data = False
+            process_message = "Successfully Update Order {}".format(response_data)
+            self.create_bigcommerce_operation_detail('order', 'export', req_data, response_data,
+                                                     operation_id, self.warehouse_id, False,
+                                                     process_message)
+        except Exception as e:
+            _logger.info("Update Order Response {}".format(response.content))
+            raise ValidationError(e)
+        if response.status_code not in [200, 201]:
+            raise ValidationError("Getting Some Error {}".format(response.content))
+            process_message = "Getting Some Error {}".format(response.content)
+            self.create_bigcommerce_operation_detail('order', 'update', req_data, response_data,
                                                      operation_id, self.warehouse_id, False,
                                                      process_message)
         response_data = response.json()
@@ -1175,7 +1292,10 @@ class SaleOrderVts(models.Model):
                 for response in response:
                     _logger.info("1______________: {0}".format(response))
                     line_id = self.env['sale.order.line'].search([('order_id', '=', self.id), (
-                        'product_id.bigcommerce_product_id', '=', response.get('product_id'))])
+                        'product_id.bigcommerce_product_variant_id', '=', response.get('variant_id'))])
+                    if not line_id:
+                        line_id = self.env['sale.order.line'].search([('order_id', '=', self.id), (
+                            'product_id.bigcommerce_product_id', '=', response.get('product_id'))])
                     line_id.order_product_id = response.get('id')
                     _logger.info("2__________ : {0}".format(line_id.order_product_id))
                     self._cr.commit()

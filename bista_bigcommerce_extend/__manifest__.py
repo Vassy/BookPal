@@ -17,6 +17,7 @@
         'views/bigcommerce_configuration_view.xml',
         'views/bigcommerce_operation_view.xml',
         'views/sale_order_view.xml',
+        'views/stock_picking_view.xml',
     ],
     'installable': True,
     'application': True,
