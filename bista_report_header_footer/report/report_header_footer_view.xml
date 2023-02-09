@@ -44,7 +44,7 @@
             <div name="report_tagline">
                 <t t-out="report_tagline"/>
             </div>
-            <div class="pt-4" >
+            <div class="pt-5" >
                 <!-- This div ensures that the address is not cropped by the header. -->
                 <t t-call="bista_report_header_footer.custom_address_layout"/>
             </div>
@@ -57,11 +57,13 @@
                 <div  t-if="report_type == 'pdf'">
                     <span  style="margin-right: 15px;" t-field="company.partner_id.name"/>
                     |
-                    <span style="margin-right: 15px;margin-left:15px;" t-field="company.partner_id.street"/>
+                    <span style="margin-left:15px;" t-field="company.partner_id.street"/>
+                    ,
+                    <span style="margin-right: 15px;" t-field="company.partner_id.street2"/>
                     |
                     <span style="margin-left: 15px;" t-field="company.partner_id.city"/>
-                    <span t-field="company.partner_id.state_id.code"/>
                     ,
+                    <span t-field="company.partner_id.state_id.code"/>
                     <span style="margin-right: 15px;" t-field="company.partner_id.zip"/>
                     |
                     <span style="margin-left: 15px;margin-right: 15px;" t-field="company.partner_id.phone"/>
