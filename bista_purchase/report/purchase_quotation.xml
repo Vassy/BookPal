@@ -54,10 +54,9 @@
                             <t t-esc="o.name"/>
                         </strong>
                     </h4>
-                    <strong t-if="o.state in ['purchase','done','draft','sent']">Purchase Order Date:
+                    <strong t-if="o.state in ['purchase','done','draft','sent']">Date:
                         <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                     </strong>
-                    <br/>
                 </t>
                 <t t-set="custom_information_block">
                     <div>
@@ -97,9 +96,9 @@
                             <t t-esc="o.payment_term_id.name"/>
                             <br/>
                         </t>
-                        <!-- <strong>Shipping Method :</strong>
+                        <strong>Shipping Method :</strong>
                         <span>Free Delivery Method</span>
-                        <br/> -->
+                        <br/>
                         <t t-if="o.shipping_instructions">
                             <strong>Shipping Instructions :</strong>
                             <t t-esc="o.shipping_instructions.name"/>

@@ -49,7 +49,6 @@
                     <strong t-if="o.state in ['draft','sent']">Date:
                         <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
                     </strong>
-                    <br/>
                 </t>
                 <t t-if="o.dest_address_id">
                     <t t-set="information_block">
