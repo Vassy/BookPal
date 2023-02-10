@@ -9,10 +9,12 @@
                 <field name="sequence_code" invisible="1" />
             </field>
             <xpath expr="//field[@name='move_ids_without_package']/tree/field[@name='product_id']" position="after">
+                <field name="product_format" optional="show" />
                 <field name="publisher_id" attrs="{'column_invisible': [('parent.sequence_code', '!=', 'PICK')]}" />
             </xpath>
         </field>
     </record>
+
     <record id="bista_sale_view_stock_move_line_detailed_operation_tree_" model="ir.ui.view">
         <field name="name">bista.salestock.move.line.operations.tree.mrp</field>
         <field name="model">stock.move.line</field>
@@ -22,9 +24,11 @@
                 <field name="publisher_id" attrs="{'column_invisible': [('parent.sequence_code', '!=', 'PICK')]}" />
             </xpath>
             <field name="qty_done" position="before">
-                <field name="demand_qty" force_save="1"/>
+                <field name="demand_qty" force_save="1" />
             </field>
-
+            <field name="product_id" position="after">
+                <field name="product_format" optional="show" />
+            </field>
         </field>
     </record>
 </odoo>
