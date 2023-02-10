@@ -11,11 +11,13 @@
     'data': [
         # Views
         'security/ir.model.access.csv',
-        'views/configuration_view.xml',
-        'views/crm_lead_views.xml',
+
         'data/shipping_price_type_data.xml',
         'data/fullfillment_warehouse_data.xml',
-        'data/deal_source_data.xml'
+        'data/deal_source_data.xml',
+
+        'views/configuration_view.xml',
+        'views/crm_lead_views.xml',
     ],
     'installable': True,
     'auto_install': False

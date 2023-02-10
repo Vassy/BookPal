@@ -13,7 +13,7 @@ class ResPartner(models.Model):
     customer_service_email = fields.Char(string="Customer Service Email")
     customer_service_hours = fields.Char(string="Customer Service Hours")
     customer_service_phone = fields.Char(string="Customer Service Phone")
-    rep = fields.Char(string="Rep")
+    # rep = fields.Char(string="Rep")
     reviewed_date = fields.Date(string="Reviewed Date")
     account_number = fields.Char(string="Account Number")
     top_publisher = fields.Boolean(string="Top publisher")
