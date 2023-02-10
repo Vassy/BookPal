@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 import json
 import logging
@@ -739,3 +740,14 @@ class SaleOrderVts(models.Model):
                                                              False,
                                                              response_msg)
         self._cr.commit()
+
+
+class SaleOrderLine(models.Model):
+    _inherit = "sale.order.line"
+
+    product_format = fields.Char(related="product_id.product_format")
+
+class SaleMultiShipQtyLines(models.Model):
+    _inherit = "sale.multi.ship.qty.lines"
+
+    product_format = fields.Char(related="product_id.product_format")
