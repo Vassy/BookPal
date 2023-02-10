@@ -100,13 +100,14 @@
                     <t t-if="doc.state  in ['sale','pending_for_approval','credit_review','cancel','done']">
 <!--                        <strong>Order Date:</strong>-->
                             <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                        <br/>
                     </t>
-                    <br/>
                 </t>
                 <t t-set="report_tagline" >
-                    <div class="o_boxed_header" style="margin-top: 0px !important;">
-                        <div style="margin-left: 5rem !important;">
-                            <h5>Thank you for requesting this quote --Inspiration is just an order away!</h5>
+                    <div  style="margin-top: 0px !important;">
+                        <div  class="o_boxed_header" style="margin-left: 9rem !important; font-style: italic; font-size:14px;">
+                            <h5 style="margin-bottom: 0rem !important;">Thank you for requesting this quote --Inspiration is just an order away!</h5>
+                            <h5 style="margin-left: 7rem !important;">Please let us Know if you have any questions.</h5>
                         </div>
                     </div>
                 </t>
@@ -377,7 +378,7 @@
 <!--                    </span>-->
 <!--                </div>-->
                 <div name="footer_table">
-                    <table style="width:170pt; height:120pt; margin-left:200px;">
+                    <table style="width:190pt; height:120pt; margin-left:180px;">
                         <tr>
                             <td style="height:1px; color: black; padding-left:10px;"
                                 class="text-left">
@@ -463,26 +464,25 @@
         </xpath>
 
         <xpath expr="//p[@t-field='doc.note']" position="after">
-            <div>
-                <div>
-                    <div class="text-center" style="margin-top:10px;">
-                        <p class="mt-5" style="margin-left: 325px;width:26%; height:50pt;background-color:red;">
-                            <a t-att-href="doc.sudo().compute_customer_preview_url()" class="btn btn-link" role="button" style="margin-top:15px;">
-                                 <strong style="color: #FFFFFF;">Proceed to Checkout</strong>
-                            </a>
-                        </p>
-                    </div>
+            <div style="page-break-inside:avoid;">
+                <div class="text-center" style="margin-top:10px;">
+                    <p class="mt-5" style="margin-left: 325px;width:26%; height:50pt;background-color:red;">
+                        <a t-att-href="doc.sudo().compute_customer_preview_url()" class="btn btn-link" role="button"
+                           style="margin-top:15px;">
+                            <strong style="color: #FFFFFF;">Proceed to Checkout</strong>
+                        </a>
+                    </p>
                 </div>
-            </div>
-            <div class="text-center">
-                <img src='/bista_sale/static/src/img/payment_logo.png' style="max-height: 45px; " class="mt-0"/>
-            </div>
-            <div class="text-center" style="margin-top: -8px !important;">
-                    <span style="margin-bottom:0px;">ACH / Wire Instructions available upon request.</span>
-                     <div style="margin-top: -12px !important;">
-                    <strong >Interested in using a Purchase Order, click here:<a href=" https://bkp.al/PO" class="btn btn-link" role="button" style="margin-left:-10px;"> https://bkp.al/PO</a></strong>
-                     </div>
-            </div>
+                <div class="text-center">
+                    <img src='/bista_sale/static/src/img/payment_logo.png' style="max-height: 45px; " class="mt-0"/>
+                </div>
+                <div class="text-center" style="margin-top: -8px !important;">
+                        <span style="margin-bottom:0px;">ACH / Wire Instructions available upon request.</span>
+                         <div style="margin-top: -12px !important;">
+                        <strong >Interested in using a Purchase Order, click here:<a href=" https://bkp.al/PO" class="btn btn-link" role="button" style="margin-left:-10px;"> https://bkp.al/PO</a></strong>
+                         </div>
+                </div>
+           </div>
         </xpath>
         <xpath expr="//p[@t-field='doc.note']" position="replace"/>
         <xpath expr="//div[@name='so_total_summary']" position="after">
@@ -516,9 +516,11 @@
                     </div>
                 </div>
             </div>
-            <div style="margin-top:40px;" t-if="doc.note">
-                <strong style="border-bottom:solid 1px;">Order Terms and Conditions</strong>
-                <p class="mb-1" t-field="doc.note" style="margin-left: 50px;"/>
+            <div t-if="doc.note" style="page-break-inside:avoid;">
+                <h5 style="margin-top:50px;border-bottom:solid 1px;">Order Terms and Conditions</h5>
+                <div>
+                    <span class="mb4" t-field="doc.note" style="margin-left: 50px;"/>
+                </div>
             </div>
         </xpath>
 
