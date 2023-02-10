@@ -23,7 +23,8 @@ class ResPartner(models.Model):
 
     # Important Details
     source = fields.Char('Source')
-    referal_source = fields.Char('Referral Source')
+    referal_source = fields.Char('Referred By')
+    referring_organization = fields.Char('Referring Organization')
     source_notes = fields.Char('Source Notes')
     product_order_count = fields.Integer('Product Sale' , compute="_compute_sale_product_count")
     product_purchase_count = fields.Integer('Product Purchase', compute="_compute_purchase_product_count")
