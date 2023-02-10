@@ -43,6 +43,9 @@ class SaleOrderLine(models.Model):
                                       compute="current_product_onhand_qty")
     refund_qty = fields.Float("Refund Qty",
                               compute="compute_refund_invoice_qty")
+    industry_id = fields.Many2one('res.partner.industry',
+                                    related="order_partner_id.industry_id",
+                                    store=True)
 
     def get_return_quantity(self):
         for sline in self:

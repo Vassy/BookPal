@@ -11,6 +11,7 @@
                 <field name="order_id" optional="show"/>
                 <field name="date_order"/>
                 <field name="date_planned" string="Expected Receipt Date" optional="show"/>
+                <field name="industry_id"/>
                 <field name="product_id"/>
                 <field name="price_unit" string="Unit Price" optional="show" widget="monetary"/>
                 <field name="currency_id" optional="hide"/>

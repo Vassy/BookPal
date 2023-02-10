@@ -43,7 +43,8 @@
                     <field name="so_date"/>                   
                     <field name="order_expected_date" optional="hide" string="Expected Delivery"/>                   
                     <field name="order_po_ref" string="Customer/PO Ref"/>                   
-                    <field name="partner_country"/>                   
+                    <field name="partner_country"/>
+                    <field name="industry_id"/>                 
                     <field name="partner_state"/>                   
                     <field name="product_id" string="Product Name"/>    
                     <field name="discounted_price"/>
