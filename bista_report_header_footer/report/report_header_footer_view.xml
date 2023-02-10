@@ -44,7 +44,7 @@
             <div name="report_tagline">
                 <t t-out="report_tagline"/>
             </div>
-            <div class="pt-5" >
+            <div class="pt-1">
                 <!-- This div ensures that the address is not cropped by the header. -->
                 <t t-call="bista_report_header_footer.custom_address_layout"/>
             </div>
