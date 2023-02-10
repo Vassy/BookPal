@@ -8,7 +8,7 @@
             <form>
                 <sheet>
                     <group>
-                         <field name="code" />
+                         <field name="code" required="1"/>
                         <field name="name" />                      
                     </group>
                 </sheet>
@@ -21,7 +21,7 @@
         <field name="model">white.glove.type</field>
         <field name="arch" type="xml">
             <tree>
-                 <field name="code" />
+                 <field name="code" required="1"/>
                 <field name="name" />               
 
             </tree>
