@@ -9,7 +9,7 @@ class ProductPricelist(models.Model):
     used_for = fields.Selection(
         [("sale", "Sale"), ("purchase", "Purchase")], default="sale"
     )
-    on_order = fields.Boolean(string="On Order")
+    on_order = fields.Boolean(string="On Purchase Order")
     apply_on = fields.Selection(
         [("order_amount", "Order Amount"), ("order_qty", "Order Quantity")],
         string="Apply On",
@@ -17,6 +17,11 @@ class ProductPricelist(models.Model):
     product_pricelist_order_ids = fields.One2many(
         "product.pricelist.order", "pricelist_id", string="Items"
     )
+
+    discount_policy = fields.Selection([
+        ('with_discount', 'Discount included in the price'),
+        ('without_discount', 'Show public price & discount to the vendor')],
+        default='with_discount', required=True)
 
     @api.onchange("product_pricelist_order_ids")
     def onchange_product_pricelist_order_ids(self):
