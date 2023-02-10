@@ -6,8 +6,6 @@
         <field name="default" eval="False"/>
         <field name="disable_shrinking" eval="True"/>
         <field name="format">A4</field>
-        <field name="page_height">0</field>
-        <field name="page_width">0</field>
         <field name="orientation">Portrait</field>
         <field name="header_spacing">25</field>
         <field name="margin_top">28</field>
@@ -15,7 +13,7 @@
         <field name="margin_left">7</field>
         <field name="margin_right">7</field>
         <field name="header_line">False</field>
-        <field name="dpi">90</field>
+        <field name="dpi">115</field>
     </record>
     <template id="report_saleorder_document_extended"
               inherit_id="sale.report_saleorder_document">
@@ -104,8 +102,8 @@
                     </t>
                 </t>
                 <t t-set="report_tagline" >
-                    <div  style="margin-top: 0px !important;">
-                        <div  class="o_boxed_header" style="margin-left: 9rem !important; font-style: italic; font-size:14px;">
+                    <div class="o_boxed_header"  style="margin-top: 0px !important;">
+                        <div style="margin-left: 9rem !important; font-style: italic; font-size:14px;">
                             <h5 style="margin-bottom: 0rem !important;">Thank you for requesting this quote --Inspiration is just an order away!</h5>
                             <h5 style="margin-left: 7rem !important;">Please let us Know if you have any questions.</h5>
                         </div>
@@ -415,8 +413,6 @@
                                 class="text-left">
                                 <t t-if="doc.carrier_id">
                                     <strong class="text-left">Shipping</strong>
-                                    <br/>
-
                                     (<span style="font-size:14px; color: black;" t-field="doc.carrier_id"/>)
                                 </t>
                                 <t t-else="">
@@ -529,5 +525,6 @@
         <field name="print_report_name">
                 (object.state in ('draft','sent','quote_approval','quote_confirm') and 'Quotation - %s' % (object.name) or
                'Order - %s' % (object.name))</field>
+         <field name="paperformat_id" ref="bista_sale.paperformat_quotation_sale_report"/>
     </record>
 </odoo>
