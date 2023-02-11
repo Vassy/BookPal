@@ -30,6 +30,9 @@ class PurchaseOrderLine(models.Model):
          ('partial_received', 'Partially Received')],
         'Line Status',
         compute="_cal_line_status", store=True)
+    industry_id = fields.Many2one('res.partner.industry',
+                                    related="partner_id.industry_id",
+                                    store=True)
 
     @api.depends('qty_received', 'qty_shortclose', 'qty_remain_receive')
     def _cal_line_status(self):

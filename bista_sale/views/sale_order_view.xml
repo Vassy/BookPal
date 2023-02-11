@@ -72,8 +72,17 @@
             <xpath expr="//group[@name='utm_link']/field[@name='medium_id']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
+            <xpath expr="//group[@name='utm_link']/field[@name='campaign_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//group[@name='sale_reporting']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="string">Rep</attribute>
+            </xpath>
             <xpath expr="//notebook/page[@name='other_information']" position="after">
-                <page string="Order Details" name="order_details">
+                <page string="Source Details" name="order_details">
                     <group>
                         <group name="order_details">
                             <field name='refer_by_company'/>
@@ -94,8 +103,10 @@
                     <group>
                         <group string="Tracking" name="sale_reporting">
                             <group name="utm_link" colspan="2" class="mt-0">
+                                <field name="origin"/>
                                 <field name="medium_id" readonly="0"/>
                                 <field name="source_id" readonly="0"/>
+                                <field name="campaign_id"/>
                             </group>
                         </group>
                     </group>
@@ -206,6 +217,13 @@
             </xpath>
             <xpath expr="//notebook//page[@name='optional_products']" position="attributes">
                 <attribute name="groups">bista_sale.show_optional_product</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
+                <attribute name="string">Cover Price</attribute>
+                <attribute name="optional">show</attribute>
+                <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
+                <attribute name="widget">monetary</attribute>
             </xpath>
             
         </field>

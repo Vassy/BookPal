@@ -192,6 +192,13 @@ class SaleOrder(models.Model):
         url = base_url + '/my/orders/' + str(self.id) + "?" + access_token
         return url
 
+    @api.onchange('partner_id')
+    def onchange_partner_id(self):
+        super(SaleOrder, self).onchange_partner_id()
+        if self.partner_id:
+            self.refer_by_person = self.partner_id.referal_source
+            self.refer_by_company = self.partner_id.referring_organization
+
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"

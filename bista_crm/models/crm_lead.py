@@ -89,6 +89,7 @@ class CrmLead(models.Model):
     split_order_number = fields.Char(string='Number of Orders Split On')
     currency_id = fields.Many2one('res.currency', string="Currency",
                                   related='company_id.currency_id')
+    referring_organization = fields.Char('Referring Organization')
 
     def action_new_quotation(self):
         res = super(CrmLead, self).action_new_quotation()
@@ -123,6 +124,8 @@ class CrmLead(models.Model):
             'default_internal_note': self.description,
             'default_refer_by_person': self.referred,
             'default_project_description': self.project_details,
+            'default_refer_by_person': self.referred,
+            'default_refer_by_company': self.referring_organization,
             # 'default_carrier_id': self.carrier_id.id,
 
         })
@@ -131,21 +134,29 @@ class CrmLead(models.Model):
 
     @api.onchange('partner_id')
     def onchange_shipping_method_partner_id_to_crm(self):
+        print("\n\n ============== call unnati onchange -=================")
         """Oncnage shipping method.
 
         Partner shipping method values automatically fetched
         in crm shipping method
         """
-        if self.partner_id.property_delivery_carrier_id:
-            self.carrier_id = self.partner_id.property_delivery_carrier_id.id
+        if self.partner_id:
+            if self.partner_id.property_delivery_carrier_id:
+                self.carrier_id = self.partner_id.property_delivery_carrier_id.id
+            self.referred = self.partner_id.referal_source
+            self.referring_organization = self.partner_id.referring_organization
 
     def _prepare_customer_values(
             self, partner_name, is_company=False, parent_id=False):
+
         """Update carrier in partner from lead."""
         res = super(CrmLead, self)._prepare_customer_values(
             partner_name, is_company, parent_id)
         res.update({
             'property_delivery_carrier_id': self.carrier_id.id,
+            'referal_source': self.referred,
+            'referring_organization': self.referring_organization,
+
         })
         return res
 
