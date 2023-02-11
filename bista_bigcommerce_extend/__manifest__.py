@@ -16,6 +16,7 @@
         "bista_sale_multi_ship",
     ],
     "data": [
+        'security/ir.model.access.csv',
         "views/product_template.xml",
         "views/bigcommerce_configuration_view.xml",
         "views/bigcommerce_operation_view.xml",
@@ -23,6 +24,7 @@
         "views/stock_picking_view.xml",
         "views/account_move_views.xml",
         "views/purchase_views.xml",
+        "wizard/update_partner_view.xml",
     ],
     "installable": True,
     "application": True,

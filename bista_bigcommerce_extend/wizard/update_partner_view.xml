@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!--  form view of export operation-->
+    <record id="bigcommerce_operation_update_partner_form_view" model="ir.ui.view">
+        <field name="name">bc.operation.update.partner.form.view</field>
+        <field name="model">update.partner.wiz</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0">
+                <group>
+                    <field name="bigcommerce_store_ids" required="1" widget="many2many_tags"
+                           options='{"no_open": True, "no_create": True}'/>
+                    <separator string="Customers"/>
+                    <field name="partner_ids" widget="many2many" nolabel="1" default="active_ids"/>
+                </group>
+                <footer>
+                    <button string="Update" type="object" class="btn-primary" name="update_partner"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!--        action for form view of export operation-->
+    <record id="action_bc_update_partner_operation" model="ir.actions.act_window">
+        <field name="name">Update Customer from BC</field>
+        <field name="res_model">update.partner.wiz</field>
+        <field name="view_mode">form</field>
+        <field name="context"></field>
+        <field name="view_id" ref="bigcommerce_operation_update_partner_form_view"/>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">list,form</field>
+    </record>
+
+</odoo>
