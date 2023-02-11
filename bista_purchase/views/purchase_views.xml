@@ -443,7 +443,7 @@
     </record>
 
     <record id="purchase_line_status_action" model="ir.actions.act_window">
-        <field name="name">Purchase Line Status</field>
+        <field name="name">Review Order Status</field>
         <field name="res_model">purchase.line.status</field>
         <field name="view_mode">tree,form</field>
     </record>

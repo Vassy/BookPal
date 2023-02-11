@@ -147,7 +147,7 @@
             <field name="sequence">3</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_4">
-            <field name="name">Pending/In transient</field>
+            <field name="name">Pending/In Transient</field>
             <field name="sequence">4</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_5">
@@ -163,7 +163,7 @@
             <field name="sequence">7</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_8">
-            <field name="name">Return created</field>
+            <field name="name">Return Created</field>
             <field name="sequence">8</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_9">
