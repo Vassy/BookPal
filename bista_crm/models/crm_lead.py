@@ -89,7 +89,8 @@ class CrmLead(models.Model):
     split_order_number = fields.Char(string='Number of Orders Split On')
     currency_id = fields.Many2one('res.currency', string="Currency",
                                   related='company_id.currency_id')
-    referring_organization = fields.Char('Referring Organization')
+    referring_organization = fields.Many2one('res.partner', string='Referring Organization')
+    referred = fields.Many2one('res.partner', string='Referred By')
 
     def action_new_quotation(self):
         res = super(CrmLead, self).action_new_quotation()
@@ -129,12 +130,10 @@ class CrmLead(models.Model):
             # 'default_carrier_id': self.carrier_id.id,
 
         })
-
         return res
 
     @api.onchange('partner_id')
     def onchange_shipping_method_partner_id_to_crm(self):
-        print("\n\n ============== call unnati onchange -=================")
         """Oncnage shipping method.
 
         Partner shipping method values automatically fetched
@@ -154,9 +153,8 @@ class CrmLead(models.Model):
             partner_name, is_company, parent_id)
         res.update({
             'property_delivery_carrier_id': self.carrier_id.id,
-            'referal_source': self.referred,
-            'referring_organization': self.referring_organization,
-
+            'referal_source': self.referred and self.referred.id,
+            'referring_organization': self.referring_organization and self.referring_organization.id,
         })
         return res
 

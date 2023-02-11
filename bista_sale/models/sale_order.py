@@ -77,8 +77,8 @@ class SaleOrder(models.Model):
     on_hold_reason = fields.Text(string='On Hold Reason(s)')
     due_amount = fields.Monetary('Due Amount', related='partner_id.total_due')
 
-    refer_by_company = fields.Char('Referring Organization')
-    refer_by_person = fields.Char('Referring Person')
+    refer_by_company = fields.Many2one('res.partner', string='Referring Organization')
+    refer_by_person = fields.Many2one('res.partner', string='Referring Person')
     account_order_standing = fields.Selection(
         related="partner_id.account_order_standing",
         string='Account Order Standing', store=True)
