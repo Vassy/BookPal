@@ -590,7 +590,7 @@ class SaleOrderVts(models.Model):
                                         order, bigcommerce_store_id,
                                         order_id, operation_id, warehouse_id,
                                         req_data)
-                                    if carrier_id and order_id and base_shipping_cost > 0:
+                                    if carrier_id and order_id and float(base_shipping_cost) > 0:
                                         order_id.set_delivery_line(
                                             carrier_id, base_shipping_cost)
                                     try:
