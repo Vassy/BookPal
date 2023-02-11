@@ -13,9 +13,9 @@
                     <field name="customer_email"/>
                     <field name="industry_id"/>
                     <field name="quantity"/>
-                    <!-- <field name="publication_date"/>
-                    <field name="shipping_zip_Code"/>
-                    <field name="order_account"/>
+                    <field name="publication_date"/>
+                    <field name="shipping_zip_code"/>
+                    <!-- <field name="order_account"/>
                     <field name="customer_segment"/> -->
                     <field name="order_company"/>
                     <field name="order_status"/>
