@@ -30,6 +30,7 @@ class SellerReport(models.Model):
         ("pending_for_approval", "Order In Approval"),
         ("sale", "Approved Order")
         ], string='Order Status')
+    industry_id = fields.Many2one('res.partner.industry', string='Industry')
 
     def init(self):
         """ Fetch the data from sale order line based on report type and start and end date """
@@ -47,6 +48,7 @@ class SellerReport(models.Model):
                             sale_order_line.product_id AS product_id,
                             product_product.default_code AS sku,
                             res_partner.email AS customer_email,
+                            res_partner.industry_id AS industry_id,
                             sale_order_line.product_uom_qty AS quantity,
                             sale_order.company_id AS order_company,
                             sale_order_line.state AS order_status
