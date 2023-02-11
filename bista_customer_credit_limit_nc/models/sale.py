@@ -13,7 +13,7 @@ class SaleOrder(models.Model):
     _inherit = "sale.order"
 
     confirm_check = fields.Boolean(
-        compute="get_check_confirm", string="Is credit limit Over?", store=True
+        compute="get_check_confirm", string="Is credit limit Over?"
     )
     state = fields.Selection(
         selection_add=[("credit_review", "Credit Review"), ("sale",)]
@@ -40,7 +40,6 @@ class SaleOrder(models.Model):
             if action:
                 return action
 
-    @api.depends("partner_id", "order_line")
     def get_check_confirm(self):
         for sale in self:
             sale.confirm_check = False
