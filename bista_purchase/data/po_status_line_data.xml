@@ -18,7 +18,7 @@
         <field name="manual_update">False</field>
     </record>
     <record model="po.status.line" id="status_line_pending">
-        <field name="name">Pending/In transient</field>
+        <field name="name">Pending/In Transient</field>
         <field name="sequence">4</field>
         <field name="manual_update">True</field>
     </record>
@@ -38,7 +38,7 @@
         <field name="manual_update">True</field>
     </record>
     <record model="po.status.line" id="status_line_return">
-        <field name="name">Return created</field>
+        <field name="name">Return Created</field>
         <field name="sequence">8</field>
         <field name="manual_update">True</field>
     </record>
