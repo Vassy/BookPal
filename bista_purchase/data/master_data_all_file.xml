@@ -135,56 +135,56 @@
 
         <!--purchase line status data file-->
         <record model="purchase.line.status" id="purchase_line_status_1">
-            <field name="name">None</field>
+            <field name="name">Draft</field>
             <field name="sequence">1</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_2">
-            <field name="name">Ground Rush - Need ASAP</field>
+            <field name="name">Ready For Preview</field>
             <field name="sequence">2</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_3">
-            <field name="name">Next Day Air Saver (by E.O.D.)</field>
+            <field name="name">Ordered</field>
             <field name="sequence">3</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_4">
-            <field name="name">Next Day Air (by 10.30am)</field>
+            <field name="name">Pending/In transient</field>
             <field name="sequence">4</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_5">
-            <field name="name">UPS Next Day Air Early (by 8:30am)</field>
+            <field name="name">Received</field>
             <field name="sequence">5</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_6">
-            <field name="name">2 Day Air Saver(by E.O.D)</field>
+            <field name="name">Stocked</field>
             <field name="sequence">6</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_7">
-            <field name="name">2nd Day Air (by 10.30am) </field>
+            <field name="name">Completed</field>
             <field name="sequence">7</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_8">
-            <field name="name">3 Day Air</field>
+            <field name="name">Return created</field>
             <field name="sequence">8</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_9">
-            <field name="name">Express WW (DHL)</field>
+            <field name="name">Rush Ordered</field>
             <field name="sequence">9</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_10">
-            <field name="name"> Express A.M. (DHL))</field>
+            <field name="name"> On Hold</field>
             <field name="sequence">10</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_11">
-            <field name="name">WW Expedited (UPS)</field>
+            <field name="name">Canceled</field>
             <field name="sequence">11</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_12">
-            <field name="name">WW Express (UPS)</field>
+            <field name="name">Invoiced</field>
             <field name="sequence">12</field>
         </record>
-        <record model="purchase.line.status" id="purchase_line_status_13">
-            <field name="name">Standard int'l (UPS)</field>
-            <field name="sequence">13</field>
-        </record>
+<!--        <record model="purchase.line.status" id="purchase_line_status_13">-->
+<!--            <field name="name">Standard int'l (UPS)</field>-->
+<!--            <field name="sequence">13</field>-->
+<!--        </record>-->
     </data>
 </odoo>
