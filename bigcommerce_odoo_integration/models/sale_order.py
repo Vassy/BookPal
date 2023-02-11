@@ -201,6 +201,7 @@ class SaleOrderVts(models.Model):
             'order_id': vals.get('order_id'),
             'product_uom_qty': vals.get('order_qty', 0.0),
             'price_unit': vals.get('price_unit', 0.0),
+            # 'discounted_price': vals.get('price_unit', 0.0),
             'discount': vals.get('discount', 0.0),
             'state': 'order_booked',
         })
@@ -593,7 +594,8 @@ class SaleOrderVts(models.Model):
                 partner_parent_id=False
                 if company_name:
                     partner_parent_id = self.env['res.partner'].search(
-                        [('company_type', '=', 'company'), ('email', '=', customerEmail)], limit=1)
+                        [('email', '=', customerEmail),
+                         ('bigcommerce_customer_id', '!=', customerId)], limit=1)
                     if not partner_parent_id:
                         company_vals = {'company_type': 'company', 'name': company_name}
                         partner_parent_id = self.env['res.partner'].create({**partner_vals, **company_vals})
@@ -673,7 +675,7 @@ class SaleOrderVts(models.Model):
                              'pricelist_id': self.partner_id.property_product_pricelist.id if self.partner_id.property_product_pricelist else pricelist_id.id, })
                 order_vals = self.create_sales_order_from_bigcommerce(vals)
                 order_vals.update({'payment_status': 'paid' if order.get(
-                    'payment_status') == "captured" else 'not_paid',
+                    'payment_status') in ["captured", "paid"] else 'not_paid',
                                    'payment_method': order.get('payment_method'),
                                    'bigcommerce_shipment_order_status': order.get('status'),
                                    'currency_id':self.currency_id.id
@@ -684,8 +686,6 @@ class SaleOrderVts(models.Model):
                     process_message = "Getting an Error In Update Order procecss {}".format(e)
                     self.with_user(1).create_bigcommerce_operation_detail('order', 'import', '', '', operation_id,
                                                                           self.warehouse_id, True, process_message)
-                if carrier_id:
-                    self.set_delivery_line(carrier_id, base_shipping_cost)
                 process_message = "Sale Order Updated {0}".format(self.name)
                 _logger.info("Sale Order Updated {0}".format(self.name))
                 self.message_post(body="Order Successfully Updated From Bigcommerce")
@@ -704,7 +704,7 @@ class SaleOrderVts(models.Model):
                             vat_product_id = self.env.ref(
                                 'bigcommerce_odoo_integration.product_product_bigcommerce_tax')
                             taxline_vals = {'product_id': vat_product_id.id,
-                                            'price_unit': order.get('total_tax', 0.0),
+                                            'price_unit': float(order.get('total_tax', 0.0)),
                                             'product_uom_qty': 1,
                                             'order_id': self.id, 'name': vat_product_id.name,
                                             'company_id': self.env.user.company_id.id
@@ -712,7 +712,8 @@ class SaleOrderVts(models.Model):
                             vat_line = self.env['sale.order.line'].search(
                                 [('order_id', '=', self.id), ('product_id', '=', vat_product_id.id)])
                             if not vat_line:
-                                self.env['sale.order.line'].sudo().create(taxline_vals)
+                                if float(order.get('total_tax', 0.0)) > 0:
+                                    self.env['sale.order.line'].sudo().create(taxline_vals)
                             else:
                                 vat_line.write(taxline_vals)
                             self.sudo()._amount_all()
@@ -727,6 +728,8 @@ class SaleOrderVts(models.Model):
                     process_message = "Getting an Error In Import Order Response {}".format(e, self.name)
                     self.with_user(1).create_bigcommerce_operation_detail('order', 'import', '', '', operation_id,
                                                                           self.warehouse_id, True, process_message)
+                if carrier_id and base_shipping_cost > 0:
+                    self.set_delivery_line(carrier_id, base_shipping_cost)
             else:
                 _logger.info("Getting an Error In Update Orders Response {}".format(response_data))
                 response_data = response_data.content
@@ -1153,7 +1156,10 @@ class SaleOrderVts(models.Model):
                    }
         ls = []
         vat_product_id = self.env.ref('bigcommerce_odoo_integration.product_product_bigcommerce_tax')
-        for line in self.order_line.filtered(lambda line: not line.is_delivery and line.product_id.id != vat_product_id.id):
+        coupon_product = self.env.ref('bigcommerce_odoo_integration.add_bigcommerce_coupon_as_product')
+        coupon_product_line = self.order_line.filtered(lambda line:line.product_id.id == coupon_product.id)
+        discount = 0.0 if not coupon_product_line else sum(coupon_product_line.mapped('price_unit'))
+        for line in self.order_line.filtered(lambda line: not line.is_delivery and line.product_id.id != vat_product_id.id and line.product_id.id != coupon_product.id):
             # variant_combination_ids = self.env['product.variant.combination'].search(
             #     [('product_product_id', '=', line.product_id.id)]).mapped('product_template_attribute_value_id')
             product_option = []
@@ -1179,7 +1185,7 @@ class SaleOrderVts(models.Model):
                 data.update({"id": line.order_product_id})
             ls.append(data)
         request_data = {
-            'status_id': 1,
+            #'status_id': 1,
             'billing_address': {
                 "first_name": "{}".format(self.partner_id and self.partner_id.name),
                 "street_1": "{}".format(self.partner_id and self.partner_id.street),
@@ -1200,7 +1206,8 @@ class SaleOrderVts(models.Model):
                 "country": "{}".format(
                     self.partner_shipping_id.country_id and self.partner_shipping_id.country_id.name),
                 "email": "{}".format(self.partner_shipping_id.email)}],
-            'products': ls}
+            'products': ls,
+            'discount_amount':discount}
 
         if (self.partner_id.bigcommerce_customer_id and self.partner_id.bigcommerce_customer_id != 'Guest User') or self.partner_id.parent_id.bigcommerce_customer_id:
             bigcommerce_customer_id = self.partner_id.bigcommerce_customer_id or self.partner_id.parent_id.bigcommerce_customer_id

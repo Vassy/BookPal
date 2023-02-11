@@ -126,6 +126,7 @@ class SaleOrderVts(models.Model):
             'order_id': vals.get('order_id'),
             'product_uom_qty': vals.get('order_qty', 0.0),
             'price_unit': vals.get('price_unit', 0.0),
+            'discounted_price': vals.get('discounted_price', 0.0),
             'discount': vals.get('discount', 0.0),
             'state': 'order_booked',
         })
@@ -589,7 +590,7 @@ class SaleOrderVts(models.Model):
                                         order, bigcommerce_store_id,
                                         order_id, operation_id, warehouse_id,
                                         req_data)
-                                    if carrier_id and order_id:
+                                    if carrier_id and order_id and base_shipping_cost > 0:
                                         order_id.set_delivery_line(
                                             carrier_id, base_shipping_cost)
                                     try:
@@ -673,11 +674,17 @@ class SaleOrderVts(models.Model):
             price = order_line.get('base_price')
             total_tax = order_line.get('total_tax')
             vals = {'product_id': product_id.id,
-                    'price_unit': price, 'order_qty': quantity,
+                    'price_unit': price,
+                    'order_qty': quantity,
                     'order_id': order_id and order_id.id,
                     'description': product_bigcommerce_id,
                     'company_id': self.env.user.company_id.id,
                     'big_commerce_tax': total_tax}
+            if product_id.detailed_type != 'service':
+                vals.update({
+                    'price_unit': product_id.list_price,
+                    'discounted_price': price
+                })
             sale_order_line = self.env['sale.order.line'].search(
                 [('order_id', '=', order_id.id), ('product_id', '=', product_id.id),
                  ('product_uom_qty', '=', float(vals.get('order_qty')))])
