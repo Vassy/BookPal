@@ -40,17 +40,19 @@ class ResPartner(models.Model):
             amount = 0
             for sale in self.env["sale.order"].search(sale_domain):
                 open_invoice = sale.invoice_ids.filtered(
-                    lambda inv: inv.payment_state != "paid"
+                    lambda inv: inv.payment_state not in ["paid", "in_payment"]
                 )
                 lines = sale.order_line.filtered(
                     lambda line: line.invoice_status != "invoiced"
                 )
                 if not open_invoice and not lines:
                     continue
-                amount_total = sum(sale.order_line.mapped("price_total"))
-                payments = sale.invoice_ids.filtered(
-                    lambda inv: inv.payment_state in ["in_payment", "paid", "partial"]
-                )._get_reconciled_payments()
-                paid_payment = payments.filtered(lambda p: p.is_matched)
-                amount += amount_total - sum(paid_payment.mapped("amount_signed"))
-            partner.available_credit_limit = partner.credit_limit - amount
+                amount += sale.amount_total
+                for invoice in sale.invoice_ids.filtered(
+                    lambda inv: inv.move_type == "out_invoice"
+                    and inv.state not in ("draft", "credit_review")
+                ):
+                    amount -= invoice.amount_total
+            partner.available_credit_limit = (
+                partner.credit_limit - amount - partner.credit
+            )
