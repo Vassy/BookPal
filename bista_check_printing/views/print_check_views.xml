@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="ckus_check_inherit" inherit_id="l10n_us_check_printing.ckus_stub">
+        <xpath expr="//div[hasclass('summary_line')]" position="replace">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 30%; text-align: center;"><span t-out="page['partner_name']" /></td>
+                    <td style="width: 50%; text-align: right;">Check Number</td>
+                    <td style="width: 20%; padding-left: 10px;"><span t-out="page['sequence_number']" /></td>
+                </tr>
+                <tr>
+                    <td />
+                    <td style="text-align: right;">Check Date</td>
+                    <td style="padding-left: 10px;"><span t-out="page['date']" /></td>
+                </tr>
+                <tr>
+                    <td style="height: 10px;"></td>
+                    <td />
+                    <td />
+                </tr>
+                <tr>
+                    <td />
+                    <td style="text-align: right;">Check Amount</td>
+                    <td style="padding-left: 10px;"><span t-out="page['amount']" /></td>
+                </tr>
+            </table>
+        </xpath>
+        <xpath expr="//table[hasclass('table-bordered')]" position="replace">
+            <table class="table table-sm stub_lines" t-if="page['stub_lines']">
+                <tr>
+                    <td style="border-top: none;" class="text-left">Item to be Paid - Description</td>
+                    <td style="border-top: none;" class="text-right">Discount Take</td>
+                    <td style="border-top: none;" class="text-right">Amount Paid</td>
+                </tr>
+                <t t-foreach="page['stub_lines']" t-as="stub_line">
+                    <tr t-if="stub_line.get('header')">
+                        <td colspan="6"><t t-out="stub_line['name']"/></td>
+                    </tr>
+                    <tr t-else="">
+                        <td class="text-truncate" style="max-width: 500px;"><t t-out="stub_line['number']"/></td>
+                        <td class="text-right"><t t-out="stub_line['amount_total']"/></td>
+                        <td class="text-right"><t t-out="stub_line['amount_paid']"/></td>
+                    </tr>
+                </t>
+                <tr t-if="page['stub_cropped']"><td colspan="6" class="text-right">...</td></tr>
+            </table>
+        </xpath>
+        <xpath expr="//div[hasclass('stub_total_amount')]" position="replace" />
+    </template>
+</odoo>
