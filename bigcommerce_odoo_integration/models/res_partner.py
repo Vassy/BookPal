@@ -16,6 +16,7 @@ class ResPartner(models.Model):
     bigcommerce_customer_group_id = fields.Many2one('bigcommerce.customer.group', string="Bigcommerce Customer Group")
     bc_companyname = fields.Char(string='BC Company Name')
     shipping_address_id = fields.Char(string='Shipping Address API ID')
+    tax_exempt_category = fields.Char(string='Tax Exempt Code')
 
     def create_bigcommerce_operation(self, operation, operation_type, bigcommerce_store_id, log_message, warehouse_id):
         vals = {
@@ -61,7 +62,6 @@ class ResPartner(models.Model):
                     response_data = response_data.json()
                     _logger.info("Customer Response Data : {0}".format(response_data))
                     records = response_data.get('data')
-
                     total_pages = response_data.get('meta').get('pagination').get('total_pages')
                     if total_pages > 0:
                         bc_total_pages = total_pages + 1
@@ -110,7 +110,8 @@ class ResPartner(models.Model):
                                     'bigcommerce_customer_id': bc_customer_id,
                                     'is_available_in_bigcommerce': True,
                                     'bigcommerce_store_id': bigcommerce_store_id.id,
-                                    'bigcommerce_customer_group_id': customer_group_id.id
+                                    'bigcommerce_customer_group_id': customer_group_id.id,
+                                    'tax_exempt_category':record.get('tax_exempt_category','')
                                 }
                                 partner_id = self.env['res.partner'].create(partner_vals)
                                 _logger.info("Customer Created : {0}".format(partner_id.name))
@@ -121,7 +122,8 @@ class ResPartner(models.Model):
                                     'name': "%s %s" % (record.get('first_name'), record.get('last_name')),
                                     'phone': record.get('phone', ''),
                                     'email': record.get('email'),
-                                    'bigcommerce_customer_group_id': customer_group_id.id
+                                    'bigcommerce_customer_group_id': customer_group_id.id,
+                                    'tax_exempt_category': record.get('tax_exempt_category','')
                                     # 'bigcommerce_customer_id':record.get('id'),
                                     # 'bigcommerce_store_id':bigcommerce_store_id.id
                                 }
@@ -165,10 +167,10 @@ class ResPartner(models.Model):
                 #prefix = len(bigcommerce_store_id.bc_customer_prefix) + 1
                 bc_customer_id = partner_id.bigcommerce_customer_id#[prefix:]
                 api_operation = "/v2/customers/%s/addresses" % (bc_customer_id)
+
                 response_data = bigcommerce_store_id.send_get_request_from_odoo_to_bigcommerce(api_operation)
                 _logger.info("BigCommerce Get Customer Address Response : {0}".format(response_data))
                 _logger.info("Response Status: {0}".format(response_data.status_code))
-
                 if response_data.status_code in [200, 201, 204]:
                     response_data = response_data.json()
                     _logger.info("Customer Response Data : {0}".format(response_data))
@@ -184,7 +186,6 @@ class ResPartner(models.Model):
                         state_name = record.get('state', "")
                         state_obj = self.env['res.country.state'].search([('name', '=', state_name)], limit=1)
                         partner_id.state_id = state_obj and state_obj.id
-
                         _logger.info("Customer Address Updated : {0}".format(partner_id.name))
                         response_data = record
                         customer_message = "%s Customer Address Updated" % (partner_id.name)
@@ -272,6 +273,7 @@ class ResPartner(models.Model):
                         "last_name": " ",
                         "company": c_partner.parent_id.name if c_partner.parent_id and c_partner.parent_id.company_type=='company' else '',
                         "phone": "{}".format(c_partner.phone if c_partner.phone else ''),
+                        "tax_exempt_category":partner.tax_exempt_category,
                         "customer_group_id": int(
                             c_partner.bigcommerce_customer_group_id and c_partner.bigcommerce_customer_group_id.customer_group_id) or None,
                         # "addresses": [

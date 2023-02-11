@@ -25,6 +25,7 @@
                         <group>
                             <field name="bigcommerce_store_id" readonly="0"/>
                             <field name="bigcommerce_customer_id"/>
+                            <field name="tax_exempt_category" />
                             <field name="is_available_in_bigcommerce" readonly="1"/>
                             <field name="bigcommerce_customer_group_id" />
                         </group>
