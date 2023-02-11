@@ -85,8 +85,8 @@
                 <page string="Source Details" name="order_details">
                     <group>
                         <group name="order_details">
-                            <field name='refer_by_company'/>
-                            <field name='refer_by_person'/>
+                            <field name='refer_by_company' domain="[('company_type', '=', 'company')]"/>
+                            <field name='refer_by_person' domain="[('company_type', '!=', 'company'),('type', '=', 'contact')]"/>
                             <!--                            <field name='order_processing_time'/>-->
                         </group>
                         <group>
