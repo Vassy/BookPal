@@ -728,7 +728,7 @@ class SaleOrderVts(models.Model):
                     process_message = "Getting an Error In Import Order Response {}".format(e, self.name)
                     self.with_user(1).create_bigcommerce_operation_detail('order', 'import', '', '', operation_id,
                                                                           self.warehouse_id, True, process_message)
-                if carrier_id and base_shipping_cost > 0:
+                if carrier_id and float(base_shipping_cost) > 0:
                     self.set_delivery_line(carrier_id, base_shipping_cost)
             else:
                 _logger.info("Getting an Error In Update Orders Response {}".format(response_data))
