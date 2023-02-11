@@ -385,4 +385,27 @@
         </xpath>
     </template>
 
+    <record id="paperformat_invoice_vendor_bill_report" model="report.paperformat">
+        <field name="name">Invoice/Bill Report</field>
+        <field name="default" eval="False"/>
+        <field name="disable_shrinking" eval="True"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="header_spacing">30</field>
+        <field name="margin_top">32</field>
+        <field name="margin_bottom">18</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_line">False</field>
+        <field name="dpi">115</field>
+    </record>
+
+    <record id="account.account_invoices_without_payment" model="ir.actions.report">
+        <field name="paperformat_id" ref="bista_purchase.paperformat_invoice_vendor_bill_report"/>
+    </record>
+
+    <record id="account.account_invoices" model="ir.actions.report">
+         <field name="paperformat_id" ref="bista_purchase.paperformat_invoice_vendor_bill_report"/>
+    </record>
+
 </odoo>
