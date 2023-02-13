@@ -23,8 +23,11 @@ class ResPartner(models.Model):
 
     # Important Details
     source = fields.Char('Source')
-    referal_source = fields.Char('Referred By')
-    referring_organization = fields.Char('Referring Organization')
+    referal_source = fields.Many2one('res.partner', string='Referred By')
+    referring_organization = fields.Many2one('res.partner', string='Referring Organization')
+    company_type = fields.Selection(string='Company Type',
+        selection=[('person', 'Individual'), ('company', 'Company')],
+        compute='_compute_company_type', inverse='_write_company_type', search='_search_referal_source')
     source_notes = fields.Char('Source Notes')
     product_order_count = fields.Integer('Product Sale' , compute="_compute_sale_product_count")
     product_purchase_count = fields.Integer('Product Purchase', compute="_compute_purchase_product_count")
@@ -42,6 +45,16 @@ class ResPartner(models.Model):
         ('high', 'High'),
         ('medium', 'Medium'),
         ('low', 'Low')], string='Account Order Standing')
+
+    def _search_referal_source(self, operator, value):
+        partners = self.search([])
+        partner_ids = []
+        if operator == '=':
+            operator = '=='
+        for partner in partners:
+            if eval(("'" + partner.company_type + "'") + operator + ("'" + value + "'")):
+                partner_ids.append(partner.id)
+        return [('id','in', partner_ids)]
 
     def _compute_purchase_product_count(self):
         for partner_id in self:
