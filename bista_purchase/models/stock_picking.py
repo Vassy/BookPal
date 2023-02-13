@@ -60,6 +60,13 @@ class StockPicking(models.Model):
             "context": ctx,
         }
 
+    def _create_backorder(self):
+        res = super()._create_backorder()
+        for picking in res:
+            if not picking.user_id:
+                picking.user_id = self.env.user.id
+        return res
+
     def write(self, vals):
         res = super(StockPicking, self).write(vals)
         for picking_id in self:
