@@ -485,7 +485,7 @@
             <div class="row mt-5 mx-3" style="page-break-inside:avoid;" name="price_images">
                 <div class="col-4">
                     <div>
-                        <img src='/bista_sale/static/src/img/price_match_.png' style="max-height: 100px;" class="ml-5"/>
+                        <img src='/bista_sale/static/src/img/i.shgcdn.png' style="max-height: 100px;" class="ml-5"/>
                         <a href="https://bookpal.com/price-match-guarantee" class="btn btn-link" role="button">Price
                             Match
                             Available
@@ -494,7 +494,7 @@
                 </div>
                 <div class="col-4">
                     <div>
-                        <img src='/bista_sale/static/src/img/sale_tax_exempt.jpeg' style="max-height: 100px;"
+                        <img src='/bista_sale/static/src/img/i.shgcdn-1.png' style="max-height: 100px;"
                              class="ml-5"/>
                         <a href="https://bookpal.com/sales-tax-exemption/" class="btn btn-link" role="button">Sales Tax
                             Exempt? Learn more here.
@@ -503,7 +503,7 @@
                 </div>
                 <div class="col-4">
                     <div>
-                        <img src='/bista_sale/static/src/img/shipping_icon.png' style="max-height: 100px;"
+                        <img src='/bista_sale/static/src/img/i.shgcdn-2.png' style="max-height: 100px;"
                              class="ml-5"/>
                         <a href="https://bookpal.com/shipping-logistics" class="btn btn-link" role="button">Learn about
                             our

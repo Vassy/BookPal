@@ -27,7 +27,7 @@ class PurchaseOrder(models.Model):
     hours_process = fields.Char(string='Hours to Process')
 
     # Review Order Notes and Requirements
-    status = fields.Many2one('purchase.line.status', string='Status')
+    status = fields.Many2one('purchase.line.status', string='Purchase Line Status')
     order_notes = fields.Text(string='Order Notes')
     fulfilment_project = fields.Boolean(string="Fulfillment Project")
     ordered_by = fields.Many2one(
