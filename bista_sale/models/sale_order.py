@@ -149,21 +149,6 @@ class SaleOrder(models.Model):
         if self.fulfilment_project:
             self.report_type = 'individual'
 
-    # def compute_quote_process_time(self):
-    #     for quote in self:
-    #         print("quote_confirm", quote)
-    #         print("quote_confirm", quote.state, quote.quote_processing_time)
-    #         if quote.state in ('draft', 'quote_confirm'):
-    #             print("\n\n\ninside----------")
-    #             quote_process_time = 0
-    #             print("date_order.date()", quote.date_order)
-    #             print("date_order.date()", quote.create_date)
-    #             if quote.date_approve:
-    #                 quote_date = quote.date_approve.date() -
-    #                 quote.date_order.date()
-    #                 quote_process_time = quote_date.days
-    #             quote.quote_processing_time = str(quote_process_time)
-
     @api.depends('order_line.product_uom_qty', 'order_line.product_id')
     def _compute_product_weight(self):
         for order in self:
@@ -214,25 +199,39 @@ class SaleOrderLine(models.Model):
     )
     attachment_ids = fields.Many2many("ir.attachment", string="Attach File")
 
+    @api.depends("product_uom_qty", "discount", "price_unit", "tax_id")
+    def _compute_amount(self):
+        for line in self:
+            discount = line.discount
+            if line.price_unit:
+                discount = 100 - (line.discounted_price / line.price_unit * 100)
+            price = line.price_unit * (1 - (discount or 0.0) / 100.0)
+            taxes = line.tax_id.compute_all(
+                price, line.order_id.currency_id, line.product_uom_qty, product=line.product_id, partner=line.order_id.partner_shipping_id
+            )
+            line.update({
+                "price_tax": sum(t.get("amount", 0.0) for t in taxes.get("taxes", [])),
+                "price_total": taxes["total_included"],
+                "price_subtotal": taxes["total_excluded"],
+            })
+
     def _inverse_discounted_price(self):
         for line in self:
-            line.discount = 0
+            discount = 0
             if line.price_unit:
-                line.discount = 100 - \
-                    (line.discounted_price / line.price_unit * 100)
-            line.saving_amount = (
-                line.price_unit * line.discount / 100 * line.product_uom_qty
-            )
+                discount = 100 - (line.discounted_price / line.price_unit * 100)
+            amount = line.price_unit * line.discount / 100 * line.product_uom_qty
+            line.update({"discount": discount, "saving_amount": amount})
         self._compute_amount()
 
     @api.depends("product_uom_qty", "price_unit", "discount")
     def _compute_prices(self):
         for line in self:
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+            price = int(price * 10 ** 3) / 10 ** 3
             line_data = {
-                "discounted_price": int(price * 10 ** 3) / 10 ** 3,
-                "saving_amount": (line.price_unit - price) *
-                line.product_uom_qty,
+                "discounted_price": price,
+                "saving_amount": (line.price_unit - price) * line.product_uom_qty,
             }
             line.update(line_data)
 
