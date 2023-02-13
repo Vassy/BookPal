@@ -40,7 +40,7 @@
                     <t t-elif="o.state =='done'">
                         <h5>Validated Date:
                             <t t-esc="context_timestamp(o.date_done).strftime('%Y-%m-%d')" t-options='{"widget": "date"}'/>
-                            <t t-esc="o.date_done" t-options='{"widget": "date"}'/>
+                            <!-- <t t-esc="o.date_done" t-options='{"widget": "date"}'/> -->
                         </h5>
                     </t>
                     <t t-else="">
@@ -346,7 +346,7 @@
               inherit_id="stock.stock_report_delivery_aggregated_move_lines">
         <xpath expr="//tr/td[1]" position="after">
             <td name="td_format">
-                <span style="font-weight:normal" t-field="o.product_id.product_format"/>
+                <span style="font-weight:normal" t-field="aggregated_lines[line]['product'].product_format"/>
             </td>
         </xpath>
     </template>
