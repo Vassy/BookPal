@@ -93,6 +93,12 @@ class PurchaseOrder(models.Model):
     is_email_sent = fields.Boolean(string="Email Sent", default=False)
 
     def action_rfq_send(self):
+        if not self.shipping_instructions and is_html_empty(self.special_pick_note):
+            raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab and add the Notes'))
+        if not self.shipping_instructions:
+            raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab.'))
+        if is_html_empty(self.special_pick_note):
+            raise ValidationError(_('Please add the Notes'))
         result = super().action_rfq_send()
         glove_id = self.sale_order_ids.mapped("white_glove_id")
         if glove_id:
