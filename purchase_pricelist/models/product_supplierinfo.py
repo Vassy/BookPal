@@ -10,8 +10,9 @@ class ProductSupplierInfo(models.Model):
 
     def write(self, vals):
         res = super(ProductSupplierInfo, self).write(vals)
-        if self.product_id:
-            self.price = self.product_id.list_price
-        elif self.product_tmpl_id:
-            self.price = self.product_tmpl_id.list_price
+        for rec in self:
+            if rec.product_id:
+                rec.price = rec.product_id.list_price
+            elif rec.product_tmpl_id:
+                rec.price = rec.product_tmpl_id.list_price
         return res
