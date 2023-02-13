@@ -36,11 +36,17 @@
             <xpath expr="//page[@name='extra']//field[@name='campaign_id']" position="replace">
                 <attribute name="string">Sales Campaign</attribute>
             </xpath>
-            <xpath expr="//page[@name='lead']//field[@name='referred']" position="after">
-                <field name="referring_organization"/>
+            <xpath expr="//page[@name='lead']//field[@name='referred']" position="attributes">
+                <attribute name="domain">[('company_type', '!=', 'company'),('type', '=', 'contact')]</attribute>
             </xpath>
-            <xpath expr="//page[@name='extra']//field[@name='referred']" position="after">
-                <field name="referring_organization"/>
+            <xpath expr="//page[@name='extra']//field[@name='referred']" position="attributes">
+                <attribute name="domain">[('company_type', '!=', 'company'),('type', '=', 'contact')]</attribute>
+            </xpath>
+            <xpath expr="//page[@name='lead']//field[@name='referred']" position="before">
+                <field name="referring_organization" domain="[('company_type', '=', 'company')]"/>
+            </xpath>
+            <xpath expr="//page[@name='extra']//field[@name='referred']" position="before">
+                <field name="referring_organization" domain="[('company_type', '=', 'company')]"/>
             </xpath>
             <xpath expr="//field[@name='user_id']" position="attributes">
                 <attribute name="string">Owner</attribute>

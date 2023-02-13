@@ -71,8 +71,8 @@
                         <group>
                             <field name="source"/>
                             <field name="source_notes"/>
-                            <field name="referal_source"/>
-                            <field name="referring_organization"/>
+                            <field name="referring_organization" domain="[('company_type', '=', 'company')]"/>
+                            <field name="referal_source" domain="[('company_type', '!=', 'company'),('type', '=', 'contact')]"/>
                             <separator string="Products Purchase"/>
                         </group>
                     </group>
