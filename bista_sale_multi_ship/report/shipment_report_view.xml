@@ -34,17 +34,17 @@
                     </h4>
                     <t t-if="doc.state in ['draft','sent','quote_approval','quote_confirm']">
                         <strong>Quotation Date:</strong>
-                        <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                        <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
                         <br/>
                     </t>
                     <t t-if="doc.state in ['order_booked']">
                         <strong>Booked order date:</strong>
-                        <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                        <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
                         <br/>
                     </t>
                     <t t-if="doc.state in ['sale','pending_for_approval','credit_review','cancel','done']">
                         <strong>Order Date:
-                            <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                            <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
                         </strong>
                     </t>
                     <br/>
@@ -98,7 +98,7 @@
 <!--                            <br/>-->
 <!--                        </t>-->
                         <strong>Valid Until:</strong>
-                        <t t-esc="doc.validity_date" t-options='{"widget": "date"}'/>
+                        <t t-esc="doc.validity_date" t-options="{'widget': 'date'}"/>
                         <br/>
                         <strong>Customer Ref:</strong>
                         <t t-esc="doc.client_order_ref"/>
@@ -154,7 +154,8 @@
                                     <td name="td_nd"
                                         style="border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
                                         class="text-left">
-                                        <span t-field="line.shipping_date" t-options='{"widget": "date"}'/>
+                                        <span t-esc="context_timestamp(line.shipping_date).strftime('%m/%d/%Y, %H:%M:%S')"/>
+                                        <!-- <span t-field="line.shipping_date" t-options='{"widget": "date"}'/> -->
                                     </td>
                                     <td name="shipment_add"
                                         style="border-top: 1px solid black; border-left: none; border-right: none; border-bottom: 1px solid black;width:14%;"

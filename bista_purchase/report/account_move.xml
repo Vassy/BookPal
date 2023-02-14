@@ -94,7 +94,7 @@
                            t-as="purchase">
                             <div class="text-danger">
                                 <strong>Order Arrive By Date:</strong>
-                                <t t-esc="purchase.date_order" t-options='{"widget": "date"}'/>
+                                <t t-esc="context_timestamp(purchase.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
                                 <br/>
                             </div>
                         </t>

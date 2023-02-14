@@ -15,37 +15,35 @@
                     </h3>
                     <t t-if="o.state !='done' and o.picking_type_code =='incoming'">
                         <h5 style="font-size: 20px;">Receipt Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%Y-%m-%d')" t-options='{"widget": "date"}'/>
-                            <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
+                             <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')"/>
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='outgoing'">
                         <h5 style="font-size: 20px;">Delivery Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%Y-%m-%d')" t-options='{"widget": "date"}'/>
-                            <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
+                             <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')"/>
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name =='Pick'">
                         <h5 style="font-size: 20px;">Picking Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%Y-%m-%d')" t-options='{"widget": "date"}'/>
+                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')" />
                             <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name !='Pick'">
                         <h5 style="font-size: 20px;">Internal Transfer Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%Y-%m-%d')" t-options='{"widget": "date"}'/>
+                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')" />
                             <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
                         </h5>
                     </t>
                     <t t-elif="o.state =='done'">
                         <h5>Validated Date:
-                            <t t-esc="context_timestamp(o.date_done).strftime('%Y-%m-%d')" t-options='{"widget": "date"}'/>
+                            <t t-esc="context_timestamp(o.date_done).strftime('%m/%d/%Y, %H:%M:%S')" />
                             <!-- <t t-esc="o.date_done" t-options='{"widget": "date"}'/> -->
                         </h5>
                     </t>
                     <t t-else="">
                         <h5 style="font-size: 20px;">Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%Y-%m-%d')" t-options='{"widget": "date"}'/>
+                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')" />
                             <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
                         </h5>
                     </t>
@@ -183,37 +181,37 @@
                     </h3>
                     <t t-if="o.state !='done' and o.picking_type_code =='incoming'">
                         <h5 style="font-size: 20px;">Receipt Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%Y-%m-%d')" t-options='{"widget": "date"}'/>
+                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')"/>
                             <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='outgoing'">
                         <h5 style="font-size: 20px;">Delivery Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%Y-%m-%d')" t-options='{"widget": "date"}'/>
+                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')" />
                             <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name =='Pick'">
                         <h5 style="font-size: 20px;">Picking Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%Y-%m-%d')" t-options='{"widget": "date"}'/>
+                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')" />
                             <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name !='Pick'">
                         <h5 style="font-size: 20px;">Internal Transfer Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%Y-%m-%d')" t-options='{"widget": "date"}'/>
+                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')" />
                             <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
                         </h5>
                     </t>
                     <t t-elif="o.state =='done'">
                         <h5>Validated Date:
-                            <t t-esc="context_timestamp(o.date_done).strftime('%Y-%m-%d')" t-options='{"widget": "date"}'/>
+                            <t t-esc="context_timestamp(o.date_done).strftime('%m/%d/%Y, %H:%M:%S')"/>
                             <!-- <t t-esc="o.date_done" t-options='{"widget": "date"}'/> -->
                         </h5>
                     </t>
                     <t t-else="">
                         <h5 style="font-size: 20px;">Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%Y-%m-%d')" t-options='{"widget": "date"}'/>
+                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')" />
                             <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
                         </h5>
                     </t>
