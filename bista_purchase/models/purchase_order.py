@@ -376,6 +376,7 @@ class PurchaseOrderLine(models.Model):
                                 ondelete="restrict", tracking=True)
     tracking_ref = fields.Char(
         'Tracking Refrence', compute="get_tracking_ref")
+    price_unit = fields.Float("BP Price")
 
     @api.depends('move_ids.state')
     def get_tracking_ref(self):

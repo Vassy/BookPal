@@ -5,15 +5,20 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
-            <!--            <xpath expr="//page[@id='other_tab_entry']/field[@name='narration']" position="attributes">-->
+            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="attributes">
+                <attribute name="string">Cover Price</attribute>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='discount']" position="after">
+                <field name="bp_price" optional="show" attrs="{'column_invisible': [('parent.move_type', 'not in', ('in_invoice', 'in_refund'))]}" />
+                <field name="quote_price" optional="show" attrs="{'column_invisible': [('parent.move_type', 'not in', ('out_invoice', 'out_refund'))]}" />
+            </xpath>
             <xpath expr="//field[@name='narration']" position="attributes">
                 <attribute name="placeholder">Invoice Terms and Conditions</attribute>
             </xpath>
             <xpath expr="//group[hasclass('oe_invoice_lines_tab')]" position="after">
                 <group name="invoice_pick_note"  class="mt-2 mt-md-0" style="word-wrap: break-word;">
                     <group>
-                        <field name="invoice_pick_note" class="oe-bordered-editor"
-                               nolabel="1" placeholder="Notes" />
+                        <field name="invoice_pick_note" class="oe-bordered-editor" nolabel="1" placeholder="Notes" />
                     </group>
                 </group>
             </xpath>
