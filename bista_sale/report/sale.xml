@@ -87,17 +87,17 @@
                     </h4>
                     <t t-if="doc.state in ['draft','sent','quote_approval','quote_confirm']">
 <!--                        <strong>Quotation Date:</strong>-->
-                        <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                        <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
                         <br/>
                     </t>
                     <t t-if="doc.state in ['order_booked']">
 <!--                        <strong>Booked order date:</strong>-->
-                        <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                        <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
                         <br/>
                     </t>
                     <t t-if="doc.state  in ['sale','pending_for_approval','credit_review','cancel','done']">
 <!--                        <strong>Order Date:</strong>-->
-                            <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                            <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
                         <br/>
                     </t>
                 </t>
@@ -152,12 +152,12 @@
 <!--                        </t>-->
                         <t>
                             <strong>Need By Date:</strong>
-                            <t t-esc="doc.commitment_date" t-options='{"widget": "date"}'/>
+                            <t t-esc="o.commitment_date" t-options="{'widget': 'datetime'}"/>
                             <br/>
                         </t>
                         <t>
                             <strong>Event Date:</strong>
-                            <t t-esc="doc.date_order" t-options='{"widget": "date"}'/>
+                            <t t-esc="o.event_date" t-options="{'widget': 'date'}"/>
                             <br/>
                         </t>
 
@@ -182,7 +182,7 @@
 <!--                        <br/>-->
                         <t t-if="doc.state not in ['sale','credit_review','pending_for_approval','cancel','done']">
                         <strong>Valid Until:</strong>
-                        <t t-esc="doc.validity_date" t-options='{"widget": "date"}'/>
+                        <t t-esc="doc.validity_date" t-options="{'widget': 'date'}"/>
                         <br/>
                         </t>
                         <strong>Quoted By:</strong>
