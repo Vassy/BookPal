@@ -443,7 +443,7 @@
     </record>
 
     <record id="purchase_line_status_action" model="ir.actions.act_window">
-        <field name="name">Review Order Status</field>
+        <field name="name">Purchase Order Line Status</field>
         <field name="res_model">purchase.line.status</field>
         <field name="view_mode">tree,form</field>
     </record>
@@ -511,7 +511,7 @@
             parent="bookpal_purchase_menu"
             sequence="1"/>
      <menuitem id="menu_bista_purchase_line_status"
-              name="Review Order Status"
+              name="Purchase Order Line Status"
               parent="bookpal_purchase_menu"
               action="purchase_line_status_action"
               sequence="2"/>

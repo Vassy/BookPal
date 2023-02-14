@@ -27,7 +27,7 @@ class PurchaseOrder(models.Model):
     hours_process = fields.Char(string='Hours to Process')
 
     # Review Order Notes and Requirements
-    status = fields.Many2one('purchase.line.status', string='Purchase Line Status')
+    status = fields.Many2one('purchase.line.status', string='Purchase Order Line Status')
     order_notes = fields.Text(string='Order Notes')
     fulfilment_project = fields.Boolean(string="Fulfillment Project")
     ordered_by = fields.Many2one(
@@ -322,14 +322,14 @@ class PurchaseOrder(models.Model):
     def print_quotation(self):
         return self.env.ref('purchase.report_purchase_quotation').report_action(self)
 
-    @api.constrains("date_approve", "date_planned")
-    def warning_on_reciept_date(self):
-        for record in self:
-            if record.date_approve and record.date_planned:
-                if record.date_planned.date() < record.date_approve.date():
-                    raise ValidationError(
-                        _("The Receipt date cannot be older than the confirmation date.")
-                    )
+    # @api.constrains("date_approve", "date_planned")
+    # def warning_on_reciept_date(self):
+    #     for record in self:
+    #         if record.date_approve and record.date_planned:
+    #             if record.date_planned.date() < record.date_approve.date():
+    #                 raise ValidationError(
+    #                     _("The Receipt date cannot be older than the confirmation date.")
+    #                 )
 
 
 class RushStatus(models.Model):
