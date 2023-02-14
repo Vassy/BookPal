@@ -262,19 +262,21 @@ class PurchaseOrder(models.Model):
         if view_type != "form":
             return result
         doc = etree.XML(result["arch"])
+        attrs = "{'readonly': [('state', 'in', ('purchase', 'done'))]}"
         if not self.env.user.has_group("purchase.group_purchase_manager"):
             attrs = "{'readonly': [('state', 'not in', ['draft', 'sent'])]}"
-            for field in doc.xpath("//field"):
-                if (
-                        field.attrib.get("invisible") == "1"
-                        or field.attrib.get("readonly") == "1"
-                        or field.attrib["name"] not in self._fields
-                ):
-                    continue
-                field.attrib["attrs"] = attrs
         else:
             for node in doc.xpath("//button[@id='draft_confirm']"):
                 node.set('invisible', "1")
+        for field in doc.xpath("//field"):
+            if (
+                field.attrib.get("invisible") == "1"
+                or field.attrib.get("readonly") == "1"
+                or field.attrib["name"] not in self._fields
+                or field.attrib.get("attrs")
+            ):
+                continue
+            field.attrib["attrs"] = attrs
         result["arch"] = etree.tostring(doc)
         return result
 
