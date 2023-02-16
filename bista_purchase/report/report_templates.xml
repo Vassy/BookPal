@@ -23,10 +23,10 @@
                                 </strong>
                             </h4>
                             <strong t-if="o.state in ['purchase','done']">Order Date:
-                                <t t-esc="o.date_approve" t-options='{"widget": "date"}'/>
+                                <t t-esc="context_timestamp(o.date_approve).strftime('%m/%d/%Y, %H:%M:%S')"/>
                             </strong>
                             <strong t-if="o.state in ['draft','sent']">RFQ Date:
-                                <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                                <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
                             </strong>
                             <br/>
                         </div>
@@ -43,10 +43,10 @@
                                 </strong>
                             </h4>
                             <strong t-if="o.state in ['purchase','done']">RFQ Date:
-                                <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                                <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
                             </strong>
                             <strong t-if="o.state in ['draft','sent']">RFQ Date:
-                                <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                                <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
                             </strong>
                             <br/>
                         </div>

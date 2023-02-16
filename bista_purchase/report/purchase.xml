@@ -39,12 +39,12 @@
                 <!-- <t t-if="xmlid == 'purchase.report_purchaseorder' and o.state not in ['draft','sent']"> -->
                 <t t-if="xmlid == 'purchase.report_purchaseorder' and o.need_by_date">
                     <strong>Order Need By Date:</strong>
-                    <t t-esc="o.need_by_date" t-options='{"widget": "date"}'/>
+                    <t t-esc="context_timestamp(o.need_by_date).strftime('%m/%d/%Y, %H:%M:%S')"/>
                     <br/>
                 </t>
                 <t t-elif="xmlid == 'purchase.report_purchasequotation' and o.state not in ['draft','sent']">
                     <strong>Purchase Order Date:</strong>
-                    <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
+                    <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
                     <br/>
                 </t>
 

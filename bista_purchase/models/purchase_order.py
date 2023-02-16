@@ -93,6 +93,12 @@ class PurchaseOrder(models.Model):
     is_email_sent = fields.Boolean(string="Email Sent", default=False)
 
     def action_rfq_send(self):
+        if not self.shipping_instructions and is_html_empty(self.special_pick_note):
+            raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab and add the Notes'))
+        if not self.shipping_instructions:
+            raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab.'))
+        if is_html_empty(self.special_pick_note):
+            raise ValidationError(_('Please add the Notes'))
         result = super().action_rfq_send()
         glove_id = self.sale_order_ids.mapped("white_glove_id")
         if glove_id:
@@ -135,6 +141,8 @@ class PurchaseOrder(models.Model):
     def button_confirm(self):
         # change order line status on confirm order
         res = super(PurchaseOrder, self).button_confirm()
+        if not self.user_id:
+            self.user_id = self.env.user.id
         ready_status_id = self.env.ref('bista_purchase.status_line_ready')
         if ready_status_id:
             for order in self:
@@ -198,10 +206,11 @@ class PurchaseOrder(models.Model):
     # def onchange_partner_id_cc_email(self):
     #     self.cc_email = self.partner_id.cc_email
 
-    # def _prepare_picking(self):
-    #     res = super(PurchaseOrder, self)._prepare_picking()
-    #     res.update({'note': self.special_pick_note})
-    #     return res
+    def _prepare_picking(self):
+        res = super(PurchaseOrder, self)._prepare_picking()
+        # res.update({'note': self.special_pick_note})
+        res.update({'user_id': self.env.user.id})
+        return res
 
     @api.onchange('order_line')
     def onchange_product_is_exist(self):

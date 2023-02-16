@@ -16,7 +16,7 @@
                                 </strong>
                             </h4>
                             <h5 style="font-size: 20px;">Order Date:
-                                <t t-esc="o.purchase_id.date_approve" t-options='{"widget": "date"}'/>
+                                <t t-esc="context_timestamp(o.purchase_id.date_approve).strftime('%m/%d/%Y, %H:%M:%S')"/>
                             </h5>
                             <h4>
                                 <t t-esc="o.picking_type_id.warehouse_id.name"/>
