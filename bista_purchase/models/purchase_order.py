@@ -217,28 +217,24 @@ class PurchaseOrder(models.Model):
     def compute_lead_time(self):
         for rec in self:
             rec.lead_time = 0
-            if rec.date_approve:
-                rec.lead_time = False
-                date_list = rec.picking_ids.mapped('scheduled_date')
-                val = sorted(date_list, reverse=True)
-                if val:
-                    date_time = val[0].date() - rec.date_approve.date()
-                    rec.lead_time = date_time.days
+            max_date = sorted(rec.picking_ids.mapped("scheduled_date"), reverse=True)
+            if rec.date_approve and max_date:
+                rec.lead_time = (max_date[0].date() - rec.date_approve.date()).days
 
     def compute_order_process_time(self):
         for rec in self:
-            rec.order_process_time = 0
+            process_time = 0
             if rec.sale_order_ids.split_shipment and rec.date_approve and rec.sale_order_ids.sale_multi_ship_qty_lines:
-                rec.order_process_time = False
-                vals = min(
-                    rec.sale_order_ids.sale_multi_ship_qty_lines.mapped('confirm_date'))
-                if vals:
-                    rec_date = rec.date_approve - vals
-                    rec.order_process_time = rec_date.days
-            else:
-                if rec.sale_order_ids.date_order and rec.date_approve:
-                    order_date = rec.date_approve - rec.sale_order_ids.date_order
-                    rec.order_process_time = order_date.days
+                min_date = min(
+                    rec.sale_order_ids.sale_multi_ship_qty_lines.mapped("confirm_date")
+                )
+                if min_date:
+                    process_time = (rec.date_approve.date() - min_date.date()).days
+            elif rec.sale_order_ids.date_order and rec.date_approve:
+                process_time = (
+                    rec.date_approve.date() - rec.sale_order_ids.date_order.date()
+                ).days
+            rec.order_process_time = process_time
 
     def action_send_for_approval(self):
         for rec in self:
