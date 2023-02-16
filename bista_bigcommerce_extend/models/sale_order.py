@@ -15,15 +15,12 @@ _logger = logging.getLogger("BigCommerce")
 class SaleOrderVts(models.Model):
     _inherit = "sale.order"
 
-    def action_confirm(self):
-        for sale in self:
-            if sale.big_commerce_order_id and not sale.client_order_ref:
-                sale.client_order_ref = sale.big_commerce_order_id
-        if any(self.filtered(lambda s: not s.client_order_ref)):
-            raise ValidationError(
-                "You need to set 'Customer Reference' before approving order."
-            )
-        return super().action_confirm()
+    # bc_tax_total = fields.Float('BC Tax', compute="_get_cal_bc_tax")
+
+    # def _get_cal_bc_tax(self):
+    #     for order in self:
+    #         order.bc_tax_total = sum(
+    #             order.order_line.mapped('big_commerce_tax'))
 
     def action_redirect_to_payment_transaction(self):
         action = self.env.ref('account.action_account_payments').read()[0]
@@ -118,7 +115,6 @@ class SaleOrderVts(models.Model):
             'order_id': vals.get('order_id'),
             'product_uom_qty': vals.get('order_qty', 0.0),
             'price_unit': vals.get('price_unit', 0.0),
-            'discounted_price': vals.get('discounted_price', 0.0),
             'discount': vals.get('discount', 0.0),
             'state': 'order_booked',
         })
@@ -535,11 +531,6 @@ class SaleOrderVts(models.Model):
                     'description': product_bigcommerce_id,
                     'company_id': self.env.user.company_id.id,
                     'big_commerce_tax': total_tax}
-            if product_id.detailed_type != 'service':
-                vals.update({
-                    'price_unit': product_id.list_price,
-                    'discounted_price': price
-                })
             sale_order_line = self.env['sale.order.line'].search(
                 [('order_id', '=', order_id.id), ('product_id', '=', product_id.id),
                  ('product_uom_qty', '=', float(vals.get('order_qty')))])
@@ -602,14 +593,3 @@ class SaleOrderVts(models.Model):
                                                              False,
                                                              response_msg)
         self._cr.commit()
-
-
-class SaleOrderLine(models.Model):
-    _inherit = "sale.order.line"
-
-    product_format = fields.Char(related="product_id.product_format")
-
-class SaleMultiShipQtyLines(models.Model):
-    _inherit = "sale.multi.ship.qty.lines"
-
-    product_format = fields.Char(related="product_id.product_format")

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 import logging
 
@@ -11,5 +10,5 @@ class BigCommerceStoreConfiguration(models.Model):
     _inherit = "bigcommerce.store.configuration"
 
     bc_export_shipment = fields.Boolean(
-        string="Bigcommerce Export Shipment", default=False
-    )
+        string='Bigcommerce Export Shipment',
+        default=False)

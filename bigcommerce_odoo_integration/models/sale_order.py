@@ -22,6 +22,7 @@ class SaleOrderVts(models.Model):
     payment_method = fields.Char(string='Bigcommerce Payment Method')
     bigcommerce_customer_id = fields.Char("Bigcommerce Customer ID", related="partner_id.bigcommerce_customer_id",
                                           copy=False)
+    state = fields.Selection(selection_add=[('order_booked', 'Order Booked')])
 
     def get_order_transaction(self, through_order_cron=False):
         if (through_order_cron and self.payment_status == 'paid') or self.payment_status == 'not_paid':

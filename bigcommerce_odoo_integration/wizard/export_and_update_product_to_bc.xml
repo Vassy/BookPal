@@ -10,8 +10,8 @@
                 </group>
                 <footer>
                     <button name="update_product_in_bigcommerce" id="update_product_in_bigcommerce_btn"
-                            string="Update Product in BC" type="object" class="btn-primary" groups="bigcommerce_odoo_integration.group_hide_export_button"/>
-                    <button name="export_product_in_bigcommerce" id="export_product_in_bigcommerce_btn" groups="bigcommerce_odoo_integration.group_hide_export_button"
+                            string="Update Product in BC" type="object" class="btn-primary"/>
+                    <button name="export_product_in_bigcommerce" id="export_product_in_bigcommerce_btn"
                             string="Export Product To BC" type="object" class="btn-primary"/>
                     <button name="update_product_from_bc_to_odoo" id="update_product_from_bc_to_odoo"
                             string="Update Product To ODOO" type="object" class="btn-primary"/>

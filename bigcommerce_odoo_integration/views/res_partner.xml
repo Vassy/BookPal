@@ -17,7 +17,7 @@
                 <xpath expr="//form//sheet" position="before">
                     <header>
                         <button type="object" name="export_customer_to_bigcommerce" string="Export Customer To Bigcommerce" class="btn btn-outline-primary"
-                            attrs="{'invisible':[('bigcommerce_customer_id','!=',False)]}" groups="bigcommerce_odoo_integration.group_hide_export_button"/>
+                            attrs="{'invisible':[('bigcommerce_customer_id','!=',False)]}"/>
                     </header>
                 </xpath>
                 <xpath expr="//page[last()]" position="after">
