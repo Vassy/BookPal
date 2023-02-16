@@ -412,7 +412,7 @@ class ProductTemplateExtend(models.Model):
                     product_template_id.publication_date = \
                         datetime.strptime(
                             custom_field_data.get('value'),
-                            "%d/%m/%Y").date()
+                            "%m/%d/%Y").date()
                 elif custom_field_data.get('name') in ['pricing profile',
                                                        'Pricing Profile']:
                     product_template_id.pricing_profile = \
