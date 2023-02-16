@@ -161,9 +161,9 @@
                     <group name="shipping_method_instructions" string="Shipping Method and Instructions">
                         <group>
                             <field name="rush_status_id"/>
-                            <field name="order_shipping_desc"/>
-                            <field name="default_supplier_shipping"/>
-                            <field name="freight_charges" style="max-height: 25px;"/>
+                            <field name="order_shipping_desc" />
+                            <field name="default_supplier_shipping" />
+                            <field name="freight_charges" />
                         </group>
                         <group>
                             <field name="rush_shipping_nuances"/>
