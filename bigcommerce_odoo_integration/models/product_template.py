@@ -500,7 +500,7 @@ class ProductTemplate(models.Model):
         ecomm_categ = product_id.public_categories_ids.mapped('bigcommerce_product_category_id')
         for categ_id in ecomm_categ:
             categ_ids.append(int(categ_id))
-        if not ecomm_categ:
+        if not ecomm_categ and product_id.categ_id.bigcommerce_product_category_id:
             categ_ids.append(int(product_id.categ_id.bigcommerce_product_category_id))
         data.update({
             "name": product_id.name,

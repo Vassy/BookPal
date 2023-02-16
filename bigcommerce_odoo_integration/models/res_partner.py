@@ -45,9 +45,59 @@ class ResPartner(models.Model):
         operation_detail_id = bigcommerce_operation_details_obj.create(vals)
         return operation_detail_id
 
-    def bigcommerce_to_odoo_import_customers(self, warehouse_id=False, bigcommerce_store_ids=False,source_page=1,destination_page=1):
+    def create_update_cutomer_to_odoo(self,record,bigcommerce_store_id, customer_operation_id,warehouse_id):
+        bc_customer_id = str(record.get('id', False))  # bigcommerce_store_id.bc_customer_prefix + "_" +
+        partner_id = self.env['res.partner'].search(
+            [('bigcommerce_customer_id', '=', bc_customer_id)], limit=1)
+        customer_group_id = self.env['bigcommerce.customer.group'].search(
+            [('customer_group_id', '=', record.get('customer_group_id')),
+             ('bc_store_id', '=', bigcommerce_store_id.id)], limit=1)
+        if not partner_id:
+            partner_vals = {
+                'name': "%s %s" % (record.get('first_name'), record.get('last_name')),
+                'phone': record.get('phone', ''),
+                'email': record.get('email'),
+                'bigcommerce_customer_id': bc_customer_id,
+                'is_available_in_bigcommerce': True,
+                'bigcommerce_store_id': bigcommerce_store_id.id,
+                'bigcommerce_customer_group_id': customer_group_id.id,
+                'tax_exempt_category': record.get('tax_exempt_category', '')
+            }
+            if record.get('company') and record.get('email'):
+                partner_parent_id = self.env['res.partner'].search(
+                    [('company_type', '=', 'company'), ('email', '=', record.get('email'))], limit=1)
+                if not partner_parent_id:
+                    company_vals = {'company_type': 'company', 'name': record.get('company')}
+                    partner_parent_id = self.env['res.partner'].create({**partner_vals, **company_vals})
+                partner_vals.update({'parent_id':partner_parent_id.id})
+            partner_id = self.env['res.partner'].create(partner_vals)
+            _logger.info("Customer Created : {0}".format(partner_id.name))
+            customer_message = "%s Customer Created" % (partner_id.name)
+        else:
+            partner_vals = {
+                'name': "%s %s" % (record.get('first_name'), record.get('last_name')),
+                'phone': record.get('phone', ''),
+                'email': record.get('email'),
+                'bigcommerce_customer_group_id': customer_group_id.id,
+                'tax_exempt_category': record.get('tax_exempt_category', '')
+                # 'bigcommerce_customer_id':record.get('id'),
+                # 'bigcommerce_store_id':bigcommerce_store_id.id
+            }
+            partner_id.write(partner_vals)
+            customer_message = "Customer Data Updated %s" % (partner_id.name)
+            _logger.info("Customer Updated : {0}".format(partner_id.name))
+            req_data = record
+
+        self.create_bigcommerce_operation_detail('customer', 'import', False, record,
+                                                 customer_operation_id, warehouse_id, False,
+                                                 customer_message)
+        self._cr.commit()
+        return partner_id
+
+    def bigcommerce_to_odoo_import_customers(self, warehouse_id=False, bigcommerce_store_ids=False,source_page=1,destination_page=1,customer_id=False):
         for bigcommerce_store_id in bigcommerce_store_ids:
             req_data = False
+            partner_id = False
             customer_response_pages = []
             customer_process_message = "Process Completed Successfully!"
             customer_operation_id = self.env['bigcommerce.operation']
@@ -56,90 +106,69 @@ class ResPartner(models.Model):
                                                                           'Processing...', warehouse_id)
             self._cr.commit()
             try:
-                api_operation = "/v3/customers"
+                if customer_id:
+                    api_operation = "/v2/customers/{}".format(customer_id)
+                else:
+                    api_operation = "/v3/customers"
                 response_data = bigcommerce_store_id.send_get_request_from_odoo_to_bigcommerce(api_operation)
                 if response_data.status_code in [200, 201]:
                     response_data = response_data.json()
                     _logger.info("Customer Response Data : {0}".format(response_data))
-                    records = response_data.get('data')
-                    total_pages = response_data.get('meta').get('pagination').get('total_pages')
-                    if total_pages > 0:
-                        bc_total_pages = total_pages + 1
-                        inp_from_page = source_page or bigcommerce_store_id.source_of_import_data
-                        inp_total_pages = destination_page or bigcommerce_store_id.destination_of_import_data
-                        from_page = bc_total_pages - inp_total_pages
-                        total_pages = bc_total_pages - inp_from_page
-                    else:
-                        from_page = source_page or bigcommerce_store_id.source_of_import_data
-                        total_pages = destination_page or bigcommerce_store_id.destination_of_import_data
-                    if total_pages > 1:
-                        while (total_pages >= from_page):
+                    if not customer_id:
+                        records = response_data.get('data')
+                        total_pages = response_data.get('meta').get('pagination').get('total_pages')
+                        if total_pages > 0:
+                            bc_total_pages = total_pages + 1
+                            inp_from_page = source_page or bigcommerce_store_id.source_of_import_data
+                            inp_total_pages = destination_page or bigcommerce_store_id.destination_of_import_data
+                            from_page = bc_total_pages - inp_total_pages
+                            total_pages = bc_total_pages - inp_from_page
+                        else:
+                            from_page = source_page or bigcommerce_store_id.source_of_import_data
+                            total_pages = destination_page or bigcommerce_store_id.destination_of_import_data
+                        if total_pages > 1:
+                            while (total_pages >= from_page):
+                                    try:
+                                        page_api = "/v3/customers?page=%s" % (total_pages)
+                                        page_response_data = bigcommerce_store_id.send_get_request_from_odoo_to_bigcommerce(
+                                            page_api)
+                                        if page_response_data.status_code in [200, 201]:
+                                            page_response_data = page_response_data.json()
+                                            _logger.info("Customer Response Data : {0}".format(page_response_data))
+                                            page_records = page_response_data.get('data')
+                                            customer_response_pages.append(page_records)
+                                    except Exception as e:
+                                        category_process_message = "Page is not imported! %s" % (e)
+                                        _logger.info("Getting an Error In Customer Response {}".format(e))
+                                        process_message = "Getting an Error In Import Customer Response {}".format(e)
+                                        self.create_bigcommerce_operation_detail('customer', 'import', page_response_data,
+                                                                                 category_process_message,
+                                                                                 customer_operation_id, warehouse_id, True,
+                                                                                 process_message)
+                                    total_pages = total_pages - 1
+                        else:
+                            customer_response_pages.append(records)
+                        for customer_response_page in customer_response_pages:
+                            for record in customer_response_page:
+                                partner_id = self.create_update_cutomer_to_odoo(record, bigcommerce_store_id,
+                                                                                customer_operation_id, warehouse_id)
                                 try:
-                                    page_api = "/v3/customers?page=%s" % (total_pages)
-                                    page_response_data = bigcommerce_store_id.send_get_request_from_odoo_to_bigcommerce(
-                                        page_api)
-                                    if page_response_data.status_code in [200, 201]:
-                                        page_response_data = page_response_data.json()
-                                        _logger.info("Customer Response Data : {0}".format(page_response_data))
-                                        page_records = page_response_data.get('data')
-                                        customer_response_pages.append(page_records)
+                                    self.add_customer_address(partner_id, bigcommerce_store_id, customer_operation_id,
+                                                              warehouse_id)
                                 except Exception as e:
-                                    category_process_message = "Page is not imported! %s" % (e)
-                                    _logger.info("Getting an Error In Customer Response {}".format(e))
-                                    process_message = "Getting an Error In Import Customer Response {}".format(e)
-                                    self.create_bigcommerce_operation_detail('customer', 'import', page_response_data,
-                                                                             category_process_message,
-                                                                             customer_operation_id, warehouse_id, True,
-                                                                             process_message)
-                                total_pages = total_pages - 1
+                                    _logger.info("Getting an Error while Import Customer Address : {}".format(e))
+                                    continue
                     else:
-                        customer_response_pages.append(records)
-                    for customer_response_page in customer_response_pages:
-                        for record in customer_response_page:
-                            bc_customer_id = str(record.get('id', False))#bigcommerce_store_id.bc_customer_prefix + "_" +
-                            partner_id = self.env['res.partner'].search(
-                                [('bigcommerce_customer_id', '=', bc_customer_id)], limit=1)
-                            customer_group_id = self.env['bigcommerce.customer.group'].search(
-                                [('customer_group_id', '=', record.get('customer_group_id')),
-                                 ('bc_store_id', '=', bigcommerce_store_id.id)], limit=1)
-                            if not partner_id:
-                                partner_vals = {
-                                    'name': "%s %s" % (record.get('first_name'), record.get('last_name')),
-                                    'phone': record.get('phone', ''),
-                                    'email': record.get('email'),
-                                    'bigcommerce_customer_id': bc_customer_id,
-                                    'is_available_in_bigcommerce': True,
-                                    'bigcommerce_store_id': bigcommerce_store_id.id,
-                                    'bigcommerce_customer_group_id': customer_group_id.id,
-                                    'tax_exempt_category':record.get('tax_exempt_category','')
-                                }
-                                partner_id = self.env['res.partner'].create(partner_vals)
-                                _logger.info("Customer Created : {0}".format(partner_id.name))
-                                response_data = record
-                                customer_message = "%s Customer Created" % (partner_id.name)
-                            else:
-                                vals = {
-                                    'name': "%s %s" % (record.get('first_name'), record.get('last_name')),
-                                    'phone': record.get('phone', ''),
-                                    'email': record.get('email'),
-                                    'bigcommerce_customer_group_id': customer_group_id.id,
-                                    'tax_exempt_category': record.get('tax_exempt_category','')
-                                    # 'bigcommerce_customer_id':record.get('id'),
-                                    # 'bigcommerce_store_id':bigcommerce_store_id.id
-                                }
-                                partner_id.write(vals)
-                                customer_message = "Customer Data Updated %s" % (partner_id.name)
-                                _logger.info("Customer Updated : {0}".format(partner_id.name))
-                                req_data = record
-                            self.create_bigcommerce_operation_detail('customer', 'import', req_data, response_data,
-                                                                     customer_operation_id, warehouse_id, False,
-                                                                     customer_message)
-                            self._cr.commit()
-                            try:
-                                self.add_customer_address(partner_id, bigcommerce_store_id, customer_operation_id,
-                                                          warehouse_id)
-                            except Exception as e:
-                                continue
+                        record = response_data
+                        partner_id = self.create_update_cutomer_to_odoo(record, bigcommerce_store_id,
+                                                                        customer_operation_id, warehouse_id)
+                        try:
+                            self.add_customer_address(partner_id, bigcommerce_store_id, customer_operation_id,
+                                                      warehouse_id)
+                        except Exception as e:
+                            _logger.info("Getting an Error while Import Customer Address : {}".format(e))
+                            continue
+
                     _logger.info("Import Customer Process Completed ")
                 else:
                     _logger.info("Getting an Error In Import Customer Response".format(response_data))
@@ -157,6 +186,7 @@ class ResPartner(models.Model):
             customer_operation_id and customer_operation_id.write({'bigcommerce_message': customer_process_message})
             bigcommerce_store_id.bigcommerce_operation_message = "Import Customer Process Completed."
             self._cr.commit()
+            return partner_id
 
     def add_customer_address(self, partner_id=False, bigcommerce_store_id=False, customer_operation_id=False,
                              warehouse_id=False):
@@ -167,10 +197,10 @@ class ResPartner(models.Model):
                 #prefix = len(bigcommerce_store_id.bc_customer_prefix) + 1
                 bc_customer_id = partner_id.bigcommerce_customer_id#[prefix:]
                 api_operation = "/v2/customers/%s/addresses" % (bc_customer_id)
-
                 response_data = bigcommerce_store_id.send_get_request_from_odoo_to_bigcommerce(api_operation)
                 _logger.info("BigCommerce Get Customer Address Response : {0}".format(response_data))
                 _logger.info("Response Status: {0}".format(response_data.status_code))
+
                 if response_data.status_code in [200, 201, 204]:
                     response_data = response_data.json()
                     _logger.info("Customer Response Data : {0}".format(response_data))
@@ -186,6 +216,7 @@ class ResPartner(models.Model):
                         state_name = record.get('state', "")
                         state_obj = self.env['res.country.state'].search([('name', '=', state_name)], limit=1)
                         partner_id.state_id = state_obj and state_obj.id
+
                         _logger.info("Customer Address Updated : {0}".format(partner_id.name))
                         response_data = record
                         customer_message = "%s Customer Address Updated" % (partner_id.name)

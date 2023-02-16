@@ -1,4 +1,8 @@
+
+import logging
+
 from odoo import fields, models
+_logger = logging.getLogger("BigCommerce")
 
 
 class UpdatePartnerWiz(models.TransientModel):
@@ -17,7 +21,24 @@ class UpdatePartnerWiz(models.TransientModel):
         """Update partner from bc."""
         for partner in self.partner_ids.filtered(
                 lambda x: x.bigcommerce_customer_id):
-            partner.with_context(
-                customer_id=partner.bigcommerce_customer_id
-            ).bigcommerce_to_odoo_import_customers(
-                bigcommerce_store_ids=self.bigcommerce_store_ids)
+            for store in self.bigcommerce_store_ids:
+                customer_process_message = "Process Completed Successfully!"
+                api_operation = "/v2/customers/{}".format(
+                    partner.bigcommerce_customer_id)
+                customer_operation_id = partner.create_bigcommerce_operation(
+                    'customer', 'update', store,
+                    'Processing...', False)
+                response_data = store.\
+                    send_get_request_from_odoo_to_bigcommerce(
+                        api_operation)
+                if response_data.status_code in [200, 201]:
+                    response_data = response_data.json()
+                    _logger.info(
+                        "Customer Response Data : {0}".format(response_data))
+                    partner.create_update_cutomer_to_odoo(
+                        response_data, store,
+                        customer_operation_id, False)
+                    customer_operation_id and customer_operation_id.write(
+                        {'bigcommerce_message': customer_process_message})
+                # customer_operation_id.write({'bigcommerce_message':
+                #                              'Process Completed Successfully'})
