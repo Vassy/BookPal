@@ -279,6 +279,7 @@ class PurchaseOrder(models.Model):
                 or field.attrib.get("readonly") == "1"
                 or field.attrib["name"] not in self._fields
                 or field.attrib.get("attrs")
+                or self._fields.get(field.attrib["name"]).readonly
             ):
                 continue
             field.attrib["attrs"] = attrs
