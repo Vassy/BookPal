@@ -69,6 +69,7 @@
                 <page name="important_details" string="Lead Details">
                     <group>
                         <group>
+                            <field name="industry_id" options="{'no_create': True}"/>
                             <field name="source"/>
                             <field name="source_notes"/>
                             <field name="referring_organization" domain="[('company_type', '=', 'company')]"/>

@@ -61,7 +61,6 @@
                     <!-- <field name="active" string="Status"/> -->
                     <field name="account_number"/>
                     <field name="top_publisher"/>
-                    <field name="industry_id" attrs="{'invisible': [('is_company', '=', False)]}" options="{'no_create': True}"/>
                     <field name="availability_check"/>
                 </group>
             </xpath>
