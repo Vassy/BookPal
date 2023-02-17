@@ -90,7 +90,7 @@
                     <group>
                         <group name="order_details">
                             <field name='refer_by_company' domain="[('company_type', '=', 'company')]"/>
-                            <field name='refer_by_person' domain="[('company_type', '!=', 'company'),('type', '=', 'contact')]"/>
+                            <field name='refer_by_person' domain="[('company_type', '!=', 'company'),('type', '=', 'contact'),('parent_id', '=', refer_by_company)]"/>
                             <!--                            <field name='order_processing_time'/>-->
                         </group>
                         <group>
