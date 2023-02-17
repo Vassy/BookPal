@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="purchase_tracking_log_tree" model="ir.ui.view">
+        <field name="name">PO Tracking Log Tree</field>
+        <field name="model">automated.purchase.tracking.log</field>
+        <field name="arch" type="xml">
+            <tree name="Tracking Log" create="false">
+                <field name="order_id"/>
+                <field name="tracking_number_id"/>
+                <field name="status"/>
+                <field name="reason"/>
+                <field name="document_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="purchase_tracking_log_form" model="ir.ui.view">
+        <field name="name">Purchase tracking Form</field>
+        <field name="model">automated.purchase.tracking.log</field>
+        <field name="arch" type="xml">
+            <form string="Tracking Log">
+                <sheet>
+                    <group>
+                        <field name="order_id"/>
+                        <field name="tracking_number_id"/>
+                        <field name="status"/>
+                    </group>
+                    <group>
+                        <field name="reason"/>
+                        <field name="document_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="tracking_lof_model_action" model="ir.actions.act_window">
+        <field name="name">PO Trackings Log Action</field>
+        <field name="res_model">automated.purchase.tracking.log</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <menuitem
+            id="purchase_tracking_details"
+            name="Tracking Log"
+            action="tracking_lof_model_action"
+            parent="bista_purchase.bookpal_purchase_menu"
+            sequence="5"/>
+</odoo>

@@ -11,7 +11,7 @@
         """
         """,
     "version": "15.0.0",
-    "depends": ['base', 'documents', 'contacts'],
+    "depends": ['base', 'documents', 'contacts', 'bista_purchase'],
     "data": [
         'security/ir.model.access.csv',
         'data/create_invoices_from_doc.xml',
@@ -23,6 +23,7 @@
         'views/share_view.xml',
         'views/res_partner_view.xml',
         'views/azure_log_view.xml',
+        'views/purchase_tracking_details_view.xml',
     ],
     "auto_install": False,
     "application": True,

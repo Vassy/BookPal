@@ -10,6 +10,7 @@ from time import strptime
 import pdfkit
 import unicodedata
 import random
+from datetime import datetime
 
 
 class DocumentsDocument(models.Model):
@@ -156,7 +157,7 @@ class DocumentsDocument(models.Model):
         return final_result
 
     def _azure_doc_handler(self):
-        log_name = str(datetime.now())
+        log_name = str(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
 
         try:
             azure_comm = self._azure_doc_connector()
@@ -268,6 +269,7 @@ class DocumentsDocument(models.Model):
                          </tr>
                                     """ % (doc_name, tracking.order_id.name)
                 log_html += tr
+                self.create_tracking_log(tracking.order_id.id, tracking.id, 'done', False, False)
                 document.unlink()
 
         log_html += """
@@ -289,8 +291,11 @@ class DocumentsDocument(models.Model):
             if purchase_order:
                 purchase_id = purchase_order.id
             else:
+                self.create_tracking_log(False, False, 'failed', "Purchase Order not found:" + str(purchase_order_name),
+                                         document.id)
                 raise Exception("Purchase Order not found: ", purchase_order_name)
         else:
+            self.create_tracking_log(False, False, 'failed', "No PO Number", document.id)
             raise Exception("No PO Number")
 
         if parsed_data.get('Carrier Name'):
@@ -298,13 +303,17 @@ class DocumentsDocument(models.Model):
             if carrier:
                 carrier_id = carrier.id
             else:
+                self.create_tracking_log(False, False, 'failed',
+                                         "Carrier not found: " + parsed_data.get('Carrier Name'), document.id)
                 raise Exception("Carrier not found: ", parsed_data.get('Carrier Name'))
         else:
+            self.create_tracking_log(False, False, 'failed', "No Carrier", document.id)
             raise Exception("No Carrier")
 
         if parsed_data.get('Ship Date'):
             date = self._date_converter(parsed_data.get('Ship Date'))
         else:
+            self.create_tracking_log(False, False, 'failed', "No Ship Date", document.id)
             raise Exception("No Ship Date")
 
         tracking_ref_ids_list = []
@@ -333,14 +342,14 @@ class DocumentsDocument(models.Model):
             'carrier_id': carrier_id,
             'pro_number': parsed_data.get('Pro Number') or False,
             'tracking_ref_ids': tracking_ref_ids_list if len(tracking_ref_ids_list) > 0 else False,
+            'is_automated': True,
         }
 
         tracking = self.env['purchase.tracking'].create(purchase_tracking_vals)
-        if document.attachment_id:
-            document.attachment_id.copy({
-                'res_id': tracking.order_id.id,
-                'res_model': 'purchase.order',
-            })
+        attached_document = document.attachment_id.copy({
+            'res_id': tracking.order_id.id,
+            'res_model': 'purchase.order',
+        })
 
         if parsed_data.get('Line Item'):
             isbn_list = parsed_data.get('Line Item')
@@ -349,13 +358,29 @@ class DocumentsDocument(models.Model):
                 if tracking.tracking_line_ids:
                     for isbns_line in isbn_list:
                         isbn_number = isbns_line.get('ISBN')
+                        # order_line = tracking.order_id.order_line.filtered(
+                        #     lambda p: p.product_id.default_code == isbn_number and p.product_qty > p.qty_received
+                        # )
                         product_line = tracking.tracking_line_ids.filtered(
                             lambda p: p.default_code == isbn_number)
-                        if len(product_line.ids) == 1:
+
+                        if len(product_line.ids) == 1 and product_line.pending_shipment_qty > 0:
                             product_line.ship_qty = self._strip_float(isbns_line.get('Quantity'))
                         else:
-                            raise Exception("ISBN not found: ", isbn_number, " in PO: ", tracking.order_id.name)
-
+                            if len(product_line.ids) == 0:
+                                self.create_tracking_log(tracking.order_id.id, False, 'failed',
+                                                         "ISBN not found: " + isbn_number, document.id)
+                                tracking.unlink()
+                                attached_document.unlink()
+                                raise Exception("ISBN not found: ", isbn_number, " in PO: ", tracking.order_id.name)
+                            elif product_line.pending_shipment_qty <= 0:
+                                self.create_tracking_log(tracking.order_id.id, False, 'failed',
+                                                         "There is no pending quantity for " + isbn_number,
+                                                         document.id)
+                                tracking.unlink()
+                                attached_document.unlink()
+                                raise Exception("Already received All the Ordered Quantity for ", isbn_number,
+                                                " in PO: ", tracking.order_id.name)
         return tracking
 
     def _strip_float(self, value):
@@ -441,3 +466,12 @@ class DocumentsDocument(models.Model):
                 date = datetime.strptime(final_date, '%d/%m/%y').strftime("%Y-%m-%d")
 
             return date
+
+    def create_tracking_log(self, purchase_order, tracking_id, status, reason, document_id):
+        self.env['automated.purchase.tracking.log'].create({
+            "order_id": purchase_order,
+            "tracking_number_id": tracking_id,
+            "status": status,
+            "reason": reason,
+            "document_id": document_id,
+        })

@@ -25,6 +25,7 @@
                             <field name="date_approve" widget="date"/>
                             <field name="pro_number" required="0" string="PRO No." attrs="{'readonly': [('is_read_only', '=', True)]}" />
                             <field name="status" required="1" attrs="{'readonly': [('is_read_only', '=', True)]}" />
+                            <field name="is_automated" readonly="1"/>
                         </group>
                     </group>
                     <notebook>

@@ -43,6 +43,7 @@ class PurchaseTracking(models.Model):
         compute="_compute_is_read_only", string="Is Read Only"
     )
     checkbox = fields.Boolean(string="Select All (Pending to Shipped)")
+    is_automated = fields.Boolean(string='is Automated', default=False, copy=False)
 
     def save(self):
         return {"type": "ir.actions.act_window_close"}
