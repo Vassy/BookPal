@@ -136,7 +136,7 @@ class PurchaseOrder(models.Model):
             raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab.'))
         if is_html_empty(self.special_pick_note):
             raise ValidationError(_('Please add the Notes'))
-        return super(PurchaseOrder, self).button_approve(force)
+        return super(PurchaseOrder, self).button_approve()
 
     def button_confirm(self):
         # change order line status on confirm order
