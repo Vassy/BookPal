@@ -30,7 +30,14 @@ class SellerReport(models.Model):
         ("pending_for_approval", "Order In Approval"),
         ("sale", "Approved Order")
         ], string='Order Status')
-    industry_id = fields.Many2one('res.partner.industry', string='Industry')
+    industry_id = fields.Many2one('res.partner.industry', string='Order Customer Segment')
+    partner_id = fields.Many2one('res.partner', string="Order Account")
+    fulfilment_project = fields.Boolean(string="Fulfilment Project")
+    report_type = fields.Selection([
+                ('individual', 'Individual'),
+                ('bulk', 'Bulk'),
+                ('mixed', 'Mixed'),
+            ], string='Report Type')
 
     def init(self):
         """ Fetch the data from sale order line based on report type and start and end date """
@@ -53,7 +60,10 @@ class SellerReport(models.Model):
                             res.zip AS shipping_zip_code,
                             sale_order_line.product_uom_qty AS quantity,
                             sale_order.company_id AS order_company,
-                            sale_order_line.state AS order_status
+                            sale_order_line.state AS order_status,
+                            sale_order.report_type AS report_type,
+                            sale_order.partner_id AS partner_id,
+                            sale_order.fulfilment_project AS fulfilment_project
                         """
         from_str = """ FROM sale_order_line
                         JOIN sale_order ON (sale_order_line.order_id = sale_order.id)
