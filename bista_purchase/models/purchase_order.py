@@ -93,6 +93,12 @@ class PurchaseOrder(models.Model):
     is_email_sent = fields.Boolean(string="Email Sent", default=False)
 
     def action_rfq_send(self):
+        if not self.shipping_instructions and is_html_empty(self.special_pick_note):
+            raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab and add the Notes'))
+        if not self.shipping_instructions:
+            raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab.'))
+        if is_html_empty(self.special_pick_note):
+            raise ValidationError(_('Please add the Notes'))
         result = super().action_rfq_send()
         glove_id = self.sale_order_ids.mapped("white_glove_id")
         if glove_id:
@@ -101,6 +107,11 @@ class PurchaseOrder(models.Model):
                 lambda p: glove_id in p.glove_type_ids
             )
             result["context"].update({"default_cc_recipient_ids": cc_partner_ids.ids})
+        template_id = self.env["ir.model.data"]._xmlid_lookup(
+            "bista_purchase.email_template_bista_purchase"
+        )[2]
+        if result.get("context") and result["context"].get("default_template_id"):
+            result["context"]["default_template_id"] = template_id
         return result
 
     def button_cancel(self):
@@ -130,11 +141,13 @@ class PurchaseOrder(models.Model):
             raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab.'))
         if is_html_empty(self.special_pick_note):
             raise ValidationError(_('Please add the Notes'))
-        return super(PurchaseOrder, self).button_approve(force)
+        return super(PurchaseOrder, self).button_approve()
 
     def button_confirm(self):
         # change order line status on confirm order
         res = super(PurchaseOrder, self).button_confirm()
+        if not self.user_id:
+            self.user_id = self.env.user.id
         ready_status_id = self.env.ref('bista_purchase.status_line_ready')
         if ready_status_id:
             for order in self:
@@ -198,10 +211,11 @@ class PurchaseOrder(models.Model):
     # def onchange_partner_id_cc_email(self):
     #     self.cc_email = self.partner_id.cc_email
 
-    # def _prepare_picking(self):
-    #     res = super(PurchaseOrder, self)._prepare_picking()
-    #     res.update({'note': self.special_pick_note})
-    #     return res
+    def _prepare_picking(self):
+        res = super(PurchaseOrder, self)._prepare_picking()
+        # res.update({'note': self.special_pick_note})
+        res.update({'user_id': self.env.user.id})
+        return res
 
     @api.onchange('order_line')
     def onchange_product_is_exist(self):
@@ -217,28 +231,24 @@ class PurchaseOrder(models.Model):
     def compute_lead_time(self):
         for rec in self:
             rec.lead_time = 0
-            if rec.date_approve:
-                rec.lead_time = False
-                date_list = rec.picking_ids.mapped('scheduled_date')
-                val = sorted(date_list, reverse=True)
-                if val:
-                    date_time = val[0].date() - rec.date_approve.date()
-                    rec.lead_time = date_time.days
+            max_date = sorted(rec.picking_ids.mapped("scheduled_date"), reverse=True)
+            if rec.date_approve and max_date:
+                rec.lead_time = (max_date[0].date() - rec.date_approve.date()).days
 
     def compute_order_process_time(self):
         for rec in self:
-            rec.order_process_time = 0
+            process_time = 0
             if rec.sale_order_ids.split_shipment and rec.date_approve and rec.sale_order_ids.sale_multi_ship_qty_lines:
-                rec.order_process_time = False
-                vals = min(
-                    rec.sale_order_ids.sale_multi_ship_qty_lines.mapped('confirm_date'))
-                if vals:
-                    rec_date = rec.date_approve - vals
-                    rec.order_process_time = rec_date.days
-            else:
-                if rec.sale_order_ids.date_order and rec.date_approve:
-                    order_date = rec.date_approve - rec.sale_order_ids.date_order
-                    rec.order_process_time = order_date.days
+                min_date = min(
+                    rec.sale_order_ids.sale_multi_ship_qty_lines.mapped("confirm_date")
+                )
+                if min_date:
+                    process_time = (rec.date_approve.date() - min_date.date()).days
+            elif rec.sale_order_ids.date_order and rec.date_approve:
+                process_time = (
+                    rec.date_approve.date() - rec.sale_order_ids.date_order.date()
+                ).days
+            rec.order_process_time = process_time
 
     def action_send_for_approval(self):
         for rec in self:
@@ -262,19 +272,22 @@ class PurchaseOrder(models.Model):
         if view_type != "form":
             return result
         doc = etree.XML(result["arch"])
+        attrs = "{'readonly': [('state', 'in', ('purchase', 'done'))]}"
         if not self.env.user.has_group("purchase.group_purchase_manager"):
             attrs = "{'readonly': [('state', 'not in', ['draft', 'sent'])]}"
-            for field in doc.xpath("//field"):
-                if (
-                        field.attrib.get("invisible") == "1"
-                        or field.attrib.get("readonly") == "1"
-                        or field.attrib["name"] not in self._fields
-                ):
-                    continue
-                field.attrib["attrs"] = attrs
         else:
             for node in doc.xpath("//button[@id='draft_confirm']"):
                 node.set('invisible', "1")
+        for field in doc.xpath("//field"):
+            if (
+                field.attrib.get("invisible") == "1"
+                or field.attrib.get("readonly") == "1"
+                or field.attrib["name"] not in self._fields
+                or field.attrib.get("attrs")
+                or self._fields.get(field.attrib["name"]).readonly
+            ):
+                continue
+            field.attrib["attrs"] = attrs
         result["arch"] = etree.tostring(doc)
         return result
 

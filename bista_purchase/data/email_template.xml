@@ -5,8 +5,8 @@
         <record id="email_template_purchase_reciept_first_reminder" model="mail.template">
             <field name="name">Purchase First Receipt: Send by Email</field>
             <field name="model_id" ref="model_stock_picking"/>
-            <field name="email_to">{{ (object.partner_id.email)}}</field>
-            <field name="email_from">{{ object.user_id.email_formatted or user.email_formatted or ''}}</field>
+            <field name="email_to">{{ (object.user_id.email)}}</field>
+            <field name="email_from">"{{ object.company_id.name }}" &lt;{{ (object.company_id.email or user.email) }}&gt;</field>
             <field name="email_cc">{{object.partner_id.cc_email}}</field>
             <field name="subject">Purchase Backorder First Reminder {{object.partner_id.name}}</field>
             <field name="body_html" type="html">
@@ -26,8 +26,8 @@
         <record id="email_template_purchase_reciept_second_reminder" model="mail.template">
             <field name="name">Purchase Second Receipt: Send by Email</field>
             <field name="model_id" ref="model_stock_picking"/>
-            <field name="email_to">{{ (object.partner_id.email)}}</field>
-            <field name="email_from">{{ object.user_id.email_formatted or user.email_formatted or ''}}</field>
+            <field name="email_to">{{ (object.user_id.email)}}</field>
+            <field name="email_from">"{{ object.company_id.name }}" &lt;{{ (object.company_id.email or user.email) }}&gt;</field>
             <field name="email_cc">{{object.partner_id.cc_email}}</field>
             <field name="subject">Purchase Backorder Second Reminder {{object.partner_id.name}}</field>
             <field name="body_html" type="html">
@@ -50,8 +50,8 @@
         <record id="email_template_purchase_reciept_deadline_reminder" model="mail.template">
             <field name="name">Purchase Backorder Deadline Receipt: Send by Email</field>
             <field name="model_id" ref="model_stock_picking"/>
-            <field name="email_to">{{ (object.partner_id.email)}}</field>
-            <field name="email_from">{{ object.user_id.email_formatted or user.email_formatted or ''}}</field>
+            <field name="email_to">{{ (object.user_id.email)}}</field>
+            <field name="email_from">"{{ object.company_id.name }}" &lt;{{ (object.company_id.email or user.email) }}&gt;</field>
             <field name="subject">Purchase Backorder Deadline Reminder {{object.partner_id.name}}</field>
             <field name="body_html" type="html">
                 <body>
@@ -221,6 +221,89 @@
                     Thank you for your business and we look forward to serving you in the future!
                 </p>
             </field>
+        </record>
+
+        <record id="email_template_bista_purchase" model="mail.template">
+            <field name="name">BookPal: Send Purchase Order</field>
+            <field name="model_id" ref="model_purchase_order"/>
+            <field name="subject">{{ object.company_id.name }} Order (Ref {{ object.name or 'n/a' }})</field>
+            <field name="partner_to">{{ object.partner_id.id }}</field>
+            <field name="body_html" type="html">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    **PLEASE REPLY TO THIS EMAIL TO CONFIRM RECEIPT**
+                    <br/><br/><br/>
+                    Please ship the following item(s):<br/><br/>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>ISBN</th>
+                            <th>Description</th>
+                            <th>Total Qty on PO</th>
+                            <th>Price</th>
+                            <th>PO Line Total</th>
+                        </tr>
+                        <tr t-foreach="object.order_line" t-as="line">
+                            <td><span t-out="line.product_id.isbn" /></td>
+                            <td><span t-out="line.name" /></td>
+                            <td><span t-out="line.product_qty" /></td>
+                            <td><span t-out="format_amount(line.price_unit, line.currency_id)" /></td>
+                            <td><span t-out="format_amount(line.price_subtotal, line.currency_id)" /></td>
+                        </tr>
+                    </table>
+                    <br/><br/><br/>
+                    <span style="font-weight: bold;">SHIP TO:</span><br/>
+                    <t t-if="object.dest_address_id">
+                        <span t-out="object.dest_address_id.name"/><br/>
+                        <t t-if="object.dest_address_id.parent_id.name">
+                            <span t-out="object.dest_address_id.parent_id.name"/><br/>
+                        </t>
+                        <t t-if="object.dest_address_id.street">
+                            <span t-out="object.dest_address_id.street"/><br/>
+                        </t>
+                        <t t-if="object.dest_address_id.street2">
+                            <span t-out="object.dest_address_id.street2"/><br/>
+                        </t>
+                        <t t-if="object.dest_address_id.city">
+                            <span t-out="object.dest_address_id.city"/>,
+                        </t>
+                        <span t-out="object.dest_address_id.state_id.code"/>
+                        <span t-out="object.dest_address_id.zip"/>
+                        <span t-out="object.dest_address_id.country_id.code"/>
+                    </t>
+                    <t t-else="">
+                        <span t-out="object.company_id.name"/><br/>
+                        <t t-if="object.company_id.parent_id.name">
+                            <span t-out="object.company_id.parent_id.name"/><br/>
+                        </t>
+                        <t t-if="object.company_id.street">
+                            <span t-out="object.company_id.street"/><br/>
+                        </t>
+                        <t t-if="object.company_id.street2">
+                            <span t-out="object.company_id.street2"/><br/>
+                        </t>
+                        <t t-if="object.company_id.city">
+                            <span t-out="object.company_id.city"/>,
+                        </t>
+                        <span t-out="object.company_id.state_id.code"/>
+                        <span t-out="object.company_id.zip"/>
+                        <span t-out="object.company_id.country_id.code"/>
+                    </t>
+                    <br/><br/>
+                    <span style="font-weight: bold;">SHIPPING INSTRUCTIONS:</span>
+                    <span t-out="object.shipping_instructions.name" /><br/>
+                    <span style="font-weight: bold;">DELIVER THESE ITEMS BY:</span>
+                    <span t-out="format_date(object.date_planned.date())" /><br/>
+                    <span style="font-weight: bold;">PO INSTRUCTIONS:</span>
+                    <span t-out="object.special_pick_note" />
+                    <br/><br/><br/>
+                    <span style="font-weight: bold;">PLEASE NOTE:</span><br/>
+                    <span t-out="object.notes" />
+                    <br/><br/>
+                    **WE HAVE A NEW ADDRESS**
+                </p>
+            </field>
+            <field name="report_template" ref="purchase.report_purchase_quotation"/>
+            <field name="report_name">RFQ_{{ (object.name or '').replace('/','_') }}</field>
+            <field name="lang">{{ object.partner_id.lang }}</field>
         </record>
     </data>
 </odoo>

@@ -17,6 +17,8 @@ class ResPartner(models.Model):
                         {
                             'name': 'BC expexmption code',
                             'code': partner.tax_exempt_category,
+                            'company_id': partner.company_id.id or
+                            self.env.user.company_id.id
                         })
                 partner.avalara_exemption_id = exemption_id.id
 

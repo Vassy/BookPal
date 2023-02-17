@@ -228,7 +228,7 @@ class SaleOrderLine(models.Model):
     def _compute_prices(self):
         for line in self:
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            price = int(price * 10 ** 3) / 10 ** 3
+            price = int(price * 10 ** 2) / 10 ** 2
             line_data = {
                 "discounted_price": price,
                 "saving_amount": (line.price_unit - price) * line.product_uom_qty,
