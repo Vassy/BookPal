@@ -4,3 +4,4 @@ access_documents_share_filter,Document Share filter,model_documents_share_filter
 access_azure_odoo,Azure odoo user,model_azure_models,base.group_user,1,1,1,1
 access_documents_azure_log,access_documents_azure_log,model_documents_azure_log,base.group_user,1,0,1,1
 access_res_partner_email,access_res_partner_email,model_res_partner_email,base.group_user,1,1,1,1
+access_automated_purchase_tracking_log,access_automated_purchase_tracking_log,model_automated_purchase_tracking_log,base.group_user,1,1,1,1
