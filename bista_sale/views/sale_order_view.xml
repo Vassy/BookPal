@@ -273,7 +273,7 @@
                 <attribute name="widget">monetary</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree//field[@name='margin_percent']" position="attributes">
-                <attribute name="string">Profit(%)</attribute>
+                <attribute name="string">Margin(%)</attribute>
             </xpath>
             <xpath expr="//group[@name='sale_total']//label[@for='margin']" position="attributes">
                 <attribute name="string"> Profit </attribute>
@@ -284,7 +284,7 @@
                 <attribute name="widget">monetary</attribute>
             </xpath>
             <xpath expr="//group[@name='sale_total']//field[@name='margin_percent']" position="attributes">
-                <attribute name="string"> Profit(%) </attribute>
+                <attribute name="string"> Margin(%) </attribute>
                 <attribute name="readonly">1</attribute>
                 <attribute name="force_save">1</attribute>
             </xpath>
