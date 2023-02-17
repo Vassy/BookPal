@@ -386,8 +386,7 @@ class SaleOrderVts(models.Model):
                                           order.get('currency_code'))], limit=1)
 
                                     vals.update({
-                                        'partner_id': partner_obj.parent_id.id if
-                                        partner_obj.parent_id else partner_obj.id,
+                                        'partner_id': partner_obj.id,
                                         'partner_invoice_id': partner_obj.id,
                                         'partner_shipping_id':
                                         partner_shipping_id.id,

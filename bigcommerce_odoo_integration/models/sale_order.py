@@ -60,7 +60,7 @@ class SaleOrderVts(models.Model):
                                 'amount': response_data.get('amount'),
                                 'date': self.date_order,
                                 'ref': self.name,
-                                'partner_id': self.partner_id.parent_id.id if self.partner_id.parent_id else self.partner_id.id,
+                                'partner_id': self.partner_id.id,
                                 'partner_type': 'customer',
                                 'currency_id': currency_id.id,
                                 'journal_id': journal_id,
@@ -739,7 +739,7 @@ class SaleOrderVts(models.Model):
                 pricelist_id = self.env['product.pricelist'].search(
                     [('currency_id.name', '=', order.get('currency_code'))], limit=1)
                 vals = {}
-                vals.update({'partner_id': self.partner_id.parent_id.id if self.partner_id.parent_id else self.partner_id.id,
+                vals.update({'partner_id': self.partner_id.id,
                              'partner_invoice_id': self.partner_id.id,
                              'partner_shipping_id': partner_shipping_id.id,
                              'date_order': date_time_str or today_date,
@@ -1220,28 +1220,30 @@ class SaleOrderVts(models.Model):
         }
 
     def update_order_request_data(self,shipping_address_api_response,order_line,discount,base_shipping_cost):
+        invoice_partner = self.partner_invoice_id or self.partner_id
+        shipping_partner = self.partner_shipping_id or self.partner_id
         request_data = {
             # 'status_id': 1,
             'billing_address': {
-                "first_name": "{}".format(self.partner_id and self.partner_id.name),
-                "street_1": "{}".format(self.partner_id and self.partner_id.street),
-                "city": "{}".format(self.partner_id and self.partner_id.city),
-                "state": "{}".format(self.partner_id and self.partner_id.state_id.name),
-                "zip": "{}".format(self.partner_id and self.partner_id.zip),
-                "country": "{}".format(self.partner_id and self.partner_id.country_id.name),
-                "email": "{}".format(self.partner_id and self.partner_id.email)},
+                "first_name": "{}".format(invoice_partner.name or ''),
+                "street_1": "{}".format(invoice_partner.street or ''),
+                "city": "{}".format(invoice_partner.city or ''),
+                "state": "{}".format(invoice_partner.state_id.name or ''),
+                "zip": "{}".format(invoice_partner.zip or ''),
+                "country": "{}".format(invoice_partner.country_id.name or ''),
+                "email": "{}".format(invoice_partner.email or '')},
             'shipping_addresses': [{
                 "id": "{}".format(shipping_address_api_response.get('id')),
-                "first_name": "{}".format(self.partner_shipping_id.name or ""),
-                "street_1": "{}".format(self.partner_shipping_id.street or ""),
-                "street_2": "{}".format(self.partner_shipping_id.street2 or ""),
-                "city": "{}".format(self.partner_shipping_id.city or ""),
+                "first_name": "{}".format(shipping_partner.name or ""),
+                "street_1": "{}".format(shipping_partner.street or ""),
+                "street_2": "{}".format(shipping_partner.street2 or ""),
+                "city": "{}".format(shipping_partner.city or ""),
                 "state": "{}".format(
-                    self.partner_shipping_id.state_id and self.partner_shipping_id.state_id.name or ""),
-                "zip": "{}".format(self.partner_shipping_id.zip),
+                    shipping_partner.state_id and shipping_partner.state_id.name or ""),
+                "zip": "{}".format(shipping_partner.zip),
                 "country": "{}".format(
-                    self.partner_shipping_id.country_id and self.partner_shipping_id.country_id.name),
-                "email": "{}".format(self.partner_shipping_id.email)}],
+                    shipping_partner.country_id and shipping_partner.country_id.name),
+                "email": "{}".format(shipping_partner.email or '')}],
             'products': order_line,
             'base_shipping_cost':str(base_shipping_cost),
             'discount_amount': abs(discount),

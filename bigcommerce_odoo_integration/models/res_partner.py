@@ -65,7 +65,7 @@ class ResPartner(models.Model):
             }
             if record.get('company') and record.get('email'):
                 partner_parent_id = self.env['res.partner'].search(
-                    [('company_type', '=', 'company'), ('email', '=', record.get('email'))], limit=1)
+                    [('company_type', '=', 'company'), ('name', '=', record.get('company'))], limit=1)
                 if not partner_parent_id:
                     company_vals = {'company_type': 'company', 'name': record.get('company')}
                     partner_parent_id = self.env['res.partner'].create({**partner_vals, **company_vals})
@@ -83,6 +83,17 @@ class ResPartner(models.Model):
                 # 'bigcommerce_customer_id':record.get('id'),
                 # 'bigcommerce_store_id':bigcommerce_store_id.id
             }
+            if not partner_id.parent_id:
+                if record.get('company') and record.get('email'):
+                    partner_parent_id = self.env['res.partner'].search(
+                        [('company_type', '=', 'company'), ('name', '=', record.get('company'))], limit=1)
+                    if not partner_parent_id:
+                        company_vals = {'company_type': 'company', 'name': record.get('company')}
+                        partner_parent_id = self.env['res.partner'].create({**partner_vals, **company_vals})
+                        partner_vals.update({'parent_id': partner_parent_id.id})
+                    else:
+                        partner_parent_id.write({'name':record.get('company')})
+                        partner_vals.update({'parent_id': partner_parent_id.id})
             partner_id.write(partner_vals)
             customer_message = "Customer Data Updated %s" % (partner_id.name)
             _logger.info("Customer Updated : {0}".format(partner_id.name))
