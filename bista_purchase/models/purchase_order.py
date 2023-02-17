@@ -107,6 +107,11 @@ class PurchaseOrder(models.Model):
                 lambda p: glove_id in p.glove_type_ids
             )
             result["context"].update({"default_cc_recipient_ids": cc_partner_ids.ids})
+        template_id = self.env["ir.model.data"]._xmlid_lookup(
+            "bista_purchase.email_template_bista_purchase"
+        )[2]
+        if result.get("context") and result["context"].get("default_template_id"):
+            result["context"]["default_template_id"] = template_id
         return result
 
     def button_cancel(self):
