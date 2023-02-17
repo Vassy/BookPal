@@ -26,8 +26,6 @@
                 </xpath>
                 <field name='partner_shipping_id' position="attributes">
                     <attribute name="attrs">{'invisible': [('split_shipment', '=', True)]}</attribute>
-                </field>
-                <field name='partner_shipping_id' position="attributes">
                     <attribute name="string">Shipping Address</attribute>
                 </field>
                 <xpath expr="//page/field[@name='order_line']/tree/field[@name='name']" position="attributes">
@@ -43,7 +41,8 @@
                             icon="fa-truck"
                             class="text-primary"
                             style="float:right"
-                            attrs="{'invisible': ['|',('product_type','=','service'), ('sale_split_shipment', '=', False)]}"/>
+                            attrs="{'invisible': ['|',('product_type','=','service'), ('sale_split_shipment', '=', False)]}"
+                            title="Show Shipment Plan"/>
                     <field name="remain_so_qty" optional="hide" readonly="1" force_save="1"/>
                 </xpath>
                  <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom']" position="after">
@@ -80,11 +79,12 @@
                         </group>
 
                         <button name="open_sale_multi_ship_wizard" type="object"
-                                icon="fa-truck" string="Import Shipping Data" class="btn-primary" style="float:right" invisible="1"/>
+                                icon="fa-truck" string="Import Shipping Data" class="btn-primary" style="float:right" invisible="1" title="Import Shipping Data"/>
                         <field name="sale_multi_ship_qty_lines" context="{'multi_ship': True}">
                             <tree context="{'multi_ship': True}" decoration-danger="partner_state =='error' and state=='draft'" decoration-success="partner_state =='verified' and state=='draft'" decoration-muted="state == 'cancel' or state == 'short_close'" decoration-warning="qty_delivered and product_qty != qty_delivered" editable="top">
                                 <field name="id" invisible="1"/>
-                                <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id, 'order_id': parent.id, 'shipment_contact': True}" domain="['|', ('id', 'child_of', parent.partner_id), ('id', '=', parent.partner_id)]" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}" options="{'always_reload':1}"/>
+                                <!-- '|', ('id', 'child_of', parent.partner_id), remove this domain to show only customer name in shipping because as discussed in client meeting they will create different sale order if they want to change shipping address for tax calculation -->
+                                <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id, 'order_id': parent.id, 'shipment_contact': True}" domain="[('id', '=', parent.partner_id)]" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}" options="{'always_reload':1}"/>
                                 <field name="so_line_id" options="{'no_create_edit': True, 'no_quick_create': True}" optional="show" context="{'so_lines': parent.so_lines, 'multi_ship': True}" domain="[('order_id', '=', parent.id)]" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="shipping_date" optional="show" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="product_id" invisible="1"/>
@@ -117,7 +117,7 @@
                                 <field name="order_id" invisible="1"/>
                                 <field name="delivery_method_id"/>
                                 <field name="delivery_charges" readonly="1"/>
-                                <button name="get_shipping_charge" type="object" class="fa fa-fw o_button_icon fa-truck" />
+                                <button name="get_shipping_charge" type="object" class="fa fa-fw o_button_icon fa-truck" Title="Get Shipping Cost" />
                                 <button name="cancel_shipment"
                                     type="object"
                                     icon="fa-close"
