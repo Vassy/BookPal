@@ -382,10 +382,6 @@ class SaleOrderLine(models.Model):
         'sale.multi.ship.qty.lines', 'so_line_id',
         string="Multi Ship Lines",
         help='Linked With Sale Multi Ship Lines')
-    sale_split_shipment = fields.Boolean(
-        related='order_id.split_shipment',
-        help='To Check if Sale Order linked to line have '
-        'Multi Ship Location for product')
     remain_so_qty = fields.Float(
         "Unplanned Order Qty")
     supplier_id = fields.Many2one('res.partner', 'Vendor')

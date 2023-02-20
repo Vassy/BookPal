@@ -35,14 +35,9 @@
                     <attribute name="sum">Total</attribute>
                 </xpath>
                 <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom']" position="before">
-                    <field name="sale_split_shipment" invisible="1"/>
                     <button name="open_sale_multi_ship_qty_wizard"
-                            type="object"
-                            icon="fa-truck"
-                            class="text-primary"
-                            style="float:right"
-                            attrs="{'invisible': ['|',('product_type','=','service'), ('sale_split_shipment', '=', False)]}"
-                            title="Show Shipment Plan"/>
+                        type="object" icon="fa-truck" class="text-primary" title="Show Shipment Plan"
+                        attrs="{'invisible': ['|', ('product_type', '=', 'service'), ('parent.split_shipment', '=', False)]}" />
                     <field name="remain_so_qty" optional="hide" readonly="1" force_save="1"/>
                 </xpath>
                  <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom']" position="after">
