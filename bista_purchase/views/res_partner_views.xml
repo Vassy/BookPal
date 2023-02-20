@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='child_ids']//kanban//field[@name='display_name']" position="after">
                 <field name="is_primary"/>
-                <field name="glove_type_ids"/>
+                <field name="glove_type_ids" options="{'no_create': True, 'no_open': True}"/>
             </xpath>
             <xpath expr="//field[@name='child_ids']//kanban//templates/t//field[@name='name']" position="after">
                 <span t-if="record.is_primary.raw_value" style="float:right;color:#f3cc00;">
@@ -17,14 +17,14 @@
             </xpath>
             <xpath expr="//field[@name='child_ids']/kanban//div[hasclass('oe_kanban_details')]" position="inside">
                 <div t-if="record.glove_type_ids.raw_value">
-                    <field name="glove_type_ids" widget="many2many_tags" />
+                    <field name="glove_type_ids" widget="many2many_tags" options="{'no_create': True, 'no_open': True}" />
                 </div>
             </xpath>
             <xpath expr="//field[@name='child_ids']//form//field[@name='name']" position="attributes">
                 <attribute name="string">Name</attribute>
             </xpath>
             <xpath expr="//field[@name='child_ids']/form//field[@name='mobile']" position="after">
-                <field name="glove_type_ids" widget="many2many_tags" />
+                <field name="glove_type_ids" widget="many2many_tags" options="{'no_create': True, 'no_open': True}"/>
             </xpath>
             <xpath expr="//field[@name='child_ids']//form//field[@name='name']" position="after">
                 <field name="is_primary" attrs="{'invisible':[('type','not in',['contact'])]}"/>
@@ -44,7 +44,7 @@
             </xpath>
             <xpath expr="//field[@name='website']" position="before">
                 <!-- <field name="cc_email" widget="email" context="{'gravatar_image': True}"/> -->
-                <field name="glove_type_ids" widget="many2many_tags" />
+                <field name="glove_type_ids" widget="many2many_tags" options="{'no_create': True, 'no_open': True}"/>
             </xpath>
             <xpath expr="//field[@name='industry_id']" position='replace'>
             </xpath>
