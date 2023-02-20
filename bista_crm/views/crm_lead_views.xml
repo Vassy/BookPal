@@ -70,7 +70,7 @@
                         </group>
                         <group>
                             <!-- <field name="payment_method" /> -->
-                            <field name="payment_notes" style="max-height: 25px;"/>
+                            <field name="payment_notes" />
                         </group>
                     </group>
                 </page>
@@ -82,7 +82,7 @@
                             <field name="event_date"/>
                             <field name="need_date"/>
                             <field name="international_shipping"/>
-                            <field name="order_notes" style="max-height: 25px;"/>
+                            <field name="order_notes" />
                         </group>
                         <group name="shipping_requirements" string="Shipping Requirements">
                             <field name="shipping_to"/>
@@ -100,11 +100,11 @@
                                widget="many2many_tags"/>
                         <field name="currency_id" invisible="1"/>
                         <field name="customization_cost"/>
-                        <field name="link_to_art_files"/>
+                        <field name="link_to_art_files" widget="url"/>
                         <field name="artwork_status_id" options="{'no_open': True}"/>
                     </group>
                     <group>
-                        <field name="journal_notes" style="max-height: 25px;"/>
+                        <field name="journal_notes" />
                         <field name="journal_setup_fee"/>
                         <!-- <field name="shipping_account" /> -->
                         <field name="death_type_id" options="{'no_open': True}"/>
@@ -118,7 +118,7 @@
                             <field name="customization_type_ids" widget="many2many_tags"/>
                             <field name="project_details"/>
                             <field name="shipping_instructions"/>
-                            <field name="special_insert_note" style="max-height: 25px;"/>
+                            <field name="special_insert_note" />
                         </group>
                         <group>
                             <field name="fulfilment_warehouse" options="{'no_open': True}"/>
@@ -134,11 +134,11 @@
                             <!--<field name="deal_title"/>-->
                             <field name="pre_release"/>
                             <field name="product_use"/>
-                            <field name="product_status_notes" style="max-height: 25px;"/>
+                            <field name="product_status_notes" />
                         </group>
                         <group name="Pricing_info" string="Pricing Info">
                             <field name="special_pricing_type_id" options="{'no_open': True}"/>
-                            <field name="special_pricing_notes" style="max-height: 25px;"/>
+                            <field name="special_pricing_notes" />
                         </group>
                     </group>
                 </page>

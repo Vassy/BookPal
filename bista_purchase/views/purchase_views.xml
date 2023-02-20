@@ -92,7 +92,7 @@
                         </group>
                         <group name="po_clock">
                             <field name="clock_start_override" style="max-height: 20px;"/>
-                            <field name="clock_override_reason" style="max-height: 25px;"/>
+                            <field name="clock_override_reason" />
                         </group>
                     </group>
                     <group class="o_row">
@@ -113,7 +113,7 @@
                     <group name="review_order_notes_and_requirements" string="Review Order Notes and Requirements">
                         <group>
                             <field name="status" />
-                            <field name="order_notes" style="max-height: 25px;"/>
+                            <field name="order_notes" />
                         </group>
                         <group>
                             <field name="fulfilment_project"/>
@@ -177,7 +177,7 @@
                 <page name="note_details" string="Notes and Details">
                     <group>
                         <group>
-                            <field name="memo" style="max-height: 25px;"/>
+                            <field name="memo" />
                         </group>
                         <group>
                             <!--                            <field name="gorgias_ticket" style="max-height: 25px;"/>-->

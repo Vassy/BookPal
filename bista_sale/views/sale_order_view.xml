@@ -8,9 +8,9 @@
             <xpath expr="//field[@name='partner_invoice_id']" position="attributes">
                 <attribute name="string">Billing Address</attribute>
                 <attribute name="domain">['|', ('parent_id', '=', partner_id), ('id', '=', partner_id)]</attribute>
-            </xpath>
-            <xpath expr="//field[@name='partner_shipping_id']" position="attributes">
-                <attribute name="domain">['|', ('parent_id', '=', partner_id), ('id', '=', partner_id)]</attribute>
+           </xpath>
+           <xpath expr="//field[@name='partner_shipping_id']" position="attributes">
+               <attribute name="domain">['|', ('parent_id', '=', partner_id), ('id', '=', partner_id)]</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
                 <field name="tracking_ref" optional="hide"/>
@@ -120,17 +120,17 @@
                         <group>
                             <group name="order_notes">
                                 
-                                <field name="order_notes" class="bp_text_field"/>
-                                <field name="gorgias_ticket" widget="url" class="bp_text_field"/>
-                                <field name="product_status_notes" class="bp_text_field"/>
-                                <field name="product_use" class="bp_text_field"/>
+                                <field name="order_notes" />
+                                <field name="gorgias_ticket" widget="url" />
+                                <field name="product_status_notes" />
+                                <field name="product_use" />
                             </group>
                             <group>
                                 <field name="white_glove_id" options="{'no_create': True, 'no_open': True}"/>
-                                <field name="ce_notes" class="bp_text_field"/>
+                                <field name="ce_notes" />
                                 
-                                <field name="am_notes" class="bp_text_field"/>
-                                <field name="ce_ops_acct_notes" class="bp_text_field"/>
+                                <field name="am_notes" />
+                                <field name="ce_ops_acct_notes"/>
                             </group>
                         </group>
                     </sheet>
@@ -141,8 +141,8 @@
                             <field name="journal_customization_ids" widget="many2many_tags"
                                    options="{'color_field': 'color'}"/>
                             <field name="link_to_art_files" widget="url" style="max-height: 25px;"/>
-                            <field name="journal_notes" style="max-height: 25px;"/>
-                             <field name="journal_setup_fee"/>
+                            <field name="journal_notes" />
+                            <field name="journal_setup_fee"/>
                         </group>
                         <group>
                             <field name="shipping_account"/>
@@ -162,7 +162,7 @@
                             <field name="accept_pallets"/>
                             <field name="has_loading_dock"/>
                             <field name="inside_delivery_req"/>
-                            <field name="shipping_notes" style="max-height: 25px;"/>
+                            <field name="shipping_notes" />
                         </group>
                     </group>
                 </page>
@@ -172,29 +172,29 @@
                             <field name="fulfilment_project"/>
                             <field name="am_owner"/>
                             <field name="project_description"/>
-                            <field name="status_notes" class="bp_text_field"/>
+                            <field name="status_notes" />
                             <field name="delivery_location"/>
                             <field name="project_status"/>
-                            <field name="shipping_instruction" class="bp_text_field"/>
+                            <field name="shipping_instruction" />
                             <field name="customization_type_ids" widget="many2many_tags"/>
                             <field name="individual_mailer_return_address" class="bp_text_field_height"/>
                         </group>
                         <group>
-                            <field name="special_insert_note" class="bp_text_field"/>
-                            <field name="attachment_note" class="bp_text_field"/>
+                            <field name="special_insert_note" />
+                            <field name="attachment_note" />
                             <field name="book_status"/>
-                            <field name="on_hold_reason" class="bp_text_field"/>
+                            <field name="on_hold_reason" />
                             <field name="recipient_list_status"/>
                             <field name="individual_mailer_return_receiver" class="bp_text_field_height"/>
-                            <field name="recipient_list_expected" class="bp_text_field_char"/>
+                            <field name="recipient_list_expected"/>
                         </group>
                     </group>
                 </page>
                 <page string="Billing &amp; Payment Details" name="payment_details">
                     <group>
                         <group name="payment_info">
-                            <field name="billing_notes" class="bp_text_field"/>
-                            <field name="payment_notes" class="bp_text_field"/>
+                            <field name="billing_notes" />
+                            <field name="payment_notes" />
                         </group>
                         <group>
                             <field name="placed_from_ip"/>
