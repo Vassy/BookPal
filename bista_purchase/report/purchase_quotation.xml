@@ -79,7 +79,7 @@
                         <t t-if="o.need_by_date">
                             <div class="text-danger">
                                 <strong>Order Need By Date:</strong>
-                                <t t-esc="context_timestamp(o.need_by_date).strftime('%m/%d/%Y, %H:%M:%S')"/>
+                                <t t-esc="o.need_by_date" t-options='{"widget": "date"}'/>
                                 <br/>
                             </div>
                         </t>
