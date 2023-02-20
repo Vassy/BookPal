@@ -149,15 +149,23 @@ class PurchaseTrackingRef(models.Model):
 
     purchase_tracking_id = fields.Many2one("purchase.tracking")
     name = fields.Char(string="Number")
-    tracking_url = fields.Char(string="Tracking URL")
+    tracking_url = fields.Char(
+        string="Tracking URL", compute="_compute_tracking_url", store=True
+    )
 
-    @api.onchange("name")
-    def _onchange_name(self):
-        if self.purchase_tracking_id.delivery_type == "ups" and self.name:
-            self.tracking_url = (
-                "http://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=%s"
-                % self.name.replace("+", "%0D%0A")
-            )
+    @api.depends("name", "purchase_tracking_id.delivery_type")
+    def _compute_tracking_url(self):
+        for ref in self:
+            if ref.purchase_tracking_id.delivery_type == "ups" and ref.name:
+                ref.tracking_url = (
+                    "http://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=%s"
+                    % ref.name.replace("+", "%0D%0A")
+                )
+            elif ref.purchase_tracking_id.delivery_type == "usps" and ref.name:
+                ref.tracking_url = (
+                    "https://tools.usps.com/go/TrackConfirmAction_input?qtc_tLabels1=%s"
+                    % ref.name
+                )
 
 
 class PurchaseTrackingLine(models.Model):
