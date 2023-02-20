@@ -142,8 +142,7 @@
                                    options="{'color_field': 'color'}"/>
                             <field name="link_to_art_files" widget="url" style="max-height: 25px;"/>
                             <field name="journal_notes" style="max-height: 25px;"/>
-                            <field name="journal_setup_fee" widget="monetary"/>
-                            <field name="journal_setup_fee_waived" widget="monetary"/>
+                             <field name="journal_setup_fee"/>
                         </group>
                         <group>
                             <field name="shipping_account"/>

@@ -54,8 +54,13 @@ class CrmLead(models.Model):
     artwork_status_id = fields.Many2one(
         'artwork.status', string='Artwork Status')
     journal_notes = fields.Text(string='Journal Notes')
-    journal_setup_fee = fields.Monetary(
-        string="Journal Set Up Fee")
+    # journal_setup_fee = fields.Monetary(
+    #     string="Journal Set Up Fee")
+    journal_setup_fee = fields.Selection(
+        [('waived', 'Waived'),
+         ('75', '$75.00'),
+         ], string="Journal Set Up Fee")
+
     death_type_id = fields.Many2one('death.type', string='Die Type')
     existing_death_order = fields.Char(string="Existing Die Order #")
 

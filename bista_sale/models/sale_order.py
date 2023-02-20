@@ -29,9 +29,13 @@ class SaleOrder(models.Model):
     artwork_status_id = fields.Many2one(
         'artwork.status', string='Artwork Status')
     journal_notes = fields.Text(string='Journal Notes')
-    journal_setup_fee = fields.Monetary(string="Journal Set Up Fee")
-    journal_setup_fee_waived = fields.Monetary(
-        string="Journal Set Up Fee Waived")
+    journal_setup_fee = fields.Selection(
+        [('waived', 'Waived'),
+         ('75', '$75.00'),
+         ], string="Journal Set Up Fee")
+    # journal_setup_fee = fields.Monetary(string="Journal Set Up Fee")
+    # journal_setup_fee_waived = fields.Monetary(
+    #     string="Journal Set Up Fee Waived")
     # shipping_account = fields.Char(string="Shipping Account")
     shipping_account = fields.Selection([
         ("our_account", "Our Account"),
@@ -125,18 +129,9 @@ class SaleOrder(models.Model):
         )
 
     @api.constrains('journal_setup_fee',
-                    'journal_setup_fee_waived',
                     'customization_cost',
                     'so_shipping_cost')
     def warning_journal_setup_fee(self):
-        if self.journal_setup_fee < 0:
-            raise ValidationError(
-                "journal setup fee waived  value is negative,"
-                "add positive value.")
-        if self.journal_setup_fee_waived < 0:
-            raise ValidationError(
-                "journal setup fee waived value is  negative,"
-                "add positive value.")
         if self.customization_cost < 0:
             raise ValidationError(
                 "customization cost value is negative,add positive value.")
