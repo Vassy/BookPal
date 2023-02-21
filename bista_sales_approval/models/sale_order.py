@@ -124,7 +124,7 @@ class SaleOrder(models.Model):
             sale._create_sale_approval_log("Quote Confirmed")
             quote_approve_days = datetime.now().date() - sale.date_order.date()
             quote_days = quote_approve_days.days
-            sale.quote_processing_time = str(quote_days) + ' Days'
+            sale.quote_processing_time = str(quote_days) + " Days"
 
     def action_send_for_approval(self):
         for rec in self:
@@ -247,8 +247,8 @@ class SaleOrderLine(models.Model):
          2. The quotation hasn't commitment_date, we compute the estimated delivery
             date based on lead time"""
         treated = self.browse()
-        # If the state is already in sale the picking is created and a simple forecasted quantity isn't enough
-        # Then used the forecasted data of the related stock.move
+        # If the state is already in sale the picking is created and a simple forecasted
+        # quantity isn't enough Then used the forecasted data of the related stock.move
         for line in self.filtered(lambda l: l.state == "sale"):
             if not line.display_qty_widget:
                 continue
