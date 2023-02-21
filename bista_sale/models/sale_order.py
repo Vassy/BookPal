@@ -185,16 +185,14 @@ class SaleOrderLine(models.Model):
 
     tracking_ref = fields.Char("Tracking Refrence", compute="get_tracking_ref")
     saving_amount = fields.Float(
-        "Saving Amount", compute="_compute_prices", store=True)
+        "Saving Amount", compute="_compute_amount", store=True)
     discounted_price = fields.Float(
-        "Quote Price",
-        compute="_compute_prices",
-        store=True,
-        inverse="_inverse_discounted_price",
+        "Quote Price", compute="_compute_prices", store=True, readonly=False
     )
+    discount = fields.Float(compute="_compute_discount", store=True, readonly=False)
     attachment_ids = fields.Many2many("ir.attachment", string="Attach File")
 
-    @api.depends("product_uom_qty", "discount", "price_unit", "tax_id")
+    @api.depends("product_uom_qty", "discount", "price_unit", "tax_id", "discounted_price")
     def _compute_amount(self):
         for line in self:
             discount = line.discount
@@ -208,27 +206,22 @@ class SaleOrderLine(models.Model):
                 "price_tax": sum(t.get("amount", 0.0) for t in taxes.get("taxes", [])),
                 "price_total": taxes["total_included"],
                 "price_subtotal": taxes["total_excluded"],
+                "saving_amount": line.price_unit * discount / 100 * line.product_uom_qty,
             })
 
-    def _inverse_discounted_price(self):
+    @api.depends("price_unit", "discount")
+    def _compute_prices(self):
+        for line in self:
+            price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+            line.discounted_price = line.currency_id.round(price)
+
+    @api.depends("price_unit", "discounted_price")
+    def _compute_discount(self):
         for line in self:
             discount = 0
             if line.price_unit:
                 discount = 100 - (line.discounted_price / line.price_unit * 100)
-            amount = line.price_unit * line.discount / 100 * line.product_uom_qty
-            line.update({"discount": discount, "saving_amount": amount})
-        self._compute_amount()
-
-    @api.depends("product_uom_qty", "price_unit", "discount")
-    def _compute_prices(self):
-        for line in self:
-            price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            price = int(price * 10 ** 2) / 10 ** 2
-            line_data = {
-                "discounted_price": price,
-                "saving_amount": (line.price_unit - price) * line.product_uom_qty,
-            }
-            line.update(line_data)
+            line.discount = discount
 
     @api.depends("move_ids.state")
     def get_tracking_ref(self):

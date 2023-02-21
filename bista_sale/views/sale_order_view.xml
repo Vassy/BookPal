@@ -24,8 +24,11 @@
                 <attribute name="widget">monetary</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
-                <field name="discounted_price" optional="show" widget="monetary" />
+                <field name="discounted_price" optional="show" widget="monetary" force_save="1" />
                 <field name="saving_amount" optional="show" readonly="1" widget="monetary" />
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='discount']" position="attributes">
+                <attribute name="force_save">1</attribute>
             </xpath>
             <field name="tax_totals_json" position="after">
                 <field style="font-size: 1.3em; font-weight: bold;" name="saving_amount" readonly="1"/>
