@@ -97,5 +97,5 @@ class BistaPaymentPortal(PaymentPortal):
             **kwargs
         )
         if sale_order_id:
-            request.env["sale.order"].browse(sale_order_id).action_order_booked()
+            request.env["sale.order"].sudo().browse(sale_order_id).action_order_booked()
         return response
