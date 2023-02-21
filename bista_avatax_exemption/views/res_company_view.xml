@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="account_avatax.res_partner_form_inherit" />
         <field name="arch" type="xml">
             <field name="avalara_exemption_id" position="attributes">
-                <attribute name="attrs">{'invisible': [('parent_id', '!=', False)]}</attribute>
+                <attribute name="attrs"></attribute>
             </field>
         </field>
     </record>

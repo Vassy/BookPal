@@ -20,7 +20,14 @@ class ResPartner(models.Model):
                             'company_id': partner.company_id.id or
                             self.env.user.company_id.id
                         })
-                partner.avalara_exemption_id = exemption_id.id
+                child_partner = self.search(
+                    [('parent_id', '=', partner.id),
+                     ('state_id', '=', partner.state_id.id),
+                     ('country_id', '=', partner.country_id.id)])
+                partners = child_partner | partner
+                partners.sudo().write({
+                    'avalara_exemption_id': exemption_id.id
+                })
 
     @api.model
     def create(self, vals):

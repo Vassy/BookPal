@@ -8,9 +8,11 @@
             <xpath expr="//field[@name='partner_invoice_id']" position="attributes">
                 <attribute name="string">Billing Address</attribute>
                 <attribute name="domain">['|', ('parent_id', '=', partner_id), ('id', '=', partner_id)]</attribute>
+                    <attribute name="context">{'default_type':'delivery', 'show_address':1, 'always_reload':1}</attribute>
            </xpath>
            <xpath expr="//field[@name='partner_shipping_id']" position="attributes">
                <attribute name="domain">['|', ('parent_id', '=', partner_id), ('id', '=', partner_id)]</attribute>
+               <attribute name="context">{'default_type':'delivery', 'show_address':1, 'always_reload':1}</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
                 <field name="tracking_ref" optional="hide"/>
@@ -62,9 +64,9 @@
             <xpath expr="//field[@name='payment_term_id']" position="after">
                 <field name="client_order_ref"/>
             </xpath>
-            <xpath expr="//field[@name='partner_id']" position="after">
+            <!-- <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="due_amount"/>
-            </xpath>
+            </xpath> -->
             <xpath expr="//group/group[@name='sales_person']/field[@name='client_order_ref']" position="replace">
             </xpath>
             <xpath expr="//group[@name='sale_shipping']" position="replace">

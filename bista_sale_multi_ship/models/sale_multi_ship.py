@@ -266,6 +266,10 @@ class SaleMultiShipQtyLines(models.Model):
                     fields.Datetime.now())
                 return order_date
 
+    def get_default_shipping(self):
+        """Get default shipping."""
+        return self._context.get('partner_shipping_id', '')
+
     so_line_dom = fields.Char('Sale order line domain')
     so_line_id = fields.Many2one(
         'sale.order.line', 'Product',
@@ -288,7 +292,9 @@ class SaleMultiShipQtyLines(models.Model):
     personalization_2 = fields.Char('Personalization 2')
 
     partner_id = fields.Many2one(
-        'res.partner', string="Shipping Address", ondelete='cascade')
+        'res.partner', string="Shipping Address",
+        ondelete='cascade',
+        default=lambda self: self.get_default_shipping())
     # Fields only for display purpose from SO Line
     name = fields.Char(related='partner_id.name')
     attention = fields.Char(related='partner_id.attention')
