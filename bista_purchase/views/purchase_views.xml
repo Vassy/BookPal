@@ -53,7 +53,7 @@
                 <field name="tracking_ref" optional="show"/>
                 <field name="status_id" readonly="1" force_save="1"/>
                 <button name="open_po_line" type="object" icon="fa-eye" class="btn btn-link" style="float:right"/>
-                <button name="action_purchase_history" type="object" icon="fa-history" style="float:left"  help="Purchase History" title="Purchase bo History"/>
+                <button name="action_purchase_history" type="object" icon="fa-history" style="float:left" help="Purchase History" title="Purchase bo History"/>
             </xpath>
             <!--            <xpath expr="//page[@name='products']/field[@name='order_line']" position="before">-->
             <!--                <button name="update_po_lines" string="Update PO Lines" type="object" class="btn-primary"/>-->

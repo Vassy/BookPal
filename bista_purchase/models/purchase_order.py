@@ -467,17 +467,19 @@ class PurchaseOrderLine(models.Model):
                 _(products_list + ' is already added in line, you can Update the qty there.'))
 
     def action_purchase_history(self):
-        ''' can show the purchase order line history in purchase order line. where user can see back order qty
-        details '''
-        domain = [('display_type', '=', False),
-                  ('product_id', '=', self.product_id.id),
-                  ('order_id.partner_id', '=', self.order_id.partner_id.id),
-                  ('order_id.picking_ids.state', '=','assigned')
-                  ]
-        order_line = self.env['purchase.order.line'].search(domain)
-        # order_line = order_line.filtered(lambda x:x.product_uom_qty > x.qty_received and x.qty_received and x.state == 'assigned')
-        action = self.env.ref('bista_orders_report.''action_purchase_order_line_status').read()[0]
-        action.update({'domain': [('id', 'in', order_line.ids)]})
+        ''' can show the purchase order line history in purchase order line.
+        where user can see back order qty details '''
+        domain = [
+            ("product_id", "=", self.product_id.id),
+            ("order_id.partner_id", "=", self.order_id.partner_id.id),
+            ("line_status", "!=", "received"),
+            ("state", "in", ("purchase", "done")),
+        ]
+        order_line = self.env["purchase.order.line"].search(domain)
+        action = self.env.ref(
+            "bista_orders_report.action_purchase_order_line_status"
+        ).read()[0]
+        action.update({"domain": [("id", "in", order_line.ids)]})
         return action
 
 
