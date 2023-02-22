@@ -99,7 +99,7 @@
             <tr>
                 <td class="text-muted">Total Saving Amount</td>
                 <td class="text-right">
-                    <span t-esc="sale_order.saving_amount" t-options="{'widget': 'monetary', 'display_currency': line.currency_id}"/>
+                    <span t-esc="sale_order.saving_amount" t-options="{'widget': 'monetary', 'display_currency': sale_order.pricelist_id.currency_id}"/>
                 </td>
             </tr>
         </xpath>
@@ -108,6 +108,15 @@
     <template id="sale_order_portal_template_extend" name="Sales Order Portal Extend Template" inherit_id="sale.sale_order_portal_template">
         <xpath expr="//div[hasclass('o_portal_sale_sidebar')]//li[@t-if='sale_order.amount_undiscounted - sale_order.amount_untaxed &gt; 0.01']/small" position="replace">
             <small><b class="text-muted">Total Savings </b></small>
+        </xpath>
+        <xpath expr="//div[hasclass('o_portal_sale_sidebar')]//li[@t-if='sale_order.amount_undiscounted - sale_order.amount_untaxed &gt; 0.01']//small[2]" position="replace">
+            <small>
+                <b t-field="sale_order.saving_amount"
+                    t-options='{"widget": "monetary", "display_currency": sale_order.pricelist_id.currency_id}'
+                    style="text-decoration: line-through"
+                    class="d-block mt-1"
+                    data-id="saving_amount" />
+            </small>
         </xpath>
     </template>
 

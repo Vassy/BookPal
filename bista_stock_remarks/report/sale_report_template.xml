@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="report_saleorder_document_note" inherit_id="sale.report_saleorder_document">
+    <template id="report_saleorder_document_note" inherit_id="bista_sale.report_saleorder_document_extended">
         <xpath expr="//div[hasclass('oe_structure')]" position="after">
+            <style>
+                .table td{
+                    border: none;
+                    padding: 2px;
+                }
+            </style>
             <div>
                 <h5 style="margin-top:50px;border-bottom:solid 1px;">Notes</h5>
                 <div>
@@ -9,11 +15,26 @@
                 </div>
             </div>
         </xpath>
-        <td name="td_name" position="inside">
-            <br /><br />
-            <b><span>Product Notes:</span></b>
-            <br/>
-            <span t-field="line.picking_note"/>
-        </td>
+        <xpath expr="//t[@t-foreach='doc.order_line']/tr" position="after">
+            <tr style="border-bottom:1px solid black !important;">
+                <t t-if="not line.display_type">
+                    <td style="border: none !important"></td>
+                    <td colspan="2" style="border: none !important" class="text-left">
+                        <b><span>Product Notes:</span></b>
+                        <span t-field="line.picking_note"/>
+                    </td>
+                    <td style="border: none !important"></td>
+                    <td style="border: none !important"></td>
+                    <td style="border: none !important"></td>
+                    <td style="border: none !important"></td>
+                    <td style="border: none !important"></td>
+                    <td t-if="line_taxes" style="border: none !important"></td>
+                    <td style="border: none !important"></td>
+                </t>
+            </tr>
+        </xpath>
+        <xpath expr="//t[@t-foreach='doc.order_line']/tr" position="attributes">
+            <attribute name="style">border-top: 1px solid black !important;</attribute>
+        </xpath>
     </template>
 </odoo>

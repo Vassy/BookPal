@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <!--Picking notes-->
-            <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
+            <xpath expr="//field[@name='order_line']/tree//field[@name='name']" position="after">
                 <field name="picking_note" optional="show"/>
             </xpath>
             <!--Common Picking Note-->
@@ -26,7 +26,7 @@
                     </group>
                 </group>
             </xpath>
-            <xpath expr="//field[@name='sale_multi_ship_qty_lines']/tree/field[@name='so_line_id']" position="after">
+            <xpath expr="//field[@name='sale_multi_ship_qty_lines']//tree//field[@name='so_line_id']" position="after">
                 <field name="picking_note" optional="show"/>
             </xpath>
         </field>
