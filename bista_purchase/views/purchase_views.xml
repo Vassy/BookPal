@@ -381,7 +381,7 @@
     </record>
 
     <record id="rush_status_action" model="ir.actions.act_window">
-        <field name="name">Rush Status</field>
+        <field name="name">Shipping Method</field>
         <field name="res_model">rush.status</field>
         <field name="view_mode">tree,form</field>
     </record>
@@ -514,7 +514,7 @@
               action="purchase_line_status_action"
               sequence="2"/>
     <menuitem id="menu_bista_purchase_rush_status"
-              name="Rush Status"
+              name="Shipping Method"
               parent="bookpal_purchase_menu"
               action="rush_status_action"
               sequence="3"/>
