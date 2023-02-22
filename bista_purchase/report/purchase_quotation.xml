@@ -70,12 +70,6 @@
                             <t t-esc="o.name"/>
                             <br/>
                         </t>
-                        <!-- <t t-if="o.state in ['draft','sent']">
-                            <strong>Purchase Order Date:</strong>
-                            <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
-                            <br/>
-                        </t> -->
-                        <!-- <t t-if="xmlid == 'purchase.report_purchaseorder' and o.state not in ['draft','sent']"> -->
                         <t t-if="o.need_by_date">
                             <div class="text-danger">
                                 <strong>Order Need By Date:</strong>
@@ -83,11 +77,6 @@
                                 <br/>
                             </div>
                         </t>
-                        <!-- <t t-elif="xmlid == 'purchase.report_purchasequotation' and o.state not in ['draft','sent']">
-                            <strong>Purchase Order Date:</strong>
-                            <t t-esc="o.date_order" t-options='{"widget": "date"}'/>
-                            <br/>
-                        </t> -->
                         <strong>BookPal Account # :</strong>
                         <t t-esc="428475"/>
                         <br/>
@@ -96,13 +85,13 @@
                             <t t-esc="o.payment_term_id.name"/>
                             <br/>
                         </t>
-                        <strong>Shipping Method :</strong>
-                        <span>Free Delivery Method</span>
-                        <br/>
                         <t t-if="o.shipping_instructions">
                             <strong>Shipping Instructions :</strong>
-                            <t t-esc="o.shipping_instructions.name"/>
-                            <br/>
+                            <span t-field="o.shipping_instructions" /><br/>
+                        </t>
+                        <t t-if="o.rush_status_id">
+                            <strong>Shipping Method :</strong>
+                            <span t-field="o.rush_status_id" /><br/>
                         </t>
                         <strong>Salesperson:</strong>
                         <t t-esc="o.user_id.name"/>

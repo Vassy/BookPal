@@ -34,8 +34,6 @@ class PurchaseOrder(models.Model):
         related="order_line.partner_id", string="Ordered By")
     ops_project_owner_id = fields.Many2one(
         'res.users', string='Ops Project Owner')
-    # billing_notes = fields.Text(string="Billing Notes")
-    # cc_email = fields.Char(string="CC Email")
     supplier_nuances = fields.Text(
         string="Supplier Nuances", related="partner_id.supplier_nuances")
     minimum_nuances = fields.Text(
@@ -61,7 +59,7 @@ class PurchaseOrder(models.Model):
         string="Author Event Nuances", related="partner_id.author_event_naunces")
     author_event_shipping_naunces = fields.Text(string="Author Event Shipping Nuances",
                                                 related="partner_id.author_event_shipping_naunces")
-    rush_status_id = fields.Many2one('rush.status', string='Rush Status')
+    rush_status_id = fields.Many2one("rush.status", string="Shipping Method")
     shipping_instructions = fields.Many2one('shipping.instruction', string='Shipping Instructions')
     order_shipping_desc = fields.Text(string='Order Shipping Description', related="partner_id.shipping_notes")
     default_supplier_shipping = fields.Many2one(string='Default Supplier Shipping',
