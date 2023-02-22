@@ -44,7 +44,7 @@
                 </t>
                 <t t-elif="xmlid == 'purchase.report_purchasequotation' and o.state not in ['draft','sent']">
                     <strong>Purchase Order Date:</strong>
-                    <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
+                    <span t-field="o.date_order" />
                     <br/>
                 </t>
 

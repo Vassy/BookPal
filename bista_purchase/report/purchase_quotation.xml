@@ -55,7 +55,7 @@
                         </strong>
                     </h4>
                     <strong t-if="o.state in ['purchase','done','draft','sent']">Date:
-                        <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
+                        <span t-field="o.date_order" />
                     </strong>
                 </t>
                 <t t-set="custom_information_block">
