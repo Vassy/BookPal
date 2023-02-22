@@ -93,7 +93,7 @@
         <record id="email_template_purchase_tracking" model="mail.template">
             <field name="name">Purchase Tracking: Send by Email</field>
             <field name="model_id" ref="model_purchase_tracking"/>
-            <field name="subject">Purchase Tracking of {{object.order_id.name}}</field>
+            <field name="subject">Purchase Tracking of {{object.order_id.name}} {{object.order_id.sale_order_ids.client_order_ref}}</field>
             <field name="body_html" type="html">
                 <p style="margin: 0px; padding: 0px; font-size: 13px;">
                     Hello <span t-out="object.order_id.dest_address_id.name"/>,
@@ -153,6 +153,8 @@
                             <t t-if="object.tracking_ref_ids[-1] != tracking">,</t>
                         </t>
                     </t>
+                    <br/><br/>
+                    <span style="font-weight: bold;">Shipment Notes:</span>
                     <br/><br/>
                     Thank you for your business and we look forward to serving you in the future!
                 </p>
