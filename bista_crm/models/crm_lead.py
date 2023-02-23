@@ -90,7 +90,7 @@ class CrmLead(models.Model):
     currency_id = fields.Many2one('res.currency', string="Currency",
                                   related='company_id.currency_id')
     referring_organization = fields.Many2one('res.partner', string='Referring Organization')
-    referred = fields.Many2one("res.partner")
+    referred = fields.Many2one("res.partner", string="Referred By")
 
     def action_new_quotation(self):
         res = super(CrmLead, self).action_new_quotation()
