@@ -38,6 +38,7 @@
         'views/stock_picking_views.xml',
         'views/purchase_tracking_views.xml',
         "views/product_views.xml",
+        "views/res_config_settings_views.xml",
     ],
     'auto_install': False,
     'installable': True,

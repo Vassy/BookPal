@@ -90,6 +90,14 @@ class PurchaseOrder(models.Model):
     state = fields.Selection(selection_add=AddState)
     is_email_sent = fields.Boolean(string="Email Sent", default=False)
 
+    def default_get(self, fields):
+        defaults = super().default_get(fields)
+        po_terms = self.env["ir.config_parameter"].sudo().get_param(
+            "bista_purchase.use_po_terms"
+        )
+        defaults["notes"] = po_terms and self.env.company.po_terms or ""
+        return defaults
+
     def action_rfq_send(self):
         if not self.shipping_instructions and is_html_empty(self.special_pick_note):
             raise ValidationError(_('Please select the Shipping Instructions of Steps and Nuances tab and add the Notes'))

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_purchase_bista" model="ir.ui.view">
+        <field name="name">res.config.settings.form.inherit.purchase.bista</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="25"/>
+        <field name="inherit_id" ref="purchase.res_config_settings_view_form_purchase"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='auto_receipt_reminder']" position="after">
+                <div class="col-12 col-lg-6 o_setting_box" id="use_po_terms">
+                    <div class="o_setting_left_pane">
+                        <field name="use_po_terms"/>
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <label for="use_po_terms"/>
+                        <div class="text-muted">
+                            Add your terms &amp; conditions at the bottom of Purchase Orders
+                        </div>
+                        <div class="content-group" attrs="{'invisible': [('use_po_terms', '=', False)]}">
+                            <field name="po_terms" class="oe_account_terms mt-5 w-100"
+                                placeholder="Insert your terms &amp; conditions here..."/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
