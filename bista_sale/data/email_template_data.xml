@@ -259,7 +259,8 @@
             <field name="body_html" type="html">
                 <div style="margin: 0px; padding: 0px;">
                     <p style="margin: 0px; padding: 0px; font-size: 13px;">
-                        Thank you for reaching out to BookPal. Please see your quote attached. Feel free to call or email me anytime if you have any questions or need to modify the quantities. If pricing is an issue, please note we have a price match program. </p><br/>
+                        Thank you for reaching out to BookPal. Please see your <t t-if="object.state in ['draft', 'quote_approval', 'quote_confirm', 'sent']"> quote</t>
+                        <t t-if="object.state not in ['draft', 'quote_approval', 'quote_confirm', 'sent']"> order </t> attached. Feel free to call or email me anytime if you have any questions or need to modify the quantities. If pricing is an issue, please note we have a price match program. </p><br/>
                     <p style="margin: 0px; padding: 0px; font-size: 13px;">
                         * Sales tax does apply at checkout. Please send your state tax exemption certificate before placing your order if your organization is exempt.</p>
                     <p style="margin: 0px; padding: 0px; font-size: 13px;">
