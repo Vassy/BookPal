@@ -20,6 +20,7 @@
     },
     'data': [
         'data/data.xml',
+        'data/email_template_data.xml',
         'report/sale.xml',
         'security/ir.model.access.csv',
         'security/security_view.xml',

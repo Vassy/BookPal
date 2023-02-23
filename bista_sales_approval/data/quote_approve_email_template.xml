@@ -11,6 +11,8 @@
                 Dear <span t-out="object.user_id.name" />,<br/><br/>
                 This is to inform you that your Quotation no. <strong t-out="object.name" /> is now approved.<br/><br/>
             </p>
+            <br/>
+            <div t-out="user.signature"/>
         </field>
         <field name="report_template" ref="sale.action_report_saleorder"/>
         <field name="report_name">{{ (object.name or '').replace('/','_') }}</field>

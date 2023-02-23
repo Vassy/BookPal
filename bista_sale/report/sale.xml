@@ -425,7 +425,7 @@
         </xpath>
         <xpath expr="//p[@t-field='doc.note']" position="replace"/>
         <xpath expr="//div[@name='so_total_summary']" position="after">
-            <div class="row mt-5 mx-3" style="page-break-inside:auto;" name="price_images">
+            <div class="row mt-5 mx-3" style="page-break-inside:avoid;" name="price_images">
                 <div class="col-4">
                     <div>
                         <img src='/bista_sale/static/src/img/i.shgcdn.png' style="max-height: 100px;" class="ml-5"/>

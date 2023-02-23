@@ -65,6 +65,8 @@
                         </div>
                     %endif
                     <p></p>
+
+                    <div t-out="user.signature"></div>
                 </div>
             </div>
 			]]></field>

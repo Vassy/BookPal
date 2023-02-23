@@ -33,7 +33,7 @@
                         <t t-out="user.name"/>
                         <br/>
                         <br/>
-                        <t t-out="user.signature"/>
+                        <div t-out="user.signature"/>
                     </p>
                 </div>
             </field>
