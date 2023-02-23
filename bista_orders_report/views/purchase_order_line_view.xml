@@ -15,10 +15,10 @@
                 <field name="product_id"/>
                 <field name="price_unit" string="Unit Price" optional="show" widget="monetary"/>
                 <field name="currency_id" optional="hide"/>
-                <field name="uom_id" optional="show"/>
+                <field name="uom_id" string="Unit of Measure" optional="show"/>
                 <field name="origin" optional="show"/>
                 <field name="product_uom_qty" string="Order Qty" optional="show"/>
-                <field name="qty_received_uom" optional="show"/>
+                <field name="qty_received_uom" string="Received Qty" optional="show"/>
                 <field name="qty_remain_receive" optional="show"/>
                 <field name="qty_shortclose" optional="show"/>
                 <field name="qty_received_value" optional="show" widget="monetary"/>

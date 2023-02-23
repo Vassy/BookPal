@@ -16,6 +16,8 @@ class UpdateShipmentTracking(models.TransientModel):
     )
     status_id = fields.Many2one("po.status.line", string="Status")
     checkbox = fields.Boolean("Update All PO Lines")
+    next_followup_date = fields.Date("Next Followup Date")
+    note = fields.Text("Notes")
 
     @api.onchange("checkbox")
     def _onchange_checkbox(self):
@@ -35,8 +37,14 @@ class UpdateShipmentTracking(models.TransientModel):
         return defaults
 
     def update(self):
+        self.ensure_one()
         po_lines = self.tracking_lines.filtered(lambda x: x.checkbox)
-        po_lines.po_line_id.write({"status_id": self.status_id.id})
+        line_data = {
+            "status_id": self.status_id.id,
+            "next_followup_date": self.next_followup_date,
+            "note": self.note,
+        }
+        po_lines.po_line_id.write(line_data)
 
 
 class UpdateShipmentTrackingLine(models.TransientModel):

@@ -14,14 +14,12 @@
                     <group>
                         <field name="partner_id" />
                         <field name="picking_type_id" />
+                        <field name="checkbox" />
                     </group>
                     <group>
                         <field name="date_order" string="Order Date" />
                         <field name="date_approve" />
                     </group>
-                </group>
-                <group>
-                    <field name="checkbox" />
                 </group>
                 <field name="tracking_lines">
                     <tree editable="bottom" create="0">
@@ -36,6 +34,12 @@
                         <field name="status_id" required="1"
                             options="{'no_edit': True, 'no_create': True, 'no_open': True}"
                             domain="[('manual_update', '!=', False)]" />
+                    </group>
+                    <group>
+                        <field name="next_followup_date" />
+                    </group>
+                    <group colspan="2">
+                        <field name="note" />
                     </group>
                 </group>
                 <footer>

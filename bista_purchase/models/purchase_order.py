@@ -391,11 +391,14 @@ class PurchaseOrderLine(models.Model):
 
     purchase_tracking_line_ids = fields.One2many(
         'purchase.tracking.line', 'po_line_id', string="Tracking Lines")
-    status_id = fields.Many2one('po.status.line', string="Status", copy=False,
-                                ondelete="restrict", tracking=True)
+    status_id = fields.Many2one(
+        "po.status.line", string="Tracking Status", copy=False, ondelete="restrict", tracking=True
+    )
     tracking_ref = fields.Char(
         'Tracking Refrence', compute="get_tracking_ref")
     price_unit = fields.Float("BP Price")
+    next_followup_date = fields.Date("Next Followup Date")
+    note = fields.Text("Notes")
 
     @api.depends('move_ids.state')
     def get_tracking_ref(self):
