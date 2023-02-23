@@ -73,22 +73,11 @@
                             <field name="source"/>
                             <field name="source_notes"/>
                             <field name="referring_organization" domain="[('company_type', '=', 'company')]"/>
-                            <field name="referal_source" domain="[('company_type', '!=', 'company'),('type', '=', 'contact'),('parent_id', '=', referring_organization)]"/>
+                            <field name="referal_source" domain="[('type', '=', 'contact'), ('id', 'child_of', referring_organization), ('id', '!=', referring_organization)]"/>
                             <separator string="Products Purchase"/>
                         </group>
                     </group>
                 </page>
-<!--                <page name="product_page" string="Product Page">-->
-<!--                    <group>-->
-<!--                        <group name="customer" string="Products Ordered"  attrs="{'invisible':[('sale_product_ids','=',[])]}">-->
-<!--&lt;!&ndash;                           <field name="sale_product_ids" nolabel="1" widget="many2many_tags"/>&ndash;&gt;-->
-<!--                        </group>-->
-<!--                        <group name="vendor" string="Product Purchased" attrs="{'invisible':[('purchase_product_ids','=',[])]}">-->
-<!--&lt;!&ndash;                            <field name="purchase_product_ids" nolabel="1" widget="many2many_tags"/>&ndash;&gt;-->
-<!--                        </group>-->
-<!--                    </group>-->
-<!--                </page>-->
-
             </xpath>
             <xpath expr="//notebook" position="inside">
                 <page name="Status" string="Block Reason" attrs="{'invisible':[('block','==',False)]}">

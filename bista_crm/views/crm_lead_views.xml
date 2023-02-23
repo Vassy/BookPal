@@ -43,10 +43,10 @@
                 <field name="referring_organization" domain="[('company_type', '=', 'company')]"/>
             </xpath>
             <xpath expr="//page[@name='lead']//field[@name='referred']" position="attributes">
-                <attribute name="domain">[('company_type', '!=', 'company'),('type', '=', 'contact'),('parent_id', '=', referring_organization)]</attribute>
+                <attribute name="domain">[("type", "=", "contact"), ("id", "child_of", referring_organization), ("id", "!=", referring_organization)]</attribute>
             </xpath>
             <xpath expr="//page[@name='extra']//field[@name='referred']" position="attributes">
-                <attribute name="domain">[('company_type', '!=', 'company'),('type', '=', 'contact'),('parent_id', '=', referring_organization)]</attribute>
+                <attribute name="domain">[("type", "=", "contact"), ("id", "child_of", referring_organization), ("id", "!=", referring_organization)]</attribute>
             </xpath>
             <xpath expr="//field[@name='user_id']" position="attributes">
                 <attribute name="string">Owner</attribute>
@@ -145,13 +145,10 @@
                 <page name="deal_close" string="Deal Close">
                     <group name="deal_close" string="Deal Close">
                         <group>
-                            <!--<field name="close_won_order"/>-->
                             <field name="close_won_order_time"/>
-                            <!--<field name="actual_close_ammount"/>-->
                             <field name="deal_close_amount_override"/>
                         </group>
                         <group>
-                            <!-- <field name="created_by"/>-->
                             <field name="split_order_number"/>
                             <field name="create_uid" string="Created By"/>
                             <field name="write_uid" string="Last Modified By"/>

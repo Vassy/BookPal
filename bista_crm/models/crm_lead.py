@@ -83,19 +83,14 @@ class CrmLead(models.Model):
     attachment_note = fields.Char(string="Attachment Notes")
 
     # deal Close Fields
-    # close_won_order = fields.Char('Close Won Order #')
     close_won_order_time = fields.Datetime('Close Won Order Time')
-    # actual_close_amount = fields.Datetime('Actual Close Amount')
     deal_close_amount_override = fields.Char(
         string='Deal Close Amount Override')
-    # created_by = fields.Char(string='Created By')
-    # deal_close_lost_date = fields.Date(string='Close Lost Date')
-    # deal_close_lost_reason = fields.Char(string='Close Lost Reason')
     split_order_number = fields.Char(string='Number of Orders Split On')
     currency_id = fields.Many2one('res.currency', string="Currency",
                                   related='company_id.currency_id')
     referring_organization = fields.Many2one('res.partner', string='Referring Organization')
-    referred = fields.Many2one('res.partner', string='Referred By')
+    referred = fields.Many2one("res.partner")
 
     def action_new_quotation(self):
         res = super(CrmLead, self).action_new_quotation()

@@ -94,19 +94,16 @@
                 <page string="Source Details" name="order_details">
                     <group>
                         <group name="order_details">
-                            <field name='refer_by_company' domain="[('company_type', '=', 'company')]"/>
-                            <field name='refer_by_person' domain="[('company_type', '!=', 'company'),('type', '=', 'contact'),('parent_id', '=', refer_by_company)]"/>
-                            <!--                            <field name='order_processing_time'/>-->
+                            <field name="refer_by_company" domain="[('company_type', '=', 'company')]"/>
+                            <field name="refer_by_person" domain="[('type', '=', 'contact'), ('id', 'child_of', refer_by_company), ('id', '!=', refer_by_company)]"/>
                         </group>
                         <group>
-                                <field name="quote_processing_time"  readonly="1"/>
+                            <field name="quote_processing_time" readonly="1" />
                         </group>
-
                         <group>
                             <field name="account_order_standing" decoration-danger="account_order_standing == 'high'"
-                                   decoration-warning="account_order_standing == 'medium'"
-                                   decoration-success="account_order_standing == 'low'"/>
-                            <!-- <field name="customer_email_add"/> -->
+                                decoration-warning="account_order_standing == 'medium'"
+                                decoration-success="account_order_standing == 'low'"/>
                         </group>
                     </group>
                     <group>
