@@ -139,7 +139,7 @@
             <field name="sequence">1</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_2">
-            <field name="name">Ready For Preview</field>
+            <field name="name">Ready for Review</field>
             <field name="sequence">2</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_3">
@@ -167,11 +167,11 @@
             <field name="sequence">8</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_9">
-            <field name="name">Rush Ordered</field>
+            <field name="name">RUSH Ordered</field>
             <field name="sequence">9</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_10">
-            <field name="name"> On Hold</field>
+            <field name="name">On Hold</field>
             <field name="sequence">10</field>
         </record>
         <record model="purchase.line.status" id="purchase_line_status_11">
