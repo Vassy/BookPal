@@ -93,8 +93,6 @@
                             <strong>Shipping Method :</strong>
                             <span t-field="o.rush_status_id" /><br/>
                         </t>
-                        <strong>Salesperson:</strong>
-                        <t t-esc="o.user_id.name"/>
                     </div>
                 </t>
             </div>
