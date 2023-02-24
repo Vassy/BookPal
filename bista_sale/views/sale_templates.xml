@@ -95,11 +95,11 @@
     </template>
 
     <template id="inherit_sale_order_portal_content_totals_table" inherit_id="account.document_tax_totals">
-        <xpath expr="//tr[hasclass('o_total')]" position="after">
-            <tr>
+        <xpath expr="//tr[hasclass('o_total')]" position="after" t-if="o._name == 'sale.order'">
+            <tr t-if="o._name == 'sale.order'">
                 <td class="text-muted">Total Saving Amount</td>
                 <td class="text-right">
-                    <span t-esc="sale_order.saving_amount" t-options="{'widget': 'monetary', 'display_currency': sale_order.pricelist_id.currency_id}"/>
+                    <span t-if="o._name == 'sale.order'" t-esc="o.saving_amount" t-options="{'widget': 'monetary', 'display_currency': o.pricelist_id.currency_id}"/>
                 </td>
             </tr>
         </xpath>

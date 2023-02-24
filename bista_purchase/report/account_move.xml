@@ -248,7 +248,7 @@
             </t>
         </xpath>
         <xpath expr="//table[@name='invoice_line_table']" position="after">
-            <div>
+            <!-- <div>
                 <table style="border: 1px solid black; margin-left: auto; width:35%; height:150px; font-size:14px;">
                     <t t-if="o.move_type == 'in_invoice'">
                         <tr class="border-black o_subtotal">
@@ -257,7 +257,6 @@
                             </td>
                             <td class="text-right"
                                 style=" border-left: 1px solid black;  margin: auto;" >
-                                <!--                        <t t-esc="o.line_ids.purchase_order_id.without_disc_amount_untaxed"/>-->
                                 <t t-foreach="request.env['purchase.order'].sudo().search([('name', '=', o.invoice_origin)])"
                                    t-as="purchase">
                                     <t t-esc="purchase.without_disc_amount_untaxed"
@@ -335,6 +334,15 @@
                         </tr>
                         <tr>
                             <td style="border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black; padding-left:10px;">
+                                <strong class="border-black o_subtotal;text-right">Paid</strong>
+                            </td>
+                            <td style="border-top: 1px solid black; padding-left:10px;padding-right:8px;"
+                                class="text-right">
+                                <strong t-field="o.amount_paid"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black; padding-left:10px;">
                                 <strong class="border-black o_subtotal;text-right">Total Due</strong>
                             </td>
                             <td style="border-top: 1px solid black; padding-left:10px;padding-right:8px;"
@@ -344,7 +352,7 @@
                         </tr>
                     </t>
                 </table>
-            </div>
+            </div> -->
         </xpath>
         <xpath expr="//p[@name='payment_term']" position="before">
             <div class="mt-5 mx-0" t-if="o.invoice_pick_note">
@@ -354,8 +362,6 @@
         </xpath>
         <xpath expr="//p[@name='payment_communication']" position="replace"/>
         <xpath expr="//p[@name='payment_term']" position="replace"/>
-<!--            <strong t-field="o.invoice_payment_term_id.note"/>-->
-<!--        </xpath>-->
         <xpath expr="//div[@name='comment']" position="replace">
             <div class="mt-5 mx-0" t-if="o.narration">
                 <strong>Invoice Terms and Conditions
@@ -363,10 +369,6 @@
                 <p class="mb-1" t-field="o.narration" style="border-top: 1px solid black; margin-top: 1px;"/>
             </div>
         </xpath>
-
-<!--        <xpath expr="//div[@id='total']/div/table" position="attributes">-->
-<!--            <attribute name="style">width: 50.9% !important; margin-left: 49.2% !important;</attribute>-->
-<!--        </xpath>-->
         <xpath expr="//table[@name='invoice_line_table']" position="attributes">
             <attribute name="style">margin-bottom: 0rem;</attribute>
         </xpath>
@@ -375,9 +377,8 @@
         <xpath expr="//div[hasclass('page')]" position="attributes">
             <attribute name="style">margin-top: 50px;</attribute>
         </xpath>
-        <xpath expr="//div[@id='total']" position="replace"/>
+        <!-- <xpath expr="//div[@id='total']" position="replace"/> -->
          <xpath expr="//tbody[hasclass('invoice_tbody')]" position="attributes">
-<!--         <xpath expr="//tbody[hasclass='invoice_line_table']" position="attributes">-->
             <attribute name="style">font-size:14px !important;</attribute>
         </xpath>
     </template>
