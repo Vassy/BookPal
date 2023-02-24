@@ -27,8 +27,9 @@ class PurchaseTracking(models.Model):
     status = fields.Selection(
         [
             ("draft", "Draft"),
-            ("pending", "Pending/In Transint"),
+            ("pending", "Awaiting Shipment"),
             ("received", "Received"),
+            ("shipped", "Shipped"),
             ("on_hold", "On Hold"),
         ],
         default="pending",
@@ -43,10 +44,29 @@ class PurchaseTracking(models.Model):
         compute="_compute_is_read_only", string="Is Read Only"
     )
     checkbox = fields.Boolean(string="Select All (Pending to Shipped)")
-    is_automated = fields.Boolean(string='is Automated', default=False, copy=False)
+    is_automated = fields.Boolean(string="is Automated", default=False, copy=False)
 
     def save(self):
         return {"type": "ir.actions.act_window_close"}
+
+    def confirm_tracking(self):
+        self.ensure_one()
+        if self.status != "shipped" or not self.dest_address_id:
+            return False
+        picking_data = {
+            "purchase_tracking_id": self.id,
+            "carrier_id": self.carrier_id.id,
+            "carrier_tracking_ref": ",".join(self.tracking_ref_ids.mapped("name")),
+        }
+        self.order_id.picking_ids.filtered(lambda p: p.state != "done").write(
+            picking_data
+        )
+        open_move = self.env["stock.move"]
+        for line in self.tracking_line_ids.filtered(lambda l: l.ship_qty):
+            move_ids = line.po_line_id.move_ids.filtered(lambda m: m.state != "done")
+            open_move |= move_ids
+            move_ids.write({"quantity_done": line.ship_qty})
+        open_move._action_done()
 
     @api.onchange("checkbox")
     def _onchange_checkbox(self):
@@ -138,8 +158,6 @@ class PurchaseTracking(models.Model):
             "target": "new",
             "res_id": self.id,
             "view_id": self.env.ref("bista_purchase.purchase_tracking_form_view").id,
-            # 'context': {'create': False, 'edit': True},
-            # 'flags': {'mode': 'readonly'},
         }
 
 

@@ -26,6 +26,7 @@
                             <field name="pro_number" required="0" string="PRO No." attrs="{'readonly': [('is_read_only', '=', True)]}" />
                             <field name="status" required="1" attrs="{'readonly': [('is_read_only', '=', True)]}" />
                             <field name="is_automated" readonly="1"/>
+                            <field name="dest_address_id" invisible="1" />
                         </group>
                     </group>
                     <notebook>
@@ -63,6 +64,7 @@
                 <footer>
                     <button string="Save" special="save" class="btn-primary"/>
                     <button string="Discard" class="btn-secondary" special="cancel"/>
+                    <button string="Confirm" class="btn-primary" type="object" name="confirm_tracking" attrs="{'invisible': ['|', ('dest_address_id', '=', False), ('is_read_only', '=', True)]}" />
                 </footer>
             </form>
         </field>

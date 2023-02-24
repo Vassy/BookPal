@@ -113,6 +113,17 @@
         </field>
     </record>
 
+    <record id="sale_order_view_search_inherit_quotation_bista" model="ir.ui.view">
+        <field name="name">sale.order.search</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+        <field name="arch" type="xml">
+            <filter name="sales" position="attributes">
+                <attribute name="string">Approved Order</attribute>
+            </filter>
+        </field>
+    </record>
+
     <record id="sale.action_orders" model="ir.actions.act_window">
         <field name="context">{"order_booked": True}</field>
         <field name="domain">["|", ("state", "not in", ("draft", "quote_approval", "cancel")), ("is_order", "=", True)]</field>

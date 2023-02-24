@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields
 
 
 class PurchaseApprovalLog(models.Model):
@@ -14,5 +14,5 @@ class PurchaseApprovalLog(models.Model):
         "res.users", string="User", default=lambda self: self.env.uid
     )
     action_date = fields.Datetime(string="Date", default=fields.Datetime.now)
-    old_state = fields.Char(string='Old State')
-    state = fields.Char(string='State')
+    old_state = fields.Char(string="Old State")
+    state = fields.Char(string="State")
