@@ -181,7 +181,7 @@
             <t t-if="not line.display_type">
                 <td id="td_default_code" class="text-left"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-left: 1px solid black;border-top: 1px solid black;">
-                    <span t-field="line.product_id.isbn"/>
+                    <span t-field="line.product_id.default_code"/>
                 </td>
                 <td id="product"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">

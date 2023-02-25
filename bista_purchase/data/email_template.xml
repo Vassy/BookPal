@@ -241,16 +241,22 @@
                         <tr>
                             <th>ISBN</th>
                             <th>Description</th>
-                            <th>Total Qty on PO</th>
-                            <th>Price</th>
-                            <th>PO Line Total</th>
+                            <th>Format</th>
+                            <th class="text-right">Quantity</th>
+                            <th class="text-right">Cover Price</th>
+                            <th class="text-right">Discont</th>
+                            <th class="text-right">BP Price</th>
+                            <th class="text-right">Total</th>
                         </tr>
                         <tr t-foreach="object.order_line" t-as="line">
-                            <td><span t-out="line.product_id.isbn" /></td>
-                            <td><span t-out="line.name" /></td>
-                            <td><span t-out="line.product_qty" /></td>
-                            <td><span t-out="format_amount(line.price_unit, line.currency_id)" /></td>
-                            <td><span t-out="format_amount(line.price_subtotal, line.currency_id)" /></td>
+                            <td><span t-out="line.product_id.default_code" /></td>
+                            <td><span t-out="line.product_id.name" /></td>
+                            <td><span t-out="line.product_format" /></td>
+                            <td class="text-right"><span t-out="int(line.product_qty)" /></td>
+                            <td class="text-right"><span t-out="format_amount(line.before_disc_price_unit, line.currency_id)" /></td>
+                            <td class="text-right"><span t-out="str(int(line.discount)) + '%'" /></td>
+                            <td class="text-right"><span t-out="format_amount(line.price_unit, line.currency_id)" /></td>
+                            <td class="text-right"><span t-out="format_amount(line.price_subtotal, line.currency_id)" /></td>
                         </tr>
                     </table>
                     <br/><br/><br/>
@@ -293,16 +299,15 @@
                     </t>
                     <br/><br/>
                     <span style="font-weight: bold;">SHIPPING INSTRUCTIONS:</span>
-                    <span t-out="object.shipping_instructions.name" /><br/>
+                    <span t-out="object.shipping_instructions.name" /><br/><br/>
                     <span style="font-weight: bold;">DELIVER THESE ITEMS BY:</span>
-                    <span t-out="format_date(object.date_planned.date())" /><br/>
+                    <span t-out="format_date(object.date_planned.date())" /><br/><br/>
                     <span style="font-weight: bold;">PO INSTRUCTIONS:</span>
-                    <span t-out="object.special_pick_note" />
+                    <div style="padding-left: 20px;" t-out="object.special_pick_note" />
                     <br/><br/><br/>
                     <span style="font-weight: bold;">PLEASE NOTE:</span><br/>
                     <span t-out="object.notes" />
                     <br/><br/>
-                    **WE HAVE A NEW ADDRESS**
                 </p>
                 <div t-out="user.signature"></div>
             </field>
