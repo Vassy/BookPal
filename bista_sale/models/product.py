@@ -7,6 +7,7 @@ class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     is_never_report = fields.Boolean(string="Never Report", default=False)
+    publication_date = fields.Date(string='Publication Date', tracking=True)
 
 
 class ProductProduct(models.Model):
