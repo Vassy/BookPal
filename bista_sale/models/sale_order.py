@@ -175,9 +175,9 @@ class SaleOrder(models.Model):
     @api.onchange('partner_id')
     def onchange_partner_id(self):
         super(SaleOrder, self).onchange_partner_id()
-        if self.partner_id:
-            self.refer_by_person = self.partner_id.referal_source
-            self.refer_by_company = self.partner_id.referring_organization
+        if self.partner_id and not self._context.get("no_change_refer"):
+            self.refer_by_person = self.partner_id.referal_source.id
+            self.refer_by_company = self.partner_id.referring_organization.id
 
 
 class SaleOrderLine(models.Model):
