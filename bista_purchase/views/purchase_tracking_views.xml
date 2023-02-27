@@ -64,7 +64,8 @@
                 <footer>
                     <button string="Save" special="save" class="btn-primary"/>
                     <button string="Discard" class="btn-secondary" special="cancel"/>
-                    <button string="Confirm" class="btn-primary" type="object" name="confirm_tracking" attrs="{'invisible': ['|', ('dest_address_id', '=', False), ('is_read_only', '=', True)]}" />
+                    <button string="Confirm Shipment" class="btn-primary" type="object" name="confirm_tracking"
+                        attrs="{'invisible': ['|', ('dest_address_id', '=', False), ('is_read_only', '=', True)]}" />
                 </footer>
             </form>
         </field>
