@@ -164,6 +164,19 @@
             </xpath>
         </field>
     </record>
+
+    <record id="quick_create_opportunity_form_bista" model="ir.ui.view">
+        <field name="name">crm.lead.form.quick.bista</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.quick_create_opportunity_form"/>
+        <field name="arch" type="xml">
+            <field name="title" position="after">
+                <field name="referring_organization" invisible="1" />
+                <field name="referred" invisible="1" />
+            </field>
+        </field>
+    </record>
+
     <record id="special_pricing_type_form_view" model="ir.ui.view">
         <field name="name">special.pricing.type.form.view</field>
         <field name="model">special.pricing.type</field>

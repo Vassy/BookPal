@@ -123,22 +123,18 @@ class CrmLead(models.Model):
             'default_inside_delivery_req': self.inside_delivery_req,
             'default_shipping_notes': self.shipping_notes,
             'default_internal_note': self.description,
-            'default_refer_by_person': self.referred,
             'default_project_description': self.project_details,
-            'default_refer_by_person': self.referred,
-            'default_refer_by_company': self.referring_organization,
-            # 'default_carrier_id': self.carrier_id.id,
-
+            'default_refer_by_person': self.referred.id,
+            'default_refer_by_company': self.referring_organization.id,
+            "no_change_refer": True,
         })
         return res
 
     @api.onchange('partner_id')
     def onchange_shipping_method_partner_id_to_crm(self):
-        """Oncnage shipping method.
-
+        """Onchange shipping method.
         Partner shipping method values automatically fetched
-        in crm shipping method
-        """
+        in crm shipping method"""
         if self.partner_id:
             if self.partner_id.property_delivery_carrier_id:
                 self.carrier_id = self.partner_id.property_delivery_carrier_id.id
@@ -146,17 +142,17 @@ class CrmLead(models.Model):
             self.referring_organization = self.partner_id.referring_organization
 
     def _prepare_customer_values(
-            self, partner_name, is_company=False, parent_id=False):
-
+            self, partner_name, is_company=False, parent_id=False
+    ):
         """Update carrier in partner from lead."""
-        res = super(CrmLead, self)._prepare_customer_values(
-            partner_name, is_company, parent_id)
-        res.update({
-            'property_delivery_carrier_id': self.carrier_id.id,
-            'referal_source': self.referred and self.referred.id,
-            'referring_organization': self.referring_organization and self.referring_organization.id,
-        })
-        return res
+        partner_data = {
+            "property_delivery_carrier_id": self.carrier_id.id,
+            "referal_source": self.referred.id,
+            "referring_organization": self.referring_organization.id,
+        }
+        result = super()._prepare_customer_values(partner_name, is_company, parent_id)
+        result.update(partner_data)
+        return result
 
 
 class SpecialPricingType(models.Model):
