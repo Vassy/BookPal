@@ -66,7 +66,7 @@
                 </page>
             </xpath>
             <xpath expr="//notebook" position="inside">
-                <page name="important_details" string="Lead Details">
+                <page name="important_details" string="Source Details">
                     <group>
                         <group>
                             <field name="industry_id" options="{'no_create': True}"/>
