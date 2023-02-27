@@ -326,22 +326,22 @@ class SaleOrderVts(models.Model):
                                     #     'billing_address').get('email')
                                     # company_name = order.get(
                                     #     'billing_address').get('company')
-                                    # city = order.get(
-                                    #     'billing_address').get('city')
-                                    # first_name = order.get(
-                                    #     'billing_address').get('first_name')
-                                    # last_name = order.get(
-                                    #     'billing_address').get('last_name')
-                                    # country_iso2 = order.get(
-                                    #     'billing_address').get('country_iso2')
-                                    # street = order.get(
-                                    #     'billing_address').get('street_1', '')
-                                    # street_2 = order.get(
-                                    #     'billing_address').get('street_2', '')
-                                    # country_obj = self.env['res.country'].\
-                                    #     search(
-                                    #         [('code', '=', country_iso2)],
-                                    #         limit=1)
+                                    city = order.get(
+                                        'billing_address').get('city')
+                                    first_name = order.get(
+                                        'billing_address').get('first_name')
+                                    last_name = order.get(
+                                        'billing_address').get('last_name')
+                                    country_iso2 = order.get(
+                                        'billing_address').get('country_iso2')
+                                    street = order.get(
+                                        'billing_address').get('street_1', '')
+                                    street_2 = order.get(
+                                        'billing_address').get('street_2', '')
+                                    country_obj = self.env['res.country'].\
+                                        search(
+                                            [('code', '=', country_iso2)],
+                                            limit=1)
                                     # state_obj = self.env['res.country.state'].\
                                     #     search(
                                     #     [('name', '=',
@@ -350,7 +350,11 @@ class SaleOrderVts(models.Model):
                                     #
                                     # phone = order.get(
                                     #     'billing_address').get('phone')
-                                    # zip = order.get('billing_address').get('zip')
+                                    zip = order.get('billing_address').get('zip')
+                                    domain = [('name','=',"%s %s" % (first_name, last_name)),('street', '=', street), ('zip', '=', zip), ('city','=',city), ('country_id', '=', country_obj.id)]
+                                    if street_2:
+                                        domain.append([('street2', '=', street_2)])
+                                    partner_billing_id = self.env['res.partner'].sudo().search(domain,limit=1)
                                     partner_shipping_id = self.create_update_shipping_partner_from_bc_order(order,
                                                                                                             bigcommerce_store_id,
                                                                                                             self.partner_id.parent_id)
@@ -382,9 +386,9 @@ class SaleOrderVts(models.Model):
                                           order.get('currency_code'))], limit=1)
 
                                     vals.update({
-                                        'partner_id': partner_obj.parent_id.id if
-                                        partner_obj.parent_id else partner_obj.id,
-                                        'partner_invoice_id': partner_obj.id,
+                                        'partner_id': partner_obj.id,#partner_obj.parent_id.id if
+                                        #partner_obj.parent_id else partner_obj.id
+                                        'partner_invoice_id': partner_billing_id.id if partner_billing_id else partner_obj.id,
                                         'partner_shipping_id':
                                         partner_shipping_id.id,
                                         # chnage value shipping_id
