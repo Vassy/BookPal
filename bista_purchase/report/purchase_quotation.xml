@@ -78,7 +78,7 @@
                             </div>
                         </t>
                         <strong>BookPal Account # :</strong>
-                        <t t-esc="428475"/>
+                        <span t-field="o.partner_id.account_number" />
                         <br/>
                         <t t-if="o.payment_term_id">
                             <strong>Supplier Terms :</strong>
@@ -168,7 +168,7 @@
                 </td>
                 <td class="text-right" name="td_cover"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
-                    <span t-field="order_line.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                    <span t-field="order_line.before_disc_price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                 </td>
                 <td class="text-right" name="td_discount"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
