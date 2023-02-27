@@ -70,9 +70,11 @@ class StockPicking(models.Model):
     def write(self, vals):
         res = super(StockPicking, self).write(vals)
         for picking_id in self:
-            # Update status as 'received' if shipment  is done
-            if vals.get('date_done') and picking_id.purchase_tracking_id:
-                picking_id.purchase_tracking_id.status = 'received'
+            # Update status of PO tracking if shipment is done
+            if vals.get("date_done") and picking_id.purchase_tracking_id:
+                picking_id.purchase_tracking_id.status = (
+                    "shipped" if picking_id.shipping_partner_id else "received"
+                )
         return res
 
     def _compute_applicable_tracking_ids(self):

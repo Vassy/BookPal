@@ -51,7 +51,7 @@ class PurchaseTracking(models.Model):
 
     def confirm_tracking(self):
         self.ensure_one()
-        if self.status != "shipped" or not self.dest_address_id:
+        if not self.dest_address_id:
             return False
         picking_data = {
             "purchase_tracking_id": self.id,
@@ -67,6 +67,7 @@ class PurchaseTracking(models.Model):
             open_move |= move_ids
             move_ids.write({"quantity_done": line.ship_qty})
         open_move._action_done()
+        self.status = "shipped"
 
     @api.onchange("checkbox")
     def _onchange_checkbox(self):

@@ -110,7 +110,7 @@
                             <br/>
                         </t>
                         <strong>BookPal Account # :</strong>
-                        <t t-esc="428475"/>
+                        <span t-field="o.partner_id.account_number" />
                         <br/>
                         <t t-if="o.payment_term_id">
                             <strong>Supplier Terms :</strong>
