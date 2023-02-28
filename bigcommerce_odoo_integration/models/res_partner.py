@@ -17,6 +17,7 @@ class ResPartner(models.Model):
     bc_companyname = fields.Char(string='BC Company Name')
     shipping_address_id = fields.Char(string='Shipping Address API ID')
     tax_exempt_category = fields.Char(string='Tax Exempt Code')
+    bigcommerce_address_id = fields.Char(string='BC Address ID')
 
     def create_bigcommerce_operation(self, operation, operation_type, bigcommerce_store_id, log_message, warehouse_id):
         vals = {
@@ -45,7 +46,7 @@ class ResPartner(models.Model):
         operation_detail_id = bigcommerce_operation_details_obj.create(vals)
         return operation_detail_id
 
-    def create_update_cutomer_to_odoo(self,record,bigcommerce_store_id, customer_operation_id,warehouse_id):
+    def create_update_cutomer_to_odoo(self, record, bigcommerce_store_id, customer_operation_id, warehouse_id):
         bc_customer_id = str(record.get('id', False))  # bigcommerce_store_id.bc_customer_prefix + "_" +
         partner_id = self.env['res.partner'].search(
             [('bigcommerce_customer_id', '=', bc_customer_id)], limit=1)
@@ -65,11 +66,12 @@ class ResPartner(models.Model):
             }
             if record.get('company') and record.get('email'):
                 partner_parent_id = self.env['res.partner'].search(
-                    [('company_type', '=', 'company'), ('name', '=', record.get('company'))], limit=1)
+                    [('company_type', '=', 'company'), ('email', '=', record.get('email'))], limit=1)
                 if not partner_parent_id:
                     company_vals = {'company_type': 'company', 'name': record.get('company')}
+                    partner_vals.pop('bigcommerce_customer_id')
                     partner_parent_id = self.env['res.partner'].create({**partner_vals, **company_vals})
-                partner_vals.update({'parent_id':partner_parent_id.id})
+                partner_vals.update({'parent_id': partner_parent_id.id,'bigcommerce_customer_id':bc_customer_id})
             partner_id = self.env['res.partner'].create(partner_vals)
             _logger.info("Customer Created : {0}".format(partner_id.name))
             customer_message = "%s Customer Created" % (partner_id.name)
@@ -79,20 +81,20 @@ class ResPartner(models.Model):
                 'phone': record.get('phone', ''),
                 'email': record.get('email'),
                 'bigcommerce_customer_group_id': customer_group_id.id,
-                'tax_exempt_category': record.get('tax_exempt_category', '')
+                'tax_exempt_category': record.get('tax_exempt_category', ''),
                 # 'bigcommerce_customer_id':record.get('id'),
                 # 'bigcommerce_store_id':bigcommerce_store_id.id
             }
             if not partner_id.parent_id:
                 if record.get('company') and record.get('email'):
                     partner_parent_id = self.env['res.partner'].search(
-                        [('company_type', '=', 'company'), ('name', '=', record.get('company'))], limit=1)
+                        [('company_type', '=', 'company'), ('email', '=', record.get('email'))], limit=1)
                     if not partner_parent_id:
                         company_vals = {'company_type': 'company', 'name': record.get('company')}
                         partner_parent_id = self.env['res.partner'].create({**partner_vals, **company_vals})
                         partner_vals.update({'parent_id': partner_parent_id.id})
                     else:
-                        partner_parent_id.write({'name':record.get('company')})
+                        partner_parent_id.write({'name': record.get('company')})
                         partner_vals.update({'parent_id': partner_parent_id.id})
             partner_id.write(partner_vals)
             customer_message = "Customer Data Updated %s" % (partner_id.name)
@@ -105,7 +107,8 @@ class ResPartner(models.Model):
         self._cr.commit()
         return partner_id
 
-    def bigcommerce_to_odoo_import_customers(self, warehouse_id=False, bigcommerce_store_ids=False,source_page=1,destination_page=1,customer_id=False):
+    def bigcommerce_to_odoo_import_customers(self, warehouse_id=False, bigcommerce_store_ids=False, source_page=1,
+                                             destination_page=1, customer_id=False):
         for bigcommerce_store_id in bigcommerce_store_ids:
             req_data = False
             partner_id = False
@@ -115,7 +118,6 @@ class ResPartner(models.Model):
             if not customer_operation_id:
                 customer_operation_id = self.create_bigcommerce_operation('customer', 'import', bigcommerce_store_id,
                                                                           'Processing...', warehouse_id)
-            self._cr.commit()
             try:
                 if customer_id:
                     api_operation = "/v2/customers/{}".format(customer_id)
@@ -139,24 +141,24 @@ class ResPartner(models.Model):
                             total_pages = destination_page or bigcommerce_store_id.destination_of_import_data
                         if total_pages > 1:
                             while (total_pages >= from_page):
-                                    try:
-                                        page_api = "/v3/customers?page=%s" % (total_pages)
-                                        page_response_data = bigcommerce_store_id.send_get_request_from_odoo_to_bigcommerce(
-                                            page_api)
-                                        if page_response_data.status_code in [200, 201]:
-                                            page_response_data = page_response_data.json()
-                                            _logger.info("Customer Response Data : {0}".format(page_response_data))
-                                            page_records = page_response_data.get('data')
-                                            customer_response_pages.append(page_records)
-                                    except Exception as e:
-                                        category_process_message = "Page is not imported! %s" % (e)
-                                        _logger.info("Getting an Error In Customer Response {}".format(e))
-                                        process_message = "Getting an Error In Import Customer Response {}".format(e)
-                                        self.create_bigcommerce_operation_detail('customer', 'import', page_response_data,
-                                                                                 category_process_message,
-                                                                                 customer_operation_id, warehouse_id, True,
-                                                                                 process_message)
-                                    total_pages = total_pages - 1
+                                try:
+                                    page_api = "/v3/customers?page=%s" % (total_pages)
+                                    page_response_data = bigcommerce_store_id.send_get_request_from_odoo_to_bigcommerce(
+                                        page_api)
+                                    if page_response_data.status_code in [200, 201]:
+                                        page_response_data = page_response_data.json()
+                                        _logger.info("Customer Response Data : {0}".format(page_response_data))
+                                        page_records = page_response_data.get('data')
+                                        customer_response_pages.append(page_records)
+                                except Exception as e:
+                                    category_process_message = "Page is not imported! %s" % (e)
+                                    _logger.info("Getting an Error In Customer Response {}".format(e))
+                                    process_message = "Getting an Error In Import Customer Response {}".format(e)
+                                    self.create_bigcommerce_operation_detail('customer', 'import', page_response_data,
+                                                                             category_process_message,
+                                                                             customer_operation_id, warehouse_id, True,
+                                                                             process_message)
+                                total_pages = total_pages - 1
                         else:
                             customer_response_pages.append(records)
                         for customer_response_page in customer_response_pages:
@@ -205,8 +207,8 @@ class ResPartner(models.Model):
         customer_process_message = "Process Completed Successfully!"
         if partner_id and partner_id.bigcommerce_customer_id:
             try:
-                #prefix = len(bigcommerce_store_id.bc_customer_prefix) + 1
-                bc_customer_id = partner_id.bigcommerce_customer_id#[prefix:]
+                # prefix = len(bigcommerce_store_id.bc_customer_prefix) + 1
+                bc_customer_id = partner_id.bigcommerce_customer_id  # [prefix:]
                 api_operation = "/v2/customers/%s/addresses" % (bc_customer_id)
                 response_data = bigcommerce_store_id.send_get_request_from_odoo_to_bigcommerce(api_operation)
                 _logger.info("BigCommerce Get Customer Address Response : {0}".format(response_data))
@@ -220,22 +222,64 @@ class ResPartner(models.Model):
                         partner_id.street2 = record.get("street_2", "")
                         partner_id.zip = record.get('zip', "")
                         partner_id.city = record.get('city', "")
-                        country_code = record.get("country_iso2", "")
+                        if record.get("country"):
+                            country_code = record.get("country")
+                        else:
+                            country_code = record.get("country_iso2")
                         country_obj = self.env['res.country'].search(
                             [('code', '=', country_code)], limit=1)
                         partner_id.country_id = country_obj and country_obj.id
                         state_name = record.get('state', "")
                         state_obj = self.env['res.country.state'].search([('name', '=', state_name)], limit=1)
                         partner_id.state_id = state_obj and state_obj.id
-
+                        partner_id.phone = record.get('phone')
+                        partner_id.bigcommerce_address_id = record.get('id')
                         _logger.info("Customer Address Updated : {0}".format(partner_id.name))
-                        response_data = record
                         customer_message = "%s Customer Address Updated" % (partner_id.name)
                         self.create_bigcommerce_operation_detail('customer', 'import', req_data, response_data,
                                                                  customer_operation_id, warehouse_id, False,
                                                                  customer_message)
                         self._cr.commit()
                         break
+                    for record in response_data:
+                        if record == response_data[0]:
+                            continue
+                        main_customer_id = self.env['res.partner'].search([('bigcommerce_customer_id', '=',record.get('customer_id'))])
+                        address_partner_id = self.env['res.partner'].search([('bigcommerce_address_id', '=',record.get('id')), ('parent_id', '=',main_customer_id.id)])
+                        if record.get("country_iso2"):
+                            country_code = record.get("country_iso2")
+                        else:
+                            country_code = record.get("country")
+                        country_obj = self.env['res.country'].search(
+                            [('code', '=', country_code)], limit=1)
+                        if not country_obj:
+                            country_obj = self.env['res.country'].search(
+                                [('name', '=', country_code)], limit=1)
+                        state_name = record.get('state', "")
+                        state_obj = self.env['res.country.state'].search([('name', '=', state_name)], limit=1)
+                        vals = {'name': "%s %s" % (record.get('first_name'), record.get('last_name')),
+                                'street': record.get('street_1', ""),
+                                'street2': record.get("street_2", ""),
+                                'zip': record.get('zip', ""),
+                                'country_id': country_obj and country_obj.id or False,
+                                'state_id': state_obj and state_obj.id or False,
+                                'phone': record.get('phone'),
+                                'bigcommerce_address_id': record.get('id'),
+                                'is_available_in_bigcommerce': True,
+                                'parent_id':partner_id.parent_id.id if partner_id.parent_id else partner_id.id,
+                                'type':'invoice'}
+                        if not address_partner_id:
+                            address_partner_id = self.env['res.partner'].create(vals)
+                            _logger.info("Customer Address Created : {0}".format(address_partner_id.name))
+                            customer_message = "%s Customer Address Created" % (address_partner_id.name)
+                        else:
+                            address_partner_id.sudo().write(vals)
+                            _logger.info("Customer Address Updated : {0}".format(address_partner_id.name))
+                            customer_message = "%s Customer Address Updated" % (address_partner_id.name)
+                        self.create_bigcommerce_operation_detail('customer', 'import', req_data, response_data,
+                                                                 customer_operation_id, warehouse_id, False,
+                                                                 customer_message)
+                        self._cr.commit()
                     customer_operation_id and customer_operation_id.write(
                         {'bigcommerce_message': customer_process_message})
                     _logger.info("Import Customer Process Completed ")
@@ -260,7 +304,7 @@ class ResPartner(models.Model):
         customer_operation_id and customer_operation_id.write({'bigcommerce_message': customer_process_message})
         self._cr.commit()
 
-    def export_customer_to_bigcommerce(self,bc_store_ids=False):
+    def export_customer_to_bigcommerce(self, bc_store_ids=False):
         """
         :return: this method export customer to bigcommerce
         """
@@ -276,23 +320,25 @@ class ResPartner(models.Model):
                 if c_partner.email:
                     email = c_partner.email and c_partner.email.split('@')[1]
                     partners = self.env['res.partner'].search([])
-                    b = [pp for pp in partners if (pp.email and len(pp.email.split('@')) > 1 and pp.email.split('@')[1] == email and email != 'gmail.com' and pp.bigcommerce_customer_id)]
+                    b = [pp for pp in partners if (pp.email and len(pp.email.split('@')) > 1 and pp.email.split('@')[
+                        1] == email and email != 'gmail.com' and pp.bigcommerce_customer_id)]
                     if b:
-                        raise ValidationError(_("{0} Customer Already There in Bigcommerce With Domain:{1}".format(b[0].name,email)))
+                        raise ValidationError(
+                            _("{0} Customer Already There in Bigcommerce With Domain:{1}".format(b[0].name, email)))
 
                 # preparing dict for sending data to bigcommerce
                 partner = c_partner.parent_id if c_partner.parent_id else c_partner
                 parent_address_data = {
-                                "first_name": partner.name,
-                                "last_name": " ",
-                                "address1": partner.street or '',
-                                "city": partner.city or '',
-                                "state_or_province": "{}".format(partner.state_id and partner.state_id.name or " "),
-                                "postal_code": "{}".format(partner.zip),
-                                "country_code": "{}".format(partner.country_id and partner.country_id.code or " "),
-                                "phone": partner.mobile or partner.phone or "",
-                                "address_type": "residential",
-                            }
+                    "first_name": partner.name,
+                    "last_name": " ",
+                    "address1": partner.street or '',
+                    "city": partner.city or '',
+                    "state_or_province": "{}".format(partner.state_id and partner.state_id.name or " "),
+                    "postal_code": "{}".format(partner.zip),
+                    "country_code": "{}".format(partner.country_id and partner.country_id.code or " "),
+                    "phone": partner.mobile or partner.phone or "",
+                    "address_type": "residential",
+                }
                 address.append(parent_address_data)
                 for child_id in partner.child_ids:
                     if not child_id.name:
@@ -313,9 +359,9 @@ class ResPartner(models.Model):
                         "email": partner.email or '',
                         "first_name": partner.name,
                         "last_name": " ",
-                        "company": c_partner.parent_id.name if c_partner.parent_id and c_partner.parent_id.company_type=='company' else '',
+                        "company": c_partner.parent_id.name if c_partner.parent_id and c_partner.parent_id.company_type == 'company' else '',
                         "phone": "{}".format(c_partner.phone if c_partner.phone else ''),
-                        "tax_exempt_category":partner.tax_exempt_category,
+                        "tax_exempt_category": partner.tax_exempt_category,
                         "customer_group_id": int(
                             c_partner.bigcommerce_customer_group_id and c_partner.bigcommerce_customer_group_id.customer_group_id) or None,
                         # "addresses": [
@@ -331,7 +377,7 @@ class ResPartner(models.Model):
                         #         "address_type": "residential",
                         #     }
                         # ],
-                        "addresses":address,
+                        "addresses": address,
                         # "authentication": {
                         #     "force_password_reset": False,
                         #     "new_password": "santoro_123"
@@ -359,7 +405,8 @@ class ResPartner(models.Model):
                             partner.bigcommerce_customer_id = customer_id
                             partner.is_available_in_bigcommerce = True
                             if partner.child_ids:
-                                partner.child_ids.write({'is_available_in_bigcommerce':True})#'bigcommerce_customer_id':customer_id,
+                                partner.child_ids.write(
+                                    {'is_available_in_bigcommerce': True})  # 'bigcommerce_customer_id':customer_id,
                         # return {
                         #     'effect': {
                         #         'fadeout': 'slow',
