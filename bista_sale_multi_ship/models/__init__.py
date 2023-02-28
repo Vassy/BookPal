@@ -11,4 +11,5 @@ from . import sale_multi_ship
 from . import res_partner
 from . import stock
 from . import res_config_setting
-# from . import delivery_ups
+from . import delivery_ups
+from . import ups_request
