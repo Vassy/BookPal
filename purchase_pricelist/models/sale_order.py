@@ -18,22 +18,22 @@ class SaleOrderLine(models.Model):
             line = line.with_company(line.company_id)
             # product_cost = line.product_id.standard_price
             product_cost = line.get_vendor_price()
-            if not product_cost:
-                line.apply_on_order_vendor_price()
-                continue
+            # if not product_cost:
+            #     line.apply_on_order_vendor_price()
+            #     continue
             line.purchase_price = line._convert_price(product_cost, line.product_id.uom_id)
             line.applied_product_pricelist = True
 
     def get_vendor_price(self):
+        product_cost = self.price_unit
         seller_ids = self.product_id.seller_ids.filtered(lambda x:x.name==self.supplier_id)
         if not seller_ids:
-            return 0
+            return product_cost
 
         seller = seller_ids and seller_ids[0]
         if not seller.vendor_pricelist_id:
-            return 0
+            return product_cost
 
-        product_cost = 0
         pricelist_id = seller.vendor_pricelist_id
         product_context = dict(
             self.env.context,
