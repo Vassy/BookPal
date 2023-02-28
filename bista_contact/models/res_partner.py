@@ -133,7 +133,10 @@ class ResPartner(models.Model):
     def _get_name(self):
         """ Utility method to allow name_get to be overrided without re-browse the partner """
         partner = self
-        name = partner.name or ''
+        if self.env.context.get('with_primary_customer'):
+            name = partner.name + ' *' or ''
+        else:
+            name = partner.name or ''
 
         if partner.company_name or partner.parent_id:
             if not name and partner.type in ['invoice', 'delivery', 'other', 'return', 'warehouse']:
