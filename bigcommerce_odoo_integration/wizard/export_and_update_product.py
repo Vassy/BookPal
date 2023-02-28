@@ -35,7 +35,7 @@ class ExportandUpdateProductinBC(models.TransientModel):
         return {
             'effect': {
                 'fadeout': 'slow',
-                'message': "Yeah! Successfully Import Image",
+                'message': "Yeah! Product Updated Successfully",
                 'img_url': '/web/static/src/img/smile.svg',
                 'type': 'rainbow_man',
             }
@@ -49,7 +49,7 @@ class ExportandUpdateProductinBC(models.TransientModel):
         return {
             'effect': {
                 'fadeout': 'slow',
-                'message': "Yeah! Successfully Import Image",
+                'message': "Yeah! Product Exported Successfully",
                 'img_url': '/web/static/src/img/smile.svg',
                 'type': 'rainbow_man',
             }
