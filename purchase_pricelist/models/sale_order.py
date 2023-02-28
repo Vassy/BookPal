@@ -11,6 +11,7 @@ class SaleOrderLine(models.Model):
     @api.depends('product_id', 'company_id', 'currency_id', 'product_uom', 'supplier_id', 'product_uom_qty')
     def _compute_purchase_price(self):
         for line in self:
+            line.applied_product_pricelist = False
             if not line.product_id or not line.supplier_id:
                 line.purchase_price = 0.0
                 continue
@@ -60,7 +61,10 @@ class SaleOrderLine(models.Model):
         pricelist_line = pricelist_id.get_pricelist_line_based_on_order(
                 on_order_total, on_order_quantity)
         for line in order_lines:
-            line.purchase_price = (line.price_unit - (line.price_unit*pricelist_line.discount)/100)
+            if pricelist_line:
+                line.purchase_price = (line.price_unit - (line.price_unit*pricelist_line.discount)/100)
+            else:
+                line.purchase_price = 0
 
     def action_update_product_cost(self):
         self.apply_on_order_vendor_price()
