@@ -22,6 +22,7 @@ class SaleOrderVts(models.Model):
     payment_method = fields.Char(string='Bigcommerce Payment Method')
     bigcommerce_customer_id = fields.Char("Bigcommerce Customer ID", related="partner_id.bigcommerce_customer_id",
                                           copy=False)
+    state = fields.Selection(selection_add=[('order_booked', 'Order Booked')])
 
     def get_order_transaction(self, through_order_cron=False):
         if (through_order_cron and self.payment_status == 'paid') or self.payment_status == 'not_paid':
@@ -55,12 +56,15 @@ class SaleOrderVts(models.Model):
                                 journal_id = bc_payment_journal_id.journal_id.id
                             else:
                                 journal_id = self.company_id.payment_journal_id.id
+                            if not journal_id:
+                                self.message_post("Please Configure the Payment Journal : {0}".format(journal_id))
+                                continue
                             payment_vals = {
                                 # 'move_id': invoice_id.id,
                                 'amount': response_data.get('amount'),
                                 'date': self.date_order,
                                 'ref': self.name,
-                                'partner_id': self.partner_id.id,
+                                'partner_id': self.partner_id.parent_id.id if self.partner_id.parent_id else self.partner_id.id,
                                 'partner_type': 'customer',
                                 'currency_id': currency_id.id,
                                 'journal_id': journal_id,
@@ -649,7 +653,7 @@ class SaleOrderVts(models.Model):
                 partner_vals)
         return partner_obj
 
-    def create_update_shipping_partner_from_bc_order(self,order,bigcommerce_store_id,partner_parent_id):
+    def create_update_shipping_partner_from_bc_order(self,order,bigcommerce_store_id,partner_id):
         shipping_address_api_respons = \
             self.bigcommerce_shipping_address_api_method(
                 order, bigcommerce_store_id)
@@ -686,8 +690,10 @@ class SaleOrderVts(models.Model):
             'zip': shipping_partner_zip,
             'state_id': state_id.id,
             'type': 'delivery',
-            'parent_id': partner_parent_id.id if partner_parent_id else self.partner_id.id,
-            'country_id': country_id.id
+            'parent_id': partner_id.parent_id.id if partner_id.parent_id else self.partner_id.id,
+            'country_id': country_id.id,
+            'bigcommerce_store_id':bigcommerce_store_id.id,
+            'is_available_in_bigcommerce':True,
         }
         if partner_shipping_id and self.partner_shipping_id.id != partner_shipping_id.id:
             self.partner_shipping_id = partner_shipping_id.id
@@ -729,18 +735,48 @@ class SaleOrderVts(models.Model):
                     [('is_bigcommerce_shipping_method', '=', True)], limit=1)
                 if partner_obj and self.partner_id.id != partner_obj.id:
                     self.partner_id = partner_obj.id
+                city = order.get(
+                    'billing_address').get('city')
+                first_name = order.get(
+                    'billing_address').get('first_name')
+                last_name = order.get(
+                    'billing_address').get('last_name')
+                country_iso2 = order.get(
+                    'billing_address').get('country_iso2')
+                street = order.get(
+                    'billing_address').get('street_1', '')
+                street_2 = order.get(
+                    'billing_address').get('street_2', '')
+                country_obj = self.env['res.country']. \
+                    search(
+                    [('code', '=', country_iso2)],
+                    limit=1)
+                # state_obj = self.env['res.country.state'].\
+                #     search(
+                #     [('name', '=',
+                #       order.get('billing_address').get(
+                #           'state'))], limit=1)
+                #
+                # phone = order.get(
+                #     'billing_address').get('phone')
+                zip = order.get('billing_address').get('zip')
+                domain = [('name', '=', "%s %s" % (first_name, last_name)), ('street', '=', street), ('zip', '=', zip),
+                          ('city', '=', city), ('country_id', '=', country_obj.id)]
+                if street_2:
+                    domain.append([('street2', '=', street_2)])
+                partner_billing_id = self.env['res.partner'].sudo().search(domain, limit=1)
                 # else:
                 #     partner_vals.pop('bigcommerce_customer_id')
                 #     self.partner_id.write(partner_vals)
 
                 # else:
                 #     self.partner_shipping_id.write(res_partner_vals)
-                partner_shipping_id = self.create_update_shipping_partner_from_bc_order(order,self.bigcommerce_store_id,self.partner_id.parent_id)
+                partner_shipping_id = self.create_update_shipping_partner_from_bc_order(order,self.bigcommerce_store_id,self.partner_id)
                 pricelist_id = self.env['product.pricelist'].search(
                     [('currency_id.name', '=', order.get('currency_code'))], limit=1)
                 vals = {}
                 vals.update({'partner_id': self.partner_id.id,
-                             'partner_invoice_id': self.partner_id.id,
+                             'partner_invoice_id': partner_billing_id.id if partner_billing_id else self.partner_id.id,
                              'partner_shipping_id': partner_shipping_id.id,
                              'date_order': date_time_str or today_date,
                              'bc_order_date': date_time_str or today_date,
@@ -1221,29 +1257,34 @@ class SaleOrderVts(models.Model):
 
     def update_order_request_data(self,shipping_address_api_response,order_line,discount,base_shipping_cost):
         invoice_partner = self.partner_invoice_id or self.partner_id
-        shipping_partner = self.partner_shipping_id or self.partner_id
+        billing_add = {
+            "first_name": "{}".format(invoice_partner and invoice_partner.name),
+            "street_1": "{}".format(invoice_partner.street),
+            "city": "{}".format(invoice_partner.city),
+            "state": "{}".format(invoice_partner.state_id.name),
+            "zip": "{}".format(invoice_partner.zip),
+            "country": "{}".format(invoice_partner.country_id.name),
+        }
+        if self.partner_id.email:
+            billing_add.update({"email": "{}".format(self.partner_id and self.partner_id.email or "")})
+        shipping_add = {
+            "id": "{}".format(shipping_address_api_response.get('id')),
+            "first_name": "{}".format(self.partner_shipping_id.name or ""),
+            "street_1": "{}".format(self.partner_shipping_id.street or ""),
+            "street_2": "{}".format(self.partner_shipping_id.street2 or ""),
+            "city": "{}".format(self.partner_shipping_id.city or ""),
+            "state": "{}".format(
+                self.partner_shipping_id.state_id and self.partner_shipping_id.state_id.name or ""),
+            "zip": "{}".format(self.partner_shipping_id.zip),
+            "country": "{}".format(
+                self.partner_shipping_id.country_id and self.partner_shipping_id.country_id.name),
+        }
+        if self.partner_shipping_id.email:
+            shipping_add.update({"email": "{}".format(self.partner_shipping_id.email)})
         request_data = {
             # 'status_id': 1,
-            'billing_address': {
-                "first_name": "{}".format(invoice_partner.name or ''),
-                "street_1": "{}".format(invoice_partner.street or ''),
-                "city": "{}".format(invoice_partner.city or ''),
-                "state": "{}".format(invoice_partner.state_id.name or ''),
-                "zip": "{}".format(invoice_partner.zip or ''),
-                "country": "{}".format(invoice_partner.country_id.name or ''),
-                "email": "{}".format(invoice_partner.email or '')},
-            'shipping_addresses': [{
-                "id": "{}".format(shipping_address_api_response.get('id')),
-                "first_name": "{}".format(shipping_partner.name or ""),
-                "street_1": "{}".format(shipping_partner.street or ""),
-                "street_2": "{}".format(shipping_partner.street2 or ""),
-                "city": "{}".format(shipping_partner.city or ""),
-                "state": "{}".format(
-                    shipping_partner.state_id and shipping_partner.state_id.name or ""),
-                "zip": "{}".format(shipping_partner.zip),
-                "country": "{}".format(
-                    shipping_partner.country_id and shipping_partner.country_id.name),
-                "email": "{}".format(shipping_partner.email or '')}],
+            'billing_address': billing_add,
+            'shipping_addresses': [shipping_add],
             'products': order_line,
             'base_shipping_cost':str(base_shipping_cost),
             'discount_amount': abs(discount),
