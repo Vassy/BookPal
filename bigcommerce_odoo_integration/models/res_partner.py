@@ -261,12 +261,13 @@ class ResPartner(models.Model):
                                 'street': record.get('street_1', ""),
                                 'street2': record.get("street_2", ""),
                                 'zip': record.get('zip', ""),
+                                'city':record.get('city', ""),
                                 'country_id': country_obj and country_obj.id or False,
                                 'state_id': state_obj and state_obj.id or False,
                                 'phone': record.get('phone'),
                                 'bigcommerce_address_id': record.get('id'),
                                 'is_available_in_bigcommerce': True,
-                                'parent_id':partner_id.parent_id.id if partner_id.parent_id else partner_id.id,
+                                'parent_id':partner_id.id,
                                 'type':'invoice'}
                         if not address_partner_id:
                             address_partner_id = self.env['res.partner'].create(vals)

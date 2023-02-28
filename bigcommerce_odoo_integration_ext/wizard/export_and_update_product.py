@@ -15,7 +15,7 @@ class UpdateProductPricelist(models.TransientModel):
         return {
             'effect': {
                 'fadeout': 'slow',
-                'message': "Yeah! Successfully Import Image",
+                'message': "Yeah! Pricelist Updated Successfully",
                 'img_url': '/web/static/src/img/smile.svg',
                 'type': 'rainbow_man',
             }
