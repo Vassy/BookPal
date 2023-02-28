@@ -653,7 +653,7 @@ class SaleOrderVts(models.Model):
                 partner_vals)
         return partner_obj
 
-    def create_update_shipping_partner_from_bc_order(self,order,bigcommerce_store_id,partner_parent_id):
+    def create_update_shipping_partner_from_bc_order(self,order,bigcommerce_store_id,partner_id):
         shipping_address_api_respons = \
             self.bigcommerce_shipping_address_api_method(
                 order, bigcommerce_store_id)
@@ -690,8 +690,10 @@ class SaleOrderVts(models.Model):
             'zip': shipping_partner_zip,
             'state_id': state_id.id,
             'type': 'delivery',
-            'parent_id': partner_parent_id.id if partner_parent_id else self.partner_id.id,
-            'country_id': country_id.id
+            'parent_id': partner_id.parent_id.id if partner_id.parent_id else self.partner_id.id,
+            'country_id': country_id.id,
+            'bigcommerce_store_id':bigcommerce_store_id.id,
+            'is_available_in_bigcommerce':True,
         }
         if partner_shipping_id and self.partner_shipping_id.id != partner_shipping_id.id:
             self.partner_shipping_id = partner_shipping_id.id
@@ -769,11 +771,11 @@ class SaleOrderVts(models.Model):
 
                 # else:
                 #     self.partner_shipping_id.write(res_partner_vals)
-                partner_shipping_id = self.create_update_shipping_partner_from_bc_order(order,self.bigcommerce_store_id,self.partner_id.parent_id)
+                partner_shipping_id = self.create_update_shipping_partner_from_bc_order(order,self.bigcommerce_store_id,self.partner_id)
                 pricelist_id = self.env['product.pricelist'].search(
                     [('currency_id.name', '=', order.get('currency_code'))], limit=1)
                 vals = {}
-                vals.update({'partner_id': self.partner_id.parent_id.id if self.partner_id.parent_id else self.partner_id.id,
+                vals.update({'partner_id': self.partner_id.id,
                              'partner_invoice_id': partner_billing_id.id if partner_billing_id else self.partner_id.id,
                              'partner_shipping_id': partner_shipping_id.id,
                              'date_order': date_time_str or today_date,

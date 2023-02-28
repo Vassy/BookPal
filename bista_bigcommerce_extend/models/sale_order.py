@@ -357,7 +357,7 @@ class SaleOrderVts(models.Model):
                                     partner_billing_id = self.env['res.partner'].sudo().search(domain,limit=1)
                                     partner_shipping_id = self.create_update_shipping_partner_from_bc_order(order,
                                                                                                             bigcommerce_store_id,
-                                                                                                            self.partner_id.parent_id)
+                                                                                                            partner_obj)
 
                                     _logger.info(
                                         ">>> successfully create shipping"

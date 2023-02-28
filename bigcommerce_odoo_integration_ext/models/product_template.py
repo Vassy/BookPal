@@ -427,7 +427,19 @@ class ProductTemplateExtend(models.Model):
                                         custom_field_data.get('value'),
                                         "%Y/%m/%d").date()
                             except Exception as e:
-                                product_template_id.publication_date = datetime.strptime(custom_field_data.get('value')[0:8], "%d/%m/%Y").date()
+                                try:
+                                    product_template_id.publication_date = datetime.strptime(custom_field_data.get('value')[0:8], "%d/%m/%Y").date()
+                                except Exception as e:
+                                    try:
+                                        p_date = custom_field_data.get('value').split(' ')
+                                        if len(p_date) > 1:
+                                            product_template_id.publication_date = datetime.strptime(
+                                                p_date[0], "%m/%d/%Y").date()
+                                    except:
+                                        p_date = custom_field_data.get('value').split(' ')
+                                        if len(p_date) > 1:
+                                            product_template_id.publication_date = datetime.strptime(
+                                                p_date[0], "%d/%m/%Y").date()
 
                 elif custom_field_data.get('name') in ['pricing profile',
                                                        'Pricing Profile']:

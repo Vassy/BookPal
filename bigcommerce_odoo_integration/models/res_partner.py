@@ -71,7 +71,7 @@ class ResPartner(models.Model):
                     company_vals = {'company_type': 'company', 'name': record.get('company')}
                     partner_vals.pop('bigcommerce_customer_id')
                     partner_parent_id = self.env['res.partner'].create({**partner_vals, **company_vals})
-                partner_vals.update({'parent_id': partner_parent_id.id})
+                partner_vals.update({'parent_id': partner_parent_id.id,'bigcommerce_customer_id':bc_customer_id})
             partner_id = self.env['res.partner'].create(partner_vals)
             _logger.info("Customer Created : {0}".format(partner_id.name))
             customer_message = "%s Customer Created" % (partner_id.name)
