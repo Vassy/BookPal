@@ -27,6 +27,14 @@ class ExportandUpdateProductinBC(models.TransientModel):
                 self.env['product.template'].import_product_from_bigcommerce(bigcommerce_store_ids=bc_store,
                                                                              bigcommerce_product_id=listing_id.bc_product_id,
                                                                              add_single_product=True)
+        return {
+            'effect': {
+                'fadeout': 'slow',
+                'message': "Yeah! Product Updated Successfully",
+                'img_url': '/web/static/src/img/smile.svg',
+                'type': 'rainbow_man',
+            }
+        }
 
     def update_product_in_bigcommerce(self):
         product_templates = self.env['product.template'].browse(self._context.get('active_ids', []))
