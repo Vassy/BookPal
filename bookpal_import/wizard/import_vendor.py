@@ -122,7 +122,7 @@ class ImportVendor(models.TransientModel):
                 'processing_time_nuances': vals.get('Processing Time Nuances'),
                 'publisher_nuances': vals.get('Publisher Nuances'),
                 'website': vals.get('Publisher Website'),
-                'rep': vals.get('Rep'),
+                # 'rep': vals.get('Rep'),
                 'returnable_terms': vals.get('Returnable Terms'),
                 'rush_processing_time': vals.get('Rush Processing Time'),
                 'rush_processing_nuances': vals.get('Rush Shipping Nuances'),
@@ -137,7 +137,7 @@ class ImportVendor(models.TransientModel):
                 'top_publisher': True if vals.get('Top publisher') in ['1', 1] else False,
                 'tracking_souurce': vals.get('Tracking Source'),
                 'transfer_nuances': vals.get('Transfer Nuances'),
-                'transfer_to_bp_warehouse': True if vals.get('Transfer to BookPal Warehouse') in ['1', 1] else False,
+                # 'transfer_to_bp_warehouse': True if vals.get('Transfer to BookPal Warehouse') in ['1', 1] else False,
                 'supplier_rank': 1,
             }
 
