@@ -48,160 +48,171 @@ sheet = book.sheet_by_index(0)
 
 error = False
 
-# print("=======START SCRIPT =========")
-# products = sock.execute(
-#     dbname, uid, password,
-#     'res.partner',
-#     'search',
-#     [('name', '=', 'Ricky Manthey')])
-# for prod in products:
-#     print("\n product>>>>>>", prod)
-#     sock.execute(
-#         dbname, uid, password,
-#         'res.partner',
-#         'write',
-#         prod,
-#         {'parent_id': False})
+print("=======START SCRIPT =========")
+products = sock.execute(
+    dbname, uid, password,
+    'product.product',
+    'search', [('detailed_type', '!=', 'service')])
+for prod in products:
+    print("\n product>>>product>>>", prod)
+    sock.execute(
+        dbname, uid, password,
+        'product.product',
+        'write',
+        prod,
+        {'avatax_category_id': 428})
+product_templates = sock.execute(
+    dbname, uid, password,
+    'product.template',
+    'search', [('detailed_type', '!=', 'service')])
+for prod_temp in product_templates:
+    print("\n product>>template>>>>", prod)
+    sock.execute(
+        dbname, uid, password,
+        'product.template',
+        'write',
+        prod_temp,
+        {'avatax_category_id': 428})
 # sheet.nrows
-try:
-    for row_no in range(1303, sheet.nrows):  #
-        error = False
-        row_values = sheet.row_values(row_no)
-        print ("\n row values >>>", row_no, row_values)
-        prod_vals = {}
-        if not row_values[3]:
-            continue
-        # prod_vals = {
-        #     'isbn': row_values[1],
-        #     'product_format': row_values[7],
-        #     'origin': row_values[8],
-        #     'weight': row_values[11],
-        # }
-        prod = row_values[1]
-        if isinstance(row_values[1], float):
-            prod = str(int(row_values[1]))
-        # print ("\n prod >>>>>>", prod)
-        prod_id = sock.execute(
-            dbname, uid, password,
-            'product.template',
-            'search',
-            [('default_code', '=', prod)])
-        prod_id = prod_id and prod_id[0] or False
-        # print ("\n prod_id >>>", prod_id)
-        if not prod_id:
-            output.write(str(row_values) + '\n')
-            output.write('\n Product not available ;' +
-                         str(row_values[1]) + ';' +
-                         str(row_values[2]) + ';' +
-                         str(row_values[3]) + ';')
-            continue
-        vendor_id = sock.execute(
-            dbname, uid, password,
-            'res.partner',
-            'search',
-            [('name', '=', row_values[2]),
-             ('supplier_rank', '>', 0)])
-        vendor_id = vendor_id and vendor_id[0] or False
-        # print ("\n vendor name >>>", row_values[2], vendor_id)
-        pricelist_name = row_values[3]
-        if isinstance(row_values[3], float):
-            pricelist_name = str(int(row_values[3] * 100)) + '%'
-        print ("\n pricelist_name >>>.", pricelist_name, row_values[3])
-        pricelist_id = sock.execute(
-            dbname, uid, password,
-            'product.pricelist',
-            'search',
-            [('name', '=', pricelist_name),
-             ('used_for', '=', 'purchase'),
-             ('on_order', '=', False)])
-        pricelist_id = pricelist_id and pricelist_id[0]
-        # print ("\n pricelist_id .>>>>>.", pricelist_id)
-        percentage = pricelist_name
-        discount = ''
-        for per in percentage:
-            if per.isdigit():
-                discount += per
-        # print ("\n percentage >>>>", discount)
-        if not discount.isdigit():
-            output.write(str(row_values) + '\n')
-            output.write('\n Percentage not available ;' +
-                         str(row_values[1]) + ';' +
-                         str(row_values[2]) + ';' +
-                         str(row_values[3]) + ';')
-            continue
-        if not pricelist_id:
-            pricelist_vals = {
-                'name': pricelist_name,
-                'used_for': 'purchase',
-                'on_order': False,
-                'item_ids': [(0, 0, {
-                    'compute_price': 'percentage',
-                    'percent_price': float(discount),
-                    'applied_on': '1_product',
-                    'product_tmpl_id': prod_id
-                })]
-            }
-            pricelist_id = sock.execute(
-                dbname, uid, password,
-                'product.pricelist',
-                'create',
-                pricelist_vals)
-        pricelist_rule = sock.execute(
-            dbname, uid, password,
-            'product.pricelist.item',
-            'search',
-            [('pricelist_id', '=', pricelist_id),
-             ('product_tmpl_id', '=', prod_id),
-             ('applied_on', '=', '1_product'),
-             ('compute_price', '=', 'percentage'),
-             ('percent_price', '=', float(discount))])
-        # print ("\n pricelist_rule> >>>>", pricelist_rule)
-        if not pricelist_rule:
-            price_rule_vals = {
-                'compute_price': 'percentage',
-                'percent_price': float(discount),
-                'applied_on': '1_product',
-                'product_tmpl_id': prod_id,
-                'pricelist_id': pricelist_id
-            }
-            sock.execute(
-                dbname, uid, password,
-                'product.pricelist.item',
-                'create',
-                price_rule_vals)
-        print ("\n prod, vendor_id, pricelist >>>", prod_id, vendor_id, pricelist_id)
-        if prod_id and vendor_id and pricelist_id:
-            supplier_info = sock.execute(
-                dbname, uid, password,
-                'product.supplierinfo',
-                'search',
-                [('name', '=', vendor_id),
-                 ('product_tmpl_id', '=', prod_id),
-                 ('min_qty', '=', 0)])
-            # print ("\n supplier_info >>>>", supplier_info)
-            for vlist in supplier_info:
-                sock.execute(
-                    dbname, uid, password,
-                    'product.supplierinfo',
-                    'write',
-                    vlist, {'vendor_pricelist_id': pricelist_id})
-            if not supplier_info:
-                supplier_info_vals = {
-                    'name': vendor_id,
-                    'product_tmpl_id': prod_id,
-                    'min_qty': 0,
-                    'vendor_pricelist_id': pricelist_id
-                }
-                supplier_info = sock.execute(
-                    dbname, uid, password,
-                    'product.supplierinfo',
-                    'create',
-                    supplier_info_vals)
+# try:
+#     for row_no in range(1303, sheet.nrows):  #
+#         error = False
+#         row_values = sheet.row_values(row_no)
+#         print ("\n row values >>>", row_no, row_values)
+#         prod_vals = {}
+#         if not row_values[3]:
+#             continue
+#         # prod_vals = {
+#         #     'isbn': row_values[1],
+#         #     'product_format': row_values[7],
+#         #     'origin': row_values[8],
+#         #     'weight': row_values[11],
+#         # }
+#         prod = row_values[1]
+#         if isinstance(row_values[1], float):
+#             prod = str(int(row_values[1]))
+#         # print ("\n prod >>>>>>", prod)
+#         prod_id = sock.execute(
+#             dbname, uid, password,
+#             'product.template',
+#             'search',
+#             [('default_code', '=', prod)])
+#         prod_id = prod_id and prod_id[0] or False
+#         # print ("\n prod_id >>>", prod_id)
+#         if not prod_id:
+#             output.write(str(row_values) + '\n')
+#             output.write('\n Product not available ;' +
+#                          str(row_values[1]) + ';' +
+#                          str(row_values[2]) + ';' +
+#                          str(row_values[3]) + ';')
+#             continue
+#         vendor_id = sock.execute(
+#             dbname, uid, password,
+#             'res.partner',
+#             'search',
+#             [('name', '=', row_values[2]),
+#              ('supplier_rank', '>', 0)])
+#         vendor_id = vendor_id and vendor_id[0] or False
+#         # print ("\n vendor name >>>", row_values[2], vendor_id)
+#         pricelist_name = row_values[3]
+#         if isinstance(row_values[3], float):
+#             pricelist_name = str(int(row_values[3] * 100)) + '%'
+#         print ("\n pricelist_name >>>.", pricelist_name, row_values[3])
+#         pricelist_id = sock.execute(
+#             dbname, uid, password,
+#             'product.pricelist',
+#             'search',
+#             [('name', '=', pricelist_name),
+#              ('used_for', '=', 'purchase'),
+#              ('on_order', '=', False)])
+#         pricelist_id = pricelist_id and pricelist_id[0]
+#         # print ("\n pricelist_id .>>>>>.", pricelist_id)
+#         percentage = pricelist_name
+#         discount = ''
+#         for per in percentage:
+#             if per.isdigit():
+#                 discount += per
+#         # print ("\n percentage >>>>", discount)
+#         if not discount.isdigit():
+#             output.write(str(row_values) + '\n')
+#             output.write('\n Percentage not available ;' +
+#                          str(row_values[1]) + ';' +
+#                          str(row_values[2]) + ';' +
+#                          str(row_values[3]) + ';')
+#             continue
+#         if not pricelist_id:
+#             pricelist_vals = {
+#                 'name': pricelist_name,
+#                 'used_for': 'purchase',
+#                 'on_order': False,
+#                 'item_ids': [(0, 0, {
+#                     'compute_price': 'percentage',
+#                     'percent_price': float(discount),
+#                     'applied_on': '1_product',
+#                     'product_tmpl_id': prod_id
+#                 })]
+#             }
+#             pricelist_id = sock.execute(
+#                 dbname, uid, password,
+#                 'product.pricelist',
+#                 'create',
+#                 pricelist_vals)
+#         pricelist_rule = sock.execute(
+#             dbname, uid, password,
+#             'product.pricelist.item',
+#             'search',
+#             [('pricelist_id', '=', pricelist_id),
+#              ('product_tmpl_id', '=', prod_id),
+#              ('applied_on', '=', '1_product'),
+#              ('compute_price', '=', 'percentage'),
+#              ('percent_price', '=', float(discount))])
+#         # print ("\n pricelist_rule> >>>>", pricelist_rule)
+#         if not pricelist_rule:
+#             price_rule_vals = {
+#                 'compute_price': 'percentage',
+#                 'percent_price': float(discount),
+#                 'applied_on': '1_product',
+#                 'product_tmpl_id': prod_id,
+#                 'pricelist_id': pricelist_id
+#             }
+#             sock.execute(
+#                 dbname, uid, password,
+#                 'product.pricelist.item',
+#                 'create',
+#                 price_rule_vals)
+#         print ("\n prod, vendor_id, pricelist >>>", prod_id, vendor_id, pricelist_id)
+#         if prod_id and vendor_id and pricelist_id:
+#             supplier_info = sock.execute(
+#                 dbname, uid, password,
+#                 'product.supplierinfo',
+#                 'search',
+#                 [('name', '=', vendor_id),
+#                  ('product_tmpl_id', '=', prod_id),
+#                  ('min_qty', '=', 0)])
+#             # print ("\n supplier_info >>>>", supplier_info)
+#             for vlist in supplier_info:
+#                 sock.execute(
+#                     dbname, uid, password,
+#                     'product.supplierinfo',
+#                     'write',
+#                     vlist, {'vendor_pricelist_id': pricelist_id})
+#             if not supplier_info:
+#                 supplier_info_vals = {
+#                     'name': vendor_id,
+#                     'product_tmpl_id': prod_id,
+#                     'min_qty': 0,
+#                     'vendor_pricelist_id': pricelist_id
+#                 }
+#                 supplier_info = sock.execute(
+#                     dbname, uid, password,
+#                     'product.supplierinfo',
+#                     'create',
+#                     supplier_info_vals)
 
-except Exception as e:
-    row_values.append(str(e))
-    output.write(str(row_values) + '\n')
-    output.write('Product ref : ' +
-                 str(row_values))
+# except Exception as e:
+#     row_values.append(str(e))
+#     output.write(str(row_values) + '\n')
+#     output.write('Product ref : ' +
+#                  str(row_values))
 
 print("=======SCRIPT COMPLETE =========")

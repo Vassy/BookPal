@@ -42,7 +42,7 @@ sock = xmlrpclib.ServerProxy(url + '/xmlrpc/object')
 
 output = open(current_path + '/Errors.txt', 'w')
 # file_upload1 = '/sheet/ProductVendorPricelist.xlsx'
-file_upload = '/sheet/BP_Inventory_master.xlsx'
+file_upload = '/sheet/BPInventory_2023_with_0_cost.xlsx'
 book = xlrd.open_workbook(current_path + file_upload)
 sheet = book.sheet_by_index(0)
 
@@ -55,14 +55,28 @@ try:
     for row_no in range(1, sheet.nrows):  #
         error = False
         row_values = sheet.row_values(row_no)
-        print ("\n row values >>>", row_no, row_values)
         prod_vals = {
-            'standard_price': row_values[4],
+            'standard_price': 0,
         }
+        if not row_values[7]:
+            continue
         prod = row_values[1]
         if isinstance(row_values[1], float):
             prod = str(int(row_values[1]))
         # print ("\n prod >>>>>>", prod)
+        prod_prod_id = sock.execute(
+            dbname, uid, password,
+            'product.product',
+            'search',
+            [('default_code', '=', prod)])
+        prod_prod_id = prod_prod_id and prod_prod_id[0] or False
+        print ("\n prod_prod_id >>>", prod_prod_id)
+        sock.execute(
+            dbname, uid, password,
+            'product.product',
+            'write',
+            prod_prod_id,
+            prod_vals)
         prod_id = sock.execute(
             dbname, uid, password,
             'product.template',
