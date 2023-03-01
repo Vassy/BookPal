@@ -481,7 +481,7 @@ class PurchaseOrderLine(models.Model):
         domain = [
             ("product_id", "=", self.product_id.id),
             ("order_id.partner_id", "=", self.order_id.partner_id.id),
-            ("line_status", "!=", "received"),
+            ("line_status", "not in", ("received", "short_close")),
             ("state", "in", ("purchase", "done")),
         ]
         order_line = self.env["purchase.order.line"].search(domain)

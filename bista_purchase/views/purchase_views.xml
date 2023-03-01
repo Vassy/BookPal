@@ -65,24 +65,9 @@
             <xpath expr="//field[@name='order_line']//tree" position="inside">
                 <field name="tracking_ref" optional="show"/>
                 <field name="status_id" readonly="1" force_save="1"/>
-                <button name="open_po_line" type="object" icon="fa-eye" class="btn btn-link" style="float:right"/>
-                <button name="action_purchase_history" type="object" icon="fa-history" style="float:left" help="Purchase History" title="Purchase bo History"/>
+                <button name="open_po_line" type="object" icon="fa-eye" class="btn btn-link" attrs="{'invisible': [('id', '=', False)]}" />
+                <button name="action_purchase_history" type="object" icon="fa-history" title="Backorder History" attrs="{'invisible': [('id', '=', False)]}" />
             </xpath>
-            <!--            <xpath expr="//page[@name='products']/field[@name='order_line']" position="before">-->
-            <!--                <button name="update_po_lines" string="Update PO Lines" type="object" class="btn-primary"/>-->
-            <!--            </xpath>-->
-
-            <!--            <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">-->
-            <!--            </xpath>-->
-            <!-- <xpath expr="//div[hasclass('oe_clear')]" position="before">
-                <group name="special_pick_note" col="6" class="mt-2 mt-md-0">
-                    <group colspan="4">
-                        <field name="special_pick_note"
-                               class="oe-bordered-editor" nolabel="1"
-                               placeholder="Special Picking Notes..."/>
-                    </group>
-                </group>
-            </xpath> -->
             <xpath expr="//sheet" position="before">
                 <div class="alert alert-danger mb-0" role="alert">
                     <span>Before doing any operations, please check the Nuances.</span>
