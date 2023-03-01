@@ -122,7 +122,7 @@ class ImportVendor(models.TransientModel):
                 'processing_time_nuances': vals.get('Processing Time Nuances'),
                 'publisher_nuances': vals.get('Publisher Nuances'),
                 'website': vals.get('Publisher Website'),
-                'rep': vals.get('Rep'),
+                # 'rep': vals.get('Rep'),
                 'returnable_terms': vals.get('Returnable Terms'),
                 'rush_processing_time': vals.get('Rush Processing Time'),
                 'rush_processing_nuances': vals.get('Rush Shipping Nuances'),
