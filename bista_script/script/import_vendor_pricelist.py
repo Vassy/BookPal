@@ -52,7 +52,8 @@ print("=======START SCRIPT =========")
 products = sock.execute(
     dbname, uid, password,
     'product.product',
-    'search', [('detailed_type', '!=', 'service')])
+    'search', [('detailed_type', '!=', 'service'),
+               ('avatax_category_id', '=', False)])
 for prod in products:
     print("\n product>>>product>>>", prod)
     sock.execute(
@@ -64,7 +65,8 @@ for prod in products:
 product_templates = sock.execute(
     dbname, uid, password,
     'product.template',
-    'search', [('detailed_type', '!=', 'service')])
+    'search', [('detailed_type', '!=', 'service'),
+               ('avatax_category_id', '=', False)])
 for prod_temp in product_templates:
     print("\n product>>template>>>>", prod)
     sock.execute(
