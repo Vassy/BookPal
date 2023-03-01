@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_invoice_document_bista" inherit_id="account.report_invoice_document">
+        <xpath expr="//t[@t-set='lines']" position="after">
+            <!-- Bigcommerce Shipping Service Product -->
+            <t t-set="bc_shipping_id" t-value="o.env.ref('bigcommerce_odoo_integration.product_product_bigcommerce_delivery_fixed')" />
+            <!-- Bigcommerce Tax Product -->
+            <t t-set="bc_tax_id" t-value="o.env.ref('bigcommerce_odoo_integration.product_product_bigcommerce_tax')" />
+            <!-- Bigcommerce Coupon Product -->
+            <t t-set="bc_coupon_id" t-value="o.env.ref('bigcommerce_odoo_integration.add_bigcommerce_coupon_as_product')" />
+            <t t-set="lines" t-value="lines.filtered(lambda l: l.product_id not in bc_shipping_id | bc_tax_id)" />
+        </xpath>
+        <xpath expr="//t[@t-call='account.document_tax_totals']" position="replace">
+            <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
+                <tr class="border-black o_subtotal">
+                    <td>Subtotal</td>
+                    <td class="text-right">
+                        <span class="oe_subtotal_footer_separator" t-out="sum(lines.mapped('price_subtotal'))" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Taxes</td>
+                    <td class="text-right o_price_total">
+                        <span class="text-nowrap" t-out="o.amount_tax + sum(o.invoice_line_ids.filtered(lambda l: l.product_id == bc_tax_id).mapped('price_subtotal'))" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Shipping</td>
+                    <td class="text-right o_price_total">
+                        <span class="text-nowrap" t-out="sum(o.invoice_line_ids.filtered(lambda l: l.product_id == bc_shipping_id).mapped('price_subtotal'))" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}" />
+                    </td>
+                </tr>
+            </t>
+            <!-- Total amount with all taxes -->
+            <tr class="border-black o_total">
+                <td><strong>Total</strong></td>
+                <td class="text-right">
+                    <span t-out="tax_totals['formatted_amount_total']" />
+                </td>
+            </tr>
+        </xpath>
+    </template>
+
+    <template id="report_invoice_document_purchase_bista" inherit_id="bista_purchase.bista_purchase_report_invoice_document_inherit">
+        <span t-field="line.name" position="before">
+            <strong t-if="line.product_id == bc_coupon_id">Coupon Applied:</strong>
+        </span>
+    </template>
+</odoo>
