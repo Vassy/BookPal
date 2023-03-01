@@ -137,7 +137,7 @@ class ImportVendor(models.TransientModel):
                 'top_publisher': True if vals.get('Top publisher') in ['1', 1] else False,
                 'tracking_souurce': vals.get('Tracking Source'),
                 'transfer_nuances': vals.get('Transfer Nuances'),
-                'transfer_to_bp_warehouse': True if vals.get('Transfer to BookPal Warehouse') in ['1', 1] else False,
+                # 'transfer_to_bp_warehouse': True if vals.get('Transfer to BookPal Warehouse') in ['1', 1] else False,
                 'supplier_rank': 1,
             }
 
