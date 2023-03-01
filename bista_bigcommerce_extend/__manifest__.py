@@ -14,6 +14,7 @@
         "account_avatax_sale",
         "purchase",
         "bista_sale_multi_ship",
+        "bista_purchase",
     ],
     "data": [
         'security/ir.model.access.csv',
@@ -25,6 +26,7 @@
         "views/account_move_views.xml",
         "views/purchase_views.xml",
         "wizard/update_partner_view.xml",
+        "report/report_invoice.xml",
     ],
     "installable": True,
     "application": True,
