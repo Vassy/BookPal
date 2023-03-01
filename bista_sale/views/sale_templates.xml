@@ -52,6 +52,9 @@
             <br/>
             <span t-field="line.picking_note"/>
         </td>
+        <xpath expr="//td[@t-if='display_discount']//t" position="replace">
+            <t t-esc="round(line.discount)"/>%
+        </xpath>
     </template>
 
     <template id="account.document_tax_totals">
