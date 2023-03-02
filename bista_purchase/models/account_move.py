@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class AccountMove(models.Model):
@@ -12,14 +12,17 @@ class AccountMove(models.Model):
 class AccountMoveLine(models.Model):
     _inherit = "account.move.line"
 
-    bp_price = fields.Float("BP Price", compute="_compute_discount_price")
-    quote_price = fields.Float("Quote Price", compute="_compute_discount_price")
+    bp_price = fields.Float("BP Price", compute="_compute_discount_price", store=True)
+    quote_price = fields.Float(
+        "Quote Price", compute="_compute_discount_price", store=True
+    )
 
+    @api.depends("price_unit", "discount")
     def _compute_discount_price(self):
         for line in self:
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            line.bp_price = int(price * 10**3) / 10**3
-            line.quote_price = int(price * 10**3) / 10**3
+            line.bp_price = line.currency_id.round(price)
+            line.quote_price = line.currency_id.round(price)
 
     def create(self, vals):
         res = super(AccountMoveLine, self).create(vals)
@@ -27,3 +30,22 @@ class AccountMoveLine(models.Model):
             invoiced_status_id = self.env.ref("bista_purchase.status_line_invoiced")
             move_line.purchase_line_id.status_id = invoiced_status_id.id
         return res
+
+    def _get_price_total_and_subtotal(
+        self,
+        price_unit=None,
+        quantity=None,
+        discount=None,
+        currency=None,
+        product=None,
+        partner=None,
+        taxes=None,
+        move_type=None,
+    ):
+        price_unit = self.price_unit if price_unit is None else price_unit
+        if price_unit:
+            discount = 100 - (self.quote_price / price_unit * 100)
+        result = super()._get_price_total_and_subtotal(
+            price_unit, quantity, discount, currency, product, partner, taxes, move_type
+        )
+        return result
