@@ -8,7 +8,7 @@ import sys
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
         getattr(ssl, '_create_unverified_context', None)):
     ssl._create_default_https_context = ssl._create_unverified_context
-os.chdir('../')
+os.chdir('../../../')
 current_path = os.getcwd()
 sys.path.append(current_path)
 # username = 'admin'  # the user
@@ -38,8 +38,8 @@ password = "admin"
 sock_common = xmlrpclib.ServerProxy(url + '/xmlrpc/common')
 uid = sock_common.login(dbname, username, password)
 sock = xmlrpclib.ServerProxy(url + '/xmlrpc/object')
-
-# output = open(current_path + '/Errors.txt', 'w')
+output = open(current_path + '/Errors.txt', 'w')
+print ("\n output .>>", output)
 # file_upload1 = '/sheet/ProductVendorPricelist.xlsx'
 file_upload = '/sheet/SKUs_and_Vendors_for_Odoo.xlsx'
 book = xlrd.open_workbook(current_path + file_upload)
@@ -70,8 +70,8 @@ try:
         if not prod_id:
             print ("\n product is not availabel >>>", prod_id)
         #     output.write(str(row_values) + '\n')
-        #     output.write('\n Product not available ;' +
-        #                  str(row_values[0]) + ';')
+            output.write('\n Product not available ;' +
+                         str(row_values) + ';')
         #     continue
         vendor_id = sock.execute(
             dbname, uid, password,
@@ -82,6 +82,8 @@ try:
         vendor_id = vendor_id and vendor_id[0] or False
         if not vendor_id:
             print ("\n vendor not availabel >>>", row_values[1])
+            output.write('\n vendor not available ;' +
+                         str(row_values) + ';')
         if prod_id and vendor_id:
             supplier_info = sock.execute(
                 dbname, uid, password,
