@@ -137,10 +137,17 @@
                             <th style="border-bottom: 1px solid black;">Description</th>
                             <th style="border-bottom: 1px solid black;">QTY</th>
                         </tr>
-                        <tr t-foreach="object.tracking_line_ids" t-as="tracking">
-                            <td style="border-bottom: 1px solid black;"><span t-out="tracking.default_code" /></td>
-                            <td style="border-bottom: 1px solid black;"><span t-out="tracking.po_line_id.product_id.name" /></td>
-                            <td style="border-bottom: 1px solid black;"><span t-out="tracking.ship_qty" /></td>
+                        <tr t-foreach="object.tracking_line_ids.filtered(lambda track: track.ship_qty)" t-as="tracking">
+                            <td style="border-bottom: 1px solid black;">
+                                <span t-field="tracking.default_code" />
+                            </td>
+                            <td style="border-bottom: 1px solid black;">
+                                <span t-field="tracking.po_line_id.product_id.name" />
+                            </td>
+                            <td style="border-bottom: 1px solid black;">
+                                <span t-out="int(tracking.ship_qty)" />
+                                <span t-field="tracking.po_line_id.product_uom" />
+                            </td>
                         </tr>
                     </table>
                     <br/><br/><br/>
