@@ -40,9 +40,12 @@
                         attrs="{'invisible': ['|', ('product_type', '=', 'service'), ('parent.split_shipment', '=', False)]}" />
                     <field name="remain_so_qty" optional="hide" readonly="1" force_save="1"/>
                 </xpath>
-                 <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom']" position="after">
+                <xpath expr="//page/field[@name='order_line']/tree/field[@name='product_uom']" position="after">
                     <field name="supplier_id" context="{'vendor_product_id': product_id}" attrs="{'readonly': [('state', '!=', 'draft')]}" optional="show"/>
-                 </xpath>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
+                    <field name="vendor_shipping_cost" optional="hide" readonly="True" />
+                </xpath>
                 <xpath expr="//page[last()]" position="after">
                     <page name="shipping_lines" string="Shipment Plan"
                         attrs="{'invisible': ['|', ('state', 'in', ['draft', 'quote_approval', 'quote_confirm', 'sent', 'cancel']), ('split_shipment', '=', False)]}">
@@ -59,7 +62,6 @@
                                 </group>
                             </group>
                         </div> -->
-                        <!-- <group name="shipping_details" string="Shipping Details"/> -->
                         <group col="4">
                             <button name="action_verify_customer_data" type="object"
                                 string="Verify Customer Details"
