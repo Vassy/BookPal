@@ -11,4 +11,9 @@ bista_purchase.access_order_reject_wiz,access_order_reject_wiz,bista_purchase.mo
 bista_purchase.access_purchase_approval_log,access_purchase_approval_log,bista_purchase.model_purchase_approval_log,base.group_user,1,1,1,1
 bista_purchase.access_shipping_instruction,access_shipping_instruction,bista_purchase.model_shipping_instruction,base.group_user,1,1,1,1
 bista_purchase.access_purchase_line_status,access_purchase_line_status,bista_purchase.model_purchase_line_status,base.group_user,1,1,1,1
-
+purchase.access_product_product_purchase_manager,product.product purchase_manager,product.model_product_product,purchase.group_purchase_manager,1,0,0,0
+product.access_product_product_manager,product.product manager,product.model_product_product,base.group_system,1,0,0,0
+account.access_product_product_account_manager,product.product.account.manager,product.model_product_product,account.group_account_manager,1,0,0,0
+purchase.access_product_template_purchase_manager,product.template purchase_manager,product.model_product_template,purchase.group_purchase_manager,1,0,0,0
+account.access_product_template_account_manager,product.template.account.manager,product.model_product_template,account.group_account_manager,1,0,0,0
+product.access_product_template_manager,product.template.manager,product.model_product_template,base.group_system,1,0,0,0
