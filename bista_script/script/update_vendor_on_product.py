@@ -55,7 +55,7 @@ try:
     for row_no in range(1, sheet.nrows):  #
         error = False
         row_values = sheet.row_values(row_no)
-        print ("\n row values >>>", row_no, row_values)
+        # print ("\n row values >>>", row_no, row_values)
         prod = row_values[0]
         if isinstance(row_values[0], float):
             prod = str(int(row_values[0]))
@@ -80,6 +80,8 @@ try:
             [('name', '=', row_values[1]),
              ('supplier_rank', '>', 0)])
         vendor_id = vendor_id and vendor_id[0] or False
+        if not vendor_id:
+            print ("\n vendor not availabel >>>", vendor_id)
         if prod_id and vendor_id:
             supplier_info = sock.execute(
                 dbname, uid, password,
@@ -88,7 +90,7 @@ try:
                 [('name', '=', vendor_id),
                  ('product_tmpl_id', '=', prod_id),
                  ('min_qty', '=', 0)])
-            print ("\n supplier_info >>>>", supplier_info)
+            # print ("\n supplier_info >>>>", supplier_info)
             if not supplier_info:
                 supplier_info_vals = {
                     'name': vendor_id,
@@ -100,7 +102,7 @@ try:
                     'product.supplierinfo',
                     'create',
                     supplier_info_vals)
-                print ("\n Created supplier_info >>>>.", supplier_info)
+                # print ("\n Created supplier_info >>>>.", supplier_info)
 
 except Exception as e:
     row_values.append(str(e))
