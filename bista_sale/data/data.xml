@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <data noupdate="1">
+    <data noupdate="0">
     
         <record id="artwork_status_1" model="artwork.status">
             <field name="name">Need Artwork</field>
@@ -102,6 +102,67 @@
         <record id="white_glove_type" model="white.glove.type">
             <field name="code">AA</field>
             <field name="name">Author Event</field>
+        </record>
+         <!-- res.partner.industry -->
+        <record id="res_partner_ind_author" model="res.partner.industry">
+            <field name="name">Author</field>
+            <field name="full_name">Author</field>
+        </record>
+        <record id="res_partner_ind_corporate" model="res.partner.industry">
+            <field name="name">Corporate</field>
+            <field name="full_name">Corporate</field>
+        </record>
+        <record id="res_partner_ind_edu_co" model="res.partner.industry">
+            <field name="name">Educational (College)</field>
+            <field name="full_name">Educational (College)</field>
+        </record>
+        <record id="res_partner_ind_edu_12" model="res.partner.industry">
+            <field name="name">Educational (K-12)</field>
+            <field name="full_name">Educational (K-12)</field>
+        </record>
+        <record id="res_partner_ind_govt" model="res.partner.industry">
+            <field name="name">Government</field>
+            <field name="full_name">Government</field>
+        </record>
+        <record id="res_partner_ind_special" model="res.partner.industry">
+            <field name="name">Industry Special Project</field>
+            <field name="full_name">Industry Special Project</field>
+        </record>
+        <record id="res_partner_ind_talent" model="res.partner.industry">
+            <field name="name">Literary/Talent Agency</field>
+            <field name="full_name">Literary/Talent Agency</field>
+        </record>
+        <record id="res_partner_ind_medical" model="res.partner.industry">
+            <field name="name">Medical Institution</field>
+            <field name="full_name">Medical Institution</field>
+        </record>
+        <record id="res_partner_ind_literacy" model="res.partner.industry">
+            <field name="name">Non Profit / Literacy</field>
+            <field name="full_name">Non Profit / Literacy</field>
+        </record>
+        <record id="res_partner_ind_misc" model="res.partner.industry">
+            <field name="name">Other / Misc.</field>
+            <field name="full_name">Other / Misc.</field>
+        </record>
+        <record id="res_partner_ind_political" model="res.partner.industry">
+            <field name="name">Political Organization</field>
+            <field name="full_name">Political Organization</field>
+        </record>
+        <record id="res_partner_ind_prof" model="res.partner.industry">
+            <field name="name">Professional Association</field>
+            <field name="full_name">Professional Association</field>
+        </record>
+        <record id="res_partner_ind_publisher" model="res.partner.industry">
+            <field name="name">Publisher</field>
+            <field name="full_name">Publisher</field>
+        </record>
+        <record id="res_partner_ind_religious" model="res.partner.industry">
+            <field name="name">Religious</field>
+            <field name="full_name">Religious</field>
+        </record>
+        <record id="res_partner_ind_sb" model="res.partner.industry">
+            <field name="name">Speakers Bureau</field>
+            <field name="full_name">Speakers Bureau</field>
         </record>
      
     </data>
