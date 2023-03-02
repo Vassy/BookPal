@@ -1,4 +1,3 @@
-
 import logging
 import base64
 import requests
@@ -44,12 +43,12 @@ def import_product_from_bigcommerce(
             if add_single_product:
                 api_operation = "/v3/catalog/products/{}".format(
                     bigcommerce_product_id)
-                response_data = bigcommerce_store_id.with_user(1).\
+                response_data = bigcommerce_store_id.with_user(1). \
                     send_get_request_from_odoo_to_bigcommerce(
                     api_operation)
             else:
                 api_operation = "/v3/catalog/products"
-                response_data = bigcommerce_store_id.with_user(1).\
+                response_data = bigcommerce_store_id.with_user(1). \
                     send_get_request_from_odoo_to_bigcommerce(
                     api_operation)
             _logger.info("Response Status: {0}".format(
@@ -65,25 +64,25 @@ def import_product_from_bigcommerce(
                     if total_pages > 0:
                         bc_total_pages = total_pages + 1
                         inp_from_page = source_page or \
-                            bigcommerce_store_id.source_of_import_data
+                                        bigcommerce_store_id.source_of_import_data
                         inp_total_pages = destination_page or \
-                            bigcommerce_store_id.destination_of_import_data
+                                          bigcommerce_store_id.destination_of_import_data
                         from_page = bc_total_pages - inp_total_pages
                         total_pages = bc_total_pages - inp_from_page
                     else:
                         from_page = source_page or \
-                            bigcommerce_store_id.source_of_import_data
+                                    bigcommerce_store_id.source_of_import_data
                         total_pages = destination_page or \
-                            bigcommerce_store_id.destination_of_import_data
+                                      bigcommerce_store_id.destination_of_import_data
 
                 if total_pages > 1:
                     while (total_pages >= from_page):
                         try:
                             page_api = "/v3/catalog/products?page=%s" % (
                                 total_pages)
-                            page_response_data = bigcommerce_store_id.\
+                            page_response_data = bigcommerce_store_id. \
                                 send_get_request_from_odoo_to_bigcommerce(
-                                    page_api)
+                                page_api)
                             if page_response_data.status_code in [200, 201]:
                                 page_response_data = page_response_data.json()
                                 _logger.info(
@@ -97,15 +96,15 @@ def import_product_from_bigcommerce(
                             _logger.info(
                                 "Getting an Error In Import Product Category "
                                 "Response {}".format(e))
-                            process_message = "Getting an Error In Import "\
-                                "Product Category Response {}".format(e)
-                            self.with_user(1).\
+                            process_message = "Getting an Error In Import " \
+                                              "Product Category Response {}".format(e)
+                            self.with_user(1). \
                                 create_bigcommerce_operation_detail(
-                                    'product', 'import',
-                                    response_data,
-                                    process_message, operation_id,
-                                    warehouse_id, True,
-                                    product_process_message)
+                                'product', 'import',
+                                response_data,
+                                process_message, operation_id,
+                                warehouse_id, True,
+                                product_process_message)
 
                         total_pages = total_pages - 1
                 else:
@@ -128,12 +127,12 @@ def import_product_from_bigcommerce(
                                     format(listing_id.id))
                                 # continue
                             if not product_template_id:
-                                if bigcommerce_store_id.\
-                                    bigcommerce_product_skucode and \
+                                if bigcommerce_store_id. \
+                                        bigcommerce_product_skucode and \
                                         record.get('sku'):
                                     product_template_id = \
-                                        self.env['product.template'].sudo().\
-                                        search(
+                                        self.env['product.template'].sudo(). \
+                                            search(
                                             [('default_code', '=',
                                               record.get('sku'))], limit=1)
                             if not product_template_id:
@@ -147,40 +146,40 @@ def import_product_from_bigcommerce(
                                         record,
                                         bigcommerce_store_id)
                                 if not status:
-                                    product_process_message = "%s : "\
-                                        "Product is not imported Yet! %s" % (
-                                            record.get('id'),
-                                            product_template_id)
+                                    product_process_message = "%s : " \
+                                                              "Product is not imported Yet! %s" % (
+                                                                  record.get('id'),
+                                                                  product_template_id)
                                     _logger.info("Getting an Error In Import "
                                                  "Product Responase :{}".
                                                  format(product_template_id))
-                                    self.with_user(1).\
+                                    self.with_user(1). \
                                         create_bigcommerce_operation_detail(
-                                            'product', 'import', "",
-                                            "", operation_id,
-                                            warehouse_id, True,
-                                            product_process_message)
+                                        'product', 'import', "",
+                                        "", operation_id,
+                                        warehouse_id, True,
+                                        product_process_message)
                                     continue
-                                process_message = "Product Created : {}".\
+                                process_message = "Product Created : {}". \
                                     format(
-                                        product_template_id.name)
+                                    product_template_id.name)
                                 _logger.info("{0}".format(process_message))
                                 response_data = record
-                                self.with_user(1).\
+                                self.with_user(1). \
                                     create_bigcommerce_operation_detail(
-                                        'product', 'import', req_data,
-                                        response_data, operation_id,
-                                        warehouse_id, False,
-                                        process_message)
+                                    'product', 'import', req_data,
+                                    response_data, operation_id,
+                                    warehouse_id, False,
+                                    process_message)
                                 self._cr.commit()
                             else:
-                                process_message = "{0} : "\
-                                    "Product Already Exist In Odoo!".format(
-                                        product_template_id.name)
-                                brand_id = self.env['bc.product.brand'].\
+                                process_message = "{0} : " \
+                                                  "Product Already Exist In Odoo!".format(
+                                    product_template_id.name)
+                                brand_id = self.env['bc.product.brand']. \
                                     sudo().search(
-                                        [('bc_brand_id', '=',
-                                          record.get('brand_id'))], limit=1)
+                                    [('bc_brand_id', '=',
+                                      record.get('brand_id'))], limit=1)
                                 _logger.info("BRAND : {0}".format(brand_id))
                                 public_category_ids = \
                                     self.env['product.category'].sudo().search(
@@ -192,47 +191,47 @@ def import_product_from_bigcommerce(
                                     "standard_price": record.get("cost_price"),
                                     "is_visible": record.get("is_visible"),
                                     "inventory_tracking":
-                                    record.get("inventory_tracking"),
+                                        record.get("inventory_tracking"),
                                     "bigcommerce_product_id": record.get('id'),
                                     "bigcommerce_store_id":
-                                    bigcommerce_store_id.id,
+                                        bigcommerce_store_id.id,
                                     "public_categories_ids":
-                                    [(6, 0, public_category_ids.ids)],
+                                        [(6, 0, public_category_ids.ids)],
                                     "default_code": record.get("sku"),
                                     "is_imported_from_bigcommerce": True,
                                     "description_sale": "",
                                     "description": "",
                                     "bigcommerce_description":
-                                    record.get('description'),
+                                        record.get('description'),
                                     "is_exported_to_bigcommerce": True,
                                     "x_studio_manufacturer":
-                                    brand_id and brand_id.id,
+                                        brand_id and brand_id.id,
                                     "name": record.get('name'),
                                     "property_stock_inventory":
-                                    inven_location_id.id
+                                        inven_location_id.id
                                 })
-                                self.with_user(1).\
+                                self.with_user(1). \
                                     create_bigcommerce_operation_detail(
-                                        'product', 'import', req_data,
-                                        response_data, operation_id,
-                                        warehouse_id, False,
-                                        process_message)
+                                    'product', 'import', req_data,
+                                    response_data, operation_id,
+                                    warehouse_id, False,
+                                    process_message)
                                 _logger.info("{0}".format(process_message))
                                 self._cr.commit()
-                            self.env['product.attribute'].\
+                            self.env['product.attribute']. \
                                 import_product_attribute_from_bigcommerce(
-                                    warehouse_id,
-                                    bigcommerce_store_id,
-                                    product_template_id,
-                                    operation_id)
+                                warehouse_id,
+                                bigcommerce_store_id,
+                                product_template_id,
+                                operation_id)
 
                             if not listing_id:
-                                listing_id = self.env['bc.store.listing'].\
+                                listing_id = self.env['bc.store.listing']. \
                                     create_or_update_bc_store_listing(
-                                        record,
-                                        product_template_id,
-                                        bigcommerce_store_id)
-                            self.env['bigcommerce.product.image'].\
+                                    record,
+                                    product_template_id,
+                                    bigcommerce_store_id)
+                            self.env['bigcommerce.product.image']. \
                                 with_user(1).import_multiple_product_image(
                                 bigcommerce_store_id, product_template_id,
                                 listing_id)
@@ -247,18 +246,18 @@ def import_product_from_bigcommerce(
                                 bigcommerce_store_id, record,
                                 listing_id, operation_id, warehouse_id)
                         except Exception as e:
-                            product_process_message = "%s : "\
-                                "Product is not imported Yet! %s" % (
-                                    record.get('id'), e)
+                            product_process_message = "%s : " \
+                                                      "Product is not imported Yet! %s" % (
+                                                          record.get('id'), e)
                             _logger.info(
                                 "Getting an Error In Import Product "
                                 "Responase".format(e))
-                            self.with_user(1).\
+                            self.with_user(1). \
                                 create_bigcommerce_operation_detail(
-                                    'product', 'import', "",
-                                    "", operation_id,
-                                    warehouse_id, True,
-                                    product_process_message)
+                                'product', 'import', "",
+                                "", operation_id,
+                                warehouse_id, True,
+                                product_process_message)
                 operation_id and operation_id.with_user(1).write(
                     {'bigcommerce_message': product_process_message})
                 _logger.info("Import Product Process Completed ")
@@ -268,11 +267,11 @@ def import_product_from_bigcommerce(
                 _logger.info(
                     "Getting an Error In Import Product Responase".
                     format(response_data))
-                self.with_user(1).\
+                self.with_user(1). \
                     create_bigcommerce_operation_detail(
-                        'product', 'import',
-                        req_data, response_data,
-                        operation_id, warehouse_id, True, )
+                    'product', 'import',
+                    req_data, response_data,
+                    operation_id, warehouse_id, True, )
         except Exception as e:
             product_process_message = "Process Is Not Completed Yet! %s" % (e)
             _logger.info(
@@ -330,9 +329,9 @@ class ProductTemplateExtend(models.Model):
                     create_variant='always')
                 attribute_val_ids = []
 
-                attrib_value = product_attribute_value_obj.\
+                attrib_value = product_attribute_value_obj. \
                     get_product_attribute_values(
-                        attrib_values, attribute.id)
+                    attrib_values, attribute.id)
                 attribute_val_ids.append(attrib_value.id)
 
                 if attribute_val_ids:
@@ -391,8 +390,8 @@ class ProductTemplateExtend(models.Model):
             "/v3/catalog/products/{}/custom-fields".format(
                 str(record.get('id')))
         custom_field_response_data = \
-            bigcommerce_store_id.with_user(1).\
-            send_get_request_from_odoo_to_bigcommerce(
+            bigcommerce_store_id.with_user(1). \
+                send_get_request_from_odoo_to_bigcommerce(
                 custom_field_api_operation)
         _logger.info("Custom Field Response : {0}".format(
             custom_field_response_data))
@@ -428,7 +427,8 @@ class ProductTemplateExtend(models.Model):
                                         "%Y/%m/%d").date()
                             except Exception as e:
                                 try:
-                                    product_template_id.publication_date = datetime.strptime(custom_field_data.get('value')[0:8], "%d/%m/%Y").date()
+                                    product_template_id.publication_date = datetime.strptime(
+                                        custom_field_data.get('value')[0:8], "%d/%m/%Y").date()
                                 except Exception as e:
                                     try:
                                         p_date = custom_field_data.get('value').split(' ')
@@ -518,8 +518,8 @@ class ProductTemplateExtend(models.Model):
                     for product_variant_id in \
                             product_template_id.product_variant_ids:
                         if product_variant_id.mapped(lambda pv: pv.with_user(
-                            1).product_template_attribute_value_ids.
-                                mapped('name') == option_labales)[0]:
+                                1).product_template_attribute_value_ids.
+                                                                        mapped('name') == option_labales)[0]:
                             _logger.info(
                                 "Inside If Condition option Label =====> {0} "
                                 "Product Template "
@@ -542,7 +542,7 @@ class ProductTemplateExtend(models.Model):
                                     'bc_sale_price': price,
                                     'bigcommerce_product_variant_id': v_id,
                                     'standard_price':
-                                    variant_data.get('cost_price', 0.0)}
+                                        variant_data.get('cost_price', 0.0)}
                             variant_product_img_url = variant_data.get(
                                 'image_url')
                             if variant_product_img_url:
@@ -561,10 +561,10 @@ class ProductTemplateExtend(models.Model):
                                     [('bc_product_id', '=',
                                       variant_data.get('id')),
                                      ('bigcommerce_store_id', '=',
-                                        bigcommerce_store_id.id)])
+                                      bigcommerce_store_id.id)])
                             if not listing_item_id:
                                 self.env[
-                                    'bc.store.listing.item'].\
+                                    'bc.store.listing.item']. \
                                     create_or_update_bc_store_listing_item(
                                     record, variant_data, product_template_id,
                                     bigcommerce_store_id, listing_id,
@@ -595,25 +595,26 @@ class ProductTemplateExtend(models.Model):
                  'is_bigcommerce_pricelist': True,
                  'name': 'Bigcommerce PriceList'})
         for product_tmpl_id in product_tmpl_ids:
-            bulk_pricing_rule_api_operation = '/v3/catalog/products/{0}/'\
-                'bulk-pricing-rules'.format(
-                    product_tmpl_id.bigcommerce_product_id)
-            pricerule_response_data = bigcommerce_store_id.\
+            bulk_pricing_rule_api_operation = '/v3/catalog/products/{0}/' \
+                                              'bulk-pricing-rules'.format(
+                product_tmpl_id.bigcommerce_product_id)
+            pricerule_response_data = bigcommerce_store_id. \
                 send_get_request_from_odoo_to_bigcommerce(
-                    bulk_pricing_rule_api_operation)
+                bulk_pricing_rule_api_operation)
             if pricerule_response_data.status_code in [200, 201]:
                 pricerule_response_data = pricerule_response_data.json()
                 if len(pricerule_response_data.get('data')) > 1:
                     _logger.info("Price Rule Response Data : {0}".format(
                         pricerule_response_data))
                     for rule in pricerule_response_data.get('data'):
+                        vals = {}
                         if rule.get('type') == 'percent':
                             compute_price = 'percentage'
                             vals = {'applied_on': '1_product',
                                     'priceing_rule_id': rule.get('id'),
                                     'product_tmpl_id': product_tmpl_id.id,
                                     'min_quantity':
-                                    float(rule.get('quantity_min')),
+                                        float(rule.get('quantity_min')),
                                     'compute_price': compute_price,
                                     'percent_price': float(rule.get('amount')),
                                     'pricelist_id': pricelist_id.id}
@@ -623,19 +624,24 @@ class ProductTemplateExtend(models.Model):
                                     'priceing_rule_id': rule.get('id'),
                                     'product_tmpl_id': product_tmpl_id.id,
                                     'min_quantity':
-                                    float(rule.get('quantity_min')),
+                                        float(rule.get('quantity_min')),
                                     'compute_price': compute_price,
                                     'fixed_price': float(rule.get('amount')),
                                     'pricelist_id': pricelist_id.id}
                         pricelist_item_id = pricelist_item_obj.search(
                             [('priceing_rule_id', '=', rule.get('id')), (
                                 'product_tmpl_id', '=', product_tmpl_id.id), (
-                                'min_quantity', '=',
-                                float(rule.get('quantity_min')))])
+                                 'min_quantity', '=',
+                                 float(rule.get('quantity_min'))), ('pricelist_id', '=', pricelist_id.id)])
                         if not pricelist_item_id:
-                            pricelist_item_id = pricelist_item_obj.create(vals)
+                            pricelist_item_id = pricelist_item_obj.search(
+                                [('product_tmpl_id', '=', product_tmpl_id.id), ('pricelist_id', '=', pricelist_id.id),
+                                 ('min_quantity', '=', float(rule.get('quantity_min')))])
+                        if not pricelist_item_id and vals:
+                            pricelist_item_obj.create(vals)
                         else:
-                            pricelist_item_id.write(vals)
+                            if vals:
+                                pricelist_item_id.write(vals)
 
     def create_update_product_template_pricelist(
             self,
@@ -648,8 +654,8 @@ class ProductTemplateExtend(models.Model):
                 '/v3/catalog/products/{0}/bulk-pricing-rules'.format(
                     listing_id.bc_product_id)
             pricerule_response_data = \
-                bigcommerce_store_id.\
-                send_get_request_from_odoo_to_bigcommerce(
+                bigcommerce_store_id. \
+                    send_get_request_from_odoo_to_bigcommerce(
                     bulk_pricing_rule_api_operation)
             pricelist_item_obj = self.env['product.pricelist.item']
             if pricerule_response_data.status_code in \
@@ -661,53 +667,62 @@ class ProductTemplateExtend(models.Model):
                     _logger.info(
                         "Price Rule Response Data : {0}".
                         format(pricerule_response_data))
-                    for rule in pricerule_response_data.\
+                    for rule in pricerule_response_data. \
                             get('data'):
+                        vals = {}
                         if rule.get('type') == 'percent':
                             compute_price = 'percentage'
                             vals = {'applied_on':
-                                    '1_product',
+                                        '1_product',
                                     'priceing_rule_id':
-                                    rule.get('id'),
+                                        rule.get('id'),
                                     'product_tmpl_id':
-                                    listing_id.product_tmpl_id.id,
+                                        listing_id.product_tmpl_id.id,
                                     'min_quantity':
-                                    float(rule.get('quantity_min')),
+                                        float(rule.get('quantity_min')),
                                     'compute_price':
-                                    compute_price,
+                                        compute_price,
                                     'percent_price':
-                                    float(rule.get('amount')),
+                                        float(rule.get('amount')),
                                     'pricelist_id':
-                                    pricelist_id.id}
+                                        pricelist_id.id}
                         elif rule.get('type') == 'price':
                             compute_price = 'fixed'
                             vals = {'applied_on': '1_product',
                                     'priceing_rule_id': rule.get('id'),
                                     'product_tmpl_id':
-                                    listing_id.product_tmpl_id.id,
+                                        listing_id.product_tmpl_id.id,
                                     'min_quantity':
-                                    float(rule.get('quantity_min')),
+                                        float(rule.get('quantity_min')),
                                     'compute_price': compute_price,
                                     'fixed_price': float(rule.get('amount')),
                                     'pricelist_id':
-                                    pricelist_id.id}
+                                        pricelist_id.id}
+                        else:
+                            continue
                         pricelist_item_id = pricelist_item_obj.search(
                             [('priceing_rule_id', '=', rule.get('id')), (
                                 'product_tmpl_id', '=',
                                 listing_id.product_tmpl_id.id), (
-                                'min_quantity', '=',
-                                float(rule.get('quantity_min')))])
+                                 'min_quantity', '=',
+                                 float(rule.get('quantity_min'))),('pricelist_id','=',pricelist_id.id)])
                         if not pricelist_item_id:
-                            pricelist_item_id = pricelist_item_obj.create(vals)
+                            pricelist_item_id = pricelist_item_obj.search(
+                                [('product_tmpl_id', '=',
+                                  listing_id.product_tmpl_id.id), (
+                                     'min_quantity', '=',
+                                     float(rule.get('quantity_min'))),('pricelist_id','=',pricelist_id.id)])
+                        if not pricelist_item_id:
+                            pricelist_item_obj.create(vals)
                         else:
                             pricelist_item_id.write(vals)
         except Exception as e:
-            product_process_message = "Getting An Issue While Import Bulk "\
-                "Priceing Rule %s" % (e)
+            product_process_message = "Getting An Issue While Import Bulk " \
+                                      "Priceing Rule %s" % (e)
             _logger.info(
                 "Getting An Issue While Import Bulk Priceing Rule {}".
                 format(e))
-            process_message = "Getting An Issue While Import Bulk "\
+            process_message = "Getting An Issue While Import Bulk " \
                               "Priceing Rule {}".format(e)
             self.with_user(1).create_bigcommerce_operation_detail(
                 'product', 'import',

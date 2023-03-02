@@ -357,7 +357,7 @@ class SaleOrderVts(models.Model):
                                     zip = order.get('billing_address').get('zip')
                                     domain = [('name','=',"%s %s" % (first_name, last_name)),('street', '=', street), ('zip', '=', zip), ('city','=',city), ('country_id', '=', country_obj.id)]
                                     if street_2:
-                                        domain.append([('street2', '=', street_2)])
+                                        domain.append(('street2', '=', street_2))
                                     partner_billing_id = self.env['res.partner'].sudo().search(domain,limit=1)
                                     partner_shipping_id = self.create_update_shipping_partner_from_bc_order(order,
                                                                                                             bigcommerce_store_id,
