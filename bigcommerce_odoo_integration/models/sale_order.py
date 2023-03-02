@@ -690,7 +690,7 @@ class SaleOrderVts(models.Model):
             'zip': shipping_partner_zip,
             'state_id': state_id.id,
             'type': 'delivery',
-            'parent_id': partner_id.parent_id.id if partner_id.parent_id else self.partner_id.id,
+            'parent_id': partner_id.id,
             'country_id': country_id.id,
             'bigcommerce_store_id':bigcommerce_store_id.id,
             'is_available_in_bigcommerce':True,
@@ -802,10 +802,6 @@ class SaleOrderVts(models.Model):
                     process_message = "Getting an Error In Update Order procecss {}".format(e)
                     self.with_user(1).create_bigcommerce_operation_detail('order', 'import', '', '', operation_id,
                                                                           self.warehouse_id, True, process_message)
-                if carrier_id and float(base_shipping_cost) > 0:
-                    self.set_delivery_line(carrier_id, float(base_shipping_cost))
-                process_message = "Sale Order Updated {0}".format(self.name)
-                _logger.info("Sale Order Updated {0}".format(self.name))
                 self.message_post(body="Order Successfully Updated From Bigcommerce")
                 self.with_user(1).create_bigcommerce_operation_detail('order', 'import', req_data, response_data,
                                                                       operation_id, self.warehouse_id, False,
@@ -821,6 +817,10 @@ class SaleOrderVts(models.Model):
                                                                        self.warehouse_id,order,bigcommerce_store_id=self.bigcommerce_store_id)
                             if float(order.get('discount_amount', '0')) > 0:
                                 self.create_discount_line(order, self)
+                            if carrier_id and float(base_shipping_cost) > 0:
+                                self.set_delivery_line(carrier_id, float(base_shipping_cost))
+                            process_message = "Sale Order Updated {0}".format(self.name)
+                            _logger.info("Sale Order Updated {0}".format(self.name))
                             vat_product_id = self.env.ref(
                                 'bigcommerce_odoo_integration.product_product_bigcommerce_tax')
                             taxline_vals = {'product_id': vat_product_id.id,
