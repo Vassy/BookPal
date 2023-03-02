@@ -99,12 +99,6 @@ class SaleOrder(models.Model):
             'context': context
         }
 
-    # def action_open_delivery_wizard(self):
-    #     if self.split_shipment:
-    #         return self._split_shipping_process()
-    #     else:
-    #         return super(SaleOrder, self).action_open_delivery_wizard()
-
     def _split_shipping_process(self):
         # Method deprecated
         price_total = 0.0
@@ -369,11 +363,6 @@ class SaleOrder(models.Model):
             'bista_sale_multi_ship.shipment_report_action').read()[0]
         return report_action
 
-    # def read(self, fields=None, load='_classic_read'):
-    #     """When reading specific fields, read."""
-    #     print ("\n read self.env.context >>SaleOrder>>", self.env.context)
-    #     return super(SaleOrder, self).read(fields=fields, load=load)
-
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
@@ -385,6 +374,7 @@ class SaleOrderLine(models.Model):
     remain_so_qty = fields.Float(
         "Unplanned Order Qty")
     supplier_id = fields.Many2one('res.partner', 'Vendor')
+    vendor_shipping_cost = fields.Float("Vendor Shipping Cost")
 
     def open_sale_multi_ship_qty_wizard(self):
         """Open sale multi ship qty wizard."""

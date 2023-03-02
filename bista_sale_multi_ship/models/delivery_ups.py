@@ -195,6 +195,7 @@ class ProviderUPS(models.Model):
                 # Don't show delivery amount, if ups bill my account option is true
                 price = 0.0
 
+            line.write({"vendor_shipping_cost": price})
             total_price += price
 
         return {
