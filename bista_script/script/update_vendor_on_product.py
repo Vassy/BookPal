@@ -8,7 +8,7 @@ import sys
 if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
         getattr(ssl, '_create_unverified_context', None)):
     ssl._create_default_https_context = ssl._create_unverified_context
-os.chdir('../../../')
+os.chdir('../')
 current_path = os.getcwd()
 sys.path.append(current_path)
 # username = 'admin'  # the user
@@ -38,12 +38,15 @@ password = "admin"
 sock_common = xmlrpclib.ServerProxy(url + '/xmlrpc/common')
 uid = sock_common.login(dbname, username, password)
 sock = xmlrpclib.ServerProxy(url + '/xmlrpc/object')
-output = open(current_path + '/Errors.txt', 'w')
-print ("\n output .>>", output)
+
 # file_upload1 = '/sheet/ProductVendorPricelist.xlsx'
 file_upload = '/sheet/SKUs_and_Vendors_for_Odoo.xlsx'
 book = xlrd.open_workbook(current_path + file_upload)
 sheet = book.sheet_by_index(0)
+
+os.chdir('../../../')
+error_file_path = os.getcwd()
+output = open(error_file_path + '/Errors.txt', 'w')
 
 
 error = False
@@ -55,7 +58,7 @@ try:
     for row_no in range(1, sheet.nrows):  #
         error = False
         row_values = sheet.row_values(row_no)
-        # print ("\n row values >>>", row_no, row_values)
+        print ("\n row values >>>", row_no, row_values)
         prod = row_values[0]
         if isinstance(row_values[0], float):
             prod = str(int(row_values[0]))
@@ -66,7 +69,7 @@ try:
             'search',
             [('default_code', '=', prod)])
         prod_id = prod_id and prod_id[0] or False
-        # print ("\n prod_id >>>", prod_id)
+        print ("\n prod_id >>>", prod_id)
         if not prod_id:
             print ("\n product is not availabel >>>", prod_id)
         #     output.write(str(row_values) + '\n')
@@ -92,7 +95,7 @@ try:
                 [('name', '=', vendor_id),
                  ('product_tmpl_id', '=', prod_id),
                  ('min_qty', '=', 0)])
-            # print ("\n supplier_info >>>>", supplier_info)
+            print ("\n supplier_info >>>>", supplier_info)
             if not supplier_info:
                 supplier_info_vals = {
                     'name': vendor_id,
@@ -104,7 +107,7 @@ try:
                     'product.supplierinfo',
                     'create',
                     supplier_info_vals)
-                # print ("\n Created supplier_info >>>>.", supplier_info)
+                print ("\n Created supplier_info >>>>.", supplier_info)
 
 except Exception as e:
     row_values.append(str(e))
