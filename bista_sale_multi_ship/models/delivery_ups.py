@@ -24,7 +24,7 @@ class ProviderUPS(models.Model):
         dropship_id = self.env.ref("stock_dropshipping.route_drop_shipping")
         dropship_line = order.order_line.filtered(lambda l: l.route_id == dropship_id)
         non_dropship_line = order.order_line.filtered(
-            lambda l: l.route_id != dropship_id
+            lambda l: l.route_id != dropship_id and not l.is_delivery and not l.display_type
         )
         total_price = 0
         if non_dropship_line:
@@ -37,9 +37,7 @@ class ProviderUPS(models.Model):
                 and not l.display_type
             ):
                 total_weight += line.product_qty * line.product_id.weight
-            for line in non_dropship_line.filtered(
-                lambda line: not line.is_delivery and not line.display_type
-            ):
+            for line in non_dropship_line:
                 total_qty += line.product_uom_qty
 
             if max_weight and total_weight > max_weight:
