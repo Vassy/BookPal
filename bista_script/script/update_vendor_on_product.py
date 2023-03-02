@@ -81,7 +81,7 @@ try:
              ('supplier_rank', '>', 0)])
         vendor_id = vendor_id and vendor_id[0] or False
         if not vendor_id:
-            print ("\n vendor not availabel >>>", vendor_id)
+            print ("\n vendor not availabel >>>", row_values[1])
         if prod_id and vendor_id:
             supplier_info = sock.execute(
                 dbname, uid, password,
