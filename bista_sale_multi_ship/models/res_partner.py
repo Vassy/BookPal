@@ -222,11 +222,10 @@ class ResPartner(models.Model):
                  'type', 'company_name', 'ship_line_ids.partner_id',
                  'is_multi_ship')
     def _compute_display_name(self):
-        res = super(ResPartner, self)._compute_display_name()
+        super()._compute_display_name()
         for partner in self:
             if partner.is_multi_ship:
                 partner.display_name = partner.name
-        return res
 
     def get_vendors(self):
         """Get vendors from specific product."""
