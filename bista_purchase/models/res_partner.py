@@ -92,11 +92,15 @@ class ResPartner(models.Model):
         res = []
         for partner in self:
             name = partner.with_context(with_primary_customer = partner.is_primary)._get_name()
+            if not self.env.context.get("custom_code"):
+                res.append((partner.id, name))
+                continue
             if partner.parent_id:
                 res.append((partner.id, name , partner.parent_id.block))
             else:
                 res.append((partner.id, name , partner.block))
         return res
+
     @api.onchange('type')
     def _onchange_contact_type(self):
         if self.type != 'contact':
