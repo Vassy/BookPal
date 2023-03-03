@@ -22,7 +22,7 @@
         <xpath expr="//table[@id='sales_order_table']//th[1]" position="before">
             <th class="text-left">SKU</th>
         </xpath>
-        <xpath expr="//table[@id='sales_order_table']//th[3]" position="replace">
+        <xpath expr="//table[@id='sales_order_table']//th[4]" position="replace">
             <th t-attf-class="text-right {{ 'd-none d-sm-table-cell' if report_type == 'html' else '' }}">Price</th>
         </xpath>
         <xpath expr="//table[@id='sales_order_table']//th[5]" position="after">
