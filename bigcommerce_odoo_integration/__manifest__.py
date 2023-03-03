@@ -34,6 +34,7 @@
         'views/product_category.xml',
         'views/product_template.xml',
         'views/product_attribute.xml',
+        'views/account_payment_form_view.xml',
         'views/res_partner.xml',
         'views/sale_order.xml',
         # "views/bigcommerce_product_image_view.xml",

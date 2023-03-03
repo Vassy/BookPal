@@ -59,17 +59,25 @@ class SaleOrderVts(models.Model):
                             if not journal_id:
                                 self.message_post("Please Configure the Payment Journal : {0}".format(journal_id))
                                 continue
+                            payment = payment_obj.search(
+                                [('sale_id', '=', self.id),
+                                 ('gateway_transaction_id', '=',
+                                    response_data.get('gateway_transaction_id'))])
+                            if payment:
+                                return
                             payment_vals = {
                                 # 'move_id': invoice_id.id,
                                 'amount': response_data.get('amount'),
                                 'date': self.date_order,
                                 'ref': self.name,
-                                'partner_id': self.partner_id.parent_id.id if self.partner_id.parent_id else self.partner_id.id,
+                                'partner_id': self.partner_id.id,
                                 'partner_type': 'customer',
                                 'currency_id': currency_id.id,
                                 'journal_id': journal_id,
                                 'payment_type': 'inbound',
-                                'sale_id': self.id
+                                'sale_id': self.id,
+                                'gateway_transaction_id': response_data.get(
+                                    'gateway_transaction_id')
                                 # 'payment_method_id': journal_payment_method and journal_payment_method[0].id or False,
                             }
                             payment = payment_obj.create(payment_vals)
@@ -791,7 +799,7 @@ class SaleOrderVts(models.Model):
                              'pricelist_id': self.partner_id.property_product_pricelist.id if self.partner_id.property_product_pricelist else pricelist_id.id, })
                 order_vals = self.create_sales_order_from_bigcommerce(vals)
                 order_vals.update({'payment_status': 'paid' if order.get(
-                    'payment_status') == "captured" else 'not_paid',
+                    'payment_status') in ["captured", "paid"] else 'not_paid',
                                    'payment_method': order.get('payment_method'),
                                    'bigcommerce_shipment_order_status': order.get('status'),
                                    'currency_id':self.currency_id.id
@@ -837,6 +845,11 @@ class SaleOrderVts(models.Model):
                             else:
                                 vat_line.write(taxline_vals)
                             self.sudo()._amount_all()
+                            if order.get('payment_status') in ["captured",
+                                                               "paid"]:
+                                self.get_order_transaction(
+                                    through_order_cron=True)
+                            self._cr.commit()
                         else:
                             product_message = "Product Is not available in order : {0}!".format(self.name)
                             self.with_user(1).create_bigcommerce_operation_detail('order', 'update', req_data,
@@ -996,7 +1009,7 @@ class SaleOrderVts(models.Model):
                     order_vals.update({'big_commerce_order_id': big_commerce_order_id,
                                        'bigcommerce_store_id': bigcommerce_store_id.id,
                                        'payment_status': 'paid' if order.get(
-                                           'payment_status') == "captured" else 'not_paid',
+                                           'payment_status') in ["captured", "paid"] else 'not_paid',
                                        'payment_method': order.get('payment_method'),
                                        'bigcommerce_shipment_order_status': order.get('status')
                                        })
