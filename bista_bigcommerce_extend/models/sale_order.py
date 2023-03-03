@@ -316,7 +316,7 @@ class SaleOrderVts(models.Model):
                                     shipping_address_api_respons = \
                                         self.bigcommerce_shipping_address_api_method(
                                             order, bigcommerce_store_id)
-                                    date_time_str = order.get('orderDate')
+                                    date_time_str = order.get('date_created')
                                     customerId = str(order.get('customer_id'))
                                     total_tax = order.get('total_tax')
                                     carrier_id = self.env['delivery.carrier'].search([('is_bigcommerce_shipping_method','=', True)], limit=1)
