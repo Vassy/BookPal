@@ -87,9 +87,17 @@ class BigCommerceStoreConfiguration(models.Model):
             for bigcommerce_order_status_id in store_id.bigcommerce_order_status_ids:
                 sale_order_obj = self.env['sale.order']
                 last_modification_date = datetime.now() - relativedelta(days=15)
+                if store_id.last_modification_date:
+                    last_modification_date = store_id.last_modification_date
                 today_date = datetime.now() + relativedelta(hours=5)
+                if store_id.from_order_date:
+                    today_date = store_id.from_order_date
                 total_pages = 2
-                sale_order_obj.with_user(1).bigcommerce_to_odoo_import_orders(store_id.warehouse_id, store_id,last_modification_date,today_date,total_pages,bigcommerce_order_status_id)
+                sale_order_obj.with_user(1).bigcommerce_to_odoo_import_orders(
+                    store_id.warehouse_id, store_id,
+                    last_modification_date,
+                    today_date,
+                    total_pages, bigcommerce_order_status_id)
 
     def bigcommerce_import_operation_wizard(self):
         return self.env.ref('bigcommerce_odoo_integration.action_bc_import_operation').read()[0]
