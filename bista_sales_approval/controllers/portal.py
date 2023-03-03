@@ -14,7 +14,6 @@ from odoo.http import request
 
 from odoo.addons.portal.controllers.mail import _message_post_helper
 from odoo.addons.sale.controllers.portal import CustomerPortal
-from odoo.addons.sale.controllers.portal import PaymentPortal
 
 
 class ModCustomerPortal(CustomerPortal):
@@ -84,18 +83,3 @@ class ModCustomerPortal(CustomerPortal):
             "force_refresh": True,
             "redirect_url": order_sudo.get_portal_url(query_string=query_string),
         }
-
-
-class BistaPaymentPortal(PaymentPortal):
-    def _create_transaction(
-        self, *args, sale_order_id=None, custom_create_values=None, **kwargs
-    ):
-        response = super()._create_transaction(
-            *args,
-            sale_order_id=sale_order_id,
-            custom_create_values=custom_create_values,
-            **kwargs
-        )
-        if sale_order_id:
-            request.env["sale.order"].sudo().browse(sale_order_id).action_order_booked()
-        return response
