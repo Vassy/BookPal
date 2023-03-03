@@ -323,8 +323,8 @@ class SaleOrderVts(models.Model):
                                     partner_obj = self.env['res.partner'].bigcommerce_to_odoo_import_customers(
                                         warehouse_id=bigcommerce_store_id.warehouse_id, bigcommerce_store_ids=bigcommerce_store_id,
                                         source_page=1, destination_page=1, customer_id=customerId)
-                                    # customerEmail = order.get(
-                                    #     'billing_address').get('email')
+                                    customerEmail = order.get(
+                                        'billing_address').get('email')
                                     # company_name = order.get(
                                     #     'billing_address').get('company')
                                     city = order.get(
@@ -339,10 +339,36 @@ class SaleOrderVts(models.Model):
                                         'billing_address').get('street_1', '')
                                     street_2 = order.get(
                                         'billing_address').get('street_2', '')
-                                    country_obj = self.env['res.country'].\
+                                    country_obj = self.env['res.country']. \
                                         search(
-                                            [('code', '=', country_iso2)],
+                                        [('code', '=', country_iso2)],
                                             limit=1)
+                                    zip = order.get('billing_address').get('zip')
+                                    domain = [('name', '=', "%s %s" % (first_name, last_name)), ('street', '=', street),
+                                              ('zip', '=', zip), ('city', '=', city),
+                                              ('country_id', '=', country_obj.id)]
+                                    if street_2:
+                                        domain.append(('street2', '=', street_2))
+                                    if customerId != 0:
+                                        partner_obj = self.env['res.partner'].bigcommerce_to_odoo_import_customers(
+                                            warehouse_id=bigcommerce_store_id.warehouse_id, bigcommerce_store_ids=bigcommerce_store_id,
+                                            source_page=1, destination_page=1, customer_id=customerId)
+                                    else:
+                                        partner_obj = self.env['res.partner'].sudo().search(
+                                            [('email', '=', customerEmail)], limit=1)
+                                        if not partner_obj:
+                                            partner_obj = self.env['res.partner'].sudo().search(domain, limit=1)
+                                        if not partner_obj:
+                                            partner_obj = self.env['res.partner'].create({
+                                                'name': "%s %s" % (first_name, last_name),
+                                                'street': street,
+                                                'street2': street_2,
+                                                'zip': zip,
+                                                'city': city,
+                                                'country_id': country_obj.id or False,
+                                                'email': customerEmail,
+                                                'phone': order.get('billing_address').get('phone') or ''
+                                            })
                                     # state_obj = self.env['res.country.state'].\
                                     #     search(
                                     #     [('name', '=',
@@ -351,7 +377,6 @@ class SaleOrderVts(models.Model):
                                     #
                                     # phone = order.get(
                                     #     'billing_address').get('phone')
-                                    zip = order.get('billing_address').get('zip')
                                     domain = [('name','=',"%s %s" % (first_name, last_name)),('street', '=', street), ('zip', '=', zip), ('city','=',city), ('country_id', '=', country_obj.id)]
                                     if street_2:
                                         domain.append(('street2', '=', street_2))
