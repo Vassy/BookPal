@@ -58,7 +58,7 @@ class SaleOrderVts(models.Model):
                             else:
                                 journal_id = self.company_id.payment_journal_id.id
                             if not journal_id:
-                                self.message_post("Please Configure the Payment Journal : {0}".format(journal_id))
+                                self.message_post(body="Please Configure the Payment Journal : {0}".format(journal_id))
                                 continue
                             payment = payment_obj.search(
                                 [('sale_id', '=', self.id),
@@ -322,7 +322,7 @@ class SaleOrderVts(models.Model):
                                 partner_parent_id = False
                                 shipping_address_api_respons = self.bigcommerce_shipping_address_api_method(order,
                                                                                                             bigcommerce_store_id)
-                                date_time_str = order.get('orderDate')
+                                date_time_str = order.get('date_created')
                                 customerEmail = order.get('billing_address').get('email')
                                 company_name = order.get('billing_address').get('company')
                                 city = order.get('billing_address').get('city')
@@ -736,7 +736,7 @@ class SaleOrderVts(models.Model):
                                                                                             self.bigcommerce_store_id)
                 shipping_method = shipping_address_api_respons.get('shipping_method')
                 base_shipping_cost = shipping_address_api_respons.get('base_cost')
-                date_time_str = order.get('orderDate')
+                date_time_str = order.get('date_created')
                 customerId = order.get('customer_id')
                 customerEmail = order.get(
                     'billing_address').get('email')
@@ -924,7 +924,7 @@ class SaleOrderVts(models.Model):
                                                                                                 bigcommerce_store_id)
                     shipping_method = shipping_address_api_respons.get('shipping_method')
                     base_shipping_cost = shipping_address_api_respons.get('base_cost')
-                    date_time_str = order.get('orderDate')
+                    date_time_str = order.get('date_created')
                     customerEmail = order.get('billing_address').get('email')
                     company_name = order.get('billing_address').get('company')
                     city = order.get('billing_address').get('city')
