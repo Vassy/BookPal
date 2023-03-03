@@ -43,15 +43,16 @@ class SaleOrderVts(models.Model):
                     _logger.info("Get Sucessfull : {}".format(response.get('data')))
                     for response_data in response.get('data'):
                         if response_data.get('gateway_transaction_id') and \
-                            response_data.get('event') == 'capture' and \
-                            response_data.get(
-                                'gateway_transaction_id') != 'null' or response_data.get('gateway') == 'custom':
+                                response_data.get('event') == 'capture' and \
+                                response_data.get(
+                                    'gateway_transaction_id') != 'null' or response_data.get('gateway') == 'custom':
                             self.payment_method = response_data.get('payment_method_id')
                             self.payment_status = 'paid'
                             currency_id = self.env['res.currency'].search(
                                 [('name', '=', response_data.get('currency'))])
                             payment_obj = self.env['account.payment']
-                            bc_payment_journal_id = self.env['bc.payment.journal'].search([('name','=',response_data.get('payment_method_id'))])
+                            bc_payment_journal_id = self.env['bc.payment.journal'].search(
+                                [('name', '=', response_data.get('payment_method_id'))])
                             if bc_payment_journal_id:
                                 journal_id = bc_payment_journal_id.journal_id.id
                             else:
@@ -557,21 +558,22 @@ class SaleOrderVts(models.Model):
                 'bigcommerce_odoo_integration.'
                 'product_product_bigcommerce_discount')
             discount_line = self.env['sale.order.line'].search(
-                [('product_id', '=', discount_product_id.id), ('price_unit', '=', -float(order.get('discount_amount'))),('order_id', '=', order_id.id)])
+                [('product_id', '=', discount_product_id.id), ('price_unit', '=', -float(order.get('discount_amount'))),
+                 ('order_id', '=', order_id.id)])
             if not discount_line:
-                self.env['sale.order.line'].sudo().\
+                self.env['sale.order.line'].sudo(). \
                     create({
-                        'product_id': discount_product_id.id,
-                        'price_unit': -float(
-                            order.get('discount_amount')),
-                        'product_uom_qty': 1.0,
-                        'state': 'order_booked',
-                        'order_id': order_id.id,
-                        'company_id': order_id.company_id.id})
+                    'product_id': discount_product_id.id,
+                    'price_unit': -float(
+                        order.get('discount_amount')),
+                    'product_uom_qty': 1.0,
+                    'state': 'order_booked',
+                    'order_id': order_id.id,
+                    'company_id': order_id.company_id.id})
             else:
-                discount_line.write({'price_unit':-float(order.get('discount_amount'))})
+                discount_line.write({'price_unit': -float(order.get('discount_amount'))})
 
-    def create_or_update_customer_from_so(self,order,bigcommerce_store_id):
+    def create_or_update_customer_from_so(self, order, bigcommerce_store_id):
         partner_parent_id = False
         shipping_address_api_respons = \
             self.bigcommerce_shipping_address_api_method(
@@ -661,7 +663,7 @@ class SaleOrderVts(models.Model):
                 partner_vals)
         return partner_obj
 
-    def create_update_shipping_partner_from_bc_order(self,order,bigcommerce_store_id,partner_id):
+    def create_update_shipping_partner_from_bc_order(self, order, bigcommerce_store_id, partner_id):
         shipping_address_api_respons = \
             self.bigcommerce_shipping_address_api_method(
                 order, bigcommerce_store_id)
@@ -700,8 +702,8 @@ class SaleOrderVts(models.Model):
             'type': 'delivery',
             'parent_id': partner_id.id,
             'country_id': country_id.id,
-            'bigcommerce_store_id':bigcommerce_store_id.id,
-            'is_available_in_bigcommerce':True,
+            'bigcommerce_store_id': bigcommerce_store_id.id,
+            'is_available_in_bigcommerce': True,
         }
         if partner_shipping_id and self.partner_shipping_id.id != partner_shipping_id.id:
             self.partner_shipping_id = partner_shipping_id.id
@@ -736,13 +738,8 @@ class SaleOrderVts(models.Model):
                 base_shipping_cost = shipping_address_api_respons.get('base_cost')
                 date_time_str = order.get('orderDate')
                 customerId = order.get('customer_id')
-                partner_obj = self.env['res.partner'].bigcommerce_to_odoo_import_customers(warehouse_id=self.warehouse_id, bigcommerce_store_ids=self.bigcommerce_store_id,
-                                                     source_page=1, destination_page=1, customer_id=customerId)
-                total_tax = order.get('total_tax')
-                carrier_id = self.env['delivery.carrier'].with_user(1).search(
-                    [('is_bigcommerce_shipping_method', '=', True)], limit=1)
-                if partner_obj and self.partner_id.id != partner_obj.id:
-                    self.partner_id = partner_obj.id
+                customerEmail = order.get(
+                    'billing_address').get('email')
                 city = order.get(
                     'billing_address').get('city')
                 first_name = order.get(
@@ -772,6 +769,30 @@ class SaleOrderVts(models.Model):
                           ('city', '=', city), ('country_id', '=', country_obj.id)]
                 if street_2:
                     domain.append([('street2', '=', street_2)])
+                if customerId != 0:
+                    partner_obj = self.env['res.partner'].bigcommerce_to_odoo_import_customers(
+                        warehouse_id=self.warehouse_id, bigcommerce_store_ids=self.bigcommerce_store_id,
+                        source_page=1, destination_page=1, customer_id=customerId)
+                else:
+                    partner_obj = self.env['res.partner'].sudo().search(
+                        [('email', '=', customerEmail)], limit=1)
+                    if not partner_obj:
+                        partner_obj = self.env['res.partner'].sudo().search(domain, limit=1)
+                    if partner_obj:
+                        partner_obj.write({'name': "%s %s" % (first_name, last_name),
+                                           'street': street,
+                                           'street2': street_2,
+                                           'zip': zip,
+                                           'city': city,
+                                           'country_id': country_obj.id or False,
+                                           'email': customerEmail,
+                                           'phone': order.get('billing_address').get('phone') or ''
+                                           })
+                total_tax = order.get('total_tax')
+                carrier_id = self.env['delivery.carrier'].with_user(1).search(
+                    [('is_bigcommerce_shipping_method', '=', True)], limit=1)
+                if partner_obj and self.partner_id.id != partner_obj.id:
+                    self.partner_id = partner_obj.id
                 partner_billing_id = self.env['res.partner'].sudo().search(domain, limit=1)
                 # else:
                 #     partner_vals.pop('bigcommerce_customer_id')
@@ -779,7 +800,9 @@ class SaleOrderVts(models.Model):
 
                 # else:
                 #     self.partner_shipping_id.write(res_partner_vals)
-                partner_shipping_id = self.create_update_shipping_partner_from_bc_order(order,self.bigcommerce_store_id,self.partner_id)
+                partner_shipping_id = self.create_update_shipping_partner_from_bc_order(order,
+                                                                                        self.bigcommerce_store_id,
+                                                                                        self.partner_id)
                 pricelist_id = self.env['product.pricelist'].search(
                     [('currency_id.name', '=', order.get('currency_code'))], limit=1)
                 vals = {}
@@ -789,7 +812,7 @@ class SaleOrderVts(models.Model):
                              'date_order': date_time_str or today_date,
                              'bc_order_date': date_time_str or today_date,
                              'company_id': self.company_id and self.company_id.id or self.env.user.company_id.id,
-                             'warehouse_id':self.warehouse_id.id,
+                             'warehouse_id': self.warehouse_id.id,
                              'carrier_id': carrier_id and carrier_id.id,
                              'carrierCode': '',
                              'serviceCode': '',
@@ -802,7 +825,7 @@ class SaleOrderVts(models.Model):
                     'payment_status') in ["captured", "paid"] else 'not_paid',
                                    'payment_method': order.get('payment_method'),
                                    'bigcommerce_shipment_order_status': order.get('status'),
-                                   'currency_id':self.currency_id.id
+                                   'currency_id': self.currency_id.id
                                    })
                 try:
                     self.write(order_vals)
@@ -822,7 +845,8 @@ class SaleOrderVts(models.Model):
                         _logger.info("Sale Order Product {0}".format(response_data))
                         if response_data:
                             self.with_user(1).prepare_sale_order_lines(self, response_data, operation_id,
-                                                                       self.warehouse_id,order,bigcommerce_store_id=self.bigcommerce_store_id)
+                                                                       self.warehouse_id, order,
+                                                                       bigcommerce_store_id=self.bigcommerce_store_id)
                             if float(order.get('discount_amount', '0')) > 0:
                                 self.create_discount_line(order, self)
                             if carrier_id and float(base_shipping_cost) > 0:
@@ -1009,7 +1033,7 @@ class SaleOrderVts(models.Model):
                     order_vals.update({'big_commerce_order_id': big_commerce_order_id,
                                        'bigcommerce_store_id': bigcommerce_store_id.id,
                                        'payment_status': 'paid' if order.get(
-                                           'payment_status') in ["captured", "paid"] else 'not_paid',
+                                           'payment_status')in ["captured", "paid"]  else 'not_paid',
                                        'payment_method': order.get('payment_method'),
                                        'bigcommerce_shipment_order_status': order.get('status')
                                        })
@@ -1176,7 +1200,8 @@ class SaleOrderVts(models.Model):
         ls = []
         #  attribute_id = self.order_line.product_id.attribute_line_ids.attribute_id.bigcommerce_attribute_id
         vat_product_id = self.env.ref('bigcommerce_odoo_integration.product_product_bigcommerce_tax')
-        for line in self.order_line.filtered(lambda line:not line.is_delivery and line.product_id.id != vat_product_id.id):
+        for line in self.order_line.filtered(
+                lambda line: not line.is_delivery and line.product_id.id != vat_product_id.id):
             # variant_combination_ids = self.env['product.variant.combination'].search(
             #     [('product_product_id', '=', line.product_id.id)]).mapped('product_template_attribute_value_id')
             product_option = []
@@ -1194,8 +1219,8 @@ class SaleOrderVts(models.Model):
             data = {
                 "product_id": line.product_id.bigcommerce_product_id,
                 "quantity": line.product_uom_qty,
-                "price_inc_tax": line.price_total/line.product_uom_qty,
-                "price_ex_tax": line.price_subtotal/line.product_uom_qty,
+                "price_inc_tax": line.price_total / line.product_uom_qty,
+                "price_ex_tax": line.price_subtotal / line.product_uom_qty,
                 "product_options": product_option
             }
             ls.append(data)
@@ -1223,7 +1248,8 @@ class SaleOrderVts(models.Model):
                 "email": "{}".format(self.partner_shipping_id.email)}],
             'products': ls,
             'discount_amount': discount}
-        if (self.partner_id.bigcommerce_customer_id and self.partner_id.bigcommerce_customer_id != 'Guest User') or self.partner_id.parent_id.bigcommerce_customer_id:
+        if (
+                self.partner_id.bigcommerce_customer_id and self.partner_id.bigcommerce_customer_id != 'Guest User') or self.partner_id.parent_id.bigcommerce_customer_id:
             bigcommerce_customer_id = self.partner_id.bigcommerce_customer_id or self.partner_id.parent_id.bigcommerce_customer_id
             request_data.update({'customer_id': bigcommerce_customer_id})
         else:
@@ -1268,7 +1294,7 @@ class SaleOrderVts(models.Model):
             }
         }
 
-    def update_order_request_data(self,shipping_address_api_response,order_line,discount,base_shipping_cost):
+    def update_order_request_data(self, shipping_address_api_response, order_line, discount, base_shipping_cost):
         invoice_partner = self.partner_invoice_id or self.partner_id
         billing_add = {
             "first_name": "{}".format(invoice_partner and invoice_partner.name),
@@ -1299,10 +1325,10 @@ class SaleOrderVts(models.Model):
             'billing_address': billing_add,
             'shipping_addresses': [shipping_add],
             'products': order_line,
-            'base_shipping_cost':str(base_shipping_cost),
+            'base_shipping_cost': str(base_shipping_cost),
             'discount_amount': abs(discount),
-            'shipping_cost_ex_tax':base_shipping_cost,
-            'shipping_cost_inc_tax':base_shipping_cost}
+            'shipping_cost_ex_tax': base_shipping_cost,
+            'shipping_cost_inc_tax': base_shipping_cost}
         return request_data
 
     def update_order_from_odoo_to_bc(self):
@@ -1310,12 +1336,14 @@ class SaleOrderVts(models.Model):
             raise ValidationError("Please Select Bigcommerce Store")
         bigcommerce_store_hash = self.bigcommerce_store_id.bigcommerce_store_hash
         self.get_order_product_id()
-        ship_api_url = "{0}{1}/v2/orders/{2}/shipping_addresses".format(self.bigcommerce_store_id.bigcommerce_api_url, bigcommerce_store_hash,
-                                                self.big_commerce_order_id)
+        ship_api_url = "{0}{1}/v2/orders/{2}/shipping_addresses".format(self.bigcommerce_store_id.bigcommerce_api_url,
+                                                                        bigcommerce_store_hash,
+                                                                        self.big_commerce_order_id)
         shipping_address_api_response = self.bigcommerce_shipping_address_api_method(order=False,
                                                                                      bigcommerce_store_id=self.bigcommerce_store_id,
                                                                                      api_url=ship_api_url)
-        api_url = "{0}{1}/v2/orders/{2}".format(self.bigcommerce_store_id.bigcommerce_api_url, bigcommerce_store_hash,self.big_commerce_order_id)
+        api_url = "{0}{1}/v2/orders/{2}".format(self.bigcommerce_store_id.bigcommerce_api_url, bigcommerce_store_hash,
+                                                self.big_commerce_order_id)
         bigcommerce_auth_token = self.bigcommerce_store_id.bigcommerce_x_auth_token
         bigcommerce_auth_client = self.bigcommerce_store_id.bigcommerce_x_auth_client
         headers = {'Accept': 'application/json',
@@ -1326,12 +1354,13 @@ class SaleOrderVts(models.Model):
         ls = []
         vat_product_id = self.env.ref('bigcommerce_odoo_integration.product_product_bigcommerce_tax')
         coupon_product = self.env.ref('bigcommerce_odoo_integration.add_bigcommerce_coupon_as_product')
-        coupon_product_line = self.order_line.filtered(lambda line:line.product_id.id == coupon_product.id)
-        base_shipping_cost = sum(self.order_line.filtered(lambda line:line.is_delivery).mapped('price_unit')) or 0.0
+        coupon_product_line = self.order_line.filtered(lambda line: line.product_id.id == coupon_product.id)
+        base_shipping_cost = sum(self.order_line.filtered(lambda line: line.is_delivery).mapped('price_unit')) or 0.0
         discount = 0.0 if not coupon_product_line else sum(coupon_product_line.mapped('price_unit'))
         discount_line = sum(self.order_line.filtered(lambda line: line.price_unit < 0).mapped('price_unit')) or 0.0
         discount = discount + discount_line
-        for line in self.order_line.filtered(lambda line: not line.is_delivery and line.product_id.id != vat_product_id.id and line.product_id.id != coupon_product.id and line.price_unit > 0):
+        for line in self.order_line.filtered(
+                lambda line: not line.is_delivery and line.product_id.id != vat_product_id.id and line.product_id.id != coupon_product.id and line.price_unit > 0):
             # variant_combination_ids = self.env['product.variant.combination'].search(
             #     [('product_product_id', '=', line.product_id.id)]).mapped('product_template_attribute_value_id')
             product_option = []
@@ -1349,15 +1378,18 @@ class SaleOrderVts(models.Model):
             data = {
                 "product_id": line.product_id.bigcommerce_product_id,
                 "quantity": line.product_uom_qty,
-                "price_inc_tax": line.price_total/line.product_uom_qty,
-                "price_ex_tax": line.price_subtotal/line.product_uom_qty,
+                "price_inc_tax": line.price_total / line.product_uom_qty,
+                "price_ex_tax": line.price_subtotal / line.product_uom_qty,
                 "product_options": product_option
             }
             if line.order_product_id:
                 data.update({"id": line.order_product_id})
             ls.append(data)
-        request_data = self.update_order_request_data(shipping_address_api_response=shipping_address_api_response, order_line=ls, discount=discount,base_shipping_cost=base_shipping_cost)
-        if (self.partner_id.bigcommerce_customer_id and self.partner_id.bigcommerce_customer_id != 'Guest User') or self.partner_invoice_id.bigcommerce_customer_id:
+        request_data = self.update_order_request_data(shipping_address_api_response=shipping_address_api_response,
+                                                      order_line=ls, discount=discount,
+                                                      base_shipping_cost=base_shipping_cost)
+        if (
+                self.partner_id.bigcommerce_customer_id and self.partner_id.bigcommerce_customer_id != 'Guest User') or self.partner_invoice_id.bigcommerce_customer_id:
             bigcommerce_customer_id = self.partner_id.bigcommerce_customer_id or self.partner_invoice_id.bigcommerce_customer_id
             request_data.update({'customer_id': bigcommerce_customer_id})
         else:
