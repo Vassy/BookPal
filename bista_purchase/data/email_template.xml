@@ -85,7 +85,6 @@
             <field name="report_template" ref="bista_purchase.report_purchase_backorder_pdf"/>
             <field name="report_name">Transfers_{{ (object.name or '').replace('/','_') }}</field>
             <field name="lang">{{ object.partner_id.lang }}</field>
-
         </record>
 
         <record id="email_template_purchase_tracking" model="mail.template">
@@ -244,11 +243,9 @@
                     **PLEASE REPLY TO THIS EMAIL TO CONFIRM RECEIPT**
                     <br/><br/><br/>
                     Please ship the following item(s):<br/><br/>
-                    <table class="table table-sm table-bordered">
+                    <table class="table table-sm table-bordered" style="table-layout: auto;">
                         <tr>
-                            <th>ISBN</th>
                             <th>Description</th>
-                            <th>Format</th>
                             <th class="text-right">QTY</th>
                             <th class="text-right">Cover Price</th>
                             <th class="text-right">Discount</th>
@@ -256,9 +253,17 @@
                             <th class="text-right">Total</th>
                         </tr>
                         <tr t-foreach="object.order_line" t-as="line">
-                            <td><span t-out="line.product_id.default_code" /></td>
-                            <td><span t-out="line.product_id.name" /></td>
-                            <td><span t-if="line.product_format" t-out="line.product_format" /></td>
+                            <td>
+                                <span t-out="line.product_id.name" /><br/>
+                                <t t-if="line.product_id.default_code">
+                                    <span style="font-weight: bold;">ISBN:</span>
+                                    <span t-field="line.product_id.default_code" /><br/>
+                                </t>
+                                <t t-if="line.product_format">
+                                    <span style="font-weight: bold;">Format:</span>
+                                    <span t-field="line.product_format" /><br/>
+                                </t>
+                            </td>
                             <td class="text-right">
                                 <span t-out="int(line.product_qty)" />
                             </td>
@@ -268,8 +273,8 @@
                             <td class="text-right"><span t-out="format_amount(line.price_subtotal, line.currency_id)" /></td>
                         </tr>
                     </table>
-                    <div>
-                        <table class="table table-sm table-bordered" style="margin-left: auto; width:35%;font-size: 14px;">
+                    <div class="row" style="margin: 0px;">
+                        <table class="table table-sm table-bordered col-6" style="margin-left: auto;">
                         <tr class="border-black o_subtotal">
                             <td style="padding-left:10px; width:57.16%; ">
                                 <strong>Total W/D</strong>
@@ -314,7 +319,7 @@
                         </tr>
                         </table>
                     </div>
-                    <br/><br/><br/>
+                    <br/>
                     <span style="font-weight: bold;">SHIP TO:</span><br/>
                     <t t-if="object.dest_address_id">
                         <span t-out="object.dest_address_id.name"/><br/>
