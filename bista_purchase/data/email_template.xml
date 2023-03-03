@@ -244,24 +244,23 @@
                     **PLEASE REPLY TO THIS EMAIL TO CONFIRM RECEIPT**
                     <br/><br/><br/>
                     Please ship the following item(s):<br/><br/>
-                    <table class="table table-bordered">
+                    <table class="table table-sm table-bordered">
                         <tr>
                             <th>ISBN</th>
                             <th>Description</th>
                             <th>Format</th>
-                            <th class="text-right">Quantity</th>
+                            <th class="text-right">QTY</th>
                             <th class="text-right">Cover Price</th>
                             <th class="text-right">Discount</th>
-                            <th class="text-right">BP Price</th>
+                            <th class="text-right">Price</th>
                             <th class="text-right">Total</th>
                         </tr>
                         <tr t-foreach="object.order_line" t-as="line">
                             <td><span t-out="line.product_id.default_code" /></td>
                             <td><span t-out="line.product_id.name" /></td>
-                            <td><span t-out="line.product_format" /></td>
+                            <td><span t-if="line.product_format" t-out="line.product_format" /></td>
                             <td class="text-right">
                                 <span t-out="int(line.product_qty)" />
-                                <span t-field="line.product_uom" />
                             </td>
                             <td class="text-right"><span t-out="format_amount(line.before_disc_price_unit, line.currency_id)" /></td>
                             <td class="text-right"><span t-out="str(int(line.discount)) + '%'" /></td>
@@ -269,6 +268,52 @@
                             <td class="text-right"><span t-out="format_amount(line.price_subtotal, line.currency_id)" /></td>
                         </tr>
                     </table>
+                    <div>
+                        <table class="table table-sm table-bordered" style="margin-left: auto; width:35%;font-size: 14px;">
+                        <tr class="border-black o_subtotal">
+                            <td style="padding-left:10px; width:57.16%; ">
+                                <strong>Total W/D</strong>
+                            </td>
+                            <td class="text-right"
+                                style="border-left: 1px solid black;margin: auto;">
+                                <span t-field="object.without_disc_amount_untaxed"/>
+                            </td>
+                        </tr>
+                        <tr class="border-black o_subtotal">
+                            <td style="padding-left:10px;">
+                                <strong>Discount</strong>
+                            </td>
+                            <td class="text-right" style="border-left: 1px solid black;">
+                                <span t-field="object.total_discount_amount"/>
+                            </td>
+                        </tr>
+                        <tr class="border-black o_subtotal">
+                            <td style="padding-left:10px;">
+                                <strong>Subtotal</strong>
+                            </td>
+                            <td class="text-right" style="border-left: 1px solid black;">
+                                <span t-field="object.amount_untaxed"/>
+                            </td>
+                        </tr>
+                        <tr class="border-black o_subtotal">
+                            <td style="padding-left:10px;">
+                                <strong class="text-right">Tax</strong>
+                            </td>
+                            <td class="text-right" style="border-left: 1px solid black;">
+                                <span t-field="object.amount_tax"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding-left:10px;">
+                                <strong class="o_subtotal;text-right">Total</strong>
+                            </td>
+                            <td style="padding-left:10px;"
+                                class="text-right">
+                                <strong t-field="object.amount_total"/>
+                            </td>
+                        </tr>
+                        </table>
+                    </div>
                     <br/><br/><br/>
                     <span style="font-weight: bold;">SHIP TO:</span><br/>
                     <t t-if="object.dest_address_id">
