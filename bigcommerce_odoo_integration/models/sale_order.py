@@ -1,9 +1,11 @@
 from odoo import fields, models, api, _
 import json
 from datetime import datetime
+from dateutil.parser import parse
 from requests import request
 from odoo.exceptions import ValidationError, UserError
 from odoo.addons.sale.models.sale_order import SaleOrder
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DTF
 import logging
 import time
 
@@ -322,7 +324,7 @@ class SaleOrderVts(models.Model):
                                 partner_parent_id = False
                                 shipping_address_api_respons = self.bigcommerce_shipping_address_api_method(order,
                                                                                                             bigcommerce_store_id)
-                                date_time_str = order.get('date_created')
+                                date_time_str = str(parse(order.get('date_created')))[:19]
                                 customerEmail = order.get('billing_address').get('email')
                                 company_name = order.get('billing_address').get('company')
                                 city = order.get('billing_address').get('city')
@@ -362,7 +364,7 @@ class SaleOrderVts(models.Model):
                                         [('company_type', '=', 'company'), ('email', '=', customerEmail)], limit=1):
                                     company_vals = {'company_type': 'company', 'name': company_name}
                                     partner_parent_id = self.env['res.partner'].create({**partner_vals, **company_vals})
-                                if customerId == 0:
+                                if customerId in ['0', 0]:
                                     partner_vals.update({
                                         'name': "%s %s (Guest)" % (first_name, last_name),
                                         'bigcommerce_customer_id': str(big_commerce_order_id),
@@ -642,7 +644,7 @@ class SaleOrderVts(models.Model):
             partner_parent_id = \
                 self.env['res.partner'].create(
                     {**partner_vals, **company_vals})
-        if customerId == 0:
+        if customerId in ['0', 0]:
             partner_vals.update({
                 'name': "%s %s (Guest)" % (
                     first_name, last_name),
@@ -736,7 +738,7 @@ class SaleOrderVts(models.Model):
                                                                                             self.bigcommerce_store_id)
                 shipping_method = shipping_address_api_respons.get('shipping_method')
                 base_shipping_cost = shipping_address_api_respons.get('base_cost')
-                date_time_str = order.get('date_created')
+                date_time_str = str(parse(order.get('date_created')))[:19]
                 customerId = order.get('customer_id')
                 customerEmail = order.get(
                     'billing_address').get('email')
@@ -769,7 +771,7 @@ class SaleOrderVts(models.Model):
                           ('city', '=', city), ('country_id', '=', country_obj.id)]
                 if street_2:
                     domain.append(('street2', '=', street_2))
-                if customerId != 0:
+                if customerId not in [0, '0']:
                     partner_obj = self.env['res.partner'].bigcommerce_to_odoo_import_customers(
                         warehouse_id=self.warehouse_id, bigcommerce_store_ids=self.bigcommerce_store_id,
                         source_page=1, destination_page=1, customer_id=customerId)
@@ -924,7 +926,7 @@ class SaleOrderVts(models.Model):
                                                                                                 bigcommerce_store_id)
                     shipping_method = shipping_address_api_respons.get('shipping_method')
                     base_shipping_cost = shipping_address_api_respons.get('base_cost')
-                    date_time_str = order.get('date_created')
+                    date_time_str = str(parse(order.get('date_created')))[:19]
                     customerEmail = order.get('billing_address').get('email')
                     company_name = order.get('billing_address').get('company')
                     city = order.get('billing_address').get('city')
@@ -957,7 +959,7 @@ class SaleOrderVts(models.Model):
                     if company_name:
                         company_vals = {'company_type': 'company', 'name': company_name}
                         partner_parent_id = self.env['res.partner'].create({**partner_vals, **company_vals})
-                    if customerId == 0:
+                    if customerId in [0, '0']:
                         partner_vals.update({
                             'name': "%s %s (Guest)" % (first_name, last_name),
                             'bigcommerce_customer_id': "Guest User",
@@ -1446,7 +1448,7 @@ class SaleOrderVts(models.Model):
         try:
             response = request(method="GET", url=url, headers=headers)
             if response.status_code in [200, 201]:
-                response = response.json()
+                responses = response.json()
                 _logger.info("BigCommerce Get Shipment  Response : {0}".format(response))
                 for response in response:
                     self.bigcommerce_shipment_address_id = response.get('id')
