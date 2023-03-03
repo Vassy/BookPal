@@ -22,14 +22,22 @@
         <xpath expr="//table[@id='sales_order_table']//th[1]" position="before">
             <th class="text-left">SKU</th>
         </xpath>
+        <xpath expr="//table[@id='sales_order_table']/tbody/t/tr/t/td[@id='product_name']" position="before">
+            <td class="text-left">
+                <span t-esc="line.product_template_id.default_code"/>
+            </td>
+        </xpath>
+        <xpath expr="//table[@id='sales_order_table']/tbody/t/tr/t/td[@id='product_name']" position="replace">
+            <td id="product_name"><span t-field="line.product_template_id.name"/></td>
+        </xpath>
         <xpath expr="//table[@id='sales_order_table']//th[4]" position="replace">
             <th t-attf-class="text-right {{ 'd-none d-sm-table-cell' if report_type == 'html' else '' }}">Price</th>
         </xpath>
-        <xpath expr="//table[@id='sales_order_table']//th[5]" position="after">
+        <xpath expr="//table[@id='sales_order_table']//th[6]" position="after">
             <th class="text-right">Saving Amount</th>
         </xpath>
 
-        <xpath expr="//table[@id='sales_order_table']/tbody/t/tr/t/td[2]" position="replace">
+        <xpath expr="//table[@id='sales_order_table']/tbody/t/tr/t/td[3]" position="replace">
             <td class="text-right">
                 <div id="quote_qty">
                     <t t-set="qty" t-value="line.product_uom_qty"/>
@@ -37,12 +45,12 @@
                 </div>
             </td>
         </xpath>
-        <xpath expr="//table[@id='sales_order_table']//td[5]" position="after">
+        <xpath expr="//table[@id='sales_order_table']//td[6]" position="after">
             <td class="text-right">
                 <span t-field="line.saving_amount" t-options="{'widget': 'monetary', 'display_currency': line.currency_id , 'decimal_precision': 'Product Price'}" />
             </td>
         </xpath>
-        <xpath expr="//table[@id='sales_order_table']//td[3]" position="replace">
+        <xpath expr="//table[@id='sales_order_table']//td[4]" position="replace">
             <td t-attf-class="text-right {{ 'd-none d-sm-table-cell' if report_type == 'html' else '' }}">
                 <div
                     t-if="line.discount &gt;= 0"
@@ -67,14 +75,6 @@
             <br/>
             <span t-field="line.picking_note"/>
         </td>
-        <xpath expr="//table[@id='sales_order_table']/tbody/t/tr/t/td[@id='product_name']" position="before">
-            <td class="text-left">
-                <span t-esc="line.product_template_id.default_code"/>
-            </td>
-        </xpath>
-        <xpath expr="//table[@id='sales_order_table']/tbody/t/tr/t/td[@id='product_name']" position="replace">
-            <td id="product_name"><span t-field="line.product_template_id.name"/></td>
-        </xpath>
         <xpath expr="//td[@t-if='display_discount']//t" position="replace">
             <t t-esc="round(line.discount)"/>%
         </xpath>
