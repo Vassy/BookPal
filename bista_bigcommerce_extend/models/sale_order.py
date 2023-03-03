@@ -2,6 +2,7 @@
 import logging
 
 from datetime import datetime
+from dateutil.parser import parse
 from requests import request
 
 from odoo import fields, models
@@ -316,7 +317,7 @@ class SaleOrderVts(models.Model):
                                     shipping_address_api_respons = \
                                         self.bigcommerce_shipping_address_api_method(
                                             order, bigcommerce_store_id)
-                                    date_time_str = order.get('date_created')
+                                    date_time_str = str(parse(order.get('date_created')))[:19]
                                     customerId = str(order.get('customer_id'))
                                     total_tax = order.get('total_tax')
                                     carrier_id = self.env['delivery.carrier'].search([('is_bigcommerce_shipping_method','=', True)], limit=1)
@@ -349,10 +350,24 @@ class SaleOrderVts(models.Model):
                                               ('country_id', '=', country_obj.id)]
                                     if street_2:
                                         domain.append(('street2', '=', street_2))
-                                    if customerId != 0:
+
+                                    if customerId not in [0, '0']:
                                         partner_obj = self.env['res.partner'].bigcommerce_to_odoo_import_customers(
                                             warehouse_id=bigcommerce_store_id.warehouse_id, bigcommerce_store_ids=bigcommerce_store_id,
                                             source_page=1, destination_page=1, customer_id=customerId)
+                                    elif customerId in ['0', 0]:
+                                        partner_vals = {
+                                            'name': "%s %s (Guest)" % (first_name, last_name),
+                                            'bigcommerce_customer_id': str(big_commerce_order_id),
+                                            'street': street,
+                                            'street2': street_2,
+                                            'zip': zip,
+                                            'city': city,
+                                            'country_id': country_obj.id or False,
+                                            'email': customerEmail,
+                                            'phone': order.get('billing_address').get('phone') or ''
+                                        }
+                                        partner_obj = self.env['res.partner'].create(partner_vals)
                                     else:
                                         partner_obj = self.env['res.partner'].sudo().search(
                                             [('email', '=', customerEmail)], limit=1)
@@ -369,14 +384,6 @@ class SaleOrderVts(models.Model):
                                                 'email': customerEmail,
                                                 'phone': order.get('billing_address').get('phone') or ''
                                             })
-                                    # state_obj = self.env['res.country.state'].\
-                                    #     search(
-                                    #     [('name', '=',
-                                    #       order.get('billing_address').get(
-                                    #           'state'))], limit=1)
-                                    #
-                                    # phone = order.get(
-                                    #     'billing_address').get('phone')
                                     domain = [('name','=',"%s %s" % (first_name, last_name)),('street', '=', street), ('zip', '=', zip), ('city','=',city), ('country_id', '=', country_obj.id)]
                                     if street_2:
                                         domain.append(('street2', '=', street_2))
