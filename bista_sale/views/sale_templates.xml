@@ -19,8 +19,23 @@
         <address t-field="sale_order.partner_shipping_id" position="attributes">
             <attribute name="t-options">{"widget": "contact", "fields": ["address", "email", "phone"], "no_marker": True}</attribute>
         </address>
+        <xpath expr="//table[@id='sales_order_table']//th[1]" position="before">
+            <th class="text-left">SKU</th>
+        </xpath>
+        <xpath expr="//table[@id='sales_order_table']//th[3]" position="replace">
+            <th t-attf-class="text-right {{ 'd-none d-sm-table-cell' if report_type == 'html' else '' }}">Price</th>
+        </xpath>
         <xpath expr="//table[@id='sales_order_table']//th[5]" position="after">
             <th class="text-right">Saving Amount</th>
+        </xpath>
+
+        <xpath expr="//table[@id='sales_order_table']/tbody/t/tr/t/td[2]" position="replace">
+            <td class="text-right">
+                <div id="quote_qty">
+                    <t t-set="qty" t-value="line.product_uom_qty"/>
+                    <span t-esc="int(qty)"/>
+                </div>
+            </td>
         </xpath>
         <xpath expr="//table[@id='sales_order_table']//td[5]" position="after">
             <td class="text-right">
@@ -48,10 +63,18 @@
         </xpath>
         <td id="product_name" position="inside">
             <br /><br />
-            <b><span>Product Notes:</span></b>
+            <b><span t-if="line.picking_note">Product Notes:</span></b>
             <br/>
             <span t-field="line.picking_note"/>
         </td>
+        <xpath expr="//table[@id='sales_order_table']/tbody/t/tr/t/td[@id='product_name']" position="before">
+            <td class="text-left">
+                <span t-esc="line.product_template_id.default_code"/>
+            </td>
+        </xpath>
+        <xpath expr="//table[@id='sales_order_table']/tbody/t/tr/t/td[@id='product_name']" position="replace">
+            <td id="product_name"><span t-field="line.product_template_id.name"/></td>
+        </xpath>
         <xpath expr="//td[@t-if='display_discount']//t" position="replace">
             <t t-esc="round(line.discount)"/>%
         </xpath>
@@ -90,7 +113,7 @@
             <tr class="border-black o_total">
                 <td><strong>Total</strong></td>
                 <td class="text-right">
-                    <span t-esc="tax_totals['formatted_amount_total']"/>
+                    <strong t-esc="tax_totals['formatted_amount_total']"/>
                 </td>
             </tr>
     </template>
