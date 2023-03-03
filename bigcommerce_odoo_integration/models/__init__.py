@@ -14,6 +14,7 @@ from . import product_attribute
 from . import product_product
 from . import product_template
 from . import res_partner
+from . import account_payment
 from . import sale_order
 from . import delivery_carrier
 from . import stock

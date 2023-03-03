@@ -1,13 +1,11 @@
 
-import json
 import logging
 
 from datetime import datetime
 from requests import request
 
-from odoo import api, fields, models
-from odoo.exceptions import ValidationError, UserError
-from odoo.addons.sale.models.sale_order import SaleOrder
+from odoo import fields, models
+from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger("BigCommerce")
 
@@ -315,7 +313,6 @@ class SaleOrderVts(models.Model):
                                       '=',
                                       big_commerce_order_id)])
                                 if not sale_order:
-                                    partner_parent_id = False
                                     shipping_address_api_respons = \
                                         self.bigcommerce_shipping_address_api_method(
                                             order, bigcommerce_store_id)
@@ -425,7 +422,7 @@ class SaleOrderVts(models.Model):
                                          'bigcommerce_store_id':
                                          bigcommerce_store_id.id,
                                          'payment_status': 'paid' if
-                                         order.get('payment_status') == "captured"
+                                         order.get('payment_status') in ["captured", "paid"]
                                          else 'not_paid',
                                          'payment_method':
                                          order.get('payment_method'),
@@ -529,7 +526,6 @@ class SaleOrderVts(models.Model):
                     'order', 'import', '', '',
                     operation_id, warehouse_id, True, response_msg)
                 product_id = self.get_odoo_product_id(bigcommerce_store_id, product_bigcommerce_id, order_line)
-                #continue
             quantity = order_line.get('quantity')
             price = order_line.get('base_price')
             total_tax = order_line.get('total_tax')
@@ -550,6 +546,7 @@ class SaleOrderVts(models.Model):
             order_line_vals = self.create_sale_order_line_from_bigcommerce(vals)
             if not sale_order_line:
                 sale_order_line = self.env['sale.order.line'].create(order_line_vals)
+                sale_order_line._compute_discount()
                 _logger.info("Sale Order line Created".format(
                     sale_order_line and sale_order_line.product_id and sale_order_line.product_id.name))
                 response_msg = "Sale order line created %s" % sale_order_line.product_id.name
@@ -557,10 +554,11 @@ class SaleOrderVts(models.Model):
                                                          response_msg)
             else:
                 order_line_vals.update({'big_commerce_tax': total_tax})
-                order_line.write(order_line_vals)
+                sale_order_line.write(order_line_vals)
+                sale_order_line._compute_discount()
                 _logger.info("Sale Order line Updated".format(
-                    order_line and order_line.product_id and order_line.product_id.name))
-                response_msg = "Sale order line updated %s" % order_line.product_id.name
+                    sale_order_line and sale_order_line.product_id and sale_order_line.product_id.name))
+                response_msg = "Sale order line updated %s" % sale_order_line.product_id.name
                 self.create_bigcommerce_operation_detail('order', 'update', '', '', operation_id, warehouse_id, False,
                                                          response_msg)
             # order_line = self.create_sale_order_line_from_bigcommerce(vals)
@@ -612,6 +610,7 @@ class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     product_format = fields.Char(related="product_id.product_format")
+
 
 class SaleMultiShipQtyLines(models.Model):
     _inherit = "sale.multi.ship.qty.lines"
