@@ -311,7 +311,8 @@
                     <span style="font-weight: bold;">SHIPPING INSTRUCTIONS:</span>
                     <span t-out="object.shipping_instructions.name" /><br/><br/>
                     <span style="font-weight: bold;">DELIVER THESE ITEMS BY:</span>
-                    <span t-out="format_date(object.date_planned.date())" /><br/><br/>
+                    <t t-if="object.date_planned">
+                    <span t-out="format_date(object.date_planned.date())" /></t><br/><br/>
                     <span style="font-weight: bold;">PO INSTRUCTIONS:</span>
                     <div style="padding-left: 20px;" t-out="object.special_pick_note" />
                     <br/><br/><br/>
@@ -322,7 +323,7 @@
                 <div t-out="user.signature"></div>
             </field>
             <field name="report_template" ref="purchase.report_purchase_quotation"/>
-            <field name="report_name">RFQ_{{ (object.name or '').replace('/','_') }}</field>
+            <field name="report_name">PO_{{ (object.name or '').replace('/','_') }}</field>
             <field name="lang">{{ object.partner_id.lang }}</field>
         </record>
     </data>
