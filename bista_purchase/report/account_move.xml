@@ -35,20 +35,15 @@
                     <t t-if="o.move_type == 'out_invoice'">
                     <div name="shipping_address_block">
                         <strong>Ship To Address</strong>
+                        <br/>
+                        <span t-field="o.partner_shipping_id.name"/>
+                        <br/>
                         <t t-if="o.partner_shipping_id.parent_id.name">
-                            <div>
-                                <span t-field="o.partner_shipping_id.name"/>
-                                <br/>
-                                <span t-field="o.partner_shipping_id.parent_id.name"/>
-                            </div>
-                            <div t-field="o.partner_id"
-                                 t-options='{"widget": "contact", "fields": ["address"], "no_marker": True, "phone_icons": True}'/>
+                            <span t-field="o.partner_shipping_id.parent_id.name"/>
+                            <br/>
                         </t>
-                        <t t-else="">
-                            <div t-field="o.partner_shipping_id"
-                                 t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
-                        </t>
-
+                        <div t-field="o.partner_shipping_id"
+                            t-options='{"widget": "contact", "fields": ["address"], "no_marker": True}'/>
                     </div>
                     </t>
                 </t>
@@ -93,12 +88,16 @@
                             <span t-field="o.invoice_date_due" t-options='{"widget": "date"}'/>
                             <br/>
                         </t>
-                        <strong>BookPal Account # :</strong>
-                        <span t-field="o.partner_id.account_number" />
-                        <br/>
-                        <strong>Client PO Number:</strong>
-                        <span t-field="o.sale_order_id.client_order_ref"/>
-                        <br/>
+                        <t t-if="o.partner_id.account_number">
+                            <strong>BookPal Account # :</strong>
+                            <span t-field="o.partner_id.account_number" />
+                            <br/>
+                        </t>
+                        <t t-if="o.sale_order_id.client_order_ref">
+                            <strong>Client PO Number:</strong>
+                            <span t-field="o.sale_order_id.client_order_ref"/>
+                            <br/>
+                        </t>
                     </t>
                 </t>
             </div>
@@ -119,11 +118,11 @@
                     </th>
                     <th class="text-center"
                         style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;" >
-                        <strong>Product Format</strong>
+                        <strong>Format</strong>
                     </th>
                     <th class="text-center"
                         style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black; width:10%;">
-                        <strong>Quantity</strong>
+                        <strong>QTY</strong>
                     </th>
                     <t t-if="o.move_type == 'out_invoice'">
                         <th class="text-center"
@@ -170,7 +169,7 @@
                 </td>
                 <td id="product"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
-                    <span t-field="line.name"/>
+                    <span t-out="line.name.replace('[' + str(line.product_id.default_code) + '] ', str())"/>
                 </td>
                 <td class="text-center" name="td_format"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
@@ -178,7 +177,7 @@
                 </td>
                 <td class="text-center"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; ">
-                    <span t-field="line.quantity"/>
+                    <span t-field="line.quantity" t-options="{'widget': 'integer'}" />
                     <span t-field="line.product_uom_id"/>
                 </td>
                 <t t-if="o.move_type == 'out_invoice'">
