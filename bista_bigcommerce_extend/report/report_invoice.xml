@@ -11,26 +11,24 @@
             <t t-set="lines" t-value="lines.filtered(lambda l: l.product_id not in bc_shipping_id | bc_tax_id)" />
         </xpath>
         <xpath expr="//t[@t-call='account.document_tax_totals']" position="replace">
-            <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
-                <tr class="border-black o_subtotal">
-                    <td>Subtotal</td>
-                    <td class="text-right">
-                        <span class="oe_subtotal_footer_separator" t-out="sum(lines.mapped('price_subtotal'))" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Taxes</td>
-                    <td class="text-right o_price_total">
-                        <span class="text-nowrap" t-out="o.amount_tax + sum(o.invoice_line_ids.filtered(lambda l: l.product_id == bc_tax_id).mapped('price_subtotal'))" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Shipping</td>
-                    <td class="text-right o_price_total">
-                        <span class="text-nowrap" t-out="sum(o.invoice_line_ids.filtered(lambda l: l.product_id == bc_shipping_id).mapped('price_subtotal'))" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}" />
-                    </td>
-                </tr>
-            </t>
+            <tr class="border-black o_subtotal">
+                <td>Subtotal</td>
+                <td class="text-right">
+                    <span class="oe_subtotal_footer_separator" t-out="sum(lines.mapped('price_subtotal'))" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}" />
+                </td>
+            </tr>
+            <tr>
+                <td>Taxes</td>
+                <td class="text-right o_price_total">
+                    <span class="text-nowrap" t-out="o.amount_tax + sum(o.invoice_line_ids.filtered(lambda l: l.product_id == bc_tax_id).mapped('price_subtotal'))" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}" />
+                </td>
+            </tr>
+            <tr>
+                <td>Shipping</td>
+                <td class="text-right o_price_total">
+                    <span class="text-nowrap" t-out="sum(o.invoice_line_ids.filtered(lambda l: l.product_id == bc_shipping_id).mapped('price_subtotal'))" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}" />
+                </td>
+            </tr>
             <!-- Total amount with all taxes -->
             <tr class="border-black o_total">
                 <td><strong>Total</strong></td>
