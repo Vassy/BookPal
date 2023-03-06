@@ -25,14 +25,22 @@
         <field name="print_report_name">('Purchase Order - %s' % (object.name))</field>
         <field name="paperformat_id" ref="bista_purchase.paperformat_approved_purchase_report"/>
     </record>
+    <template id="custom_address_layout_inherit" inherit_id="bista_report_header_footer.custom_address_layout">
+        <xpath expr="//div[hasclass('address', 'row')]" position="attributes">
+            <attribute name="style">font-size: 13px !important;</attribute>
+        </xpath>
+    </template>
     <template id="report_purchaseorder_document_extended" inherit_id="purchase.report_purchaseorder_document">
         <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
             <attribute name="t-call">bista_report_header_footer.shipment_custom_header</attribute>
         </xpath>
+        <xpath expr="//div[hasclass('page')]" position="attributes">
+            <attribute name="style">font-size: 12px !important;</attribute>
+        </xpath>
         <xpath expr="//div[hasclass('page')]" position="inside">
             <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang)"/>
-            <div class="page ">
-                <div t-set="address">
+            <div class="page" style="font-size: 12px !important;">
+                <div t-set="address" style="font-size: 12px !important;">
                     <span>
                         <strong>Supplier Address</strong>
                     </span>
@@ -60,14 +68,14 @@
                         </strong>
                     </h4>
                     <strong t-if="o.state in ['purchase','done']">Date:
-                        <span t-field="o.date_approve" />
+                        <span t-field="o.date_approve" t-options='{"format": "MM/dd/yyyy"}'/>
                     </strong>
                     <strong t-if="o.state not in ['purchase','done']">Date:
-                        <span t-field="o.date_order" />
+                        <span t-field="o.date_order" t-options='{"format": "MM/dd/yyyy"}'/>
                     </strong>
                 </t>
                 <t t-if="o.dest_address_id">
-                    <t t-set="information_block">
+                    <t t-set="information_block" style="font-size: 12px !important;">
                         <strong>Shipping Address</strong>
                             <t t-if="o.dest_address_id.parent_id.name">
                                 <div>
@@ -85,7 +93,7 @@
                             </t>
                     </t>
                 </t>
-                <t t-set="custom_information_block">
+                <t t-set="custom_information_block" style="font-size: 12px !important;">
                     <div>
                         <t t-if="o.state in ['draft','sent']">
                             <strong>Purchase Order #:</strong>
@@ -185,7 +193,7 @@
                 </td>
                 <td id="product"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
-                    <span t-field="line.name"/>
+                    <span t-field="line.product_id.name"/>
                     <div>
                         <b>
                             <span>Remarks:</span>
@@ -211,7 +219,7 @@
                 <td class="text-right" name="td_discount"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
                     <div>
-                        <span t-field="line.discount"/>%
+                        <span t-esc="int(line.discount)"/>%
                     </div>
                 </td>
                 <td class="text-right text-danger" name="td_bp_price"
@@ -227,7 +235,7 @@
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm', 'o_main_table')]" position="after">
             <div>
-                <table style="border: 1px solid black; margin-left: auto; width:35%;font-size: 14px;">
+                <table style="border: 1px solid black; margin-left: auto; width:35%;font-size: 13px;">
                     <tr class="border-black o_subtotal">
                         <td style="padding-left:10px; width:57.16%; ">
                             <strong>Total W/D</strong>
