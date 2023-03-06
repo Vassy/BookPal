@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+    <template id="custom_address_layout_inherit" inherit_id="bista_report_header_footer.custom_address_layout">
+        <xpath expr="//div[hasclass('address', 'row')]" position="attributes">
+            <attribute name="style">font-size: 13px !important;</attribute>
+        </xpath>
+    </template>
     <template id="report_purchasequotation_document_inherit" inherit_id="purchase.report_purchasequotation_document">
         <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
             <attribute name="t-call">bista_report_header_footer.shipment_custom_header</attribute>
         </xpath>
+        <xpath expr="//div[hasclass('page')]" position="attributes">
+            <attribute name="style">font-size: 12px !important;</attribute>
+        </xpath>
         <xpath expr="//div[hasclass('page')]" position="inside">
             <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang)"/>
-            <div class="page">
-                <div t-set="address">
+            <div class="page" style="font-size: 12px !important;">
+                <div t-set="address" style="font-size: 12px !important;">
                     <span>
                         <strong>Supplier Address</strong>
                     </span>
@@ -26,8 +34,8 @@
                     </t>
                 </div>
                 <t t-if="o.dest_address_id">
-                    <t t-set="information_block">
-                        <strong>Shipping Address:</strong>
+                    <t t-set="information_block" style="font-size: 12px !important;">
+                        <strong>Shipping Address</strong>
                         <t t-if="o.dest_address_id.parent_id.name">
                             <div>
                                 <span t-field="o.dest_address_id.name"/>
@@ -55,10 +63,10 @@
                         </strong>
                     </h4>
                     <strong t-if="o.state in ['purchase','done','draft','sent']">Date:
-                        <span t-field="o.date_order" />
+                        <span t-field="o.date_order" t-options='{"format": "MM/dd/yyyy"}'/>
                     </strong>
                 </t>
-                <t t-set="custom_information_block">
+                <t t-set="custom_information_block" style="font-size: 12px; !important">
                     <div>
                         <t t-if="o.state in ['draft','sent']">
                             <strong>Purchase Order #:</strong>
@@ -147,7 +155,7 @@
                 </td>
                 <td id="product"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
-                    <span t-field="order_line.name"/>
+                    <span t-field="order_line.product_id.name"/>
                     <div>
                         <b>
                             <span>Remarks:</span>
@@ -173,7 +181,7 @@
                 <td class="text-right" name="td_discount"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
                     <div>
-                        <span t-field="order_line.discount"/>%
+                        <span t-esc="int(order_line.discount)"/>%
                     </div>
                 </td>
                 <td class="text-right text-danger" name="td_bp_price"
@@ -188,6 +196,9 @@
                 </td>
             </t>
         </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm')]" position="attributes">
+            <attribute name="style">margin-bottom: 0rem;</attribute>
+        </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm')]" position="before">
             <t t-if="o.special_pick_note">
                 <div class='row mt-4'>
@@ -198,6 +209,19 @@
                     </div>
                 </div>
             </t>
+        </xpath>
+        <xpath expr="//p[@t-field='o.notes']" position="before">
+            <table class="mt0" style="border: 1px solid black; margin-left: auto; width:35%;font-size: 13px;">
+                    <tr>
+                        <td style="border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black; padding-left:10px;">
+                            <strong class="border-black o_subtotal;text-right">Total</strong>
+                        </td>
+                        <td style="border-top: 1px solid black; padding-left:10px;"
+                            class="text-right">
+                            <strong t-field="o.amount_total"/>
+                        </td>
+                    </tr>
+                </table>
         </xpath>
         <xpath expr="//p[@t-field='o.notes']" position="replace">
             <div class="mt-5 mx-3" t-if="o.notes">

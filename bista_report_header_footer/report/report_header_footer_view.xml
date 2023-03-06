@@ -57,12 +57,10 @@
                 <div  t-if="report_type == 'pdf'">
                     <span  style="margin-right: 15px;" t-field="company.partner_id.name"/>
                     |
-                    <span style="margin-left:15px;" t-field="company.partner_id.street"/>
-                    ,
+                    <span style="margin-left:15px;" t-field="company.partner_id.street"/>,
                     <span style="margin-right: 15px;" t-field="company.partner_id.street2"/>
                     |
-                    <span style="margin-left: 15px;" t-field="company.partner_id.city"/>
-                    ,
+                    <span style="margin-left: 15px;" t-field="company.partner_id.city"/>,
                     <span t-field="company.partner_id.state_id.code"/>
                     <span style="margin-right: 15px;" t-field="company.partner_id.zip"/>
                     |
