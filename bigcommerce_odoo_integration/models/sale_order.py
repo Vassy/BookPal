@@ -16,6 +16,7 @@ class SaleOrderVts(models.Model):
     _inherit = "sale.order"
 
     big_commerce_order_id = fields.Char(string="BigCommerce Order ID", readonly=True, copy=False)
+    bc_id = fields.Integer('BC Order Id', readonly=True, copy=False)
     bigcommerce_store_id = fields.Many2one('bigcommerce.store.configuration', string="Bigcommerce Store", copy=False)
     bigcommerce_shipment_order_status = fields.Char(string='Bigcommerce Shipment Order Status', readonly=True)
     payment_status = fields.Selection([('paid', 'Paid'), ('not_paid', 'Not Paid')], string='Payment Status',
@@ -464,6 +465,7 @@ class SaleOrderVts(models.Model):
                                 })
                                 order_vals = self.create_sales_order_from_bigcommerce(vals)
                                 order_vals.update({'big_commerce_order_id': big_commerce_order_id,
+                                                    'bc_id': int(big_commerce_order_id),
                                                    'bigcommerce_store_id': bigcommerce_store_id.id,
                                                    'payment_status': 'paid' if order.get('payment_status') in [
                                                        "captured", "paid"] else 'not_paid',
@@ -1033,6 +1035,7 @@ class SaleOrderVts(models.Model):
                                  })
                     order_vals = self.with_user(1).create_sales_order_from_bigcommerce(vals)
                     order_vals.update({'big_commerce_order_id': big_commerce_order_id,
+                                        'bc_id': int(big_commerce_order_id),
                                        'bigcommerce_store_id': bigcommerce_store_id.id,
                                        'payment_status': 'paid' if order.get(
                                            'payment_status')in ["captured", "paid"]  else 'not_paid',

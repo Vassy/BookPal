@@ -156,8 +156,8 @@
                     <group>
                         <group>
                             <field name="warehouse_id" required="1"/>
-                            <field name="last_modification_date"/>
-                            <field name="from_order_date" />
+                            <field name="last_modification_date" string="From Date"/>
+                            <field name="from_order_date" string="To Date"/>
                         </group>
                     </group>
                     <div class="row mt16 o_settings_container">

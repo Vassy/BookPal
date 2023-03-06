@@ -23,6 +23,7 @@
                         <group>
                             <group>
                                 <field name="big_commerce_order_id" readonly="1"/>
+                                <field name="bc_id"/>
                                 <field name="bigcommerce_shipment_order_status" readonly="1"/>
                             </group>
                             <group>
