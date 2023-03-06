@@ -27,6 +27,7 @@
                 <span t-esc="line.product_template_id.default_code"/>
             </td>
         </xpath>
+
         <xpath expr="//table[@id='sales_order_table']/tbody/t/tr/t/td[@id='product_name']" position="replace">
             <td id="product_name"><span t-field="line.product_template_id.name"/></td>
         </xpath>
@@ -36,7 +37,9 @@
         <xpath expr="//table[@id='sales_order_table']//th[6]" position="after">
             <th class="text-right">Saving Amount</th>
         </xpath>
-
+        <xpath expr="//td[@t-if='display_discount']//t" position="replace">
+            <t t-esc="round(line.discount)"/>%
+        </xpath>
         <xpath expr="//table[@id='sales_order_table']/tbody/t/tr/t/td[3]" position="replace">
             <td class="text-right">
                 <div id="quote_qty">
@@ -64,8 +67,8 @@
                 </div>
             </td>
         </xpath>
-        <xpath expr="//table[@id='sales_order_table']//th[5]" position="replace" />
-        <xpath expr="//table[@id='sales_order_table']//td[5]" position="replace" />
+        <xpath expr="//table[@id='sales_order_table']//th[6]" position="replace" />
+        <xpath expr="//table[@id='sales_order_table']//td[6]" position="replace" />
         <xpath expr="//div[@name='total']/div" position="attributes">
             <attribute name="class">col-6</attribute>
         </xpath>
@@ -75,9 +78,6 @@
             <br/>
             <span t-field="line.picking_note"/>
         </td>
-        <xpath expr="//td[@t-if='display_discount']//t" position="replace">
-            <t t-esc="round(line.discount)"/>%
-        </xpath>
     </template>
 
     <template id="account.document_tax_totals">
