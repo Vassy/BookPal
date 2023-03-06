@@ -106,13 +106,13 @@ class PurchaseOrder(models.Model):
         if is_html_empty(self.special_pick_note):
             raise ValidationError(_('Please add the Notes'))
         result = super().action_rfq_send()
+        cc_partner_ids = self.partner_id.child_ids.filtered(lambda p: p.is_primary)
         glove_id = self.sale_order_ids.mapped("white_glove_id")
         if glove_id:
-            cc_partner_ids = self.partner_id.child_ids.filtered(lambda p: p.is_primary)
             cc_partner_ids |= self.partner_id.child_ids.filtered(
                 lambda p: glove_id in p.glove_type_ids
             )
-            result["context"].update({"default_cc_recipient_ids": cc_partner_ids.ids})
+        result["context"].update({"default_cc_recipient_ids": cc_partner_ids.ids})
         template_id = self.env["ir.model.data"]._xmlid_lookup(
             "bista_purchase.email_template_bista_purchase"
         )[2]
@@ -291,6 +291,7 @@ class PurchaseOrder(models.Model):
                 or field.attrib["name"] not in self._fields
                 or field.attrib.get("attrs")
                 or self._fields.get(field.attrib["name"]).readonly
+                or field.attrib["name"] == "po_conf"
             ):
                 continue
             field.attrib["attrs"] = attrs
