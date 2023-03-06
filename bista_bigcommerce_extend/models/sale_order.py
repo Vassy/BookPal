@@ -345,7 +345,7 @@ class SaleOrderVts(models.Model):
                                               ('country_id', '=', country_obj.id)]
                                     if street_2:
                                         domain.append(('street2', '=', street_2))
-                                    if customerId != 0:
+                                    if customerId != '0':
                                         partner_obj = self.env['res.partner'].bigcommerce_to_odoo_import_customers(
                                             warehouse_id=bigcommerce_store_id.warehouse_id, bigcommerce_store_ids=bigcommerce_store_id,
                                             source_page=1, destination_page=1, customer_id=customerId)
