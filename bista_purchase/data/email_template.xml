@@ -274,103 +274,79 @@
                         </tr>
                     </table>
                     <div class="row" style="margin: 0px;">
-                        <table class="table table-sm table-bordered col-6" style="margin-left: auto;">
-                        <tr class="border-black o_subtotal">
-                            <td style="padding-left:10px; width:57.16%; ">
-                                <strong>Total W/D</strong>
-                            </td>
-                            <td class="text-right"
-                                style="border-left: 1px solid black;margin: auto;">
-                                <span t-field="object.without_disc_amount_untaxed"/>
-                            </td>
-                        </tr>
-                        <tr class="border-black o_subtotal">
-                            <td style="padding-left:10px;">
-                                <strong>Discount</strong>
-                            </td>
-                            <td class="text-right" style="border-left: 1px solid black;">
-                                <span t-field="object.total_discount_amount"/>
-                            </td>
-                        </tr>
-                        <tr class="border-black o_subtotal">
-                            <td style="padding-left:10px;">
-                                <strong>Subtotal</strong>
-                            </td>
-                            <td class="text-right" style="border-left: 1px solid black;">
-                                <span t-field="object.amount_untaxed"/>
-                            </td>
-                        </tr>
-                        <tr class="border-black o_subtotal">
-                            <td style="padding-left:10px;">
-                                <strong class="text-right">Tax</strong>
-                            </td>
-                            <td class="text-right" style="border-left: 1px solid black;">
-                                <span t-field="object.amount_tax"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="padding-left:10px;">
-                                <strong class="o_subtotal;text-right">Total</strong>
-                            </td>
-                            <td style="padding-left:10px;"
-                                class="text-right">
-                                <strong t-field="object.amount_total"/>
-                            </td>
-                        </tr>
+                        <table class="table table-sm table-bordered col-6" style="margin-left: auto; margin-bottom: 0px;">
+                            <tr>
+                                <td><strong>Total</strong></td>
+                                <td class="text-right"><strong t-field="object.amount_total" /></td>
+                            </tr>
                         </table>
                     </div>
-                    <br/>
-                    <span style="font-weight: bold;">SHIP TO:</span><br/>
+                    <div class="row" style="margin: 0px;">
+                        <span style="font-weight: bold;">SHIP TO:</span>
+                    </div>
                     <t t-if="object.dest_address_id">
-                        <span t-out="object.dest_address_id.name"/><br/>
-                        <t t-if="object.dest_address_id.parent_id.name">
-                            <span t-out="object.dest_address_id.parent_id.name"/><br/>
-                        </t>
-                        <t t-if="object.dest_address_id.street">
-                            <span t-out="object.dest_address_id.street"/><br/>
-                        </t>
-                        <t t-if="object.dest_address_id.street2">
-                            <span t-out="object.dest_address_id.street2"/><br/>
-                        </t>
-                        <t t-if="object.dest_address_id.city">
-                            <span t-out="object.dest_address_id.city"/>,
-                        </t>
-                        <span t-out="object.dest_address_id.state_id.code"/>
-                        <span t-out="object.dest_address_id.zip"/>
-                        <span t-out="object.dest_address_id.country_id.code"/>
+                        <div class="row" style="margin: 0px;"><span t-field="object.dest_address_id.name" /></div>
+                        <div class="row" style="margin: 0px;" t-if="object.dest_address_id.parent_id.name">
+                            <span t-field="object.dest_address_id.parent_id.name" />
+                        </div>
+                        <div class="row" style="margin: 0px;" t-if="object.dest_address_id.street">
+                            <span t-field="object.dest_address_id.street"/>
+                        </div>
+                        <div class="row" style="margin: 0px;" t-if="object.dest_address_id.street2">
+                            <span t-field="object.dest_address_id.street2"/>
+                        </div>
+                        <div class="row" style="margin: 0px;">
+                            <t t-if="object.dest_address_id.city"><span t-field="object.dest_address_id.city" />,&amp;nbsp;</t>
+                            <span t-field="object.dest_address_id.state_id.code" />&amp;nbsp;
+                            <span t-field="object.dest_address_id.zip" />&amp;nbsp;
+                            <span t-field="object.dest_address_id.country_id.code" />
+                            <br/><br/>
+                        </div>
                     </t>
                     <t t-else="">
-                        <span t-out="object.company_id.name"/><br/>
-                        <t t-if="object.company_id.parent_id.name">
-                            <span t-out="object.company_id.parent_id.name"/><br/>
-                        </t>
-                        <t t-if="object.company_id.street">
-                            <span t-out="object.company_id.street"/><br/>
-                        </t>
-                        <t t-if="object.company_id.street2">
-                            <span t-out="object.company_id.street2"/><br/>
-                        </t>
-                        <t t-if="object.company_id.city">
-                            <span t-out="object.company_id.city"/>,
-                        </t>
-                        <span t-out="object.company_id.state_id.code"/>
-                        <span t-out="object.company_id.zip"/>
-                        <span t-out="object.company_id.country_id.code"/>
+                        <div class="row" style="margin: 0px;"><span t-field="object.company_id.name"/></div>
+                        <div class="row" style="margin: 0px;" t-if="object.company_id.parent_id.name">
+                            <span t-field="object.company_id.parent_id.name"/>
+                        </div>
+                        <div class="row" style="margin: 0px;" t-if="object.company_id.street">
+                            <span t-field="object.company_id.street"/>
+                        </div>
+                        <div class="row" style="margin: 0px;" t-if="object.company_id.street2">
+                            <span t-field="object.company_id.street2"/>
+                        </div>
+                        <div class="row" style="margin: 0px;">
+                            <t t-if="object.company_id.city"><span t-field="object.company_id.city" />,&amp;nbsp;</t>
+                            <span t-field="object.company_id.state_id.code" />&amp;nbsp;
+                            <span t-field="object.company_id.zip" />&amp;nbsp;
+                            <span t-field="object.company_id.country_id.code" />
+                            <br/><br/>
+                        </div>
                     </t>
-                    <br/><br/>
-                    <span style="font-weight: bold;">SHIPPING INSTRUCTIONS:</span>
-                    <span t-out="object.shipping_instructions.name" /><br/><br/>
-                    <span style="font-weight: bold;">DELIVER THESE ITEMS BY:</span>
-                    <t t-if="object.date_planned">
-                    <span t-out="format_date(object.date_planned.date())" /></t><br/><br/>
-                    <span style="font-weight: bold;">PO INSTRUCTIONS:</span>
-                    <div style="padding-left: 20px;" t-out="object.special_pick_note" />
-                    <br/><br/><br/>
-                    <span style="font-weight: bold;">PLEASE NOTE:</span><br/>
-                    <span t-out="object.notes" />
-                    <br/><br/>
+                    <div class="row" style="margin: 0px;">
+                        <span style="font-weight: bold;">SHIPPING INSTRUCTIONS:&amp;nbsp;</span>
+                        <span t-field="object.shipping_instructions.name" />
+                        <br/><br/>
+                    </div>
+                    <div class="row" style="margin: 0px;">
+                        <span style="font-weight: bold;">DELIVER THESE ITEMS BY:&amp;nbsp;</span>
+                        <span t-out="format_date(object.date_planned.date())" />
+                        <br/><br/>
+                    </div>
+                    <div class="row" style="margin: 0px;">
+                        <span style="font-weight: bold;">PO INSTRUCTIONS:</span>
+                    </div>
+                    <div class="row" style="margin: 0px;">
+                        <div style="padding-left: 20px;" t-field="object.special_pick_note" />
+                        <br/>
+                    </div>
+                    <div class="row" style="margin: 0px;">
+                        <span style="font-weight: bold;">PLEASE NOTE:</span>
+                    </div>
+                    <div class="row" style="margin: 0px;">
+                        <span t-field="object.notes" />
+                    </div>
                 </p>
-                <div t-out="user.signature"></div>
+                <div t-field="user.signature" />
             </field>
             <field name="report_template" ref="purchase.report_purchase_quotation"/>
             <field name="report_name">PO_{{ (object.name or '').replace('/','_') }}</field>
