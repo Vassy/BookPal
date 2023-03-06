@@ -41,6 +41,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='name']" position="after">
                     <field name="big_commerce_order_id"/>
+                    <field name="bc_id"/>
                     <field name="bigcommerce_shipment_order_status"/>
                 </xpath>
                 <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
