@@ -191,7 +191,7 @@ class SaleOrder(models.Model):
         if self.partner_id and not self._context.get("no_change_refer"):
             self.refer_by_person = self.partner_id.referal_source.id
             self.refer_by_company = self.partner_id.referring_organization.id
-        self.available_acquirer_ids = self.partner_id.available_acquirer_ids.ids
+        self.acquirer_ids = self.partner_id.acquirer_ids.ids
 
 
 class SaleOrderLine(models.Model):
