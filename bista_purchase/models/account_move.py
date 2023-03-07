@@ -21,8 +21,9 @@ class AccountMoveLine(models.Model):
     def _compute_discount_price(self):
         for line in self:
             price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            line.bp_price = line.currency_id.round(price)
-            line.quote_price = line.currency_id.round(price)
+            if line.currency_id:
+                line.bp_price = line.currency_id.round(price)
+                line.quote_price = line.currency_id.round(price)
 
     def create(self, vals):
         res = super(AccountMoveLine, self).create(vals)
