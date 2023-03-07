@@ -1,71 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<odoo noupdate="1">
-
+<odoo>
     <record model="po.status.line" id="status_line_draft">
         <field name="name">Draft</field>
-        <field name="sequence">1</field>
+        <field name="sequence">100</field>
         <field name="manual_update">False</field>
     </record>
     <record model="po.status.line" id="status_line_ready">
         <field name="name">Ready For Preview</field>
-        <field name="sequence">2</field>
+        <field name="sequence">100</field>
         <field name="manual_update">False</field>
     </record>
     <record model="po.status.line" id="status_line_ordered">
         <field name="name">Ordered</field>
-        <field name="sequence">3</field>
+        <field name="sequence">100</field>
         <field name="manual_update">False</field>
-    </record>
-    <record model="po.status.line" id="status_line_pending">
-        <field name="name">Pending/In Transient</field>
-        <field name="sequence">4</field>
-        <field name="manual_update">True</field>
     </record>
     <record model="po.status.line" id="status_line_received">
         <field name="name">Received</field>
-        <field name="sequence">5</field>
+        <field name="sequence">100</field>
         <field name="manual_update">False</field>
     </record>
     <record model="po.status.line" id="status_line_stocked">
         <field name="name">Stocked</field>
-        <field name="sequence">6</field>
-        <field name="manual_update">False</field>
-    </record>
-    <record model="po.status.line" id="status_line_completed">
-        <field name="name">Completed</field>
-        <field name="sequence">7</field>
-        <field name="manual_update">True</field>
-    </record>
-    <record model="po.status.line" id="status_line_return">
-        <field name="name">Return Created</field>
-        <field name="sequence">8</field>
-        <field name="manual_update">True</field>
-    </record>
-    <record model="po.status.line" id="status_line_rush_ordered">
-        <field name="name">Rush Ordered</field>
-        <field name="sequence">9</field>
-        <field name="manual_update">True</field>
-    </record>
-    <record model="po.status.line" id="status_line_on_hold">
-        <field name="name">On Hold</field>
-        <field name="sequence">10</field>
-        <field name="manual_update">True</field>
-    </record>
-    <record model="po.status.line" id="status_line_canceled">
-        <field name="name">Canceled</field>
-        <field name="sequence">11</field>
+        <field name="sequence">100</field>
         <field name="manual_update">False</field>
     </record>
     <record model="po.status.line" id="status_line_invoiced">
         <field name="name">Invoiced</field>
-        <field name="sequence">12</field>
+        <field name="sequence">100</field>
         <field name="manual_update">False</field>
+    </record>
+    <!-- Manuallu Line status -->
+    <record model="po.status.line" id="status_line_warehouse">
+        <field name="name">At Warehouse</field>
+        <field name="sequence">1</field>
+    </record>
+    <record model="po.status.line" id="status_line_backorder">
+        <field name="name">Backorder</field>
+        <field name="sequence">2</field>
+    </record>
+    <record model="po.status.line" id="status_line_canceled">
+        <field name="name">Cancelled</field>
+        <field name="sequence">3</field>
+    </record>
+    <record model="po.status.line" id="status_line_claim">
+        <field name="name">Carrier Claim</field>
+        <field name="sequence">4</field>
+    </record>
+    <record model="po.status.line" id="status_line_exception">
+        <field name="name">Carrier Exception</field>
+        <field name="sequence">5</field>
+    </record>
+    <record model="po.status.line" id="status_line_completed">
+        <field name="name">Complete</field>
+        <field name="sequence">6</field>
+    </record>
+    <record model="po.status.line" id="status_line_attempts">
+        <field name="name">Delivery Attempts</field>
+        <field name="sequence">7</field>
+    </record>
+    <record model="po.status.line" id="status_line_pending_wh">
+        <field name="name">Delivery Pending to WH</field>
+        <field name="sequence">8</field>
+    </record>
+    <record model="po.status.line" id="status_line_future_delivery">
+        <field name="name">Held: Future Delivery</field>
+        <field name="sequence">9</field>
+    </record>
+    <record model="po.status.line" id="status_line_tracking">
+        <field name="name">Inactive Tracking</field>
+        <field name="sequence">10</field>
+    </record>
+    <record model="po.status.line" id="status_line_transit">
+        <field name="name">In Transit</field>
+        <field name="sequence">11</field>
+    </record>
+    <record model="po.status.line" id="status_line_lost_carton">
+        <field name="name">Lost Carton</field>
+        <field name="sequence">12</field>
+    </record>
+    <record model="po.status.line" id="status_line_out_delivery">
+        <field name="name">Out for Delivery</field>
+        <field name="sequence">13</field>
     </record>
     <record model="po.status.line" id="status_line_partially_received">
-        <field name="name">Partially Received</field>
-        <field name="sequence">13</field>
-        <field name="manual_update">False</field>
+        <field name="name">Partially Delivered</field>
+        <field name="sequence">14</field>
     </record>
-
+    <record model="po.status.line" id="status_line_partially_shipment">
+        <field name="name">Partial Shipment</field>
+        <field name="sequence">15</field>
+    </record>
+    <record model="po.status.line" id="status_line_pub_entry">
+        <field name="name">Pending Pub Entry</field>
+        <field name="sequence">16</field>
+    </record>
+    <record model="po.status.line" id="status_line_release_title">
+        <field name="name">Pre Release Title</field>
+        <field name="sequence">17</field>
+    </record>
+    <record model="po.status.line" id="status_line_demand_title">
+        <field name="name">Print on Demand Title</field>
+        <field name="sequence">18</field>
+    </record>
+    <record model="po.status.line" id="status_line_returned">
+        <field name="name">Returned</field>
+        <field name="sequence">19</field>
+    </record>
+    <record model="po.status.line" id="status_line_returning">
+        <field name="name">Returning</field>
+        <field name="sequence">20</field>
+    </record>
+    <record model="po.status.line" id="status_line_issue_section">
+        <field name="name">See Issues Section</field>
+        <field name="sequence">21</field>
+    </record>
+    <record model="po.status.line" id="status_line_stock_hold">
+        <field name="name">Stock Hold</field>
+        <field name="sequence">22</field>
+    </record>
+    <record model="po.status.line" id="status_line_tracking_pending">
+        <field name="name">Tracking Pending</field>
+        <field name="sequence">23</field>
+    </record>
+    <record model="po.status.line" id="status_line_ups_claim">
+        <field name="name">UPS Claim</field>
+        <field name="sequence">24</field>
+    </record>
+    <record model="po.status.line" id="status_line_pending_cancel">
+        <field name="name">Pending Cancellation</field>
+        <field name="sequence">25</field>
+    </record>
 </odoo>

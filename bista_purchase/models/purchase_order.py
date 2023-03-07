@@ -393,7 +393,7 @@ class PurchaseOrderLine(models.Model):
     purchase_tracking_line_ids = fields.One2many(
         'purchase.tracking.line', 'po_line_id', string="Tracking Lines")
     status_id = fields.Many2one(
-        "po.status.line", string="Tracking Status", copy=False, ondelete="restrict", tracking=True
+        "po.status.line", string="Line Status", copy=False, ondelete="restrict", tracking=True
     )
     tracking_ref = fields.Char(
         'Tracking Refrence', compute="get_tracking_ref")
