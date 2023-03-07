@@ -45,6 +45,7 @@ class ResPartner(models.Model):
         ('high', 'High'),
         ('medium', 'Medium'),
         ('low', 'Low')], string='Account Order Standing')
+    external_company = fields.Char()
 
     def _search_referal_source(self, operator, value):
         partners = self.search([])

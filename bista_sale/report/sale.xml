@@ -110,7 +110,12 @@
                                     <div>
                                         <span t-field="doc.partner_shipping_id.name"/>
                                         <br/>
-                                        <span t-field="o.partner_shipping_id.parent_id.name"/>
+                                         <t t-if="not o.partner_shipping_id.external_company">
+                                            <span t-field="o.partner_shipping_id.parent_id.name"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span t-field="o.partner_shipping_id.external_company"/>
+                                        </t>
                                     </div>
                                     <span t-if="o.partner_shipping_id.street" t-field="o.partner_shipping_id.street"/>
                                     <span t-if="o.partner_shipping_id.street2" t-field="o.partner_shipping_id.street2"/>
