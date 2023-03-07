@@ -5,6 +5,9 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
+            <group name="order_details" position="inside">
+                <field name="acquirer_ids" widget="many2many_tags" options="{'no_create_edit': True, 'no_quick_create': True}" />
+            </group>
             <xpath expr="//field[@name='partner_invoice_id']" position="attributes">
                 <attribute name="string">Billing Address</attribute>
                 <attribute name="domain">['|', ('parent_id', '=', partner_id), ('id', '=', partner_id)]</attribute>
@@ -259,9 +262,6 @@
             <field name="invoice_status" position="after">
                 <field name="tag_ids" widget="many2many_tags"/>
             </field>
-<!--            <xpath expr="//field[@name='state']" position="before">-->
-<!--                <field name="order_processing_time" optional="hide"/>-->
-<!--            </xpath>-->
         </field>
     </record>
 
