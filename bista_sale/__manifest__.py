@@ -25,6 +25,7 @@
         'security/ir.model.access.csv',
         'security/security_view.xml',
         'views/artwork_status_view.xml',
+        "views/res_partner_views.xml",
         'views/sale_order_view.xml',
         'views/white_glove_type_view.xml',
         'views/journal_customization_view.xml',
@@ -36,7 +37,6 @@
         "views/seller_report_views.xml",
         # "views/crm_lead_views.xml",
         "wizard/best_seller_report_views.xml",
-
     ],
     'installable': True,
     'auto_install': False

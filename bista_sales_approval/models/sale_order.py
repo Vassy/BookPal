@@ -70,11 +70,9 @@ class SaleOrder(models.Model):
         return super().message_post(**kwargs)
 
     def has_to_be_signed(self, include_draft=False):
-        display_state = self.state == "sent" or (
-            self.state in ["draft", "quote_approval", "quote_confirm"] and include_draft
-        )
+        display_state = ("quote_confirm", "sent", "order_booked", "sale")
         return (
-            display_state
+            (self.state in display_state or (self.state == "draft" and include_draft))
             and not self.is_expired
             and self.require_signature
             and not self.signature
@@ -82,15 +80,14 @@ class SaleOrder(models.Model):
 
     def has_to_be_paid(self, include_draft=False):
         transaction = self.get_portal_last_transaction()
-        display_state = self.state == "sent" or (
-            self.state in ["draft", "quote_approval", "quote_confirm"] and include_draft
-        )
+        display_state = ("quote_confirm", "sent", "order_booked", "sale")
         return (
-            display_state
+            (self.state in display_state or (self.state == "draft" and include_draft))
             and not self.is_expired
             and self.require_payment
             and transaction.state != "done"
             and self.amount_total
+            and not self.transaction_ids
         )
 
     def write(self, vals):

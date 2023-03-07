@@ -107,6 +107,19 @@ class SaleOrder(models.Model):
         string='Weight unit of measure label', compute="_compute_weight_uom")
     product_use = fields.Char(string='Product Use')
     # compurl = fields.Char(string="compute url", compute="compute_url")
+    acquirer_ids = fields.Many2many(
+        "payment.acquirer",
+        string="Available Payments",
+        domain=lambda self: self._get_available_acquirer(),
+    )
+
+    def _get_available_acquirer(self):
+        payment = self.env["payment.acquirer"].sudo()
+        payment_ids = payment._get_compatible_acquirers(
+            company_id=self.env.company.id,
+            partner_id=self.env.user.partner_id.id,
+        )
+        return [("id", "in", payment_ids.ids)]
 
     @api.depends("order_line.price_total")
     def _amount_all(self):
@@ -178,6 +191,7 @@ class SaleOrder(models.Model):
         if self.partner_id and not self._context.get("no_change_refer"):
             self.refer_by_person = self.partner_id.referal_source.id
             self.refer_by_company = self.partner_id.referring_organization.id
+        self.acquirer_ids = self.partner_id.acquirer_ids.ids
 
 
 class SaleOrderLine(models.Model):

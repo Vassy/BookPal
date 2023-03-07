@@ -296,9 +296,9 @@
                             <span t-field="object.dest_address_id.street2"/>
                         </div>
                         <div class="row" style="margin: 0px;">
-                            <t t-if="object.dest_address_id.city"><span t-field="object.dest_address_id.city" />,&amp;nbsp;</t>
-                            <span t-field="object.dest_address_id.state_id.code" />&amp;nbsp;
-                            <span t-field="object.dest_address_id.zip" />&amp;nbsp;
+                            <t t-if="object.dest_address_id.city"><span t-field="object.dest_address_id.city" />,</t>
+                            <span t-field="object.dest_address_id.state_id.code" />
+                            <span t-field="object.dest_address_id.zip" />
                             <span t-field="object.dest_address_id.country_id.code" />
                             <br/><br/>
                         </div>
@@ -315,20 +315,20 @@
                             <span t-field="object.company_id.street2"/>
                         </div>
                         <div class="row" style="margin: 0px;">
-                            <t t-if="object.company_id.city"><span t-field="object.company_id.city" />,&amp;nbsp;</t>
-                            <span t-field="object.company_id.state_id.code" />&amp;nbsp;
-                            <span t-field="object.company_id.zip" />&amp;nbsp;
+                            <t t-if="object.company_id.city"><span t-field="object.company_id.city" />,</t>
+                            <span t-field="object.company_id.state_id.code" />
+                            <span t-field="object.company_id.zip" />
                             <span t-field="object.company_id.country_id.code" />
                             <br/><br/>
                         </div>
                     </t>
                     <div class="row" style="margin: 0px;">
-                        <span style="font-weight: bold;">SHIPPING INSTRUCTIONS:&amp;nbsp;</span>
+                        <span style="font-weight: bold;">SHIPPING INSTRUCTIONS:</span>
                         <span t-field="object.shipping_instructions.name" />
                         <br/><br/>
                     </div>
                     <div class="row" style="margin: 0px;">
-                        <span style="font-weight: bold;">DELIVER THESE ITEMS BY:&amp;nbsp;</span>
+                        <span style="font-weight: bold;">DELIVER THESE ITEMS BY:</span>
                         <span t-out="format_date(object.date_planned.date())" />
                         <br/><br/>
                     </div>
