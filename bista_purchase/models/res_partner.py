@@ -74,6 +74,19 @@ class ResPartner(models.Model):
 
     partner_shipping_ids = fields.One2many('res.partner.shipping', 'partner_id', string="Partner Shippings")
 
+    def default_get(self, fields):
+        """Updating default fiscal position and currency."""
+        defaults = super().default_get(fields)
+        currency = self.env['res.currency'].search(
+            [('name', '=', 'USD'), ('active', '=', True)])
+        defaults['property_purchase_currency_id'] = currency.id
+        fiscal_position_id = self.env['account.fiscal.position'].search(
+            [('is_avatax', '=', True)], limit=1)
+        if defaults.get('customer_rank', 0) > 0:
+            defaults['property_account_position_id'] = \
+                fiscal_position_id.id
+        return defaults
+
     def _compute_product_count(self):
         for partner_id in self:
             product_tmpl_ids = self.env['product.supplierinfo'].search([('name', '=', partner_id.id)]).mapped(
