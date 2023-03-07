@@ -67,7 +67,7 @@
                             <t t-esc="o.name"/>
                         </strong>
                     </h4>
-                    <strong t-if="o.state in ['purchase','done','draft','sent']">Date:
+                    <strong>Date:
                         <span t-field="o.date_order" t-options='{"format": "MM/dd/yyyy"}'/>
                     </strong>
                 </t>
