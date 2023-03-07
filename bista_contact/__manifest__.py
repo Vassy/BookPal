@@ -7,7 +7,7 @@
     'summary': 'Manage Conatct',
     'website': 'http://www.bistasolutions.com',
     'license': 'AGPL-3',
-    'depends': ['base', 'product'],
+    'depends': ['bista_sale_multi_ship', 'product'],
     'data': [
         'security/ir.model.access.csv',
 
