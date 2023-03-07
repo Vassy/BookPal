@@ -40,7 +40,12 @@
                             <div>
                                 <span t-field="o.dest_address_id.name"/>
                                 <br/>
-                                <span t-field="o.dest_address_id.parent_id.name"/>
+                                <t t-if="not o.dest_address_id.external_company">
+                                    <span t-field="o.dest_address_id.parent_id.name"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-field="o.dest_address_id.external_company"/>
+                                </t>
                             </div>
                             <div t-field="o.dest_address_id"
                                  t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
@@ -211,7 +216,7 @@
             </t>
         </xpath>
         <xpath expr="//p[@t-field='o.notes']" position="before">
-            <table class="mt0" style="border: 1px solid black; margin-left: auto; width:35%;font-size: 13px;">
+            <table class="mt0" style="border: 1px solid black; margin-left: auto; width:30%;font-size: 13px;">
                     <tr>
                         <td style="border-top: 1px solid black; border-left: 1px solid black; border-right: 1px solid black; padding-left:10px;">
                             <strong class="border-black o_subtotal;text-right">Total</strong>

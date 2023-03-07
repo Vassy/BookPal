@@ -88,6 +88,19 @@
                     </group>
                 </page>
             </xpath>
+            <xpath expr="//page[@name='contact_addresses']/field[@name='child_ids']/form/sheet//field[@name='name']" position="after">
+                <field name="external_company"/>
+            </xpath>
+            <xpath expr="//page[@name='contact_addresses']/field[@name='child_ids']/form/sheet//field[@name='mobile']" position="after">
+                <field name="is_multi_ship"/>
+            </xpath>
+            <field name="parent_id" position="after">
+                <br/>
+                <label for="external_company"/>
+                <div>
+                <field name="external_company"/>
+            </div>
+            </field>
         </field>
     </record>
     <record model="ir.ui.view" id="res_partner_tree_views">

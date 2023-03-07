@@ -24,10 +24,9 @@
         </xpath>
         <xpath expr="//table[@id='sales_order_table']/tbody/t/tr/t/td[@id='product_name']" position="before">
             <td class="text-left">
-                <span t-esc="line.product_template_id.default_code"/>
+                <span t-esc="line.product_template_id.default_code"/> 
             </td>
         </xpath>
-
         <xpath expr="//table[@id='sales_order_table']/tbody/t/tr/t/td[@id='product_name']" position="replace">
             <td id="product_name"><span t-field="line.product_template_id.name"/></td>
         </xpath>
@@ -35,7 +34,7 @@
             <th t-attf-class="text-right {{ 'd-none d-sm-table-cell' if report_type == 'html' else '' }}">Price</th>
         </xpath>
         <xpath expr="//table[@id='sales_order_table']//th[6]" position="after">
-            <th class="text-right">Saving Amount</th>
+            <th class="text-center">Saving Amount</th>
         </xpath>
         <xpath expr="//td[@t-if='display_discount']//t" position="replace">
             <t t-esc="round(line.discount)"/>%
@@ -49,7 +48,7 @@
             </td>
         </xpath>
         <xpath expr="//table[@id='sales_order_table']//td[6]" position="after">
-            <td class="text-right">
+            <td class="text-center">
                 <span t-field="line.saving_amount" t-options="{'widget': 'monetary', 'display_currency': line.currency_id , 'decimal_precision': 'Product Price'}" />
             </td>
         </xpath>
@@ -72,12 +71,80 @@
         <xpath expr="//div[@name='total']/div" position="attributes">
             <attribute name="class">col-6</attribute>
         </xpath>
-        <td id="product_name" position="inside">
+        <div class="col-lg-6" position="replace">
+            <div class="col-lg-6">
+            <strong t-if="sale_order.partner_shipping_id == sale_order.partner_invoice_id" class="d-block mb-1">Invoicing and Shipping Address:</strong>
+            <strong t-if="sale_order.partner_shipping_id != sale_order.partner_invoice_id" class="d-block mb-1">Invoicing Address:</strong>
+            <t t-if="sale_order.partner_shipping_id.parent_id.name">
+                    <div>
+                        <span t-field="sale_order.partner_invoice_id.name"/>
+                        <br/>
+                         <t t-if="not sale_order.partner_invoice_id.external_company">
+                            <span t-field="sale_order.partner_invoice_id.parent_id.name"/>
+                        </t>
+                        <t t-else="">
+                            <span t-field="sale_order.partner_invoice_id.external_company"/>
+                        </t>
+                    </div>
+                    <span t-if="sale_order.partner_invoice_id.street" t-field="sale_order.partner_invoice_id.street"/>
+                    <span t-if="sale_order.partner_invoice_id.street2" t-field="sale_order.partner_invoice_id.street2"/>
+                    <br t-if="sale_order.partner_invoice_id.city"/>
+                    <span t-if="sale_order.partner_invoice_id.city" t-field="sale_order.partner_invoice_id.city"/>
+                    <span t-if="sale_order.partner_invoice_id.zip" t-field="sale_order.partner_invoice_id.zip"/>
+                </t>
+                <t t-else="">
+                    <br/>
+                    <span t-field="sale_order.partner_invoice_id.name"/>
+                    <br t-if="sale_order.partner_invoice_id.street"/>
+                    <span t-if="sale_order.partner_invoice_id.street" t-field="sale_order.partner_invoice_id.street"/>
+                    <br t-if="sale_order.partner_invoice_id.street2"/>
+                    <span t-if="sale_order.partner_invoice_id.street2" t-field="sale_order.partner_invoice_id.street2"/>
+                    <br t-if="sale_order.partner_invoice_id.city"/>
+                    <span t-if="sale_order.partner_invoice_id.city" t-field="sale_order.partner_invoice_id.city"/>
+                    <span t-if="sale_order.partner_invoice_id.zip" t-field="sale_order.partner_invoice_id.zip"/>
+                </t>
+            </div>
+        </div>
+        <div id="shipping_address" position="replace">
+            <div id="shipping_address" class="col-lg-6">
+                <strong class="d-block mb-1">Shipping Address:</strong>
+                <t t-if="sale_order.partner_shipping_id.parent_id.name">
+                    <div>
+                        <span t-field="sale_order.partner_shipping_id.name"/>
+                        <br/>
+                         <t t-if="not sale_order.partner_shipping_id.external_company">
+                            <span t-field="sale_order.partner_shipping_id.parent_id.name"/>
+                        </t>
+                        <t t-else="">
+                            <span t-field="sale_order.partner_shipping_id.external_company"/>
+                        </t>
+                    </div>
+                    <span t-if="sale_order.partner_shipping_id.street" t-field="sale_order.partner_shipping_id.street"/>
+                    <span t-if="sale_order.partner_shipping_id.street2" t-field="sale_order.partner_shipping_id.street2"/>
+                    <br t-if="sale_order.partner_shipping_id.city"/>
+                    <span t-if="sale_order.partner_shipping_id.city" t-field="sale_order.partner_shipping_id.city"/>
+                    <span t-if="sale_order.partner_shipping_id.zip" t-field="sale_order.partner_shipping_id.zip"/>
+                </t>
+                <t t-else="">
+                    <br/>
+                    <span t-field="sale_order.partner_shipping_id.name"/>
+                    <br t-if="sale_order.partner_shipping_id.street"/>
+                    <span t-if="sale_order.partner_shipping_id.street" t-field="sale_order.partner_shipping_id.street"/>
+                    <br t-if="sale_order.partner_shipping_id.street2"/>
+                    <span t-if="sale_order.partner_shipping_id.street2" t-field="sale_order.partner_shipping_id.street2"/>
+                    <br t-if="sale_order.partner_shipping_id.city"/>
+                    <span t-if="sale_order.partner_shipping_id.city" t-field="sale_order.partner_shipping_id.city"/>
+                    <span t-if="sale_order.partner_shipping_id.zip" t-field="sale_order.partner_shipping_id.zip"/>
+                </t>
+            </div>
+        </div>
+
+        <!-- <td id="product_name" position="inside">
             <br /><br />
             <b><span t-if="line.picking_note">Product Notes:</span></b>
             <br/>
             <span t-field="line.picking_note"/>
-        </td>
+        </td> -->
     </template>
 
     <template id="account.document_tax_totals">
