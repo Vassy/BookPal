@@ -10,6 +10,7 @@
                 <field name="next_followup_date" optional="show" />
                 <field name="note" optional="show" />
             </field>
+            <field name="line_status" position="replace" />
         </field>
     </record>
 
