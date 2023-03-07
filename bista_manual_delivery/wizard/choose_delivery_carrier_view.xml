@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="choose_delivery_carrier_extend_view_form" model="ir.ui.view">
+        <field name="name">choose.delivery.carrier.extend.form</field>
+        <field name="model">choose.delivery.carrier</field>
+        <field name="inherit_id" ref="delivery.choose_delivery_carrier_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='delivery_price']" position="after">
+                <field name="manual_shipping_cost" attrs="{'invisible': [('delivery_type', '!=', 'manual')]}"/>
+            </xpath>
+            <xpath expr="//label[@for='display_price']" position="attributes">
+                <attribute name="attrs">{'invisible': [('delivery_type', '=', 'manual')]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='display_price']" position="attributes">
+                <attribute name="attrs">{'invisible': [('delivery_type', '=', 'manual')]}</attribute>
+            </xpath>
+            <xpath expr="//button[@name='update_price']" position="attributes">
+                <attribute name="attrs">{'invisible': [('delivery_type', '=', 'manual')]}</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
