@@ -25,7 +25,7 @@ class ModCustomerPortal(CustomerPortal):
             download=download,
             **kw
         )
-        sale_id = request.env["sale.order"].browse(order_id)
+        sale_id = request.env["sale.order"].browse(order_id).sudo()
         if sale_id.exists() and sale_id.acquirer_ids:
             response.qcontext["acquirers"] = sale_id.acquirer_ids
         return response

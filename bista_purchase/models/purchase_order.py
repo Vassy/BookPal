@@ -398,8 +398,8 @@ class PurchaseOrderLine(models.Model):
     tracking_ref = fields.Char(
         'Tracking Refrence', compute="get_tracking_ref")
     price_unit = fields.Float("BP Price")
-    next_followup_date = fields.Date("Next Followup Date")
-    note = fields.Text("Notes")
+    next_followup_date = fields.Date("Next Followup Date", copy=False)
+    note = fields.Text("Notes", copy=False)
 
     @api.depends('move_ids.state')
     def get_tracking_ref(self):
