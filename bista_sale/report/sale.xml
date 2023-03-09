@@ -94,8 +94,18 @@
                 <t t-set="report_tagline" >
                     <div class="o_boxed_header"  style="margin-top: 0px !important; margin-bottom: 0rem !important;">
                         <div style="margin-left: 9rem !important; font-style: italic; font-size:20px;margin-bottom: 0rem !important;">
-                            <h5 style="margin-bottom: 0rem !important;">Thank you for requesting this quote Inspiration is just an order away!</h5>
-                            <h5 style="margin-left: 7rem !important;">Please let us Know if you have any questions.</h5>
+                            <t t-if="o.state in ('draft','sent','quote_approval', 'quote_confirm')">
+                                <div class="row">
+                                <span style="margin-bottom: 0rem !important;font-size:20px;" t-esc="o.company_id.quote_tag_line"></span>
+                            </div>
+                            </t>
+                            <t t-else="">
+                                <div class="row">
+                                <span style="margin-bottom: 0rem !important;font-size:20px;" t-esc="o.company_id.so_tag_line"></span>
+                            </div>
+                            </t>
+                            <!-- <h5 style="margin-bottom: 0rem !important;">Thank you for requesting this quote Inspiration is just an order away!</h5> -->
+                            <!-- <h5 style="margin-left: 7rem !important;">Please let us Know if you have any questions.</h5> -->
                         </div>
                     </div>
                 </t>
