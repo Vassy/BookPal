@@ -31,6 +31,9 @@
                 <xpath expr="//field[@name='vat']" position="after">
                     <field name="state" attrs="{'invisible': [('is_multi_ship', '=', False)]}"/>
                 </xpath>
+                <xpath expr="//page[@name='contact_addresses']/field[@name='child_ids']/form/sheet//field[@name='mobile']" position="after">
+                <field name="is_multi_ship"/>
+            </xpath>
         </field>
     </record>
 
