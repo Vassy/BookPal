@@ -10,3 +10,4 @@ from . import customization_type
 from . import product
 from . import seller_report
 from . import pricelist_item
+
