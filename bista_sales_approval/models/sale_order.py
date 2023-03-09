@@ -97,6 +97,8 @@ class SaleOrder(models.Model):
 
     def action_order_booked(self):
         for sale in self:
+            if sale.state == "sale":
+                continue
             sale_data = {
                 "state": "order_booked",
                 "is_order": True,
