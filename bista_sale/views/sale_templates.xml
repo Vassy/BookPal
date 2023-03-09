@@ -189,8 +189,8 @@
 
             <!--Total amount with all taxes-->
             <tr class="border-black o_total">
-                <td><strong>Total</strong></td>
-                <td class="text-right">
+                <td style="font-size: 18px;"><strong>Total</strong></td>
+                <td class="text-right" style="font-size: 18px;">
                     <strong t-esc="tax_totals['formatted_amount_total']"/>
                 </td>
             </tr>
@@ -199,8 +199,8 @@
     <template id="inherit_sale_order_portal_content_totals_table" inherit_id="account.document_tax_totals">
         <xpath expr="//tr[hasclass('o_total')]" position="after">
             <tr t-if="sale_order and sale_order._name == 'sale.order'">
-                <td class="text-muted">Total Saving Amount</td>
-                <td class="text-right">
+                <td style="font-size: 12px; color: #AEAEAE;">Total Saving Amount</td>
+                <td class="text-right" style="font-size: 12px; color: #AEAEAE;">
                     <span t-field="sale_order.saving_amount" t-options="{'widget': 'monetary', 'display_currency': sale_order.pricelist_id.currency_id}"/>
                 </td>
             </tr>
@@ -215,10 +215,11 @@
             <small>
                 <b t-field="sale_order.saving_amount"
                     t-options='{"widget": "monetary", "display_currency": sale_order.pricelist_id.currency_id}'
-                    style="text-decoration: line-through"
                     class="d-block mt-1"
                     data-id="saving_amount" />
             </small>
         </xpath>
+        <xpath expr="//div[hasclass('o_portal_sale_sidebar')]//li[@t-if='sale_order.amount_undiscounted - sale_order.amount_untaxed &gt; 0.01']//t[@t-if='sale_order.amount_untaxed == sale_order.amount_total']" position="replace"/>
+        <xpath expr="//div[hasclass('o_portal_sale_sidebar')]//li[@t-if='sale_order.amount_undiscounted - sale_order.amount_untaxed &gt; 0.01']//t[@t-else='']" position="replace"/>
     </template>
 </odoo>

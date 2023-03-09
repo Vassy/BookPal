@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_sale_bista" model="ir.ui.view">
+        <field name="name">res.config.settings.form.inherit.sale.bista</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="25"/>
+        <field name="inherit_id" ref="sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='no_edit_order']" position="after">
+                <div class="col-12 col-lg-6 o_setting_box" id="quote_tag_line">
+                    <div class="o_setting_left_pane">
+                        <!-- <field name="use_po_terms"/> -->
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <label for="quote_tag_line"/>
+                        <div class="text-muted">
+                            Add your tagline to print in the quotaion 
+                        </div>
+                        <div class="content-group">
+                            <field name="quote_tag_line" class="oe_account_terms mt-5 w-100"
+                                placeholder="Insert your tagline here..."/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6 o_setting_box" id="so_tag_line">
+                    <div class="o_setting_left_pane">
+                        <!-- <field name="use_po_terms"/> -->
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <label for="so_tag_line"/>
+                        <div class="text-muted">
+                            Add your tagline to print in the sale orders 
+                        </div>
+                        <div class="content-group">
+                            <field name="so_tag_line" class="oe_account_terms mt-5 w-100"
+                                placeholder="Insert your tagline here..."/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
