@@ -31,6 +31,12 @@
                         </group>
                     </page>
                 </xpath>
+                <xpath expr="//page[@name='contact_addresses']//field[@name='child_ids']/form/sheet/group" position="inside">
+                    <group string='Bigcommerce Info' name="bigcommerce_info">
+                        <field name="bigcommerce_customer_id"/>
+                        <field name="tax_exempt_category"/>
+                    </group>
+                </xpath>
             </field>
         </record>
        <!-- <record id="action_server_module_immediate_install" model="ir.actions.server">
@@ -41,5 +47,16 @@
             <field name="state">code</field>
             <field name="code">records.export_customer_to_bigcommerce()</field>
         </record>-->
+
+        <record id="bigcommerce_customer_filter_view" model="ir.ui.view">
+            <field name="name">Bigcommerce Customer Filter</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='inactive']" position="after">
+                    <filter string="Bigcommerce Customer" name="bc_customer" domain="[('bigcommerce_customer_id', '!=', False)]"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

@@ -50,6 +50,8 @@ class ResPartner(models.Model):
         bc_customer_id = str(record.get('id', False))  # bigcommerce_store_id.bc_customer_prefix + "_" +
         partner_id = self.env['res.partner'].search(
             [('bigcommerce_customer_id', '=', bc_customer_id)], limit=1)
+        if partner_id and not partner_id.avalara_partner_code:
+            partner_id.avalara_partner_code = partner_id.bigcommerce_customer_id
         customer_group_id = self.env['bigcommerce.customer.group'].search(
             [('customer_group_id', '=', record.get('customer_group_id')),
              ('bc_store_id', '=', bigcommerce_store_id.id)], limit=1)
@@ -59,6 +61,7 @@ class ResPartner(models.Model):
                 'phone': record.get('phone', ''),
                 'email': record.get('email'),
                 'bigcommerce_customer_id': bc_customer_id,
+                'avalara_partner_code': bc_customer_id,
                 'is_available_in_bigcommerce': True,
                 'bigcommerce_store_id': bigcommerce_store_id.id,
                 'bigcommerce_customer_group_id': customer_group_id.id,
@@ -70,8 +73,12 @@ class ResPartner(models.Model):
                 if not partner_parent_id:
                     company_vals = {'company_type': 'company', 'name': record.get('company')}
                     partner_vals.pop('bigcommerce_customer_id')
-                    partner_parent_id = self.env['res.partner'].create({**partner_vals, **company_vals})
-                partner_vals.update({'parent_id': partner_parent_id.id,'bigcommerce_customer_id':bc_customer_id})
+                    partner_parent_id = self.env['res.partner'].create(
+                        {**partner_vals, **company_vals})
+                partner_vals.update({
+                    'parent_id': partner_parent_id.id,
+                    'bigcommerce_customer_id': bc_customer_id,
+                    'avalara_partner_code': bc_customer_id})
             partner_id = self.env['res.partner'].create(partner_vals)
             _logger.info("Customer Created : {0}".format(partner_id.name))
             customer_message = "%s Customer Created" % (partner_id.name)
@@ -404,6 +411,7 @@ class ResPartner(models.Model):
                         for data in response_data.get('data'):
                             customer_id = data.get('id')
                             partner.bigcommerce_customer_id = customer_id
+                            partner.avalara_partner_code = customer_id
                             partner.is_available_in_bigcommerce = True
                             if partner.child_ids:
                                 partner.child_ids.write(

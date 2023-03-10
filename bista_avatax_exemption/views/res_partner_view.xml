@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="res_partner_exemption_extend" model="ir.ui.view">
+        <field name="name">res.partner.exemption.extend</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account_avatax.res_partner_form_inherit" />
+        <field name="arch" type="xml">
+            <field name="avalara_exemption_id" position="attributes">
+                <attribute name="attrs"></attribute>
+                <attribute name="string">Avalara Exemption Code</attribute>
+            </field>
+            <field name="avatax_unique_code" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+            <field name="avalara_partner_code" position="attributes">
+                <attribute name="string">Avalara Customer Id</attribute>
+                <attribute name="attrs"></attribute>
+            </field>
+             <xpath expr="//page[@name='contact_addresses']//field[@name='child_ids']/form/sheet/group" position="inside">
+                <group name="avatax_info" string="Avalara Info">
+                    <field name="avalara_partner_code" string="Avalara Customer ID"/>
+                    <field name="avalara_exemption_id" string="Avalara Exemption Code"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
