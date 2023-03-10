@@ -17,6 +17,7 @@
 
     <record id="purchase.action_report_purchase_order" model="ir.actions.report">
         <field name="name">Approved Order</field>
+        <field name="binding_model_id" eval="False"/>
         <field name="print_report_name">('Approved Order - %s' % (object.name))</field>
         <field name="paperformat_id" ref="bista_purchase.paperformat_approved_purchase_report"/>
     </record>
