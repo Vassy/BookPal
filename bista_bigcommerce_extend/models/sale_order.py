@@ -573,6 +573,11 @@ class SaleOrderVts(models.Model):
                     'price_unit': product_id.list_price,
                     'discounted_price': price
                 })
+            else:
+                vals.update({
+                    'price_unit': price,
+                    'discounted_price': price
+                })
             sale_order_line = self.env['sale.order.line'].search(
                 [('order_id', '=', order_id.id), ('product_id', '=', product_id.id),
                  ('product_uom_qty', '=', float(vals.get('order_qty')))])
