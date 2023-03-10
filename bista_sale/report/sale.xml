@@ -25,6 +25,8 @@
             <t t-set="o" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
             <div class="page">
                 <div t-set="address">
+                <div class="row">
+                <div class="col-12" style="margin-top:16px;">
                     <strong>Prepared For:</strong>
                     <t t-if="o.partner_id.parent_id.name">
                         <div>
@@ -70,6 +72,8 @@
                         </div>
                     </t>
                 </div>
+                </div>
+                </div>
                 <t t-set="report_info"
                    class="col-6 text-right">
                     <h3 t-if="o.state in ['sale','order_booked','credit_review','pending_for_approval','cancel','done']">Sale Order</h3>
@@ -101,7 +105,7 @@
                 </t>
                 <t t-set="information_block">
                     <div class="row">
-                        <div>
+                        <div class="col-12" style="margin-top:16px;">
                             <t t-if="doc.split_shipment">
                             </t>
                             <t t-else="">
@@ -139,7 +143,8 @@
                     </div>
                 </t>
                 <t t-set="custom_information_block">
-                    <div>
+                    <div class="row">
+                    <div class="col-12" style="margin-top:16px;">
                         <t t-if="o.commitment_date">
                             <strong>Need By Date:</strong>
                             <span t-field="o.commitment_date" t-options="{'widget': 'date'}"/>
@@ -165,6 +170,7 @@
                         <span t-field="o.user_id.phone"/>
                         <br/>
                     </div>
+                </div>
                 </t>
             </div>
 
