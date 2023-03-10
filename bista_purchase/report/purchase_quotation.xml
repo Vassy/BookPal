@@ -163,7 +163,7 @@
                     <span t-field="order_line.product_id.name"/>
                     <div>
                         <b>
-                            <span>Remarks:</span>
+                            <span t-if="order_line.receipt_note">Remarks:</span>
                         </b>
                         <span t-field="order_line.receipt_note"/>
                     </div>
@@ -227,6 +227,11 @@
                         </td>
                     </tr>
                 </table>
+        </xpath>
+        <xpath expr="//p[@t-field='o.notes']" position="before">
+            <div class="text-right text-danger">
+                <span style="font-size: 11px; margin-right:0px;">DO NOT PROCESS IF PRICES ARE INCORRECT</span>
+            </div>
         </xpath>
         <xpath expr="//p[@t-field='o.notes']" position="replace">
             <div class="mt-5 mx-3" t-if="o.notes">
