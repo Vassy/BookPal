@@ -35,13 +35,16 @@
                         </div>
                             <div>
                             <strong>Customer Address:</strong><br/>
-                                <span  t-field="o.partner_id.street"/>
+                                <span t-field="o.partner_id.street"/>
                                 <br/>
-                                <span t-field="o.partner_id.street2"/>
-                                <br/>
-                                <span t-field="o.partner_id.city"/>
+                                <span t-if="o.partner_id.street2" t-field="o.partner_id.street2"/>
+                                <br t-if="o.partner_id.street2"/>
+                                <span t-field="o.partner_id.city"/>, 
+                                <span t-if="o.partner_id.state_id.code" t-field="o.partner_id.state_id.code"/>
+                                <span t-if="not o.partner_id.state_id.code" t-field="o.partner_id.state_id.name"/>
                                 <span t-field="o.partner_id.zip"/>
                                 <br/>
+                                <span t-field="o.partner_id.country_id.name"/>
                               </div>
                                 <strong>Email:</strong>
                                 <span t-field="o.partner_id.email"/>
@@ -57,10 +60,13 @@
                             <strong>Customer Address:</strong><br/>
                                 <div t-if="o.partner_id.street">
                                 <span t-field="o.partner_id.street"/>
-                                <span t-field="o.partner_id.street2"/><br/>
-                                <span t-field="o.partner_id.city"/>
+                                <span t-if="o.partner_id.street2" t-field="o.partner_id.street2"/><br t-if="o.partner_id.street2"/>
+                                <span t-field="o.partner_id.city"/>, 
+                                <span t-if="o.partner_id.state_id.code" t-field="o.partner_id.state_id.code"/>
+                                <span t-if="not o.partner_id.state_id.code" t-field="o.partner_id.state_id.name"/>
                                 <span t-field="o.partner_id.zip"/>
                                 <br/>
+                                <span t-field="o.partner_id.country_id.name"/>
                                 </div>
                                 <strong> Email:</strong>
                                 <span t-field="o.partner_id.email"/>
@@ -117,22 +123,11 @@
                                             <span t-field="o.partner_shipping_id.external_company"/>
                                         </t>
                                     </div>
-                                    <span t-if="o.partner_shipping_id.street" t-field="o.partner_shipping_id.street"/>
-                                    <span t-if="o.partner_shipping_id.street2" t-field="o.partner_shipping_id.street2"/>
-                                    <br t-if="o.partner_shipping_id.city"/>
-                                    <span t-if="o.partner_shipping_id.city" t-field="o.partner_shipping_id.city"/>
-                                    <span t-if="o.partner_shipping_id.zip" t-field="o.partner_shipping_id.zip"/>
+                                    <div t-field="o.partner_shipping_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": True}'/>
                                 </t>
                                 <t t-else="">
                                     <br/>
-                                    <span t-field="doc.partner_shipping_id.name"/>
-                                    <br t-if="o.partner_shipping_id.street"/>
-                                    <span t-if="o.partner_shipping_id.street" t-field="o.partner_shipping_id.street"/>
-                                    <br t-if="o.partner_shipping_id.street2"/>
-                                    <span t-if="o.partner_shipping_id.street2" t-field="o.partner_shipping_id.street2"/>
-                                    <br t-if="o.partner_shipping_id.city"/>
-                                    <span t-if="o.partner_shipping_id.city" t-field="o.partner_shipping_id.city"/>
-                                    <span t-if="o.partner_shipping_id.zip" t-field="o.partner_shipping_id.zip"/>
+                                    <div t-field="o.partner_shipping_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}'/>
                                 </t>
                             </t>
                         </div>
