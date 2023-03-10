@@ -20,7 +20,7 @@
                 <t t-if="not line.display_type">
                     <td style="border: none !important"></td>
                     <td colspan="2" style="border: none !important" class="text-left">
-                        <b><span>Product Notes:</span></b>
+                        <b><span t-if="line.picking_note">Product Notes:</span></b>
                         <span t-field="line.picking_note"/>
                     </td>
                     <td style="border: none !important"></td>
