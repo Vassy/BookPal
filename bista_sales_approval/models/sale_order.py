@@ -87,7 +87,9 @@ class SaleOrder(models.Model):
             and self.require_payment
             and transaction.state != "done"
             and self.amount_total
-            and not self.transaction_ids
+            and not self.transaction_ids.filtered(
+                lambda t: t.state not in ("draft", "cancel", "error")
+            )
         )
 
     def write(self, vals):
