@@ -6,9 +6,9 @@
     "category": "Account",
     "website": "http://www.bistasolutions.com",
     "license": "AGPL-3",
-    "depends": ["account_avatax_sale"],
+    "depends": ["bista_bigcommerce_extend"],
     "data": [
-        "views/res_company_view.xml",
+        "views/res_partner_view.xml",
     ],
     "installable": True,
     "auto_install": False,

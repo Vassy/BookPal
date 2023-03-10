@@ -11,7 +11,6 @@
     """,
     "depends": [
         "bigcommerce_odoo_integration_ext",
-        "account_avatax_sale",
         "purchase",
         "bista_sale_multi_ship",
         "bista_purchase",

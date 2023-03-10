@@ -553,8 +553,8 @@ class SaleOrderVts(models.Model):
                 #     " SKU And Name : {1}".format(
                 #         order_id and order_id.name, product_bigcommerce_id)
                 response_msg = "Sale Order : {0} Product Created" \
-                               " SKU And Name : {1}".format(
-                    order_id and order_id.name, product_bigcommerce_id)
+                    " SKU And Name : {1}".format(
+                        order_id and order_id.name, product_bigcommerce_id)
                 self.create_bigcommerce_operation_detail(
                     'order', 'import', '', '',
                     operation_id, warehouse_id, True, response_msg)

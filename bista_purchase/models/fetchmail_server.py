@@ -55,8 +55,8 @@ class FetchmailServer(models.Model):
                             get_param('do_not_fetch_email', False)
                         if do_not_fetch_email:
                             do_not_fetch_email = do_not_fetch_email.split(',')
-                        if email_from in do_not_fetch_email:
-                            continue
+                            if email_from in do_not_fetch_email:
+                                continue
                         try:
                             res_id = mail_therad.with_context(**additionnal_context).message_process(server.object_id.model, data[0][1], save_original=server.original, strip_attachments=(not server.attach))
                         except Exception:
@@ -93,8 +93,8 @@ class FetchmailServer(models.Model):
                                 get_param('do_not_fetch_email', False)
                             if do_not_fetch_email:
                                 do_not_fetch_email = do_not_fetch_email.split(',')
-                            if email_from in do_not_fetch_email:
-                                continue
+                                if email_from in do_not_fetch_email:
+                                    continue
                             try:
                                 res_id = mail_therad.with_context(**additionnal_context).message_process(server.object_id.model, message, save_original=server.original, strip_attachments=(not server.attach))
                                 pop_server.dele(num)
