@@ -39,7 +39,7 @@ sock_common = xmlrpclib.ServerProxy(url + '/xmlrpc/common')
 uid = sock_common.login(dbname, username, password)
 sock = xmlrpclib.ServerProxy(url + '/xmlrpc/object')
 
-output = open(current_path + '/Errors.txt', 'w')
+# output = open(current_path + '/Errors.txt', 'w')
 # file_upload1 = '/sheet/ProductVendorPricelist.xlsx'
 file_upload = '/sheet/ProductVendorPricelistUpdated.xlsx'
 book = xlrd.open_workbook(current_path + file_upload)
@@ -52,7 +52,8 @@ print("=======START SCRIPT =========")
 products = sock.execute(
     dbname, uid, password,
     'product.product',
-    'search', [('detailed_type', '!=', 'service')])
+    'search', [('detailed_type', '!=', 'service'),
+               ('avatax_category_id', '=', False)])
 for prod in products:
     print("\n product>>>product>>>", prod)
     sock.execute(
@@ -64,7 +65,8 @@ for prod in products:
 product_templates = sock.execute(
     dbname, uid, password,
     'product.template',
-    'search', [('detailed_type', '!=', 'service')])
+    'search', [('detailed_type', '!=', 'service'),
+               ('avatax_category_id', '=', False)])
 for prod_temp in product_templates:
     print("\n product>>template>>>>", prod)
     sock.execute(

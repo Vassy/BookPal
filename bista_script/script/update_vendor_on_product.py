@@ -11,8 +11,8 @@ if (not os.environ.get('PYTHONHTTPSVERIFY', '') and
 os.chdir('../')
 current_path = os.getcwd()
 sys.path.append(current_path)
-username = 'admin'  # the user
-password = 'admin'
+# username = 'admin'  # the user
+# password = 'admin'
 # password = 'BookPal@2022'  # the password of the user
 # dbname = 'nikita-bistait-bookpal-bista-staging-5356920'  # the database
 # ESP-staging url
@@ -24,26 +24,29 @@ password = 'admin'
 # url = 'https://nikita-bistait-bookpal-bookpalstaging-5352248.dev.odoo.com'
 
 # local Url
-dbname = 'BookPalStaging-Dec-14'  # the database
-url = 'http://localhost:8069'  # ESP-staging url
+# dbname = 'BookPalStaging-Dec-14'  # the database
+# url = 'http://localhost:8069'  # ESP-staging url
 
 # dbname = 'Bista-staging-jan-23-sandbox'  # the database
 # url = 'http://0.0.0.0:8070'  # ESP-staging url
 # production url
-# url = 'https://bookpal.odoo.com'
-# dbname = 'nikita-bistait-bookpal-production-5352226'
-# username = "admin"
-# password = "admin"
+url = 'https://bookpal.odoo.com'
+dbname = 'nikita-bistait-bookpal-production-5352226'
+username = "admin"
+password = "admin"
 
 sock_common = xmlrpclib.ServerProxy(url + '/xmlrpc/common')
 uid = sock_common.login(dbname, username, password)
 sock = xmlrpclib.ServerProxy(url + '/xmlrpc/object')
 
-# output = open(current_path + '/Errors.txt', 'w')
 # file_upload1 = '/sheet/ProductVendorPricelist.xlsx'
 file_upload = '/sheet/SKUs_and_Vendors_for_Odoo.xlsx'
 book = xlrd.open_workbook(current_path + file_upload)
 sheet = book.sheet_by_index(0)
+
+os.chdir('../../../')
+error_file_path = os.getcwd()
+output = open(error_file_path + '/Errors.txt', 'w')
 
 
 error = False
@@ -66,12 +69,12 @@ try:
             'search',
             [('default_code', '=', prod)])
         prod_id = prod_id and prod_id[0] or False
-        # print ("\n prod_id >>>", prod_id)
+        print ("\n prod_id >>>", prod_id)
         if not prod_id:
             print ("\n product is not availabel >>>", prod_id)
         #     output.write(str(row_values) + '\n')
-        #     output.write('\n Product not available ;' +
-        #                  str(row_values[0]) + ';')
+            output.write('\n Product not available ;' +
+                         str(row_values) + ';')
         #     continue
         vendor_id = sock.execute(
             dbname, uid, password,
@@ -80,6 +83,10 @@ try:
             [('name', '=', row_values[1]),
              ('supplier_rank', '>', 0)])
         vendor_id = vendor_id and vendor_id[0] or False
+        if not vendor_id:
+            print ("\n vendor not availabel >>>", row_values[1])
+            output.write('\n vendor not available ;' +
+                         str(row_values) + ';')
         if prod_id and vendor_id:
             supplier_info = sock.execute(
                 dbname, uid, password,
