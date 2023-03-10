@@ -236,7 +236,7 @@
         <record id="email_template_bista_purchase" model="mail.template">
             <field name="name">BookPal: Send Purchase Order</field>
             <field name="model_id" ref="model_purchase_order"/>
-            <field name="subject">New {{ object.company_id.name }} PO ({{ object.name or 'n/a' }})</field>
+            <field name="subject">{{"New " if object.state == "draft" else ""}}{{ object.company_id.name }} PO ({{ object.name or 'n/a' }})</field>
             <field name="partner_to">{{ object.partner_id.id }}</field>
             <field name="body_html" type="html">
                 <p style="margin: 0px; padding: 0px; font-size: 13px;">
