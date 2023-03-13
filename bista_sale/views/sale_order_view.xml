@@ -129,6 +129,7 @@
                                 <field name="gorgias_ticket" widget="url" />
                                 <field name="product_status_notes" />
                                 <field name="product_use" />
+                                <field name="book_use_email" widget="url" text="Book Use Email"/>
                             </group>
                             <group>
                                 <field name="white_glove_id" options="{'no_create': True, 'no_open': True}"/>
@@ -203,6 +204,7 @@
                         </group>
                         <group>
                             <field name="placed_from_ip"/>
+                            <field name="customer_po_link" widget="url" text="Customer PO Link"/>
                         </group>
                     </group>
                 </page>

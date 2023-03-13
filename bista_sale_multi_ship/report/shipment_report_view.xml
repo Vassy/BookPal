@@ -12,7 +12,12 @@
                         <div>
                             <span t-field="o.partner_id.name"/>
                             <br/>
-                            <span t-field="o.partner_id.parent_id.name"/>
+                            <t t-if="not o.partner_id.external_company">
+                                <span t-field="o.partner_id.parent_id.name"/>
+                            </t>
+                            <t t-else="">
+                                <span t-field="o.partner_id.external_company"/>
+                            </t>
                         </div>
                         <div t-field="doc.partner_id"
                              t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
@@ -33,18 +38,18 @@
                         </strong>
                     </h4>
                     <t t-if="doc.state in ['draft','sent','quote_approval','quote_confirm']">
-                        <strong>Quotation Date:</strong>
-                        <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
+                        <!-- <strong>Quotation Date:</strong> -->
+                        <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y')"/>
                         <br/>
                     </t>
                     <t t-if="doc.state in ['order_booked']">
-                        <strong>Booked order date:</strong>
-                        <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
+                        <!-- <strong>Booked order date:</strong> -->
+                        <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y')"/>
                         <br/>
                     </t>
                     <t t-if="doc.state in ['sale','pending_for_approval','credit_review','cancel','done']">
-                        <strong>Order Date:
-                            <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y, %H:%M:%S')"/>
+                        <strong>
+                            <t t-esc="context_timestamp(o.date_order).strftime('%m/%d/%Y')"/>
                         </strong>
                     </t>
                     <br/>
@@ -54,11 +59,16 @@
                         <strong>Invoicing Address:</strong>
                         <!--                        <div t-field="doc.partner_invoice_id"-->
                         <!--                             t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>-->
-                        <t t-if="o.partner_invoice_id.parent_id.name">
+                        <t t-if="o.partner_invoice_id.parent_id">
                             <div>
-                                <span t-field="o.partner_invoice_id.parent_id.name"/>
-                                <br/>
                                 <span t-field="o.partner_invoice_id.name"/>
+                                <br/>
+                                <t t-if="not o.partner_invoice_id.external_company">
+                                    <span t-field="o.partner_invoice_id.parent_id.name"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-field="o.partner_invoice_id.external_company"/>
+                                </t>
                             </div>
                             <div t-field="doc.partner_invoice_id"
                                  t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
@@ -71,32 +81,6 @@
                 </t>
                 <t t-set="custom_information_block">
                     <div>
-<!--                        <t t-if="doc.state in ['draft','sent','quote_approval','quote_confirm']">-->
-<!--                            <strong>Quotation:</strong>-->
-<!--                            <t t-esc="doc.name"/>-->
-<!--                            <br/>-->
-<!--                        </t>-->
-<!--                        <t t-if="doc.state in ['sale','pending_for_approval','order_booked','credit_review','cancel','done']">-->
-<!--                            <strong>Sale Order:</strong>-->
-<!--                            <t t-esc="doc.name"/>-->
-<!--                            <br/>-->
-<!--                        </t>-->
-<!--                        <t t-if="doc.state in ['draft','sent','quote_approval','quote_confirm']">-->
-<!--                            <strong>Quotation Date:</strong>-->
-<!--                            <t t-esc="o.date_order" t-options='{"widget": "date"}'/>-->
-<!--                            <br/>-->
-<!--                        </t>-->
-<!--                        <t t-if="doc.state in ['order_booked']">-->
-<!--                            <strong>Booked order date:</strong>-->
-<!--                            <t t-esc="o.date_order" t-options='{"widget": "date"}'/>-->
-<!--                            <br/>-->
-<!--                        </t>-->
-<!--                        <t t-if="doc.state  in ['sale','pending_for_approval','credit_review','cancel','done']">-->
-<!--                            <strong>Order Date:</strong>-->
-<!--                            <span t-esc="o.date_order" t-options='{"widget": "date"}'>-->
-<!--                            </span>-->
-<!--                            <br/>-->
-<!--                        </t>-->
                         <strong>Valid Until:</strong>
                         <t t-esc="doc.validity_date" t-options="{'widget': 'date'}"/>
                         <br/>
@@ -112,15 +96,18 @@
                     <!-- In case we want to repeat the header, remove "display: table-row-group" -->
                     <thead style="display: table-row-group">
                         <tr style="border-top: 1px solid black;">
-                            <th style="border: none;" name="th_nd" class="text-left">
-                                <strong>Need By Date</strong>
-                            </th>
-                            <th style=" border-collapse: collapse;border: none;" name="shipment_add"
-                                class="text-left">
-                                <strong>Shipment Address</strong>
-                            </th>
                             <th style=" border-collapse: collapse;border: none;" name="th_image"
                                 class="text-left">
+                            </th>
+                           
+                            <!-- <th style=" border-collapse: collapse;border: none;" name="shipment_add"
+                                class="text-left">
+                                <strong>Shipment Address</strong>
+                            </th> -->
+                            
+                            <th style=" border-collapse: collapse;border: none;" name="th_description"
+                                class="text-left">
+                                <strong>ISBN</strong>
                             </th>
                             <th style=" border-collapse: collapse;border: none;" name="th_description"
                                 class="text-left">
@@ -129,6 +116,9 @@
                             <th style=" border-collapse: collapse;border: none;" name="th_format"
                                 class="text-center">
                                 <strong>Format</strong>
+                            </th>
+                            <th style="border: none;" name="th_nd" class="text-left">
+                                <strong>Need By Date</strong>
                             </th>
                             <th style=" border-collapse: collapse;border: none;" name="th_quantity" class="text-center">
                                 <strong>Quantity</strong>
@@ -151,48 +141,47 @@
                         <t t-foreach="doc.sale_multi_ship_qty_lines" t-as="line">
                             <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.so_line_id.display_type == 'line_section' else 'font-italic o_line_note' if line.so_line_id.display_type == 'line_note' else ''">
                                 <t t-if="not line.so_line_id.display_type">
-                                    <td name="td_nd"
-                                        style="border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
-                                        class="text-left">
-                                        <span t-esc="context_timestamp(line.shipping_date).strftime('%m/%d/%Y, %H:%M:%S')"/>
-                                        <!-- <span t-field="line.shipping_date" t-options='{"widget": "date"}'/> -->
-                                    </td>
-                                    <td name="shipment_add"
-                                        style="border-top: 1px solid black; border-left: none; border-right: none; border-bottom: 1px solid black;width:14%;"
-                                        class="text-left">
-                                        <span t-field="line.partner_id"/>
-                                    </td>
-                                    <td name="image" class="text-center" style="border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;">
+                                    <td name="image" class="text-center" style="border-top: 1px solid black; border-left: none;border-right: none;">
                                         <t t-if="line.product_id.image_1920">
                                             <img t-attf-src="data:image/*;base64,{{line.product_id.image_1920}}"
-                                                 style="max-height:70px; max-width:70px;"/>
+                                                 style="height:70px; width:70px;"/>
                                         </t>
                                         <t t-else="">
                                             <img src="/web/static/img/placeholder.png"
                                                  style="max-height:100px; max-width:100px;"/>
                                         </t>
                                     </td>
+                                    <!-- <td name="shipment_add"
+                                        style="border-top: 1px solid black; border-left: none; border-right: none;width:14%;"
+                                        class="text-left">
+                                        <span t-field="line.partner_id"/>
+                                    </td> -->
+                                    
+                                    <td name="td_isbn"
+                                        style="width:30%; border-top: 1px solid black; border-left: none;border-right: none;" class="text-left">
+                                        <span t-field="line.so_line_id.product_id.default_code"/>
+                                    </td>
                                     <td name="td_name"
-                                        style="width:30%; border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;">
+                                        style="width:30%; border-top: 1px solid black; border-left: none;border-right: none;">
                                         <b>
-                                            <span t-field="line.so_line_id.name"/>
+                                            <span t-field="line.so_line_id.product_id.name"/>
                                         </b>
                                         <br/>
-                                        <span t-field="line.product_id.default_code"/>
-                                        <br/>
-                                        <b>
-                                            <span>Product Notes:</span>
-                                        </b>
-                                        <span t-field="line.picking_note"/>
                                     </td>
 
                                     <td name="td_format"
-                                        style="border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
+                                        style="border-top: 1px solid black; border-left: none;border-right: none;"
                                         class="text-center">
                                         <span t-field="line.product_id.product_format"/>
                                     </td>
+                                    <td name="td_nd"
+                                        style="border-top: 1px solid black; border-left: none;border-right: none;"
+                                        class="text-left">
+                                        <span t-esc="context_timestamp(line.shipping_date).strftime('%m/%d/%Y')"/>
+                                        <!-- <span t-field="line.shipping_date" t-options='{"widget": "date"}'/> -->
+                                    </td>
                                     <td name="td_quantity"
-                                        style="border-top: 1px solid black; border-left: none;border-right: none;border-bottom: 1px solid black;"
+                                        style="border-top: 1px solid black; border-left: none;border-right: none;"
                                         class="text-center">
                                         <span t-if="float(line.product_qty).is_integer()"
                                               t-esc="int(line.product_qty)"/>
@@ -200,7 +189,7 @@
                                               t-field="line.product_qty"/>
                                     </td>
                                     <td name="td_cprice_unit"
-                                        style=" border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
+                                        style=" border-top: 1px solid black; border-left: none;border-right: none;"
                                         class="text-center">
                                         <t t-if="line.so_line_id.discount">
                                             <s>
@@ -214,7 +203,7 @@
                                         </t>
                                     </td>
                                     <td name="td_price_unit"
-                                        style=" border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
+                                        style=" border-top: 1px solid black; border-left: none;border-right: none;"
                                         class="text-center">
                                         <span>
                                             <t t-if="line.so_line_id.discount">
@@ -228,7 +217,7 @@
                                         </span>
                                     </td>
                                     <td name="td_subtotal"
-                                        style="border-top: 1px solid black; border-left: none;border-right: none; border-bottom: 1px solid black;"
+                                        style="border-top: 1px solid black; border-left: none;border-right: none;"
                                         class="text-right">
                                         <t t-if="line.so_line_id.discount">
                                             <t t-esc="line.product_qty * (line.so_line_id.price_unit-((line.so_line_id.discount/100)*line.so_line_id.price_unit))"
@@ -241,17 +230,26 @@
                                     </td>
                                 </t>
                             </tr>
+                            <tr style="border-bottom:1px solid black !important;">
+                                <t t-if="line.picking_note">
+                                    <td colspan="2" style="border: none !important" class="text-left">
+                                        <b><span t-if="line.picking_note">Product Notes:</span></b>
+                                        <span t-field="line.picking_note"/>
+                                    </td>
+                                    <td colspan="7" style="border: none !important"></td>
+                                </t>
+                            </tr>
                         </t>
                     </tbody>
                 </table>
-                <div class="col-6">
+                <!-- <div class="col-6">
                     <span style="color:black;">
                         <b>Total Savings:
                         </b>
                         <span t-esc="sum((line.product_uom_qty*line.price_unit)-line.price_subtotal for line in doc.order_line)"
                               t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
                     </span>
-                </div>
+                </div> -->
                 <div class="text-right" style="margin-top:-20px;">
                     <t t-set="current_sub" t-value="0"/>
                     <t t-foreach="doc.sale_multi_ship_qty_lines" t-as="line">
@@ -264,7 +262,51 @@
                                t-value="current_sub + (line.product_qty* line.so_line_id.price_unit)"/>
                         </t>
                     </t>
-                    <table style="border: 1px solid black; width: 26%; margin-left:74%;background-color: #CC5500;"
+
+                    <div class="clearfix row" name="so_total_summary" style="page-break-inside:avoid;">
+                    <div class="col-6"/>
+                    <div name="footer_table" class="col-6 row justify-content-end" style="display:flex;padding:2px;padding-top:14px;">
+                    <div width="70%" style="padding-right:40px;">
+                        <div class="text-right" style="font-size: 14px;">
+                            Subtotal
+                        </div>
+                        <div class="text-right" t-if="doc.amount_tax" style="font-size: 14px;">
+                            Tax
+                        </div>
+                        <div class="text-right" t-if="doc.carrier_id" style="font-size: 14px;">
+                            Shipping
+                            (<span t-field="doc.carrier_id"/>)
+                        </div>
+                        <div class="text-right" style="font-size: 20px;">
+                            <strong>Total</strong>
+                        </div>
+                        <div class="text-right text-muted" style="font-size: 12px;">
+                           Total Savings
+                        </div>
+                    </div>
+                    <div width="30%">
+                        <div class="text-right" style="font-size: 14px;">
+                            <span t-esc="current_sub"  t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        </div>
+                        <div class="text-right" t-if="doc.amount_tax" style="font-size: 14px;">
+                            <span t-field="doc.amount_tax" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        </div>
+                        <div class="text-right" t-if="doc.carrier_id" style="font-size: 14px;">
+                            <t t-esc="sum([line.price_total for line in doc.order_line if line.is_delivery])" t-if="doc.carrier_id"
+                                   t-options='{"widget": "monetary", "display_currency": doc.currency_id}'>
+                            </t>
+                        </div>
+                        <div class="text-right" style="font-size: 20px;">
+                            <strong t-field="doc.amount_total" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        </div>
+                        <div class="text-right text-muted" style="font-size: 12px;">
+                            <span t-esc="sum((line.product_uom_qty*line.price_unit)-line.price_subtotal for line in doc.order_line)"
+                                        t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    <!-- <table style="border: 1px solid black; width: 26%; margin-left:74%;background-color: #CC5500;"
                            class="text-right">
                         <tr style="background-color: #f56343;">
                             <td class="text-left"
@@ -276,7 +318,7 @@
                                 <strong t-esc="current_sub"
                                         t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
                             </td>
-                        </tr>
+                        </tr> -->
                         <!--                        <tr>-->
                         <!--                            <td class="text-left"-->
                         <!--                                style="height:1px; border-left: 1px solid black; border-right: 1px solid black; width:180px; border-top: 1px solid black; color: black; padding-left:10px;">-->
@@ -288,7 +330,7 @@
                         <!--                              t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>-->
                         <!--                        </td>-->
                         <!--                        </tr>-->
-                    </table>
+                    <!-- </table> -->
                 </div>
             </div>
         </t>

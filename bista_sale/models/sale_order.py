@@ -112,6 +112,8 @@ class SaleOrder(models.Model):
         string="Available Payments",
         domain=lambda self: self._get_available_acquirer(),
     )
+    customer_po_link = fields.Char("Customer PO Link")
+    book_use_email = fields.Char()
 
     def _get_available_acquirer(self):
         payment = self.env["payment.acquirer"].sudo()
