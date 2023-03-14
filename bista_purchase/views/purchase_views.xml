@@ -204,7 +204,7 @@
                             <field name="dest_address_id" invisible="1" />
                             <button name="edit_tracking_line" icon="fa-edit" type="object" class="btn-link" style="float: right" />
                             <button name="send_email" string="Send Email" type="object" class="btn-primary"
-                                attrs="{'invisible': ['|', ('dest_address_id', '=', False), ('status', '=', 'on_hold')]}" />
+                                attrs="{'invisible': [('dest_address_id', '=', False)]}" />
                         </tree>
                     </field>
                 </page>
