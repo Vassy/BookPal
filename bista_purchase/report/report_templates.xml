@@ -23,10 +23,10 @@
                                 </strong>
                             </h4>
                             <strong t-if="o.state in ['purchase','done']">Order Date:
-                                <t t-field="o.date_approve" t-options='{"widget": "date"}'/>
+                                <span t-field="o.date_approve" t-options='{"widget": "date"}'/>
                             </strong>
                             <strong t-if="o.state in ['draft','sent']">RFQ Date:
-                                <t t-field="o.date_order" t-options='{"widget": "date"}'/>
+                                <span t-field="o.date_order" t-options='{"widget": "date"}'/>
                             </strong>
                             <br/>
                         </div>
@@ -43,7 +43,7 @@
                                 </strong>
                             </h4>
                             <strong t-if="o.state in ['purchase','done', 'draft','sent']">RFQ Date:
-                                <t t-field="o.date_order" t-options='{"widget": "date"}'/>
+                                <span t-field="o.date_order" t-options='{"widget": "date"}'/>
                             </strong>
                             <br/>
                         </div>
