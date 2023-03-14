@@ -15,36 +15,34 @@
                     </h3>
                     <t t-if="o.state !='done' and o.picking_type_code =='incoming'">
                         <h5 style="font-size: 20px;">Receipt Date:
-                             <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')"/>
+                            <t t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='outgoing'">
                         <h5 style="font-size: 20px;">Delivery Date:
-                             <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')"/>
+                            <t t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name =='Pick'">
                         <h5 style="font-size: 20px;">Picking Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')" />
-                            <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
+                            <t t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name !='Pick'">
                         <h5 style="font-size: 20px;">Internal Transfer Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')" />
+                            <t t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
                             <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
                         </h5>
                     </t>
                     <t t-elif="o.state =='done'">
                         <h5>Validated Date:
-                            <t t-esc="context_timestamp(o.date_done).strftime('%m/%d/%Y, %H:%M:%S')" />
+                            <t t-field="o.date_done" t-options='{"widget": "date"}'/>
                             <!-- <t t-esc="o.date_done" t-options='{"widget": "date"}'/> -->
                         </h5>
                     </t>
                     <t t-else="">
                         <h5 style="font-size: 20px;">Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')" />
-                            <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
+                            <t t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
                         </h5>
                     </t>
                     <h4>
@@ -59,12 +57,29 @@
                 </t>
             </t>
         </xpath>
-        <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[1]" position="after">
+        <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th" position="before">
+            <th name="th_isbn">
+                <strong>ISBN</strong>
+            </th>
+        </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/t/tr/td" position="replace">
+            <td name="td_name">
+                <span t-field="ml.product_id.name"/>
+                <br/>
+                <span t-field="ml.product_id.description_picking"/>
+            </td>
+        </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/t/tr/td[@name='td_name']" position="before">
+            <td name="td_isbn">
+                <span style="font-weight:normal" t-field="ml.product_id.default_code"/>
+            </td>
+        </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[2]" position="after">
             <th name="th_format">
                 <strong>Format</strong>
             </th>
         </xpath>
-        <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/t/tr/td[1]" position="after">
+        <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/t/tr/td[@name='td_name']" position="after">
             <td name="td_format">
                 <span style="font-weight:normal" t-field="ml.product_id.product_format"/>
             </td>
@@ -83,7 +98,13 @@
                                 <div>
                                     <span t-field="o.move_ids_without_package[0].partner_id.name"/>
                                     <br/>
-                                    <span t-field="o.move_ids_without_package[0].partner_id.parent_id.name"/>
+                                    <!-- <span t-field="o.move_ids_without_package[0].partner_id.parent_id.name"/> -->
+                                    <t t-if="not o.move_ids_without_package[0].partner_id.external_company">
+                                        <span t-field="o.move_ids_without_package[0].partner_id.parent_id.name"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span t-field="o.move_ids_without_package[0].partner_id.external_company"/>
+                                    </t>
                                 </div>
                                 <div t-field="o.move_ids_without_package[0].partner_id"
                                      t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
@@ -104,7 +125,13 @@
                                 <div>
                                     <span t-field="o.picking_type_id.warehouse_id.partner_id.name"/>
                                     <br/>
-                                    <span t-field="o.picking_type_id.warehouse_id.partner_id.parent_id.name"/>
+                                    <!-- <span t-field="o.picking_type_id.warehouse_id.partner_id.parent_id.name"/> -->
+                                    <t t-if="not o.picking_type_id.warehouse_id.partner_id.external_company">
+                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.parent_id.name"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.external_company"/>
+                                    </t>
                                 </div>
                                 <div t-field="o.picking_type_id.warehouse_id.partner_id"
                                      t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
@@ -137,7 +164,13 @@
                             <div>
                                 <span t-field="o.partner_id.name"/>
                                 <br/>
-                                <span t-field="o.partner_id.parent_id.name"/>
+                                <!-- <span t-field="o.partner_id.parent_id.name"/> -->
+                                <t t-if="not o.partner_id.external_company">
+                                    <span t-field="o.partner_id.parent_id.name"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-field="o.partner_id.external_company"/>
+                                </t>
                             </div>
                             <div t-field="o.partner_id"
                                  t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
@@ -154,7 +187,7 @@
             </div>
         </xpath>
         <xpath expr="//p[@t-field='o.note']" position="before">
-            <strong>Internal Note</strong>
+            <strong t-if="o.note">Internal Note</strong>
         </xpath>
         <xpath expr="//h1" position="replace"/>
         <xpath expr="//table[hasclass('table','table-sm')]" position="attributes">
@@ -181,38 +214,32 @@
                     </h3>
                     <t t-if="o.state !='done' and o.picking_type_code =='incoming'">
                         <h5 style="font-size: 20px;">Receipt Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')"/>
-                            <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
+                            <t t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='outgoing'">
                         <h5 style="font-size: 20px;">Delivery Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')" />
-                            <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
+                            <t t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name =='Pick'">
                         <h5 style="font-size: 20px;">Picking Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')" />
-                            <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
+                            <t t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name !='Pick'">
                         <h5 style="font-size: 20px;">Internal Transfer Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')" />
-                            <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
+                            <t t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
                         </h5>
                     </t>
                     <t t-elif="o.state =='done'">
                         <h5>Validated Date:
-                            <t t-esc="context_timestamp(o.date_done).strftime('%m/%d/%Y, %H:%M:%S')"/>
-                            <!-- <t t-esc="o.date_done" t-options='{"widget": "date"}'/> -->
+                            <t t-field="o.date_done" t-options='{"widget": "date"}'/>
                         </h5>
                     </t>
                     <t t-else="">
                         <h5 style="font-size: 20px;">Date:
-                            <t t-esc="context_timestamp(o.scheduled_date).strftime('%m/%d/%Y, %H:%M:%S')" />
-                            <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
+                            <t t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
                         </h5>
                     </t>
                     <h4>
@@ -240,7 +267,12 @@
                                 <div>
                                     <span t-field="o.move_ids_without_package[0].partner_id.name"/>
                                     <br/>
-                                    <span t-field="o.move_ids_without_package[0].partner_id.parent_id.name"/>
+                                    <t t-if="not o.move_ids_without_package[0].partner_id.external_company">
+                                        <span t-field="o.move_ids_without_package[0].partner_id.parent_id.name"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span t-field="o.move_ids_without_package[0].partner_id.external_company"/>
+                                    </t>
                                 </div>
                                 <div t-field="o.move_ids_without_package[0].partner_id"
                                      t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
@@ -260,7 +292,12 @@
                                 <div>
                                     <span t-field="o.picking_type_id.warehouse_id.partner_id.name"/>
                                     <br/>
-                                    <span t-field="o.picking_type_id.warehouse_id.partner_id.parent_id.name"/>
+                                    <t t-if="not o.picking_type_id.warehouse_id.partner_id.external_company">
+                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.parent_id.name"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.external_company"/>
+                                    </t>
                                 </div>
                                 <div t-field="o.picking_type_id.warehouse_id.partner_id"
                                      t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
@@ -293,7 +330,13 @@
                             <div>
                                 <span t-field="partner.commercial_partner_id.name"/>
                                 <br/>
-                                <span t-field="partner.commercial_partner_id.parent_id.name"/>
+                                <!-- <span t-field="partner.commercial_partner_id.parent_id.name"/> -->
+                                <t t-if="not partner.commercial_partner_id.external_company">
+                                    <span t-field="partner.commercial_partner_id.parent_id.name"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-field="partner.commercial_partner_id.external_company"/>
+                                </t>
                             </div>
                             <div t-field="partner.commercial_partner_id"
                                  t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
@@ -316,17 +359,41 @@
         <xpath expr="//table[@name='stock_move_table']" position="attributes">
             <attribute name="style">margin-top: 2rem !important;</attribute>
         </xpath>
-        <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[1]" position="after">
+        <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[1]" position="before">
+            <th name="th_isbn">
+                <strong>ISBN</strong>
+            </th>
+        </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[2]" position="after">
             <th name="th_format">
                 <strong>Format</strong>
             </th>
         </xpath>
-        <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/tr/td[1]" position="after">
+        <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/tr/td" position="replace">
+            <td name="td_product">
+            <span t-field="move.product_id.name"/>
+            <p t-if="move.description_picking != move.product_id.name and move.description_picking != move.product_id.display_name">
+                <span t-field="move.description_picking"/>
+            </p>
+        </td>
+        </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/tr/td" position="before">
+            <td name="td_isbn">
+                <span style="font-weight:normal" t-field="move.product_id.default_code"/>
+            </td>
+        </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/tr/td[2]" position="after">
             <td name="th_format">
                 <span style="font-weight:normal" t-field="move.product_id.product_format"/>
             </td>
         </xpath>
-        <xpath expr="//table[hasclass('table', 'table-sm', 'mt48')]/thead/tr/th[1]" position="after">
+        <xpath expr="//table[hasclass('table', 'table-sm', 'mt48')]/thead/tr/th[1]" position="before">
+            <th name="th_isbn">
+                <span>ccccccccc</span>
+                <strong>ISBN</strong>
+            </th>
+        </xpath>
+        <xpath expr="//table[hasclass('table', 'table-sm', 'mt48')]/thead/tr/th[2]" position="after">
             <th name="th_format">
                 <strong>Format</strong>
             </th>
@@ -334,7 +401,26 @@
     </template>
     <template id="bista_purchase_stock_report_delivery_has_serial_move_line"
               inherit_id="stock.stock_report_delivery_has_serial_move_line">
-        <xpath expr="//td[1]" position="after">
+            <xpath expr="//td[1]" position="before">
+                <td name="td_isbn">
+                <span style="font-weight:normal" t-field="move_line.product_id.default_code"/>
+            </td>
+            </xpath>
+            <xpath expr="//td[1]" position="replace">
+                <td>
+                <span t-field="move_line.product_id.name"/>
+                <!-- this is an annoying workaround for the multiple types of descriptions (often auto-filled) that we do not want to print -->
+                <!-- this makes it so we can pre-filter the descriptions in inherited templates since we cannot extend the standard "if" condition -->
+                <!-- let's agree that pre-filtered descriptions will be set to "" -->
+                <t t-if="not description and description != ''">
+                    <t t-set="description" t-value="move_line.move_id.description_picking"/>
+                </t>
+                <p t-if="description !='' and description != move_line.product_id.name">
+                    <span t-esc="description"/>
+                </p>
+            </td>
+            </xpath>
+        <xpath expr="//td[2]" position="after">
             <td name="td_format">
                 <span style="font-weight:normal" t-field="move_line.product_id.product_format"/>
             </td>
@@ -342,7 +428,20 @@
     </template>
     <template id="bista_purchase_stock_report_delivery_aggregated_move_lines"
               inherit_id="stock.stock_report_delivery_aggregated_move_lines">
-        <xpath expr="//tr/td[1]" position="after">
+              <xpath expr="//tr/td[1]" position="before">
+                <td name="td_isbn">
+                <span style="font-weight:normal" t-field="aggregated_lines[line]['product'].default_code"/>
+            </td>
+        </xpath>
+            <xpath expr="//tr/td[2]" position="replace">
+                <td>
+                <span t-esc="aggregated_lines[line]['product'].name"/>
+                <p t-if="aggregated_lines[line]['description']">
+                    <span t-esc="aggregated_lines[line]['description']"/>
+                </p>
+                </td>
+            </xpath>
+        <xpath expr="//tr/td[3]" position="after">
             <td name="td_format">
                 <span style="font-weight:normal" t-field="aggregated_lines[line]['product'].product_format"/>
             </td>
