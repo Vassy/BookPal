@@ -1,58 +1,51 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-
-    <template id="report_purchaseorder_delivery_report"
-              inherit_id="stock.report_picking">
+    <template id="report_purchaseorder_delivery_report" inherit_id="stock.report_picking">
         <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
             <attribute name="t-call">bista_report_header_footer.shipment_custom_header</attribute>
         </xpath>
         <xpath expr="//div[hasclass('page')]" position="inside">
             <t t-foreach="docs" t-as="o">
                 <t t-set="report_info" class="col-6 text-right mb4">
-                    <h3 t-esc="env['ir.actions.report'].search([('report_name', '=', xmlid)]).name"/>
+                    <h3 t-out="env['ir.actions.report'].search([('report_name', '=', xmlid)]).name" />
                     <h3>
-                        <t t-esc="o.name"/>
+                        <span t-field="o.name" />
                     </h3>
                     <t t-if="o.state !='done' and o.picking_type_code =='incoming'">
                         <h5 style="font-size: 20px;">Receipt Date:
-                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
+                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}' />
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='outgoing'">
                         <h5 style="font-size: 20px;">Delivery Date:
-                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
+                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}' />
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name =='Pick'">
                         <h5 style="font-size: 20px;">Picking Date:
-                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
+                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}' />
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name !='Pick'">
                         <h5 style="font-size: 20px;">Internal Transfer Date:
-                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
-                            <!-- <t t-esc="o.scheduled_date" t-options='{"widget": "date"}'/> -->
+                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}' />
                         </h5>
                     </t>
                     <t t-elif="o.state =='done'">
                         <h5>Validated Date:
-                            <span t-field="o.date_done" t-options='{"widget": "date"}'/>
-                            <!-- <t t-esc="o.date_done" t-options='{"widget": "date"}'/> -->
+                            <span t-field="o.date_done" t-options='{"widget": "date"}' />
                         </h5>
                     </t>
                     <t t-else="">
                         <h5 style="font-size: 20px;">Date:
-                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
+                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}' />
                         </h5>
                     </t>
                     <h4>
-                        <t t-esc="o.picking_type_id.warehouse_id.name"/>
+                        <span t-field="o.picking_type_id.warehouse_id" />
                     </h4>
                     <div class="text-right" style="margin-left:150px;">
-                        <t t-esc="o.name"
-                           t-options="{'widget': 'barcode', 'width': 310, 'height': 100, 'img_style': 'width:350px;height:55px;'}"
-                        />
-                        <br/>
+                        <span t-field="o.name" t-options="{'widget': 'barcode', 'img_style': 'width: 350px; height: 55px;'}" />
                     </div>
                 </t>
             </t>
@@ -64,14 +57,14 @@
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/t/tr/td" position="replace">
             <td name="td_name">
-                <span t-field="ml.product_id.name"/>
-                <br/>
-                <span t-field="ml.product_id.description_picking"/>
+                <span t-field="ml.product_id.name" />
+                <br />
+                <span t-field="ml.product_id.description_picking" />
             </td>
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/t/tr/td[@name='td_name']" position="before">
             <td name="td_isbn">
-                <span style="font-weight:normal" t-field="ml.product_id.default_code"/>
+                <span style="font-weight:normal" t-field="ml.product_id.default_code" />
             </td>
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[2]" position="after">
@@ -81,14 +74,13 @@
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/t/tr/td[@name='td_name']" position="after">
             <td name="td_format">
-                <span style="font-weight:normal" t-field="ml.product_id.product_format"/>
+                <span style="font-weight:normal" t-field="ml.product_id.product_format" />
             </td>
         </xpath>
-        <xpath expr="//div[@name='right_box']" position="replace"/>
+        <xpath expr="//div[@name='right_box']" position="replace" />
         <xpath expr="//div[hasclass('page')]/div[2]" position="replace">
             <div class="row mb-2 pt-5 ">
-                <div class="col-4" name="div_outgoing_address"
-                     t-if="(o.move_ids_without_package and o.move_ids_without_package[0].partner_id and o.move_ids_without_package[0].partner_id.id != o.partner_id.id) or (o.picking_type_id.code != 'internal' and (not o.move_ids_without_package or not o.move_ids_without_package[0].partner_id) and o.picking_type_id.warehouse_id.partner_id)">
+                <div class="col-4" name="div_outgoing_address" t-if="(o.move_ids_without_package and o.move_ids_without_package[0].partner_id and o.move_ids_without_package[0].partner_id.id != o.partner_id.id) or (o.picking_type_id.code != 'internal' and (not o.move_ids_without_package or not o.move_ids_without_package[0].partner_id) and o.picking_type_id.warehouse_id.partner_id)">
                     <t t-if="o.move_ids_without_package and o.move_ids_without_package[0].partner_id and o.move_ids_without_package[0].partner_id.id != o.partner_id.id">
                         <div t-if="o.move_ids_without_package and o.move_ids_without_package[0].partner_id and o.move_ids_without_package[0].partner_id.id != o.partner_id.id">
                             <span>
@@ -96,49 +88,42 @@
                             </span>
                             <t t-if="o.move_ids_without_package[0].partner_id.parent_id.name">
                                 <div>
-                                    <span t-field="o.move_ids_without_package[0].partner_id.name"/>
-                                    <br/>
-                                    <!-- <span t-field="o.move_ids_without_package[0].partner_id.parent_id.name"/> -->
+                                    <span t-field="o.move_ids_without_package[0].partner_id.name" />
+                                    <br />
                                     <t t-if="not o.move_ids_without_package[0].partner_id.external_company">
-                                        <span t-field="o.move_ids_without_package[0].partner_id.parent_id.name"/>
+                                        <span t-field="o.move_ids_without_package[0].partner_id.parent_id.name" />
                                     </t>
                                     <t t-else="">
-                                        <span t-field="o.move_ids_without_package[0].partner_id.external_company"/>
+                                        <span t-field="o.move_ids_without_package[0].partner_id.external_company" />
                                     </t>
                                 </div>
-                                <div t-field="o.move_ids_without_package[0].partner_id"
-                                     t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
+                                <div t-field="o.move_ids_without_package[0].partner_id" t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}' />
                             </t>
                             <t t-else="">
-                                <div t-field="o.move_ids_without_package[0].partner_id"
-                                     t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                                <div t-field="o.move_ids_without_package[0].partner_id" t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}' />
                             </t>
                         </div>
                     </t>
                     <t t-else="">
                         <div t-if="o.picking_type_id.code != 'internal' and (not o.move_ids_without_package or not o.move_ids_without_package[0].partner_id) and o.picking_type_id.warehouse_id.partner_id">
-                            <!--                    <div t-if="o.picking_type_id.code != 'internal' and o.picking_type_id.warehouse_id.partner_id" >-->
                             <span>
                                 <strong>Warehouse Address:</strong>
                             </span>
                             <t t-if="o.picking_type_id.warehouse_id.partner_id.parent_id.name">
                                 <div>
-                                    <span t-field="o.picking_type_id.warehouse_id.partner_id.name"/>
-                                    <br/>
-                                    <!-- <span t-field="o.picking_type_id.warehouse_id.partner_id.parent_id.name"/> -->
+                                    <span t-field="o.picking_type_id.warehouse_id.partner_id.name" />
+                                    <br />
                                     <t t-if="not o.picking_type_id.warehouse_id.partner_id.external_company">
-                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.parent_id.name"/>
+                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.parent_id.name" />
                                     </t>
                                     <t t-else="">
-                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.external_company"/>
+                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.external_company" />
                                     </t>
                                 </div>
-                                <div t-field="o.picking_type_id.warehouse_id.partner_id"
-                                     t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
+                                <div t-field="o.picking_type_id.warehouse_id.partner_id" t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}' />
                             </t>
                             <t t-else="">
-                                <div t-field="o.picking_type_id.warehouse_id.partner_id"
-                                     t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                                <div t-field="o.picking_type_id.warehouse_id.partner_id" t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}' />
                             </t>
                         </div>
                     </t>
@@ -162,25 +147,23 @@
                     <div t-if="o.partner_id" name="partner_header">
                         <t t-if="o.partner_id.parent_id.name">
                             <div>
-                                <span t-field="o.partner_id.name"/>
-                                <br/>
-                                <!-- <span t-field="o.partner_id.parent_id.name"/> -->
+                                <span t-field="o.partner_id.name" />
+                                <br />
                                 <t t-if="not o.partner_id.external_company">
-                                    <span t-field="o.partner_id.parent_id.name"/>
+                                    <span t-field="o.partner_id.parent_id.name" />
                                 </t>
                                 <t t-else="">
-                                    <span t-field="o.partner_id.external_company"/>
+                                    <span t-field="o.partner_id.external_company" />
                                 </t>
                             </div>
-                            <div t-field="o.partner_id"
-                                 t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
+                            <div t-field="o.partner_id" t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}' />
                         </t>
                         <t t-else="">
-                            <div t-field="o.partner_id"
-                                 t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                            <div t-field="o.partner_id" t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}' />
                         </t>
-                        <p t-if="o.sudo().partner_id.vat"><t t-esc="o.company_id.country_id.vat_label or 'Tax ID'"/>:
-                            <span t-field="o.sudo().partner_id.vat"/>
+                        <p t-if="o.sudo().partner_id.vat">
+                            <span t-out="o.company_id.country_id.vat_label or 'Tax ID'" />:
+                            <span t-field="o.sudo().partner_id.vat" />
                         </p>
                     </div>
                 </div>
@@ -189,75 +172,69 @@
         <xpath expr="//p[@t-field='o.note']" position="before">
             <strong t-if="o.note">Internal Note</strong>
         </xpath>
-        <xpath expr="//h1" position="replace"/>
+        <xpath expr="//h1" position="replace" />
         <xpath expr="//table[hasclass('table','table-sm')]" position="attributes">
             <attribute name="style">margin-top: 2rem !important;</attribute>
         </xpath>
-       <xpath expr="//p[@t-field='o.note']"  position="attributes">
+        <xpath expr="//p[@t-field='o.note']" position="attributes">
             <attribute name="style">border-top: 1px solid black;</attribute>
         </xpath>
-
     </template>
 
     <!--   Delivery slip pdf-->
-    <template id="report_purchaseorder_deliveryslip_report"
-              inherit_id="stock.report_delivery_document">
+    <template id="report_purchaseorder_deliveryslip_report" inherit_id="stock.report_delivery_document">
         <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
             <attribute name="t-call">bista_report_header_footer.shipment_custom_header</attribute>
         </xpath>
         <xpath expr="//div[hasclass('page')]" position="inside">
             <t t-foreach="docs" t-as="o">
                 <t t-set="report_info" class="col-6 text-right mb4">
-                    <h3 t-esc="env['ir.actions.report'].search([('report_name', '=', xmlid)]).name"/>
+                    <h3 t-out="env['ir.actions.report'].search([('report_name', '=', xmlid)]).name" />
                     <h3>
-                        <t t-esc="o.name"/>
+                        <span t-field="o.name" />
                     </h3>
                     <t t-if="o.state !='done' and o.picking_type_code =='incoming'">
                         <h5 style="font-size: 20px;">Receipt Date:
-                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
+                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}' />
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='outgoing'">
                         <h5 style="font-size: 20px;">Delivery Date:
-                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
+                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}' />
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name =='Pick'">
                         <h5 style="font-size: 20px;">Picking Date:
-                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
+                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}' />
                         </h5>
                     </t>
                     <t t-elif="o.state !='done' and o.picking_type_code =='internal' and o.picking_type_id.name !='Pick'">
                         <h5 style="font-size: 20px;">Internal Transfer Date:
-                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
+                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}' />
                         </h5>
                     </t>
                     <t t-elif="o.state =='done'">
                         <h5>Validated Date:
-                            <span t-field="o.date_done" t-options='{"widget": "date"}'/>
+                            <span t-field="o.date_done" t-options='{"widget": "date"}' />
                         </h5>
                     </t>
                     <t t-else="">
                         <h5 style="font-size: 20px;">Date:
-                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}'/>
+                            <span t-field="o.scheduled_date" t-options='{"widget": "date"}' />
                         </h5>
                     </t>
                     <h4>
-                        <t t-esc="o.picking_type_id.warehouse_id.name"/>
+                        <span t-field="o.picking_type_id.warehouse_id" />
                     </h4>
                     <div class="text-right" style="margin-left:150px;">
-                        <t t-esc="o.name"
-                           t-options="{'widget': 'barcode', 'width': 310, 'height': 100, 'img_style': 'width:350px;height:55px;'}"
-                        />
-                        <br/>
+                        <span t-field="o.name" t-options="{'widget': 'barcode', 'img_style': 'width: 350px; height: 55px;'}" />
                     </div>
                 </t>
             </t>
         </xpath>
         <xpath expr="//div[hasclass('row','mt32','mb32')]" position="before">
             <div class="row mb-2 pt-5 ">
-                <div name="div_outgoing_address" class="col-4"
-                     t-if="o.should_print_delivery_address() or o.picking_type_id.code != 'internal' and o.picking_type_id.warehouse_id.partner_id">
+                <div name="div_outgoing_address" class="col-4" t-if="o.should_print_delivery_address() or o.picking_type_id.code != 'internal' and o.picking_type_id.warehouse_id.partner_id">
                     <t t-if="o.should_print_delivery_address() ">
                         <div t-if="o.should_print_delivery_address()">
                             <span>
@@ -265,21 +242,19 @@
                             </span>
                             <t t-if="o.move_ids_without_package[0].partner_id.parent_id.name">
                                 <div>
-                                    <span t-field="o.move_ids_without_package[0].partner_id.name"/>
-                                    <br/>
+                                    <span t-field="o.move_ids_without_package[0].partner_id.name" />
+                                    <br />
                                     <t t-if="not o.move_ids_without_package[0].partner_id.external_company">
-                                        <span t-field="o.move_ids_without_package[0].partner_id.parent_id.name"/>
+                                        <span t-field="o.move_ids_without_package[0].partner_id.parent_id.name" />
                                     </t>
                                     <t t-else="">
-                                        <span t-field="o.move_ids_without_package[0].partner_id.external_company"/>
+                                        <span t-field="o.move_ids_without_package[0].partner_id.external_company" />
                                     </t>
                                 </div>
-                                <div t-field="o.move_ids_without_package[0].partner_id"
-                                     t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
+                                <div t-field="o.move_ids_without_package[0].partner_id" t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}' />
                             </t>
                             <t t-else="">
-                                <div t-field="o.move_ids_without_package[0].partner_id"
-                                     t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                                <div t-field="o.move_ids_without_package[0].partner_id" t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}' />
                             </t>
                         </div>
                     </t>
@@ -290,21 +265,19 @@
                             </span>
                             <t t-if="o.picking_type_id.warehouse_id.partner_id.parent_id.name">
                                 <div>
-                                    <span t-field="o.picking_type_id.warehouse_id.partner_id.name"/>
-                                    <br/>
+                                    <span t-field="o.picking_type_id.warehouse_id.partner_id.name" />
+                                    <br />
                                     <t t-if="not o.picking_type_id.warehouse_id.partner_id.external_company">
-                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.parent_id.name"/>
+                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.parent_id.name" />
                                     </t>
                                     <t t-else="">
-                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.external_company"/>
+                                        <span t-field="o.picking_type_id.warehouse_id.partner_id.external_company" />
                                     </t>
                                 </div>
-                                <div t-field="o.picking_type_id.warehouse_id.partner_id"
-                                     t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
+                                <div t-field="o.picking_type_id.warehouse_id.partner_id" t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}' />
                             </t>
                             <t t-else="">
-                                <div t-field="o.picking_type_id.warehouse_id.partner_id"
-                                     t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                                <div t-field="o.picking_type_id.warehouse_id.partner_id" t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}' />
                             </t>
                         </div>
                     </t>
@@ -328,34 +301,31 @@
                     <div t-if="partner" name="partner_header">
                         <t t-if="partner.commercial_partner_id.parent_id.name">
                             <div>
-                                <span t-field="partner.commercial_partner_id.name"/>
-                                <br/>
-                                <!-- <span t-field="partner.commercial_partner_id.parent_id.name"/> -->
+                                <span t-field="partner.commercial_partner_id.name" />
+                                <br />
                                 <t t-if="not partner.commercial_partner_id.external_company">
-                                    <span t-field="partner.commercial_partner_id.parent_id.name"/>
+                                    <span t-field="partner.commercial_partner_id.parent_id.name" />
                                 </t>
                                 <t t-else="">
-                                    <span t-field="partner.commercial_partner_id.external_company"/>
+                                    <span t-field="partner.commercial_partner_id.external_company" />
                                 </t>
                             </div>
-                            <div t-field="partner.commercial_partner_id"
-                                 t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
+                            <div t-field="partner.commercial_partner_id" t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}' />
                         </t>
                         <t t-else="">
-                            <div t-field="partner.commercial_partner_id"
-                                 t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
-                            <p t-if="partner.sudo().commercial_partner_id.vat"><t
-                                    t-esc="o.company_id.country_id.vat_label or 'Tax ID'"/>:
-                                <span t-field="partner.sudo().commercial_partner_id.vat"/>
+                            <div t-field="partner.commercial_partner_id" t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}' />
+                            <p t-if="partner.sudo().commercial_partner_id.vat">
+                                <span t-out="o.company_id.country_id.vat_label or 'Tax ID'" />:
+                                <span t-field="partner.sudo().commercial_partner_id.vat" />
                             </p>
                         </t>
                     </div>
                 </div>
             </div>
         </xpath>
-        <xpath expr="//t[@t-set='address']" position="replace"/>
-        <xpath expr="//h2" position="replace"/>
-        <xpath expr="//t[@t-set='information_block']" position="replace"/>
+        <xpath expr="//t[@t-set='address']" position="replace" />
+        <xpath expr="//h2" position="replace" />
+        <xpath expr="//t[@t-set='information_block']" position="replace" />
         <xpath expr="//table[@name='stock_move_table']" position="attributes">
             <attribute name="style">margin-top: 2rem !important;</attribute>
         </xpath>
@@ -371,20 +341,20 @@
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/tr/td" position="replace">
             <td name="td_product">
-            <span t-field="move.product_id.name"/>
-            <p t-if="move.description_picking != move.product_id.name and move.description_picking != move.product_id.display_name">
-                <span t-field="move.description_picking"/>
-            </p>
-        </td>
+                <span t-field="move.product_id.name" />
+                <p t-if="move.description_picking != move.product_id.name and move.description_picking != move.product_id.display_name">
+                    <span t-field="move.description_picking" />
+                </p>
+            </td>
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/tr/td" position="before">
             <td name="td_isbn">
-                <span style="font-weight:normal" t-field="move.product_id.default_code"/>
+                <span style="font-weight:normal" t-field="move.product_id.default_code" />
             </td>
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/tr/td[2]" position="after">
             <td name="th_format">
-                <span style="font-weight:normal" t-field="move.product_id.product_format"/>
+                <span style="font-weight:normal" t-field="move.product_id.product_format" />
             </td>
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm', 'mt48')]/thead/tr/th[1]" position="before">
@@ -398,59 +368,59 @@
             </th>
         </xpath>
     </template>
-    <template id="bista_purchase_stock_report_delivery_has_serial_move_line"
-              inherit_id="stock.stock_report_delivery_has_serial_move_line">
-            <xpath expr="//td[1]" position="before">
-                <td name="td_isbn">
-                <span style="font-weight:normal" t-field="move_line.product_id.default_code"/>
+
+    <template id="bista_purchase_stock_report_delivery_has_serial_move_line" inherit_id="stock.stock_report_delivery_has_serial_move_line">
+        <xpath expr="//td[1]" position="before">
+            <td name="td_isbn">
+                <span style="font-weight:normal" t-field="move_line.product_id.default_code" />
             </td>
-            </xpath>
-            <xpath expr="//td[1]" position="replace">
-                <td>
-                <span t-field="move_line.product_id.name"/>
+        </xpath>
+        <xpath expr="//td[1]" position="replace">
+            <td>
+                <span t-field="move_line.product_id.name" />
                 <!-- this is an annoying workaround for the multiple types of descriptions (often auto-filled) that we do not want to print -->
                 <!-- this makes it so we can pre-filter the descriptions in inherited templates since we cannot extend the standard "if" condition -->
                 <!-- let's agree that pre-filtered descriptions will be set to "" -->
                 <t t-if="not description and description != ''">
-                    <t t-set="description" t-value="move_line.move_id.description_picking"/>
+                    <t t-set="description" t-value="move_line.move_id.description_picking" />
                 </t>
                 <p t-if="description !='' and description != move_line.product_id.name">
-                    <span t-esc="description"/>
+                    <span t-out="description" />
                 </p>
             </td>
-            </xpath>
+        </xpath>
         <xpath expr="//td[2]" position="after">
             <td name="td_format">
-                <span style="font-weight:normal" t-field="move_line.product_id.product_format"/>
+                <span style="font-weight:normal" t-field="move_line.product_id.product_format" />
             </td>
         </xpath>
     </template>
-    <template id="bista_purchase_stock_report_delivery_aggregated_move_lines"
-              inherit_id="stock.stock_report_delivery_aggregated_move_lines">
-              <xpath expr="//tr/td[1]" position="before">
-                <td name="td_isbn">
-                <span style="font-weight:normal" t-field="aggregated_lines[line]['product'].default_code"/>
+
+    <template id="bista_purchase_stock_report_delivery_aggregated_move_lines" inherit_id="stock.stock_report_delivery_aggregated_move_lines">
+        <xpath expr="//tr/td[1]" position="before">
+            <td name="td_isbn">
+                <span style="font-weight:normal" t-field="aggregated_lines[line]['product'].default_code" />
             </td>
         </xpath>
-            <xpath expr="//tr/td[2]" position="replace">
-                <td>
-                <span t-esc="aggregated_lines[line]['product'].name"/>
+        <xpath expr="//tr/td[2]" position="replace">
+            <td>
+                <span t-out="aggregated_lines[line]['product'].name" />
                 <p t-if="aggregated_lines[line]['description']">
-                    <span t-esc="aggregated_lines[line]['description']"/>
+                    <span t-out="aggregated_lines[line]['description']" />
                 </p>
-                </td>
-            </xpath>
+            </td>
+        </xpath>
         <xpath expr="//tr/td[2]" position="after">
             <td name="td_format">
-                <span style="font-weight:normal" t-field="aggregated_lines[line]['product'].product_format"/>
+                <span style="font-weight:normal" t-field="aggregated_lines[line]['product'].product_format" />
             </td>
         </xpath>
     </template>
 
     <record id="paperformat_stock_picking_report" model="report.paperformat">
         <field name="name">Invoice/Bill Report</field>
-        <field name="default" eval="False"/>
-        <field name="disable_shrinking" eval="True"/>
+        <field name="default" eval="False" />
+        <field name="disable_shrinking" eval="True" />
         <field name="format">A4</field>
         <field name="orientation">Portrait</field>
         <field name="header_spacing">39</field>
@@ -463,10 +433,10 @@
     </record>
 
     <record id="stock.action_report_picking" model="ir.actions.report">
-        <field name="paperformat_id" ref="bista_purchase.paperformat_stock_picking_report"/>
+        <field name="paperformat_id" ref="bista_purchase.paperformat_stock_picking_report" />
     </record>
 
     <record id="stock.action_report_delivery" model="ir.actions.report">
-        <field name="paperformat_id" ref="bista_purchase.paperformat_stock_picking_report"/>
+        <field name="paperformat_id" ref="bista_purchase.paperformat_stock_picking_report" />
     </record>
 </odoo>
