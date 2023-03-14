@@ -39,17 +39,17 @@
                     </h4>
                     <t t-if="doc.state in ['draft','sent','quote_approval','quote_confirm']">
                         <!-- <strong>Quotation Date:</strong> -->
-                        <t t-field="o.date_order" t-options='{"widget": "date"}'/>
+                        <span t-field="o.date_order" t-options='{"widget": "date"}'/>
                         <br/>
                     </t>
                     <t t-if="doc.state in ['order_booked']">
                         <!-- <strong>Booked order date:</strong> -->
-                        <t t-field="o.date_order" t-options='{"widget": "date"}'/>
+                        <span t-field="o.date_order" t-options='{"widget": "date"}'/>
                         <br/>
                     </t>
                     <t t-if="doc.state in ['sale','pending_for_approval','credit_review','cancel','done']">
                         <strong>
-                            <t t-field="o.date_order" t-options='{"widget": "date"}'/>
+                            <span t-field="o.date_order" t-options='{"widget": "date"}'/>
                         </strong>
                     </t>
                     <br/>
