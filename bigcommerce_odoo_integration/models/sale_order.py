@@ -1448,13 +1448,14 @@ class SaleOrderVts(models.Model):
 
         url = "%s%s/v2/orders/%s/shipping_addresses?limit=%s" % (
             self.bigcommerce_store_id.bigcommerce_api_url, bigcommerce_store_hash, self.big_commerce_order_id, 1)
+        _logger.info("URL :{}".format(url))
         try:
             response = request(method="GET", url=url, headers=headers)
             if response.status_code in [200, 201]:
-                responses = response.json()
-                _logger.info("BigCommerce Get Shipment  Response : {0}".format(response))
-                for response in response:
-                    self.bigcommerce_shipment_address_id = response.get('id')
+                response_datas = response.json()
+                _logger.info("BigCommerce Get Shipment  Response : {0}".format(response_datas))
+                for response_data in response_datas:
+                    self.bigcommerce_shipment_address_id = response_data.get('id')
             else:
                 self.with_user(1).message_post(
                     body="Getting an Error in Import Shipment Address : {0}".format(response.content))
