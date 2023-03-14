@@ -389,7 +389,6 @@
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm', 'mt48')]/thead/tr/th[1]" position="before">
             <th name="th_isbn">
-                <span>ccccccccc</span>
                 <strong>ISBN</strong>
             </th>
         </xpath>
