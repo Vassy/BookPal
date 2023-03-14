@@ -1,0 +1,13 @@
+<odoo>
+    <template id="portal_share_template_bista"
+              inherit_id="portal.portal_share_template">
+            <xpath expr="//div" position="replace">
+                <p>Dear <span t-esc="partner.name"/>,</p>
+                <p t-if="note" style="white-space: pre-wrap;" t-esc="note"/>
+                <br/>
+                <p class="text-muted">Please click the button below to access your order details:</p>
+                <br/>
+                <a t-attf-href="#{share_link}" style="background-color: #875A7B; padding: 10px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 12px;"><strong>Open </strong><strong t-esc="record.display_name"/></a><br/>
+            </xpath>
+    </template>
+</odoo>
