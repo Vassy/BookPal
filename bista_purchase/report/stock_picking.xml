@@ -440,7 +440,7 @@
                 </p>
                 </td>
             </xpath>
-        <xpath expr="//tr/td[3]" position="after">
+        <xpath expr="//tr/td[2]" position="after">
             <td name="td_format">
                 <span style="font-weight:normal" t-field="aggregated_lines[line]['product'].product_format"/>
             </td>
