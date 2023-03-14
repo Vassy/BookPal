@@ -452,6 +452,7 @@ class SaleOrderVts(models.Model):
                                         {'big_commerce_order_id':
                                          big_commerce_order_id,
                                          'bc_id': int(big_commerce_order_id),
+                                         'client_order_ref': big_commerce_order_id,
                                          'bigcommerce_store_id':
                                          bigcommerce_store_id.id,
                                          'payment_status': 'paid' if
