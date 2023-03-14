@@ -466,6 +466,7 @@ class SaleOrderVts(models.Model):
                                 order_vals = self.create_sales_order_from_bigcommerce(vals)
                                 order_vals.update({'big_commerce_order_id': big_commerce_order_id,
                                                     'bc_id': int(big_commerce_order_id),
+                                                    'client_order_ref': big_commerce_order_id,
                                                    'bigcommerce_store_id': bigcommerce_store_id.id,
                                                    'payment_status': 'paid' if order.get('payment_status') in [
                                                        "captured", "paid"] else 'not_paid',
