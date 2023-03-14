@@ -185,16 +185,16 @@
                     <th style=" border-collapse: collapse;
                    border: none;" name="th_image" ></th>
                     <th style=" border-collapse: collapse;
-                   border: none;" name="th_isbn" class="text-center">ISBN
+                   border: none;" name="th_isbn" class="text-left">ISBN
                     </th>
                     <th  style=" border-collapse: collapse;
-                   border: none;" name="image" class="text-center">Description
+                   border: none;" name="image" class="text-left">Description
                     </th>
                     <th style=" border-collapse: collapse;
-                   border: none;" name="th_format" class="text-center">Format
+                   border: none;" name="th_format" class="text-left">Format
                     </th>
                     <th style=" border-collapse: collapse;
-                   border: none;" name="th_quantity" class="text-center">Quantity
+                   border: none;" name="th_quantity" class="text-center">Qty
                     </th>
                     <th style=" border-collapse: collapse;
                    border: none;" name="th_uom" class="text-center">Cover
@@ -245,7 +245,7 @@
                     <span t-if="line.product_template_id.default_code" t-field="line.product_template_id.default_code"/>
                     <span t-if="not line.product_template_id.default_code" t-field="line.product_template_id.isbn"/>
                 </td>
-                <td name="td_name" class="text-center">
+                <td name="td_name" class="text-left">
                     <b>
                         <span t-field="line.product_template_id.name"/>
                     </b>
