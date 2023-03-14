@@ -34,6 +34,7 @@
         # 'views/product_view.xml',
         "views/sale_templates.xml",
         "views/product_views.xml",
+        "views/share_template.xml",
         "views/seller_report_views.xml",
         "views/res_config_settings_views.xml",
         # "views/crm_lead_views.xml",
