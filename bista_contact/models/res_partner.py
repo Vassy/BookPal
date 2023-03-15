@@ -28,7 +28,7 @@ class ResPartner(models.Model):
     company_type = fields.Selection(string='Company Type',
         selection=[('person', 'Individual'), ('company', 'Company')],
         compute='_compute_company_type', inverse='_write_company_type', search='_search_referal_source')
-    source_notes = fields.Char('Source Notes')
+    source_notes = fields.Text('Source Notes')
     product_order_count = fields.Integer('Product Sale' , compute="_compute_sale_product_count")
     product_purchase_count = fields.Integer('Product Purchase', compute="_compute_purchase_product_count")
 

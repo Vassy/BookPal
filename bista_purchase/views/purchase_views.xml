@@ -176,9 +176,6 @@
                         <group>
                             <field name="memo" />
                         </group>
-                        <group>
-                            <!--                            <field name="gorgias_ticket" style="max-height: 25px;"/>-->
-                        </group>
                     </group>
                 </page>
                 <page name="financials" string="Financials">
