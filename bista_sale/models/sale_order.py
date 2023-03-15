@@ -36,13 +36,12 @@ class SaleOrder(models.Model):
     # journal_setup_fee = fields.Monetary(string="Journal Set Up Fee")
     # journal_setup_fee_waived = fields.Monetary(
     #     string="Journal Set Up Fee Waived")
-    # shipping_account = fields.Char(string="Shipping Account")
     shipping_account = fields.Selection([
         ("our_account", "Our Account"),
         ("castelli_account", "Castelli's Account")], string='Shipping Account')
     so_shipping_cost = fields.Monetary(string=" Our Shipping Cost")
     death_type_id = fields.Many2one('death.type', string='Die Type')
-    existing_death_order = fields.Char(string="Existing Die Order #")
+    existing_death_order = fields.Text(string="Existing Die Order #")
     # Shipping Info.
     shipping_notes = fields.Text(string='Shipping Notes')
     shipping_to = fields.Boolean('Shipping to Hotel or Event Venue')
@@ -56,11 +55,10 @@ class SaleOrder(models.Model):
         [('yes', 'Yes'), ('no', 'No')], string='Inside Delivery Required')
     # Project & Fulfilment Tracking.
     fulfilment_project = fields.Boolean('Fulfillment Project')
-    am_owner = fields.Char(string="AM Owner")
-    project_description = fields.Char(string="Project Description")
-    project_status = fields.Char(string="Project Status")
+    am_owner = fields.Many2one("res.users", string="AM Owner")
+    project_description = fields.Text(string="Project Description")
+    project_status = fields.Text(string="Project Status")
     status_notes = fields.Text(string='Status Notes')
-    # delivery_location = fields.Char(string="Delivery Location")
     delivery_location = fields.Selection([
         ("domestic", "Domestic"),
         ("international", "International"),
@@ -71,13 +69,13 @@ class SaleOrder(models.Model):
         'customization.type', string="Customization Type")
     special_insert_note = fields.Text(string='Special Insert Notes')
     attachment_note = fields.Text(string='Attachment Notes')
-    individual_mailer_return_receiver = fields.Char(
+    individual_mailer_return_receiver = fields.Text(
         string="Individual Mailer Return Receiver")
-    recipient_list_status = fields.Char(string="Recipient List Status")
-    recipient_list_expected = fields.Char(string="Recipient List Expected")
-    individual_mailer_return_address = fields.Char(
+    recipient_list_status = fields.Text(string="Recipient List Status")
+    recipient_list_expected = fields.Text(string="Recipient List Expected")
+    individual_mailer_return_address = fields.Text(
         string="Individual Mailer Return Address")
-    book_status = fields.Char(string="Book Status")
+    book_status = fields.Text(string="Book Status")
     on_hold_reason = fields.Text(string='On Hold Reason(s)')
     due_amount = fields.Monetary('Due Amount', related='partner_id.total_due')
 
@@ -86,8 +84,6 @@ class SaleOrder(models.Model):
     account_order_standing = fields.Selection(
         related="partner_id.account_order_standing",
         string='Account Order Standing', store=True)
-    # customer_email_add = fields.Char(
-    #     'Customer Email Address', related='partner_id.email')
     saving_amount = fields.Monetary(
         "Total Saving Amount", compute="_amount_all", store=True
     )
@@ -105,7 +101,7 @@ class SaleOrder(models.Model):
         compute="_compute_product_weight", string="Product Weight")
     weight_uom_name = fields.Char(
         string='Weight unit of measure label', compute="_compute_weight_uom")
-    product_use = fields.Char(string='Product Use')
+    product_use = fields.Text(string='Product Use')
     # compurl = fields.Char(string="compute url", compute="compute_url")
     acquirer_ids = fields.Many2many(
         "payment.acquirer",
