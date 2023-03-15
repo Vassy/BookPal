@@ -93,6 +93,9 @@
             <xpath expr="//field[@name='user_id']" position="attributes">
                 <attribute name="string">Rep</attribute>
             </xpath>
+            <field name="user_id" position="after">
+                <field name="am_owner" />
+            </field>
             <xpath expr="//notebook/page[@name='other_information']" position="after">
                 <page string="Source Details" name="order_details">
                     <group>
@@ -121,32 +124,28 @@
                     </group>
                 </page>
                 <page string="Order Notes" name="order_notes">
-                    <sheet>
-                        <group>
-                            <group name="order_notes">
-                                
-                                <field name="order_notes" />
-                                <field name="gorgias_ticket" widget="url" />
-                                <field name="product_status_notes" />
-                                <field name="product_use" />
-                                <field name="book_use_email" widget="url" text="Book Use Email"/>
-                            </group>
-                            <group>
-                                <field name="white_glove_id" options="{'no_create': True, 'no_open': True}"/>
-                                <field name="ce_notes" />
-                                
-                                <field name="am_notes" />
-                                <field name="ce_ops_acct_notes"/>
-                            </group>
+                    <group>
+                        <group name="order_notes">
+                            <field name="order_notes" />
+                            <field name="gorgias_ticket" />
+                            <field name="product_status_notes" />
+                            <field name="product_use" />
+                            <field name="book_use_email" widget="url" text="Book Use Email"/>
                         </group>
-                    </sheet>
+                        <group>
+                            <field name="white_glove_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="ce_notes" />
+                            <field name="am_notes" />
+                            <field name="ce_ops_acct_notes"/>
+                        </group>
+                    </group>
                 </page>
                 <page name="journal_details" string="Journal Details">
                     <group>
                         <group name="journal_details">
                             <field name="journal_customization_ids" widget="many2many_tags"
                                    options="{'color_field': 'color'}"/>
-                            <field name="link_to_art_files" widget="url" style="max-height: 25px;"/>
+                            <field name="link_to_art_files" widget="url" />
                             <field name="journal_notes" />
                             <field name="journal_setup_fee"/>
                         </group>
@@ -176,7 +175,6 @@
                     <group>
                         <group name="project_fulfilment_tracking">
                             <field name="fulfilment_project"/>
-                            <field name="am_owner"/>
                             <field name="project_description"/>
                             <field name="status_notes" />
                             <field name="delivery_location"/>
@@ -239,6 +237,17 @@
         </field>
     </record>
 
+    <record id="view_quotation_tree_bista" model="ir.ui.view">
+        <field name="name">sale.quotation.tree.bista</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="am_owner" optional="show" />
+            </field>
+        </field>
+    </record>
+
     <record id="bista_sale_sale_quotation_delivery_tree_view" model="ir.ui.view">
         <field name="name">bista.sale.sale.quotation.tree.inherit</field>
         <field name="model">sale.order</field>
@@ -263,6 +272,9 @@
         <field name="arch" type="xml">
             <field name="invoice_status" position="after">
                 <field name="tag_ids" widget="many2many_tags"/>
+            </field>
+            <field name="user_id" position="after">
+                <field name="am_owner" optional="show" />
             </field>
         </field>
     </record>

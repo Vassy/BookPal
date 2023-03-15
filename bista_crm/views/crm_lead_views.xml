@@ -65,11 +65,9 @@
                 <page name="billing_info" string="Billing Info">
                     <group name="billing_info" string="Billing Info">
                         <group>
-                            <!--                        <field name="billing_address"/>-->
                             <field name="tax_exempt"/>
                         </group>
                         <group>
-                            <!-- <field name="payment_method" /> -->
                             <field name="payment_notes" />
                         </group>
                     </group>
@@ -90,7 +88,7 @@
                             <field name="accept_pallets"/>
                             <field name="has_loading_dock"/>
                             <field name="inside_delivery_req"/>
-                            <field name="shipping_notes"  style="word-wrap: break-word;max-height: 25px;"/>
+                            <field name="shipping_notes" />
                         </group>
                     </group>
                 </page>
@@ -106,7 +104,6 @@
                     <group>
                         <field name="journal_notes" />
                         <field name="journal_setup_fee"/>
-                        <!-- <field name="shipping_account" /> -->
                         <field name="death_type_id" options="{'no_open': True}"/>
                         <field name="existing_death_order"/>
                     </group>
@@ -131,7 +128,6 @@
                 <page name="product_info" string="Product Info">
                     <group>
                         <group name="product_info" string="Product Info">
-                            <!--<field name="deal_title"/>-->
                             <field name="pre_release"/>
                             <field name="product_use"/>
                             <field name="product_status_notes" />
