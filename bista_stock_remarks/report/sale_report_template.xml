@@ -26,8 +26,6 @@
                     <td style="border: none !important"></td>
                     <td style="border: none !important"></td>
                     <td style="border: none !important"></td>
-                    <td style="border: none !important"></td>
-                    <td style="border: none !important"></td>
                     <td t-if="line_taxes" style="border: none !important"></td>
                     <td style="border: none !important"></td>
                     <td style="border: none !important"></td>
