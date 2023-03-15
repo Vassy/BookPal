@@ -25,7 +25,7 @@ class SaleOrder(models.Model):
     journal_customization_ids = fields.Many2many(
         'journal.customization', string='Journal Customization')
     customization_cost = fields.Monetary('Our Customization Cost')
-    link_to_art_files = fields.Text(string='Link to Art Files')
+    link_to_art_files = fields.Char(string='Link to Art Files')
     artwork_status_id = fields.Many2one(
         'artwork.status', string='Artwork Status')
     journal_notes = fields.Text(string='Journal Notes')
