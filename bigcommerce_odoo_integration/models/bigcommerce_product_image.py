@@ -152,6 +152,7 @@ class BigcommerceProductImage(models.Model):
                 if data.get('is_thumbnail'):
                     listing_id.image_1920 = image_data
                     listing_id.bc_product_image_id = image_id
+                    listing_id.product_tmpl_id.image_1920 = image_data
                     continue
                 if not self.search([('bigcommerce_product_image_id', '=', data.get('id')), ('bigcommerce_listing_id','=',listing_id.id)]):
                     self.create(values)
