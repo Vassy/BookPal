@@ -74,7 +74,8 @@ class SaleOrderVts(models.Model):
                                 'amount': response_data.get('amount'),
                                 'date': self.date_order,
                                 'ref': self.name,
-                                'partner_id': self.partner_id.id,
+                                'partner_id': self.partner_id.parent_id.id if 
+                                self.partner_id.parent_id else self.partner_id.id,
                                 'partner_type': 'customer',
                                 'currency_id': currency_id.id,
                                 'journal_id': journal_id,
