@@ -210,7 +210,11 @@ class ResPartner(models.Model):
         if self.env.context.get('shipment_contact'):
             for partner in self:
                 if partner.is_multi_ship:
-                    res.append((partner.id, partner.name))
+                    if partner.external_company:
+                        name = partner.name + "\n" + partner.external_company + "\n" + partner._display_address(without_company=False)
+                    else:
+                        name = partner.name + partner._display_address(without_company=False)
+                    res.append((partner.id, name))
                 else:
                     name = partner._get_name()
                     res.append((partner.id, name))
