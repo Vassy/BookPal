@@ -237,6 +237,17 @@
         </field>
     </record>
 
+    <record id="view_quotation_tree_bista" model="ir.ui.view">
+        <field name="name">sale.quotation.tree.bista</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="am_owner" optional="show" />
+            </field>
+        </field>
+    </record>
+
     <record id="bista_sale_sale_quotation_delivery_tree_view" model="ir.ui.view">
         <field name="name">bista.sale.sale.quotation.tree.inherit</field>
         <field name="model">sale.order</field>
@@ -261,6 +272,9 @@
         <field name="arch" type="xml">
             <field name="invoice_status" position="after">
                 <field name="tag_ids" widget="many2many_tags"/>
+            </field>
+            <field name="user_id" position="after">
+                <field name="am_owner" optional="show" />
             </field>
         </field>
     </record>
