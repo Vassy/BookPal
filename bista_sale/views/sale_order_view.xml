@@ -145,7 +145,7 @@
                         <group name="journal_details">
                             <field name="journal_customization_ids" widget="many2many_tags"
                                    options="{'color_field': 'color'}"/>
-                            <field name="link_to_art_files" />
+                            <field name="link_to_art_files" widget="url" />
                             <field name="journal_notes" />
                             <field name="journal_setup_fee"/>
                         </group>

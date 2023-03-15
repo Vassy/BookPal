@@ -98,7 +98,7 @@
                                widget="many2many_tags"/>
                         <field name="currency_id" invisible="1"/>
                         <field name="customization_cost"/>
-                        <field name="link_to_art_files" />
+                        <field name="link_to_art_files" widget="url"/>
                         <field name="artwork_status_id" options="{'no_open': True}"/>
                     </group>
                     <group>
