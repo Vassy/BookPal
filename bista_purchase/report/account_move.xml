@@ -120,18 +120,18 @@
                     Product Details
                 </span>
                 <tr>
-                    <th class="text-center"
+                    <!-- <th class="text-center"
                         style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;">
                         <strong>SKU</strong>
-                    </th>
+                    </th> -->
                     <th class="text-center"
                         style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black; ">
                         <strong>Title</strong>
                     </th>
-                    <th class="text-center"
+                    <!-- <th class="text-center"
                         style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;" >
                         <strong>Format</strong>
-                    </th>
+                    </th> -->
                     <th class="text-center"
                         style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black; width:10%;">
                         <strong>QTY</strong>
@@ -175,18 +175,27 @@
         </xpath>
         <xpath expr="//t[@t-if='not line.display_type']" position="replace">
             <t t-if="not line.display_type">
-                <td id="td_default_code" class="text-left td_style"
+                <!-- <td id="td_default_code" class="text-left td_style"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-left: 1px solid black;border-top: 1px solid black;">
                     <span t-field="line.product_id.default_code"/>
-                </td>
+                </td> -->
                 <td id="product"
-                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
-                    <span t-out="line.name.replace('[' + str(line.product_id.default_code) + '] ', str())"/>
+                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;border-left: 1px solid black;">
+                    <span t-out="line.product_id.name"/>
+                    <br/>
+                    <t t-if="line.product_id.default_code">
+                        <span style="font-weight: bold;">ISBN:</span>
+                        <span t-field="line.product_id.default_code" /><br/>
+                    </t>
+                    <t t-if="line.product_format">
+                        <span style="font-weight: bold;">Format:</span>
+                        <span t-field="line.product_format" /><br/>
+                    </t>
                 </td>
-                <td class="text-center" name="td_format"
+                <!-- <td class="text-center" name="td_format"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
                     <span t-field="line.product_id.product_format"/>
-                </td>
+                </td> -->
                 <td class="text-center"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; ">
                     <span t-field="line.quantity" t-options="{'widget': 'integer'}" />
@@ -202,17 +211,17 @@
                         style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
                         <span t-field="line.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                     </td>
-                    <td class="text-right" name="td_discount"
+                    <td class="text-center" name="td_discount"
                         style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
                         <div>
                             <span t-field="line.discount"/>%
                         </div>
                     </td>
-                    <td class="text-right text-danger" name="td_bp_price"
+                    <td class="text-center text-danger" name="td_bp_price"
                         style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
                         <span t-field="line.purchase_line_id.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                     </td>
-                    <td class="text-right"
+                    <td class="text-center"
                         style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; margin: auto;">
                         <span t-field="line.price_subtotal"
                               t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
@@ -224,7 +233,7 @@
                 </td>
 
                 <t t-if="o.move_type == 'out_invoice'">
-                    <td class="text-right"
+                    <td class="text-center"
                         style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; margin: auto; ">
                         <span t-field="line.price_subtotal"
                               t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
@@ -242,8 +251,10 @@
         <xpath expr="//p[@name='payment_term']" position="replace"/>
         <xpath expr="//div[@name='comment']" position="replace">
             <div class="mt-5 mx-0" t-if="o.narration">
+                <t t-if="o.narration">
                 <strong>Invoice Terms and Conditions
                 </strong>
+            </t>
                 <p class="mb-1" t-field="o.narration" style="border-top: 1px solid black; margin-top: 1px;"/>
             </div>
         </xpath>

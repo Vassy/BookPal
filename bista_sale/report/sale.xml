@@ -184,15 +184,15 @@
                     </th>
                     <th style=" border-collapse: collapse;
                    border: none;" name="th_image" ></th>
-                    <th style=" border-collapse: collapse;
+                    <!-- <th style=" border-collapse: collapse;
                    border: none;" name="th_isbn" class="text-left">ISBN
-                    </th>
+                    </th> -->
                     <th  style=" border-collapse: collapse;
                    border: none;" name="image" class="text-left">Description
                     </th>
-                    <th style=" border-collapse: collapse;
+                    <!-- <th style=" border-collapse: collapse;
                    border: none;" name="th_format" class="text-left">Format
-                    </th>
+                    </th> -->
                     <th style=" border-collapse: collapse;
                    border: none;" name="th_quantity" class="text-center">Qty
                     </th>
@@ -241,18 +241,28 @@
                         <img src="/web/static/img/placeholder.png" style="max-height:100px; max-width:100px;"/>
                     </t>
                 </td>
-                <td name="td_sku" class="text-center">
+               <!--  <td name="td_sku" class="text-center">
                     <span t-if="line.product_template_id.default_code" t-field="line.product_template_id.default_code"/>
                     <span t-if="not line.product_template_id.default_code" t-field="line.product_template_id.isbn"/>
-                </td>
+                </td> -->
                 <td name="td_name" class="text-left">
                     <b>
                         <span t-field="line.product_template_id.name"/>
+                        <br/>
+                        <t t-if="line.product_template_id.isbn">
+                        <span style="font-weight: bold;">ISBN:</span>
+                        <span t-if="line.product_template_id.default_code" t-field="line.product_template_id.default_code"/>
+                        <span t-if="not line.product_template_id.default_code" t-field="line.product_template_id.isbn"/><br/>
+                        </t>
+                        <t t-if="line.product_format">
+                            <span style="font-weight: bold;">Format:</span>
+                            <span t-field="line.product_format" /><br/>
+                        </t>
                     </b>
                 </td>
-                <td name="td_format" class="text-center">
+                <!-- <td name="td_format" class="text-center">
                     <span t-field="line.product_id.product_format"/>
-                </td>
+                </td> -->
                 <td name="td_quantity" class="text-center">
                     <span t-if="float(line.product_uom_qty).is_integer()"
                           t-esc="int(line.product_uom_qty)"/>

@@ -116,18 +116,18 @@
                     Product Details
                 </span>
                 <tr>
-                    <th name="th_default_code" class="text-center"
+                   <!--  <th name="th_default_code" class="text-center"
                         style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;">
                         <strong>ISBN</strong>
-                    </th>
+                    </th> -->
                     <th name="th_description" class="text-center"
                         style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;">
                         <strong>Description</strong>
                     </th>
-                    <th name="th_format" class="text-center"
+                    <!-- <th name="th_format" class="text-center"
                         style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;">
                         <strong>Format</strong>
-                    </th>
+                    </th> -->
                     <!-- <th name="th_taxes" class="text-center"><strong>Taxes</strong></th> -->
                     <th name="th_quantity" class="text-center"
                         style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;">
@@ -154,13 +154,21 @@
         </xpath>
         <xpath expr="//t[@t-if='not order_line.display_type']" position="replace">
             <t t-if="not order_line.display_type">
-                <td id="td_default_code" class="text-left"
+                <!-- <td id="td_default_code" class="text-left"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-left: 1px solid black;border-top: 1px solid black;">
                     <span t-field="order_line.product_id.default_code"/>
-                </td>
+                </td> -->
                 <td id="product"
-                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
-                    <span t-field="order_line.product_id.name"/>
+                    style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;border-left: 1px solid black;">
+                    <span t-field="order_line.product_id.name"/><br/>
+                    <t t-if="order_line.product_id.default_code">
+                        <span style="font-weight: bold;">ISBN:</span>
+                        <span t-field="order_line.product_id.default_code" /><br/>
+                    </t>
+                    <t t-if="order_line.product_format">
+                        <span style="font-weight: bold;">Format:</span>
+                        <span t-field="order_line.product_format" /><br/>
+                    </t>
                     <div>
                         <b>
                             <span t-if="order_line.receipt_note">Remarks:</span>
@@ -168,10 +176,10 @@
                         <span t-field="order_line.receipt_note"/>
                     </div>
                 </td>
-                <td class="text-center" name="td_format"
+               <!--  <td class="text-center" name="td_format"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black; ">
                     <span t-field="order_line.product_id.product_format"/>
-                </td>
+                </td> -->
                 <td class="text-center"
                     style="border-bottom: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;">
                     <span t-if="float(order_line.product_qty).is_integer()"

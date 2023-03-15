@@ -50,33 +50,42 @@
                 </t>
             </t>
         </xpath>
-        <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th" position="before">
+        <!-- <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th" position="before">
             <th name="th_isbn">
                 <strong>ISBN</strong>
             </th>
-        </xpath>
+        </xpath> -->
         <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/t/tr/td" position="replace">
             <td name="td_name">
                 <span t-field="ml.product_id.name" />
+                <br/>
+                    <t t-if="ml.product_id.default_code">
+                        <span style="font-weight: bold;">ISBN:</span>
+                        <span t-field="ml.product_id.default_code" /><br/>
+                    </t>
+                    <t t-if="ml.product_format">
+                        <span style="font-weight: bold;">Format:</span>
+                        <span t-field="ml.product_format" /><br/>
+                    </t>
                 <br />
                 <span t-field="ml.product_id.description_picking" />
             </td>
         </xpath>
-        <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/t/tr/td[@name='td_name']" position="before">
+       <!--  <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/t/tr/td[@name='td_name']" position="before">
             <td name="td_isbn">
                 <span style="font-weight:normal" t-field="ml.product_id.default_code" />
             </td>
-        </xpath>
-        <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[2]" position="after">
+        </xpath> -->
+       <!--  <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[2]" position="after">
             <th name="th_format">
                 <strong>Format</strong>
             </th>
-        </xpath>
-        <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/t/tr/td[@name='td_name']" position="after">
+        </xpath> -->
+        <!-- <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/t/tr/td[@name='td_name']" position="after">
             <td name="td_format">
                 <span style="font-weight:normal" t-field="ml.product_id.product_format" />
             </td>
-        </xpath>
+        </xpath> -->
         <xpath expr="//div[@name='right_box']" position="replace" />
         <xpath expr="//div[hasclass('page')]/div[2]" position="replace">
             <div class="row mb-2 pt-5 ">
@@ -232,6 +241,23 @@
                 </t>
             </t>
         </xpath>
+        <xpath expr="//table[@name='stock_backorder_table']/tbody/t/tr/td" position="replace">
+            <td class="w-auto">
+                <span t-field="bo_line.product_id.name"/>
+                <p t-if="bo_line.description_picking != bo_line.product_id.name and bo_line.description_picking != bo_line.product_id.display_name">
+                    <span t-field="bo_line.description_picking"/>
+                </p>
+                <br/>
+                <t t-if="bo_line.product_id.default_code">
+                    <span style="font-weight: bold;">ISBN:</span>
+                    <span t-field="bo_line.product_id.default_code" /><br/>
+                </t>
+                <t t-if="bo_line.product_format">
+                    <span style="font-weight: bold;">Format:</span>
+                    <span t-field="bo_line.product_format" /><br/>
+                </t>
+            </td>
+        </xpath>
         <xpath expr="//div[hasclass('row','mt32','mb32')]" position="before">
             <div class="row mb-2 pt-5 ">
                 <div name="div_outgoing_address" class="col-4" t-if="o.should_print_delivery_address() or o.picking_type_id.code != 'internal' and o.picking_type_id.warehouse_id.partner_id">
@@ -329,7 +355,7 @@
         <xpath expr="//table[@name='stock_move_table']" position="attributes">
             <attribute name="style">margin-top: 2rem !important;</attribute>
         </xpath>
-        <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[1]" position="before">
+        <!-- <xpath expr="//table[hasclass('table', 'table-sm')]/thead/tr/th[1]" position="before">
             <th name="th_isbn">
                 <strong>ISBN</strong>
             </th>
@@ -338,26 +364,36 @@
             <th name="th_format">
                 <strong>Format</strong>
             </th>
-        </xpath>
+        </xpath> -->
         <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/tr/td" position="replace">
             <td name="td_product">
                 <span t-field="move.product_id.name" />
                 <p t-if="move.description_picking != move.product_id.name and move.description_picking != move.product_id.display_name">
-                    <span t-field="move.description_picking" />
+                <span t-field="move.description_picking" />
                 </p>
+                <br/>
+                    <t t-if="move.product_id.default_code">
+                        <span style="font-weight: bold;">ISBN:</span>
+                        <span t-field="move.product_id.default_code" /><br/>
+                    </t>
+                    <t t-if="move.product_format">
+                        <span style="font-weight: bold;">Format:</span>
+                        <span t-field="move.product_format" /><br/>
+                    </t>
+                <br />
             </td>
         </xpath>
-        <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/tr/td" position="before">
+        <!-- <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/tr/td" position="before">
             <td name="td_isbn">
                 <span style="font-weight:normal" t-field="move.product_id.default_code" />
             </td>
-        </xpath>
-        <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/tr/td[2]" position="after">
+        </xpath> -->
+       <!--  <xpath expr="//table[hasclass('table', 'table-sm')]/tbody/tr/td[2]" position="after">
             <td name="th_format">
                 <span style="font-weight:normal" t-field="move.product_id.product_format" />
             </td>
-        </xpath>
-        <xpath expr="//table[hasclass('table', 'table-sm', 'mt48')]/thead/tr/th[1]" position="before">
+        </xpath> -->
+        <!-- <xpath expr="//table[hasclass('table', 'table-sm', 'mt48')]/thead/tr/th[1]" position="before">
             <th name="th_isbn">
                 <strong>ISBN</strong>
             </th>
@@ -366,15 +402,15 @@
             <th name="th_format">
                 <strong>Format</strong>
             </th>
-        </xpath>
+        </xpath> -->
     </template>
 
     <template id="bista_purchase_stock_report_delivery_has_serial_move_line" inherit_id="stock.stock_report_delivery_has_serial_move_line">
-        <xpath expr="//td[1]" position="before">
+        <!-- <xpath expr="//td[1]" position="before">
             <td name="td_isbn">
                 <span style="font-weight:normal" t-field="move_line.product_id.default_code" />
             </td>
-        </xpath>
+        </xpath> -->
         <xpath expr="//td[1]" position="replace">
             <td>
                 <span t-field="move_line.product_id.name" />
@@ -387,34 +423,52 @@
                 <p t-if="description !='' and description != move_line.product_id.name">
                     <span t-out="description" />
                 </p>
+                <br/>
+                    <t t-if="move_line.product_id.default_code">
+                        <span style="font-weight: bold;">ISBN:</span>
+                        <span t-field="move_line.product_id.default_code" /><br/>
+                    </t>
+                    <t t-if="move_line.product_format">
+                        <span style="font-weight: bold;">Format:</span>
+                        <span t-field="move_line.product_format" /><br/>
+                    </t>
             </td>
         </xpath>
-        <xpath expr="//td[2]" position="after">
+        <!-- <xpath expr="//td[2]" position="after">
             <td name="td_format">
                 <span style="font-weight:normal" t-field="move_line.product_id.product_format" />
             </td>
-        </xpath>
+        </xpath> -->
     </template>
 
     <template id="bista_purchase_stock_report_delivery_aggregated_move_lines" inherit_id="stock.stock_report_delivery_aggregated_move_lines">
-        <xpath expr="//tr/td[1]" position="before">
+        <!-- <xpath expr="//tr/td[1]" position="before">
             <td name="td_isbn">
                 <span style="font-weight:normal" t-field="aggregated_lines[line]['product'].default_code" />
             </td>
-        </xpath>
-        <xpath expr="//tr/td[2]" position="replace">
+        </xpath> -->
+        <xpath expr="//tr/td[1]" position="replace">
             <td>
                 <span t-out="aggregated_lines[line]['product'].name" />
                 <p t-if="aggregated_lines[line]['description']">
                     <span t-out="aggregated_lines[line]['description']" />
                 </p>
+                <br/>
+                <t t-if="aggregated_lines[line]['product'].default_code">
+                    <span style="font-weight: bold;">ISBN:</span>
+                    <span t-field="aggregated_lines[line]['product'].default_code" /><br/>
+                </t>
+                <t t-if="aggregated_lines[line]['product'].product_format">
+                    <span style="font-weight: bold;">Format:</span>
+                    <span t-field="aggregated_lines[line]['product'].product_format" /><br/>
+                </t>
             </td>
         </xpath>
-        <xpath expr="//tr/td[2]" position="after">
+        <!-- <xpath expr="//tr/td[2]" position="after">
             <td name="td_format">
                 <span style="font-weight:normal" t-field="aggregated_lines[line]['product'].product_format" />
             </td>
-        </xpath>
+        </xpath> -->
     </template>
 
     <record id="paperformat_stock_picking_report" model="report.paperformat">
