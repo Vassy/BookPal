@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="bigcommerce_store_config_form_view_inherited" model="ir.ui.view">
+        <field name="name">bigcommerce.store.config.form.view.inherited</field>
+        <field name="model">bigcommerce.store.configuration</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="bigcommerce_odoo_integration.bigcommerce_store_configuration_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='bc_customer_prefix']" position="after">
+                <div class="col-xs-12 col-md-6 o_setting_box" id="last_import_products_date"
+                     name="bc_export_shipment">
+                    <div class="o_setting_right_pane">
+                        <label string="Last Import Products Date" for="last_import_products_date"/>
+                        <div class="text-muted">
+                            Up-to this date lastly Cron executed.
+                        </div>
+                        <div class="text-muted">
+                            <b>
+                                <field name="last_import_products_date" readonly="0"/>
+                            </b>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

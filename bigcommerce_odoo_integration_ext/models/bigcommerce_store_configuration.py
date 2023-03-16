@@ -1,13 +1,17 @@
 
 import logging
+from datetime import datetime, date, timedelta
 from threading import Thread
-from odoo import models, api, registry, SUPERUSER_ID
+from odoo import fields, models, api, _, registry, SUPERUSER_ID
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger("BigCommerce")
 
 
 class BigCommerceStoreConfiguration(models.Model):
     _inherit = "bigcommerce.store.configuration"
+
+    last_import_products_date = fields.Date('Last Import Products Date')
 
     def bigcommerce_to_odoo_import_pricelist_main(self):
         """Import main pricelist."""
@@ -31,3 +35,22 @@ class BigCommerceStoreConfiguration(models.Model):
             import_pricelist = pricelist_obj.with_user(
                 1).bigcommerce_to_odoo_import_pricelist(self)
             return import_pricelist
+
+    def bigcommerce_to_odoo_import_products(self, store_id=None):
+        """
+        Func: This method use to import products from bigcommerce to odoo
+        :return: True
+        """
+        bigcommerce_store_obj = self.search([('id', '=', store_id)])
+        product_obj = self.env['product.template']
+        if bigcommerce_store_obj:
+            _logger.info("===== Auto Import Bigcommerce Products =====")
+            from_date = bigcommerce_store_obj.last_import_products_date
+            if not from_date:
+                from_date = date.today() - timedelta(days=1)
+            to_date = date.today()
+            product_obj.with_context(from_date=from_date, to_date=to_date).import_product_from_bigcommerce(
+                bigcommerce_store_obj.warehouse_id, bigcommerce_store_obj)
+            bigcommerce_store_obj.last_import_products_date = to_date
+        else:
+            raise UserError(_("No record found of Bigcommerce store."))
