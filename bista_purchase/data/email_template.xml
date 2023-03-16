@@ -236,10 +236,14 @@
         <record id="email_template_bista_purchase" model="mail.template">
             <field name="name">BookPal: Send Purchase Order</field>
             <field name="model_id" ref="model_purchase_order"/>
-            <field name="subject">{{"New " if object.state == "draft" else ""}}{{ object.company_id.name }} PO ({{ object.name or 'n/a' }})</field>
+            <field name="subject">{{"URGENT " if object.rush else ""}} {{"New " if object.state == "draft" else ""}}{{ object.company_id.name }} PO ({{ object.name or 'n/a' }})</field>
             <field name="partner_to">{{ object.partner_id.id }}</field>
             <field name="body_html" type="html">
                 <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    <p style="font-size: 15px;" class="text-danger" t-if="object.rush">
+                        **URGENT - <span t-field="object.rush_status_id" /> ORDER ATTACHED**
+                    </p>
+                    <br/><br/>
                     **PLEASE REPLY TO THIS EMAIL TO CONFIRM RECEIPT**
                     <br/><br/><br/>
                     Please ship the following item(s):<br/><br/>
@@ -325,6 +329,10 @@
                     <div class="row" style="margin: 0px;">
                         <span style="font-weight: bold;">SHIPPING INSTRUCTIONS:</span>
                         <span t-field="object.shipping_instructions.name" />
+                        <t t-if="object.rush_status_id">
+                            <i class="mr-1 ml-1"> via </i>
+                            <span t-field="object.rush_status_id"/>
+                        </t>
                         <br/><br/>
                     </div>
                     <div class="row" style="margin: 0px;">
