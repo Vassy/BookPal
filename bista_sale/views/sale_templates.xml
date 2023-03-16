@@ -39,7 +39,12 @@
             </tr>
         </xpath>
         <xpath expr="//table[@id='sales_order_table']/tbody/t/tr/t/td[@id='product_name']" position="replace">
-            <td id="product_name"><span t-field="line.product_template_id.name"/></td>
+            <td id="product_name"><span t-field="line.product_template_id.name"/><br/>
+            <t t-if="line.product_format">
+                        <span style="font-weight: bold;">Format:</span>
+                        <span t-field="line.product_format" /><br/>
+                    </t>
+        </td>
         </xpath>
         <xpath expr="//table[@id='sales_order_table']//th[4]" position="replace">
             <th t-attf-class="text-right {{ 'd-none d-sm-table-cell' if report_type == 'html' else '' }}">Price</th>
