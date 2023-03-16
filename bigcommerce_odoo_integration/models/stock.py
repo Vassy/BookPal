@@ -66,6 +66,7 @@ class StockPicking(models.Model):
                                                                  operation_id, False, False,
                                                                  process_message)
                 self.bigcommerce_shimpment_id = response_data.get('id')
+                self.sale_id.bigcommerce_shipment_order_status = 'Shipped'
             else:
                 process_message = response.content
                 self.sale_id.create_bigcommerce_operation_detail('order', 'export', request_data, False,

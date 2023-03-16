@@ -286,6 +286,13 @@ class SaleOrderVts(models.Model):
                 self._cr.commit()
             except Exception as e:
                 _logger.info("Getting an Error in Order : {0} and {1}".format(order, e))
+            # In sale order bigcommerce shipment order status changed if any.
+            api_operation = "/v2/orders/{0}".format(order.big_commerce_order_id)
+            response_data = order.bigcommerce_store_id.with_user(1).send_get_request_from_odoo_to_bigcommerce(
+                api_operation)
+            if response_data.status_code in [200, 201]:
+                response = response_data.json()
+                order.bigcommerce_shipment_order_status = response.get('status')
 
     def bigcommerce_to_odoo_import_orders(self, warehouse_id=False, bigcommerce_store_ids=False,
                                           last_modification_date=False, today_date=False, total_pages=20,
