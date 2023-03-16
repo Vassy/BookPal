@@ -68,11 +68,8 @@
                             <span t-field="o.name"/>
                         </strong>
                     </h4>
-                    <strong t-if="o.state in ['purchase','done']">Date:
-                        <span t-field="o.date_approve" t-options='{"format": "MM/dd/yyyy"}'/>
-                    </strong>
-                    <strong t-if="o.state not in ['purchase','done']">Date:
-                        <span t-field="o.date_order" t-options='{"format": "MM/dd/yyyy"}'/>
+                    <strong>Date:
+                        <span t-field="o.date_approve" t-options='{"widget": "date"}'/>
                     </strong>
                 </t>
                 <t t-if="o.dest_address_id">
@@ -106,17 +103,12 @@
                             <t t-esc="o.name"/>
                             <br/>
                         </t>
-                        <t t-if="xmlid == 'purchase.report_purchaseorder' and o.need_by_date">
+                        <t t-if="xmlid == 'purchase.report_purchaseorder' and o.date_planned">
                             <div class="text-danger">
                                 <strong >Order Arrive By Date:</strong>
-                                <span t-field="o.need_by_date" t-options='{"widget": "date"}' />
+                                <span t-field="o.date_planned" t-options='{"widget": "date"}' />
                                 <br/>
                             </div>
-                        </t>
-                        <t t-elif="xmlid == 'purchase.report_purchasequotation' and o.state not in ['draft','sent']">
-                            <strong>Purchase Order Date:</strong>
-                            <span t-field="o.date_order" />
-                            <br/>
                         </t>
                         <strong>BookPal Account # :</strong>
                         <span t-field="o.partner_id.account_number" />

@@ -68,7 +68,7 @@
                         </strong>
                     </h4>
                     <strong>Date:
-                        <span t-field="o.date_order" t-options='{"format": "MM/dd/yyyy"}'/>
+                        <span t-field="o.date_approve" t-options='{"widget": "date"}'/>
                     </strong>
                 </t>
                 <t t-set="custom_information_block" style="font-size: 12px; !important">
@@ -83,10 +83,10 @@
                             <t t-esc="o.name"/>
                             <br/>
                         </t>
-                        <t t-if="o.need_by_date">
+                        <t t-if="o.date_planned">
                             <div class="text-danger">
                                 <strong>Order Need By Date:</strong>
-                                <t t-esc="o.need_by_date" t-options='{"widget": "date"}'/>
+                                <t t-esc="o.date_planned" t-options='{"widget": "date"}'/>
                                 <br/>
                             </div>
                         </t>

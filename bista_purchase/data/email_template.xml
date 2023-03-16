@@ -293,39 +293,16 @@
                         <div class="row" style="margin: 0px;" t-if="object.dest_address_id.parent_id.name">
                             <span t-field="object.dest_address_id.parent_id.name" />
                         </div>
-                        <div class="row" style="margin: 0px;" t-if="object.dest_address_id.street">
-                            <span t-field="object.dest_address_id.street"/>
-                        </div>
-                        <div class="row" style="margin: 0px;" t-if="object.dest_address_id.street2">
-                            <span t-field="object.dest_address_id.street2"/>
-                        </div>
-                        <div class="row" style="margin: 0px;">
-                            <t t-if="object.dest_address_id.city"><span t-field="object.dest_address_id.city" />,</t>
-                            <span t-field="object.dest_address_id.state_id.code" />
-                            <span t-field="object.dest_address_id.zip" />
-                            <span t-field="object.dest_address_id.country_id.code" />
-                            <br/><br/>
-                        </div>
+                        <div t-field="object.dest_address_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": True}' />
                     </t>
                     <t t-else="">
                         <div class="row" style="margin: 0px;"><span t-field="object.company_id.name"/></div>
                         <div class="row" style="margin: 0px;" t-if="object.company_id.parent_id.name">
                             <span t-field="object.company_id.parent_id.name"/>
                         </div>
-                        <div class="row" style="margin: 0px;" t-if="object.company_id.street">
-                            <span t-field="object.company_id.street"/>
-                        </div>
-                        <div class="row" style="margin: 0px;" t-if="object.company_id.street2">
-                            <span t-field="object.company_id.street2"/>
-                        </div>
-                        <div class="row" style="margin: 0px;">
-                            <t t-if="object.company_id.city"><span t-field="object.company_id.city" />,</t>
-                            <span t-field="object.company_id.state_id.code" />
-                            <span t-field="object.company_id.zip" />
-                            <span t-field="object.company_id.country_id.code" />
-                            <br/><br/>
-                        </div>
+                        <div t-field="object.company_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": True}' />
                     </t>
+                    <br/><br/>
                     <div class="row" style="margin: 0px;">
                         <span style="font-weight: bold;">SHIPPING INSTRUCTIONS:</span>
                         <span t-field="object.shipping_instructions.name" />
@@ -337,7 +314,7 @@
                     </div>
                     <div class="row" style="margin: 0px;">
                         <span style="font-weight: bold;">DELIVER THESE ITEMS BY:</span>
-                        <span t-out="format_date(object.date_planned.date())" />
+                        <span t-field="object.date_planned" t-options='{"widget": "date"}' />
                         <br/><br/>
                     </div>
                     <div class="row" style="margin: 0px;">

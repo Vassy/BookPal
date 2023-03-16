@@ -27,7 +27,6 @@ class SaleOrder(models.Model):
     state = fields.Selection(selection_add=AddState)
     sale_approval_log_ids = fields.One2many("sale.approval.log", "sale_id")
     is_order = fields.Boolean(copy=False)
-    date_approve = fields.Datetime()
 
     @api.depends("state")
     def _compute_type_name(self):
@@ -120,7 +119,6 @@ class SaleOrder(models.Model):
         )
         for sale in self:
             self.state = "quote_confirm"
-            sale.date_approve = datetime.now()
             approve_template.send_mail(sale.id, force_send=True)
             sale._create_sale_approval_log("Quote Confirmed")
             quote_approve_days = datetime.now().date() - sale.date_order.date()
