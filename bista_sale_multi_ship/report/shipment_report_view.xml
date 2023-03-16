@@ -37,21 +37,21 @@
                             <t t-esc="o.name"/>
                         </strong>
                     </h4>
-                    <t t-if="doc.state in ['draft','sent','quote_approval','quote_confirm']">
+                    <t>
                         <!-- <strong>Quotation Date:</strong> -->
                         <span t-field="o.date_order" t-options='{"widget": "date"}'/>
                         <br/>
                     </t>
-                    <t t-if="doc.state in ['order_booked']">
-                        <!-- <strong>Booked order date:</strong> -->
+                    <!-- <t t-if="doc.state in ['order_booked']">
+                        <strong>Booked order date:</strong>
                         <span t-field="o.date_order" t-options='{"widget": "date"}'/>
                         <br/>
-                    </t>
-                    <t t-if="doc.state in ['sale','pending_for_approval','credit_review','cancel','done']">
+                    </t> -->
+                    <!-- <t t-if="doc.state in ['sale','pending_for_approval','credit_review','cancel','done']">
                         <strong>
                             <span t-field="o.date_order" t-options='{"widget": "date"}'/>
                         </strong>
-                    </t>
+                    </t> -->
                     <br/>
                 </t>
                 <t t-set="information_block">
@@ -105,18 +105,18 @@
                                 <strong>Shipment Address</strong>
                             </th> -->
                             
-                            <th style=" border-collapse: collapse;border: none;" name="th_description"
+                           <!--  <th style=" border-collapse: collapse;border: none;" name="th_description"
                                 class="text-left">
                                 <strong>ISBN</strong>
-                            </th>
+                            </th> -->
                             <th style=" border-collapse: collapse;border: none;" name="th_description"
                                 class="text-left">
                                 <strong>Description</strong>
                             </th>
-                            <th style=" border-collapse: collapse;border: none;" name="th_format"
+                            <!-- <th style=" border-collapse: collapse;border: none;" name="th_format"
                                 class="text-center">
                                 <strong>Format</strong>
-                            </th>
+                            </th> -->
                             <th style="border: none;" name="th_nd" class="text-left">
                                 <strong>Need By Date</strong>
                             </th>
@@ -157,23 +157,31 @@
                                         <span t-field="line.partner_id"/>
                                     </td> -->
                                     
-                                    <td name="td_isbn"
+                                    <!-- <td name="td_isbn"
                                         style="width:30%; border-top: 1px solid black; border-left: none;border-right: none;" class="text-left">
                                         <span t-field="line.so_line_id.product_id.default_code"/>
-                                    </td>
+                                    </td> -->
                                     <td name="td_name"
                                         style="width:30%; border-top: 1px solid black; border-left: none;border-right: none;">
                                         <b>
                                             <span t-field="line.so_line_id.product_id.name"/>
                                         </b>
                                         <br/>
+                                        <t t-if="line.so_line_id.product_id.default_code">
+                                            <span style="font-weight: bold;">ISBN:</span>
+                                            <span t-field="line.so_line_id.product_id.default_code" /><br/>
+                                        </t>
+                                        <t t-if="line.so_line_id.product_format">
+                                            <span style="font-weight: bold;">Format:</span>
+                                            <span t-field="line.so_line_id.product_format" /><br/>
+                                        </t>
                                     </td>
 
-                                    <td name="td_format"
+                                    <!-- <td name="td_format"
                                         style="border-top: 1px solid black; border-left: none;border-right: none;"
                                         class="text-center">
                                         <span t-field="line.product_id.product_format"/>
-                                    </td>
+                                    </td> -->
                                     <td name="td_nd"
                                         style="border-top: 1px solid black; border-left: none;border-right: none;"
                                         class="text-left">
@@ -235,7 +243,7 @@
                                         <b><span t-if="line.picking_note">Product Notes:</span></b>
                                         <span t-field="line.picking_note"/>
                                     </td>
-                                    <td colspan="7" style="border: none !important"></td>
+                                    <td colspan="5" style="border: none !important"></td>
                                 </t>
                             </tr>
                         </t>
