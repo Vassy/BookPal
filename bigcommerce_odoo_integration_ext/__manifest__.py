@@ -17,7 +17,9 @@
     'depends': ['bigcommerce_odoo_integration'],
 
     'data': [
+        'data/ir_cron_data.xml',
         'views/product_template.xml',
+        'views/bigcommerce_store_configuration_view.xml',
     ],
     'maintainer': 'Vraja Technologies',
     'website': 'https://www.vrajatechnologies.com',

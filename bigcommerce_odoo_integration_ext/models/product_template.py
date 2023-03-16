@@ -40,11 +40,18 @@ def import_product_from_bigcommerce(
              ('usage', '=', 'inventory')], limit=1)
         try:
             total_pages = 0
+            from_date = self._context.get('from_date', False)
+            to_date = self._context.get('to_date', False)
             if add_single_product:
                 api_operation = "/v3/catalog/products/{}".format(
                     bigcommerce_product_id)
                 response_data = bigcommerce_store_id.with_user(1). \
                     send_get_request_from_odoo_to_bigcommerce(
+                    api_operation)
+            elif from_date and to_date:
+                api_operation = "/v3/catalog/products?date_modified:min={0}&date_modified:max={1}".format(
+                    from_date, to_date)
+                response_data = bigcommerce_store_id.with_user(1).send_get_request_from_odoo_to_bigcommerce(
                     api_operation)
             else:
                 api_operation = "/v3/catalog/products"
