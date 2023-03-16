@@ -46,13 +46,9 @@
             <xpath expr="//header/button[@name='action_confirm'][1]" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
-            <xpath expr="//field[@name='commitment_date']" position="after">
-                <field name="date_approve" invisible="1"/>
-            </xpath>
             <xpath expr="//page[@name='order_lines']//tree//field[@name='route_id']" position="attributes">
                 <attribute name="groups">bista_sales_approval.group_create_sale_order</attribute>
             </xpath>
-
             <notebook position="inside">
                 <page name="sale_approval_log_ids" string="Approval Status">
                     <field name="sale_approval_log_ids">

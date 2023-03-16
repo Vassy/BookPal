@@ -81,7 +81,7 @@
                            t-as="purchase">
                             <div class="text-danger">
                                 <strong>Order Arrive By Date:</strong>
-                                <span t-field="purchase.date_order" />
+                                <span t-field="purchase.date_approve" />
                                 <br/>
                             </div>
                         </t>

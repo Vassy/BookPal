@@ -5,6 +5,7 @@ from lxml import etree
 from odoo import models, fields, _, api
 from odoo.exceptions import ValidationError
 from odoo.tools import is_html_empty
+from dateutil.relativedelta import relativedelta
 
 AddState = [
     ("draft", "Purchase Order"),
@@ -78,7 +79,6 @@ class PurchaseOrder(models.Model):
     memo = fields.Text(string="Memo")
     supplier_order_number = fields.Char(string="Supplier Order Number")
     num_of_need_by_days = fields.Text(string='Num of Need By Days')
-    need_by_date = fields.Date(string="Need By Date")
     sale_order_ids = fields.Many2many(
         'sale.order', compute="compute_sale_order_ids")
     purchase_tracking_ids = fields.One2many(
@@ -90,6 +90,8 @@ class PurchaseOrder(models.Model):
     state = fields.Selection(selection_add=AddState)
     is_email_sent = fields.Boolean(string="Email Sent", default=False)
     rush = fields.Boolean(string="Rush")
+    date_order = fields.Datetime(string="SO Need By Date")
+    date_planned = fields.Datetime(string="MAB Date")
 
     def default_get(self, fields):
         defaults = super().default_get(fields)
@@ -386,6 +388,15 @@ class PurchaseLineStatus(models.Model):
 class PurchaseOrderLine(models.Model):
     _inherit = ['purchase.order.line', 'mail.thread', 'mail.activity.mixin']
     _name = 'purchase.order.line'
+
+    def _prepare_purchase_order_line_from_procurement(
+        self, product_id, product_qty, product_uom, company_id, values, po
+    ):
+        result = super()._prepare_purchase_order_line_from_procurement(
+            product_id, product_qty, product_uom, company_id, values, po
+        )
+        result["date_planned"] = values.get("date_planned") - relativedelta(days=1)
+        return result
 
     def _default_po_line_status(self):
         draft_status_id = self.env.ref('bista_purchase.status_line_draft')
