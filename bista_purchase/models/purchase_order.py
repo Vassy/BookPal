@@ -89,6 +89,7 @@ class PurchaseOrder(models.Model):
     purchase_approval_log_ids = fields.One2many("purchase.approval.log", "order_id")
     state = fields.Selection(selection_add=AddState)
     is_email_sent = fields.Boolean(string="Email Sent", default=False)
+    rush = fields.Boolean(string="Rush")
 
     def default_get(self, fields):
         defaults = super().default_get(fields)

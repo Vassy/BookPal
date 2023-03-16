@@ -260,6 +260,9 @@
                 <attribute name="context">{'show_address': 1}</attribute>
                 <attribute name="options">{"always_reload": True}</attribute>
             </xpath>
+            <xpath expr="//field[@name='effective_date']" position="after">
+                <field name="rush"/>
+            </xpath>
         </field>
     </record>
 
