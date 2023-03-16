@@ -21,10 +21,14 @@
                 <field name="tracking_ref" optional="hide"/>
                 <field name="attachment_ids" widget="many2many_binary" optional="show"/>
             </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="before">
+                <field name="detailed_type" invisible="1"/>
+            </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
                 <attribute name="string">Cover Price</attribute>
                 <attribute name="optional">show</attribute>
-                <attribute name="readonly">1</attribute>
+                <!-- <attribute name="readonly">0</attribute> -->
+                <attribute name="attrs">{'readonly': [('detailed_type', '!=', 'service')]}</attribute>
                 <attribute name="force_save">1</attribute>
                 <attribute name="widget">monetary</attribute>
             </xpath>
@@ -226,14 +230,6 @@
             <xpath expr="//notebook//page[@name='optional_products']" position="attributes">
                 <attribute name="groups">bista_sale.show_optional_product</attribute>
             </xpath>
-            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
-                <attribute name="string">Cover Price</attribute>
-                <attribute name="optional">show</attribute>
-                <attribute name="readonly">1</attribute>
-                <attribute name="force_save">1</attribute>
-                <attribute name="widget">monetary</attribute>
-            </xpath>
-            
         </field>
     </record>
 
