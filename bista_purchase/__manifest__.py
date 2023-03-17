@@ -49,3 +49,4 @@
         ],
     },
 }
+# for Odoo.sh update
