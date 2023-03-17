@@ -90,8 +90,15 @@ class PurchaseOrder(models.Model):
     state = fields.Selection(selection_add=AddState)
     is_email_sent = fields.Boolean(string="Email Sent", default=False)
     rush = fields.Boolean(string="Rush")
-    date_order = fields.Datetime(string="SO Need By Date")
+    need_by_date = fields.Datetime(string="SO Need By Date", compute="_compute_need_by_date")
     date_planned = fields.Datetime(string="MAB Date")
+
+    def _compute_need_by_date(self):
+        for purchase in self:
+            if purchase.sale_order_ids:
+                purchase.need_by_date = purchase.sale_order_ids.commitment_date
+            else:
+                purchase.need_by_date = False
 
     def default_get(self, fields):
         defaults = super().default_get(fields)

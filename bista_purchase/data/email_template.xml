@@ -240,10 +240,15 @@
             <field name="partner_to">{{ object.partner_id.id }}</field>
             <field name="body_html" type="html">
                 <p style="margin: 0px; padding: 0px; font-size: 13px;">
-                    <p style="font-size: 15px;" class="text-danger" t-if="object.rush">
+                    <div class="col-12">
+                        <center>
+                            <img t-attf-src="/logo.png?company={{ object.company_id.id }}" style="width: 75px;" />
+                        </center>
+                    </div>
+                    <div class="row text-danger" style="font-size: 15px; margin: 0px;" t-if="object.rush">
                         **URGENT - <span t-field="object.rush_status_id" /> ORDER ATTACHED**
-                    </p>
-                    <br/><br/>
+                        <br/><br/>
+                    </div>
                     **PLEASE REPLY TO THIS EMAIL TO CONFIRM RECEIPT**
                     <br/><br/><br/>
                     Please ship the following item(s):<br/><br/>
@@ -300,7 +305,7 @@
                         <div class="row" style="margin: 0px;" t-if="object.company_id.parent_id.name">
                             <span t-field="object.company_id.parent_id.name"/>
                         </div>
-                        <div t-field="object.company_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": True}' />
+                        <div t-field="object.company_id.partner_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": True}' />
                     </t>
                     <br/><br/>
                     <div class="row" style="margin: 0px;">
@@ -330,8 +335,8 @@
                     <div class="row" style="margin: 0px;">
                         <span t-field="object.notes" />
                     </div>
+                    <span t-field="user.signature" />
                 </p>
-                <div t-field="user.signature" />
             </field>
             <field name="report_template" ref="purchase.report_purchase_quotation"/>
             <field name="report_name">PO_{{ (object.name or '').replace('/','_') }}</field>
