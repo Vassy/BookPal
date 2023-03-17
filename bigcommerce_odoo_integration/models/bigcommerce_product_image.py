@@ -56,7 +56,7 @@ class BigcommerceProductImage(models.Model):
                             requests.get(image_url).content)
                         values = {
                             'bigcommerce_product_image_id': image_id,
-                            # 'bigcommerce_product_image': image_data,
+                            'bigcommerce_product_image': image_data,
                             'bigcommerce_product_id': data.get('product_id'),
                             'product_template_id': product_id.id,
                         }
@@ -72,7 +72,7 @@ class BigcommerceProductImage(models.Model):
                             requests.get(image_url).content)
                         values = {
                             'bigcommerce_product_image_id': image_id,
-                            # 'bigcommerce_product_image': image_data,
+                            'bigcommerce_product_image': image_data,
                             'bigcommerce_product_id': data.get('product_id'),
                             'product_template_id': product_id.id,
                         }
@@ -159,7 +159,7 @@ class BigcommerceProductImage(models.Model):
                 image_data = base64.b64encode(requests.get(image_url).content)
                 values = {
                     'bigcommerce_product_image_id': image_id,
-                    # 'bigcommerce_product_image': image_data,
+                    'bigcommerce_product_image': image_data,
                     'bigcommerce_product_id': data.get('product_id'),
                     'bigcommerce_listing_id': listing_id.id,
                     'bigcommerce_store_id': bigcommerce_store_ids.id,
