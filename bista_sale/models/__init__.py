@@ -11,3 +11,4 @@ from . import product
 from . import seller_report
 from . import pricelist_item
 from . import res_config_settings
+from . import mail_thread
