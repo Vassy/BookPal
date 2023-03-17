@@ -381,8 +381,7 @@ class SaleOrderVts(models.Model):
                     elif customer_id in ['0', 0]:
                         partner_vals = {
                             'name': "%s %s" % (first_name, last_name),
-                            'bigcommerce_customer_id':
-                            str(big_commerce_order_id),
+                            'bigcommerce_customer_id': "Guest User",
                             'street': street,
                             'street2': street_2,
                             'zip': zip,

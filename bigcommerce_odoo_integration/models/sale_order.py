@@ -406,9 +406,8 @@ class SaleOrderVts(models.Model):
                                     partner_parent_id = self.env['res.partner'].create({**partner_vals, **company_vals})
                                 if customerId in ['0', 0]:
                                     partner_vals.update({
-                                        'name': "%s %s (Guest)" % (first_name, last_name),
-                                        'bigcommerce_customer_id': str(big_commerce_order_id),
-                                        # bigcommerce_store_id.bc_customer_prefix +
+                                        'name': "%s %s" % (first_name, last_name),
+                                        'bigcommerce_customer_id': "Guest User",
                                         'parent_id': partner_parent_id and partner_parent_id.id
                                     })
                                     partner_obj = self.env['res.partner'].create(
@@ -719,7 +718,7 @@ class SaleOrderVts(models.Model):
                     {**partner_vals, **company_vals})
         if customerId in ['0', 0]:
             partner_vals.update({
-                'name': "%s %s (Guest)" % (
+                'name': "%s %s" % (
                     first_name, last_name),
                 'bigcommerce_customer_id': "Guest User",
                 'parent_id': partner_parent_id and partner_parent_id.id
@@ -1101,7 +1100,7 @@ class SaleOrderVts(models.Model):
                         partner_parent_id = self.env['res.partner'].create({**partner_vals, **company_vals})
                     if customerId in [0, '0']:
                         partner_vals.update({
-                            'name': "%s %s (Guest)" % (first_name, last_name),
+                            'name': "%s %s" % (first_name, last_name),
                             'bigcommerce_customer_id': "Guest User",
                             'parent_id': partner_parent_id and partner_parent_id.id
                         })
