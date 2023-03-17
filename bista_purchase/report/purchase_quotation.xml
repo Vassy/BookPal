@@ -240,33 +240,11 @@
                 <div name="footer_table" class="col-6 row justify-content-end" style="display:flex;padding:2px;padding-top:8px;">
                     <br/>
                     <div width="70%" style="padding-right:70px;">
-                        <div class="text-left" style="font-size: 15px;">
-                            Subtotal
-                        </div>
-                        <div class="text-left" t-if="o.amount_tax" style="font-size: 15px;">
-                            Discount
-                        </div>
-                        <!-- <div class="text-right" t-if="o.amount_tax" style="font-size: 14px;">
-                            Tax
-                        </div> -->
                         <div class="text-left" style="font-size: 21px;">
                             <strong>Total</strong>
                         </div>
-                        <!-- <div class="text-right text-muted" style="font-size: 12px;">
-                           Total Savings
-                        </div> -->
                     </div>
                     <div width="30%">
-                        <div class="text-right" style="font-size: 15px;">
-                            <span t-field="o.amount_untaxed"  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                        </div>
-                        <div class="text-right" t-if="o.total_discount_amount" style="font-size: 15px;">
-                            <span t-field="o.total_discount_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                        </div>
-                        <!-- <div class="text-right" t-if="o.amount_tax" style="font-size: 14px;">
-                            <span t-field="o.amount_tax" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                        </div> -->
-
                         <div class="text-right" style="font-size: 21px;">
                             <strong t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                         </div>
