@@ -35,7 +35,7 @@
                 <attribute name="string">Sales Campaign</attribute>
                 <attribute name="options">{"no_open": True, "no_create": True}</attribute>
             </xpath>
-            <xpath expr="//page[@name='extra']//field[@name='campaign_id']" position="replace">
+            <xpath expr="//page[@name='extra']//field[@name='campaign_id']" position="attributes">
                 <attribute name="string">Sales Campaign</attribute>
             </xpath>
             <xpath expr="//page[@name='lead']//field[@name='medium_id']" position="attributes">
