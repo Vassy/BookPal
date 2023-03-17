@@ -249,7 +249,7 @@
                     <b>
                         <span t-field="line.product_template_id.name"/>
                         <br/>
-                        <t t-if="line.product_template_id.isbn">
+                        <t t-if="line.product_template_id.default_code or line.product_template_id.default_code">
                         <span style="font-weight: bold;">ISBN:</span>
                         <span t-if="line.product_template_id.default_code" t-field="line.product_template_id.default_code"/>
                         <span t-if="not line.product_template_id.default_code" t-field="line.product_template_id.isbn"/><br/>
