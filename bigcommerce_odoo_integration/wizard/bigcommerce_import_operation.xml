@@ -26,7 +26,7 @@
                         <field name="from_order_date" attrs="{'invisible':[('import_order_date_wise','!=',True)],'required':[('import_order_date_wise','=','True')]}"/>
                         <field name="to_order_date" attrs="{'invisible':[('import_order_date_wise','!=',True)],'required':[('import_order_date_wise','=','True')]}"/>
                         <field name="bigcommerce_order_status_ids" create="0" edit="0" attrs="{'invisible':[('import_order_date_wise','!=',True)],'required':[('import_order_date_wise','=','True')]}" widget="many2many_tags"/>
-                        <button name="run_cron_manually" string="Import order now" type="object"  attrs="{'invisible':[('import_operation_of_bc','!=','import_order')]}"/>
+                        <button name="run_cron_manually" string="Import order now" type="object"  attrs="{'invisible':[('import_operation_of_bc','!=','import_order')]}" class="oe_highlight"/>
                     </group>
                 </group>
                 <footer>

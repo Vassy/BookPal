@@ -23,6 +23,9 @@
             <xpath expr="//field[@name='price']" position="attributes">
                 <attribute name="string">Cover Price</attribute>
             </xpath>
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="domain">[('company_type', '=', 'company'), ('supplier_rank', '>', 0)]</attribute>
+            </xpath>
         </field>
     </record>
 </odoo>
