@@ -33,9 +33,6 @@ class SaleOrder(models.Model):
         [('waived', 'Waived'),
          ('75', '$75.00'),
          ], string="Journal Set Up Fee")
-    # journal_setup_fee = fields.Monetary(string="Journal Set Up Fee")
-    # journal_setup_fee_waived = fields.Monetary(
-    #     string="Journal Set Up Fee Waived")
     shipping_account = fields.Selection([
         ("our_account", "Our Account"),
         ("castelli_account", "Castelli's Account")], string='Shipping Account')
@@ -102,7 +99,6 @@ class SaleOrder(models.Model):
     weight_uom_name = fields.Char(
         string='Weight unit of measure label', compute="_compute_weight_uom")
     product_use = fields.Text(string='Product Use')
-    # compurl = fields.Char(string="compute url", compute="compute_url")
     acquirer_ids = fields.Many2many(
         "payment.acquirer",
         string="Available Payments",
