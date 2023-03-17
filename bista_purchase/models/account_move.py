@@ -44,7 +44,7 @@ class AccountMoveLine(models.Model):
         move_type=None,
     ):
         price_unit = self.price_unit if price_unit is None else price_unit
-        if price_unit:
+        if not self._context.get('create_bill') and price_unit:
             discount = 100 - (self.quote_price / price_unit * 100)
         result = super()._get_price_total_and_subtotal(
             price_unit, quantity, discount, currency, product, partner, taxes, move_type
