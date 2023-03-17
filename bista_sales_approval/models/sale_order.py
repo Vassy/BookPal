@@ -226,11 +226,14 @@ class SaleOrder(models.Model):
         if view_type != "form":
             return result
         new_attrs = False
+        split = "{'invisible': [('state', 'in', ['draft', 'quote_approval', 'quote_confirm', 'sent', 'cancel'])]}"
         if self.env.user.has_group("bista_sales_approval.group_approve_sale_order"):
             attrs = "{'readonly': [('state', 'in', ['sale', 'done', 'cancel'])]}"
             new_attrs = "{'readonly': [('state', 'in', ['done', 'cancel'])]}"
+            split = "{'invisible': [('state', 'in', ['draft', 'quote_approval', 'quote_confirm', 'sent', 'cancel'])], 'readonly': [('state', 'in', ['sale', 'done', 'cancel'])]}"
         elif self.env.user.has_group("bista_sales_approval.group_create_sale_order"):
             attrs = "{'readonly': [('state', 'in', ['pending_for_approval', 'sale', 'done', 'cancel'])]}"
+            split = "{'invisible': [('state', 'in', ['draft', 'quote_approval', 'quote_confirm', 'sent', 'cancel'])], 'readonly': [('state', 'in', ['pending_for_approval', 'sale', 'done', 'cancel'])]}"
         elif self.env.user.has_group("bista_sales_approval.group_approve_sale_quote"):
             attrs = "{'readonly': [('state', 'not in', ['draft', 'quote_approval'])]}"
         else:
@@ -239,8 +242,12 @@ class SaleOrder(models.Model):
         for field in doc.xpath("//field"):
             if field.attrib["name"] in ["purchase_order_count"]:
                 field.attrib["readonly"] = "1"
+                continue
             if new_attrs and field.attrib["name"] in FieldsList:
                 field.attrib["attrs"] = new_attrs
+                continue
+            if field.attrib["name"] in ["split_shipment"]:
+                field.attrib["attrs"] = split
                 continue
             if field.attrib["name"] in [
                 "order_line",
