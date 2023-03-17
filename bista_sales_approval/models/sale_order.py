@@ -18,6 +18,66 @@ AddState = [
     ("pending_for_approval", "Order In Approval"),
     ("sale", "Approved Order"),
 ]
+FieldsList = [
+    "acquirer_ids",
+    "user_id",
+    "am_owner",
+    "require_payment",
+    "tag_ids",
+    "opportunity_id",
+    "refer_by_company",
+    "refer_by_person",
+    "origin",
+    "medium_id",
+    "source_id",
+    "campaign_id",
+    "order_notes",
+    "gorgias_ticket",
+    "product_status_notes",
+    "product_use",
+    "white_glove_id",
+    "ce_notes",
+    "am_notes",
+    "ce_ops_acct_notes",
+    "journal_customization_ids",
+    "link_to_art_files",
+    "journal_notes",
+    "journal_setup_fee",
+    "shipping_account",
+    "so_shipping_cost",
+    "artwork_status_id",
+    "death_type_id",
+    "existing_death_order",
+    "customization_cost",
+    "shipping_to",
+    "potential_pallets",
+    "accept_pallets",
+    "has_loading_dock",
+    "inside_delivery_req",
+    "shipping_notes",
+    "fulfilment_project",
+    "project_description",
+    "status_notes",
+    "delivery_location",
+    "project_status",
+    "shipping_instruction",
+    "customization_type_ids",
+    "individual_mailer_return_address",
+    "special_insert_note",
+    "attachment_note",
+    "book_status",
+    "on_hold_reason",
+    "recipient_list_status",
+    "individual_mailer_return_receiver",
+    "recipient_list_expected",
+    "billing_notes",
+    "payment_notes",
+    "placed_from_ip",
+    "customer_po_link",
+    "is_report",
+    "report_type",
+    "report_notes",
+]
 
 
 class SaleOrder(models.Model):
@@ -165,8 +225,10 @@ class SaleOrder(models.Model):
         result = super()._fields_view_get(view_id, view_type, toolbar, submenu)
         if view_type != "form":
             return result
+        new_attrs = False
         if self.env.user.has_group("bista_sales_approval.group_approve_sale_order"):
             attrs = "{'readonly': [('state', 'in', ['sale', 'done', 'cancel'])]}"
+            new_attrs = "{'readonly': [('state', 'in', ['done', 'cancel'])]}"
         elif self.env.user.has_group("bista_sales_approval.group_create_sale_order"):
             attrs = "{'readonly': [('state', 'in', ['pending_for_approval', 'sale', 'done', 'cancel'])]}"
         elif self.env.user.has_group("bista_sales_approval.group_approve_sale_quote"):
@@ -177,6 +239,9 @@ class SaleOrder(models.Model):
         for field in doc.xpath("//field"):
             if field.attrib["name"] in ["purchase_order_count"]:
                 field.attrib["readonly"] = "1"
+            if new_attrs and field.attrib["name"] in FieldsList:
+                field.attrib["attrs"] = new_attrs
+                continue
             if field.attrib["name"] in [
                 "order_line",
                 "partner_shipping_id",
