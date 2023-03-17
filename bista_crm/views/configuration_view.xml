@@ -37,5 +37,64 @@
                 sequence="20"/>
 
 
+    <!-- Master of Sales Campaign, Medium and source in CRM -->
+    <menuitem id="bookpal_menu_crm_utm" name="UTM" parent="crm.crm_menu_config" sequence="110"
+        groups="bista_sales_approval.group_approve_sale_order,bista_sales_approval.group_approve_sale_quote"/>
+
+    <menuitem id="crm_menu_utm_campaign_act"
+        action="utm.utm_campaign_action"
+        parent="bookpal_menu_crm_utm"
+        sequence="1"
+        groups="bista_sales_approval.group_approve_sale_order,bista_sales_approval.group_approve_sale_quote"/>
+
+    <menuitem id="crm_menu_utm_medium"
+        action="utm.utm_medium_action"
+        parent="bookpal_menu_crm_utm"
+        sequence="5"
+        groups="bista_sales_approval.group_approve_sale_order,bista_sales_approval.group_approve_sale_quote"/>
+
+    <menuitem id="crm_menu_utm_source"
+        action="utm.utm_source_action"
+        parent="bookpal_menu_crm_utm"
+        sequence="10"
+        groups="bista_sales_approval.group_approve_sale_order,bista_sales_approval.group_approve_sale_quote"/>
+
+    <!-- Master of Sales Campaign, Medium and source in Sales -->
+    <menuitem id="bookpal_menu_sales_utm" name="UTM" parent="sale.menu_sale_config" sequence="120"
+        groups="bista_sales_approval.group_approve_sale_order,bista_sales_approval.group_approve_sale_quote"/>
+
+    <menuitem id="sale_menu_utm_campaign_act"
+        action="utm.utm_campaign_action"
+        parent="bookpal_menu_sales_utm"
+        sequence="1"
+        groups="bista_sales_approval.group_approve_sale_order,bista_sales_approval.group_approve_sale_quote"/>
+
+    <menuitem id="sale_menu_utm_medium"
+        action="utm.utm_medium_action"
+        parent="bookpal_menu_sales_utm"
+        sequence="5"
+        groups="bista_sales_approval.group_approve_sale_order,bista_sales_approval.group_approve_sale_quote"/>
+
+    <menuitem id="sale_menu_utm_source"
+        action="utm.utm_source_action"
+        parent="bookpal_menu_sales_utm"
+        sequence="10"
+        groups="bista_sales_approval.group_approve_sale_order,bista_sales_approval.group_approve_sale_quote"/>
+
+    <!-- Added group in default sales campaign, medium and sources -->
+    <record model="ir.ui.menu" id="utm.menu_utm_campaign_act">
+      <field name="groups_id" eval="[(6,0,[ref('bista_sales_approval.group_approve_sale_order'),
+        ref('bista_sales_approval.group_approve_sale_quote')])]"/>
+    </record>
+
+    <record model="ir.ui.menu" id="utm.menu_utm_medium">
+      <field name="groups_id" eval="[(6,0,[ref('bista_sales_approval.group_approve_sale_order'),
+        ref('bista_sales_approval.group_approve_sale_quote')])]"/>
+    </record>
+
+    <record model="ir.ui.menu" id="utm.menu_utm_source">
+      <field name="groups_id" eval="[(6,0,[ref('bista_sales_approval.group_approve_sale_order'),
+        ref('bista_sales_approval.group_approve_sale_quote')])]"/>
+    </record>
 
 </odoo>
