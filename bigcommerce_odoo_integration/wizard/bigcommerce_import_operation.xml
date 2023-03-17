@@ -19,10 +19,14 @@
                         <field name="destination_of_import_data" attrs="{'invisible':['|',('import_operation_of_bc','not in',['import_customer','import_products']),('import_product_bc_id_wise','=',True)],'required':[('import_product_bc_id_wise','!=',True)]}" />
                         <field name="bc_product_id"
                                attrs="{'invisible':['|',('import_product_bc_id_wise','!=',True),('import_operation_of_bc','!=','import_products')],'required':[('import_product_bc_id_wise','=',True)]}"/>
-                        <field name="from_order_date" attrs="{'invisible':[('import_operation_of_bc','!=','import_order')],'required':[('import_operation_of_bc','=','import_order')]}"/>
-                        <field name="to_order_date" attrs="{'invisible':[('import_operation_of_bc','!=','import_order')],'required':[('import_operation_of_bc','=','import_order')]}"/>
- <!--                       <field name="bigcommerce_order_status" attrs="{'invisible':[('import_operation_of_bc','!=','import_order')],'required':[('import_operation_of_bc','=','import_order')]}"/>-->
-                        <field name="bigcommerce_order_status_ids" create="0" edit="0" attrs="{'invisible':[('import_operation_of_bc','!=','import_order')],'required':[('import_operation_of_bc','=','import_order')]}" widget="many2many_tags"/>
+                        <field name="import_order_bc_id_wise" widget="boolean_toggle" attrs="{'invisible':[('import_operation_of_bc','!=','import_order')]}" />
+                        <field name="bc_order_id"
+                               attrs="{'invisible':['|',('import_order_bc_id_wise','!=',True),('import_operation_of_bc','!=','import_order')],'required':[('import_order_bc_id_wise','=',True)]}"/>
+                        <field name="import_order_date_wise" widget="boolean_toggle" attrs="{'invisible':[('import_operation_of_bc','!=','import_order')]}"/>
+                        <field name="from_order_date" attrs="{'invisible':[('import_order_date_wise','!=',True)],'required':[('import_order_date_wise','=','True')]}"/>
+                        <field name="to_order_date" attrs="{'invisible':[('import_order_date_wise','!=',True)],'required':[('import_order_date_wise','=','True')]}"/>
+                        <field name="bigcommerce_order_status_ids" create="0" edit="0" attrs="{'invisible':[('import_order_date_wise','!=',True)],'required':[('import_order_date_wise','=','True')]}" widget="many2many_tags"/>
+                        <button name="run_cron_manually" string="Import order now" type="object"  attrs="{'invisible':[('import_operation_of_bc','!=','import_order')]}"/>
                     </group>
                 </group>
                 <footer>
