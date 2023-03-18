@@ -298,8 +298,6 @@ class SaleOrderVts(models.Model):
                             _logger.info(
                                 "Order Response Data : {0}".format(
                                     response_data))
-                            if self._context.get('import_wizard_id'):
-                                response_data = [response_data]
                 if self._context.get('import_wizard_id'):
                     import_wizard_id = self._context.get(
                         'import_wizard_id')
@@ -311,97 +309,77 @@ class SaleOrderVts(models.Model):
                     if response_data.status_code == 204:
                         break
                     if response_data.status_code in [200, 201]:
-                        response_data = response_data.json()
+                        response_data = [response_data.json()]
                         _logger.info(
                             "Order Response Data : {0}".format(
                                 response_data))
-                order = response_data
-                if order.get('status') == 'Pending' or \
-                        order.get('status') == 'Cancelled' or \
-                        order.get('status') == 'Incomplete':
-                    continue
-                big_commerce_order_id = order.get('id')
-                sale_order = self.env['sale.order'].search(
-                    [('big_commerce_order_id',
-                      '=',
-                      big_commerce_order_id)])
-                if not sale_order:
-                    shipping_address_api_respons = \
-                        self.bigcommerce_shipping_address_api_method(
-                            order, bigcommerce_store_id)
-                    date_time_str = str(
-                        parse(order.get('date_created')))[:19]
-                    customer_id = str(order.get('customer_id'))
-                    total_tax = order.get('total_tax')
-                    carrier_id = self.env['delivery.carrier'].search(
-                        [('is_bigcommerce_shipping_method', '=', True)],
-                        limit=1)
-                    partner_obj = self.env['res.partner'].\
-                        bigcommerce_to_odoo_import_customers(
-                        warehouse_id=bigcommerce_store_id.warehouse_id,
-                        bigcommerce_store_ids=bigcommerce_store_id,
-                        source_page=1, destination_page=1,
-                        customer_id=customer_id)
-                    customer_email = order.get(
-                        'billing_address').get('email')
-                    # company_name = order.get(
-                    #     'billing_address').get('company')
-                    city = order.get(
-                        'billing_address').get('city')
-                    first_name = order.get(
-                        'billing_address').get('first_name')
-                    last_name = order.get(
-                        'billing_address').get('last_name')
-                    country_iso2 = order.get(
-                        'billing_address').get('country_iso2')
-                    street = order.get(
-                        'billing_address').get('street_1', '')
-                    street_2 = order.get(
-                        'billing_address').get('street_2', '')
-                    country_obj = self.env['res.country']. \
-                        search(
-                        [('code', '=', country_iso2)],
+                for order in response_data:
+                    if order.get('status') == 'Pending' or \
+                            order.get('status') == 'Cancelled' or \
+                            order.get('status') == 'Incomplete':
+                        continue
+                    big_commerce_order_id = order.get('id')
+                    sale_order = self.env['sale.order'].search(
+                        [('big_commerce_order_id',
+                          '=',
+                          big_commerce_order_id)])
+                    if not sale_order:
+                        shipping_address_api_respons = \
+                            self.bigcommerce_shipping_address_api_method(
+                                order, bigcommerce_store_id)
+                        date_time_str = str(
+                            parse(order.get('date_created')))[:19]
+                        customer_id = str(order.get('customer_id'))
+                        total_tax = order.get('total_tax')
+                        carrier_id = self.env['delivery.carrier'].search(
+                            [('is_bigcommerce_shipping_method', '=', True)],
                             limit=1)
-                    zip = order.get('billing_address').get('zip')
-                    domain = [('name', '=', "%s %s" % (
-                        first_name, last_name)),
-                        ('street', '=', street),
-                        ('zip', '=', zip), ('city', '=', city),
-                        ('country_id', '=', country_obj.id)]
-                    if street_2:
-                        domain.append(('street2', '=', street_2))
-
-                    if customer_id not in [0, '0']:
                         partner_obj = self.env['res.partner'].\
                             bigcommerce_to_odoo_import_customers(
                             warehouse_id=bigcommerce_store_id.warehouse_id,
                             bigcommerce_store_ids=bigcommerce_store_id,
                             source_page=1, destination_page=1,
                             customer_id=customer_id)
-                    elif customer_id in ['0', 0]:
-                        partner_vals = {
-                            'name': "%s %s" % (first_name, last_name),
-                            'bigcommerce_customer_id': "Guest User",
-                            'street': street,
-                            'street2': street_2,
-                            'zip': zip,
-                            'city': city,
-                            'country_id': country_obj.id or False,
-                            'email': customer_email,
-                            'phone': order.get('billing_address').get(
-                                'phone') or ''
-                        }
-                        partner_obj = self.env['res.partner'].create(
-                            partner_vals)
-                    else:
-                        partner_obj = self.env['res.partner'].sudo().search(
-                            [('email', '=', customer_email)], limit=1)
-                        if not partner_obj:
+                        customer_email = order.get(
+                            'billing_address').get('email')
+                        # company_name = order.get(
+                        #     'billing_address').get('company')
+                        city = order.get(
+                            'billing_address').get('city')
+                        first_name = order.get(
+                            'billing_address').get('first_name')
+                        last_name = order.get(
+                            'billing_address').get('last_name')
+                        country_iso2 = order.get(
+                            'billing_address').get('country_iso2')
+                        street = order.get(
+                            'billing_address').get('street_1', '')
+                        street_2 = order.get(
+                            'billing_address').get('street_2', '')
+                        country_obj = self.env['res.country']. \
+                            search(
+                            [('code', '=', country_iso2)],
+                                limit=1)
+                        zip = order.get('billing_address').get('zip')
+                        domain = [('name', '=', "%s %s" % (
+                            first_name, last_name)),
+                            ('street', '=', street),
+                            ('zip', '=', zip), ('city', '=', city),
+                            ('country_id', '=', country_obj.id)]
+                        if street_2:
+                            domain.append(('street2', '=', street_2))
+
+                        if customer_id not in [0, '0']:
                             partner_obj = self.env['res.partner'].\
-                                sudo().search(domain, limit=1)
-                        if not partner_obj:
-                            partner_obj = self.env['res.partner'].create({
+                                bigcommerce_to_odoo_import_customers(
+                                warehouse_id=bigcommerce_store_id.warehouse_id,
+                                bigcommerce_store_ids=bigcommerce_store_id,
+                                source_page=1, destination_page=1,
+                                customer_id=customer_id)
+                        elif customer_id in ['0', 0]:
+                            partner_vals = {
                                 'name': "%s %s" % (first_name, last_name),
+                                'bigcommerce_customer_id': "Guest User",
                                 'street': street,
                                 'street2': street_2,
                                 'zip': zip,
@@ -410,127 +388,147 @@ class SaleOrderVts(models.Model):
                                 'email': customer_email,
                                 'phone': order.get('billing_address').get(
                                     'phone') or ''
-                            })
-                    domain = [
-                        ('name', '=', "%s %s" % (first_name, last_name)),
-                        ('street', '=', street),
-                        ('zip', '=', zip),
-                        ('city', '=', city),
-                        ('country_id', '=', country_obj.id)]
-                    if street_2:
-                        domain.append(('street2', '=', street_2))
-                    partner_billing_id = self.env['res.partner'].sudo().search(
-                        domain, limit=1)
-                    partner_shipping_id = self.\
-                        create_update_shipping_partner_from_bc_order(
-                            order,
-                            bigcommerce_store_id,
-                            partner_obj)
+                            }
+                            partner_obj = self.env['res.partner'].create(
+                                partner_vals)
+                        else:
+                            partner_obj = self.env['res.partner'].sudo().search(
+                                [('email', '=', customer_email)], limit=1)
+                            if not partner_obj:
+                                partner_obj = self.env['res.partner'].\
+                                    sudo().search(domain, limit=1)
+                            if not partner_obj:
+                                partner_obj = self.env['res.partner'].create({
+                                    'name': "%s %s" % (first_name, last_name),
+                                    'street': street,
+                                    'street2': street_2,
+                                    'zip': zip,
+                                    'city': city,
+                                    'country_id': country_obj.id or False,
+                                    'email': customer_email,
+                                    'phone': order.get('billing_address').get(
+                                        'phone') or ''
+                                })
+                        domain = [
+                            ('name', '=', "%s %s" % (first_name, last_name)),
+                            ('street', '=', street),
+                            ('zip', '=', zip),
+                            ('city', '=', city),
+                            ('country_id', '=', country_obj.id)]
+                        if street_2:
+                            domain.append(('street2', '=', street_2))
+                        partner_billing_id = self.env['res.partner'].sudo().search(
+                            domain, limit=1)
+                        partner_shipping_id = self.\
+                            create_update_shipping_partner_from_bc_order(
+                                order,
+                                bigcommerce_store_id,
+                                partner_obj)
 
-                    _logger.info(
-                        ">>> successfully create shipping"
-                        " partner {}".format(
-                            partner_shipping_id.name))
-                    self._cr.commit()
-                    pricelist_id = self.env['product.pricelist'].\
-                        search([('currency_id.name',
-                                 '=',
-                                 order.get('currency_code'))],
-                               limit=1)
-                    if not pricelist_id:
-                        pricelist_id = bigcommerce_store_id.\
-                            pricelist_id
-                    _logger.info(
-                        "Currency Code >>> {0} >>> "
-                        "Pricelist >>> {1}".format(
-                            order.get('currency_code'),
-                            pricelist_id))
-                    vals = {}
-                    base_shipping_cost = \
-                        shipping_address_api_respons.get(
-                            'base_cost', 0.0)
-                    currency_id = self.env['res.currency'].search(
-                        [('name', '=',
-                          order.get('currency_code'))], limit=1)
+                        _logger.info(
+                            ">>> successfully create shipping"
+                            " partner {}".format(
+                                partner_shipping_id.name))
+                        self._cr.commit()
+                        pricelist_id = self.env['product.pricelist'].\
+                            search([('currency_id.name',
+                                     '=',
+                                     order.get('currency_code'))],
+                                   limit=1)
+                        if not pricelist_id:
+                            pricelist_id = bigcommerce_store_id.\
+                                pricelist_id
+                        _logger.info(
+                            "Currency Code >>> {0} >>> "
+                            "Pricelist >>> {1}".format(
+                                order.get('currency_code'),
+                                pricelist_id))
+                        vals = {}
+                        base_shipping_cost = \
+                            shipping_address_api_respons.get(
+                                'base_cost', 0.0)
+                        currency_id = self.env['res.currency'].search(
+                            [('name', '=',
+                              order.get('currency_code'))], limit=1)
 
-                    vals.update({
-                        'partner_id': partner_obj.id,
-                        'partner_invoice_id': partner_billing_id.id if
-                        partner_billing_id else partner_obj.id,
-                        'partner_shipping_id':
-                        partner_shipping_id.id,
-                        # chnage value shipping_id
-                        'date_order': date_time_str or today_date,
-                        'bc_order_date': date_time_str or
-                        today_date,
-                        'carrier_id': carrier_id and carrier_id.id,
-                        'company_id': warehouse_id.company_id and
-                        warehouse_id.company_id.id or
-                        self.env.user.company_id.id,
-                        'warehouse_id': warehouse_id.id,
-                        'carrierCode': '',
-                        'serviceCode': '',
-                        'currency_id': currency_id.id,
-                        'delivery_price': float(base_shipping_cost),
-                        'pricelist_id':
-                        partner_obj.property_product_pricelist.id
-                        if partner_obj.property_product_pricelist
-                        else pricelist_id.id,
-                        'customer_message': order.get(
-                            'customer_message', ''),
-                        'amount_tax': total_tax
-                    })
-                    order_vals = \
-                        self.create_sales_order_from_bigcommerce(
-                            vals)
-                    order_vals.update(
-                        {'big_commerce_order_id':
-                         big_commerce_order_id,
-                         'bc_id': int(big_commerce_order_id),
-                         'client_order_ref': big_commerce_order_id,
-                         'bigcommerce_store_id':
-                         bigcommerce_store_id.id,
-                         'payment_status': 'paid' if
-                         order.get('payment_status') in [
-                             "captured", "paid"]
-                         else 'not_paid',
-                         'payment_method':
-                         order.get('payment_method'),
-                         'bigcommerce_shipment_order_status':
-                         order.get('status')
-                         })
-                    order_id = self.create(order_vals)
-                    self.create_product_order_line(
-                        order, bigcommerce_store_id,
-                        order_id, operation_id, warehouse_id,
-                        req_data)
-                    if carrier_id and order_id and \
-                            float(base_shipping_cost) > 0:
-                        order_id.set_delivery_line(
-                            carrier_id, float(base_shipping_cost))
-                    process_message = "Sale Order Created {0}".\
-                        format(order_id and order_id.name)
-                    _logger.info("Sale Order Created {0}".format(
-                        order_id and order_id.name))
-                    order_id.message_post(
-                        body="Order Successfully Import From "
-                        "Bigcommerce")
-                    self.create_bigcommerce_operation_detail(
-                        'order', 'import', req_data, response_data,
-                        operation_id, warehouse_id, False,
-                        process_message)
-                else:
-                    process_message = "Order Already in Odoo {}".\
-                        format(sale_order and sale_order.name)
-                    self.create_bigcommerce_operation_detail(
-                        'order', 'import', req_data, response_data,
-                        operation_id, warehouse_id, True,
-                        process_message)
-                    self._cr.commit()
-                if not late_modification_date_flag:
-                    current_date = datetime.now()
-                    bigcommerce_store_id.last_modification_date = \
-                        current_date
+                        vals.update({
+                            'partner_id': partner_obj.id,
+                            'partner_invoice_id': partner_billing_id.id if
+                            partner_billing_id else partner_obj.id,
+                            'partner_shipping_id':
+                            partner_shipping_id.id,
+                            # chnage value shipping_id
+                            'date_order': date_time_str or today_date,
+                            'bc_order_date': date_time_str or
+                            today_date,
+                            'carrier_id': carrier_id and carrier_id.id,
+                            'company_id': warehouse_id.company_id and
+                            warehouse_id.company_id.id or
+                            self.env.user.company_id.id,
+                            'warehouse_id': warehouse_id.id,
+                            'carrierCode': '',
+                            'serviceCode': '',
+                            'currency_id': currency_id.id,
+                            'delivery_price': float(base_shipping_cost),
+                            'pricelist_id':
+                            partner_obj.property_product_pricelist.id
+                            if partner_obj.property_product_pricelist
+                            else pricelist_id.id,
+                            'customer_message': order.get(
+                                'customer_message', ''),
+                            'amount_tax': total_tax
+                        })
+                        order_vals = \
+                            self.create_sales_order_from_bigcommerce(
+                                vals)
+                        order_vals.update(
+                            {'big_commerce_order_id':
+                             big_commerce_order_id,
+                             'bc_id': int(big_commerce_order_id),
+                             'client_order_ref': big_commerce_order_id,
+                             'bigcommerce_store_id':
+                             bigcommerce_store_id.id,
+                             'payment_status': 'paid' if
+                             order.get('payment_status') in [
+                                 "captured", "paid"]
+                             else 'not_paid',
+                             'payment_method':
+                             order.get('payment_method'),
+                             'bigcommerce_shipment_order_status':
+                             order.get('status')
+                             })
+                        order_id = self.create(order_vals)
+                        self.create_product_order_line(
+                            order, bigcommerce_store_id,
+                            order_id, operation_id, warehouse_id,
+                            req_data)
+                        if carrier_id and order_id and \
+                                float(base_shipping_cost) > 0:
+                            order_id.set_delivery_line(
+                                carrier_id, float(base_shipping_cost))
+                        process_message = "Sale Order Created {0}".\
+                            format(order_id and order_id.name)
+                        _logger.info("Sale Order Created {0}".format(
+                            order_id and order_id.name))
+                        order_id.message_post(
+                            body="Order Successfully Import From "
+                            "Bigcommerce")
+                        self.create_bigcommerce_operation_detail(
+                            'order', 'import', req_data, response_data,
+                            operation_id, warehouse_id, False,
+                            process_message)
+                    else:
+                        process_message = "Order Already in Odoo {}".\
+                            format(sale_order and sale_order.name)
+                        self.create_bigcommerce_operation_detail(
+                            'order', 'import', req_data, response_data,
+                            operation_id, warehouse_id, True,
+                            process_message)
+                        self._cr.commit()
+                    if not late_modification_date_flag:
+                        current_date = datetime.now()
+                        bigcommerce_store_id.last_modification_date = \
+                            current_date
             except Exception as e:
                 _logger.info(
                     "Getting an Error In Import Order Response {}".format(e))
