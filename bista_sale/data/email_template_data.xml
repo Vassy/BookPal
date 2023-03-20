@@ -288,8 +288,8 @@
             <xpath expr="//table/tr/td/table/tbody/tr/td/table/tr/td" position="replace">
                 <td valign="middle">
                     <span style="font-size: 10px;">Your </span>
-                    <span style="font-size: 10px;" t-if="message.model == 'sale.order' and record.state in ['sale','order_booked','credit_review','pending_for_approval','cancel','done']">Sales Order</span>
-                    <span style="font-size: 10px;" t-if="message.model == 'sale.order' and record.state in ['draft','sent','quote_approval','quote_confirm']">Quotation</span><br />
+                    <span style="font-size: 10px;" t-if="record._name == 'sale.order' and record.state in ['sale','order_booked','credit_review','pending_for_approval','cancel','done']">Sales Order</span>
+                    <span style="font-size: 10px;" t-if="record._name == 'sale.order' and record.state in ['draft','sent','quote_approval','quote_confirm']">Quotation</span><br />
                     <span style="font-size: 20px; font-weight: bold;">
                         <t t-esc="message.record_name and message.record_name.replace('/','-') or ''" />
                     </span>
