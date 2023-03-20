@@ -108,10 +108,12 @@ class PurchaseOrderLine(models.Model):
 
     def _get_discounted_price_unit(self):
         self.ensure_one()
-
+        price_unit = self.before_disc_price_unit
         if self.discount:
-            return self.currency_id.round(self.before_disc_price_unit * (1 - self.discount / 100))
-        return self.currency_id.round(self.before_disc_price_unit)
+            price_unit = self.before_disc_price_unit * (1 - self.discount / 100)
+        if self.currency_id:
+            price_unit = self.currency_id.round(price_unit)
+        return price_unit
 
     @api.onchange("product_qty", "product_uom")
     def _onchange_quantity(self):
