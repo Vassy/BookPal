@@ -6,9 +6,9 @@
         <field name="inherit_id" ref="bista_orders_report.purchase_order_line_tree_view"/>
         <field name="arch" type="xml">
             <field name="price_total" position="after">
-                <field name="status_id" optional="show" />
-                <field name="next_followup_date" optional="show" />
-                <field name="note" optional="show" />
+                <field name="status_id" optional="show" readonly="1" />
+                <field name="next_followup_date" optional="show" readonly="1" />
+                <field name="note" optional="show" readonly="1" />
             </field>
             <field name="line_status" position="replace" />
         </field>
