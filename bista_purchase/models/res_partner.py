@@ -100,18 +100,24 @@ class ResPartner(models.Model):
         return action
 
     def name_get(self):
-        if self._context.get('res_partner_search_mode') != 'supplier':
+        if self._context.get('res_partner_search_mode') != 'supplier' and not self.env.context.get("dropship_contact"):
             return super(ResPartner, self).name_get()
         res = []
         for partner in self:
             name = partner.with_context(with_primary_customer = partner.is_primary)._get_name()
+            if self.env.context.get("dropship_contact"):
+                if partner.external_company:
+                    name = partner.name + "\n" + partner.external_company + "\n" + partner._display_address(without_company=False)
+                else:
+                    name = partner._get_name()
+                res.append((partner.id, name))
             if not self.env.context.get("custom_code"):
                 res.append((partner.id, name))
                 continue
             if partner.parent_id:
-                res.append((partner.id, name , partner.parent_id.block))
+                res.append((partner.id, name, partner.parent_id.block))
             else:
-                res.append((partner.id, name , partner.block))
+                res.append((partner.id, name, partner.block))
         return res
 
     @api.onchange('type')

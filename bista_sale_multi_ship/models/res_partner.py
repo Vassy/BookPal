@@ -208,16 +208,40 @@ class ResPartner(models.Model):
         """Updated display name."""
         res = []
         if self.env.context.get('shipment_contact'):
+            # for partner in self:
+            #     if partner.is_multi_ship:
+            #         if partner.external_company:
+            #             name = partner.name + "\n" + partner.external_company + "\n" + partner._display_address(without_company=False)
+            #         else:
+            #             name = partner.name + partner._display_address(without_company=False)
+            #         res.append((partner.id, name))
+            #     else:
+            #         name = partner._get_name()
+            #         res.append((partner.id, name))
             for partner in self:
+                street = partner.street or ""
                 if partner.is_multi_ship:
                     if partner.external_company:
-                        name = partner.name + "\n" + partner.external_company + "\n" + partner._display_address(without_company=False)
+                        name = partner.name + " (" + street + ")" + "\n" + partner.external_company + "\n" + partner._display_address(without_company=False)
                     else:
-                        name = partner.name + partner._display_address(without_company=False)
+                        name = partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
                     res.append((partner.id, name))
                 else:
-                    name = partner._get_name()
+                    if partner.parent_id:
+                        name = partner.parent_id.name + "," + partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
+                    else:
+                        name = partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
+                    # name = partner._get_name()
                     res.append((partner.id, name))
+            return res
+        if self.env.context.get('invoice_contact'):
+            for partner in self:
+                street = partner.street or ""
+                if partner.parent_id:
+                        name = partner.parent_id.name + "," + partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
+                else:
+                    name = partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
+                res.append((partner.id, name))
             return res
         else:
             return super(ResPartner, self).name_get()
