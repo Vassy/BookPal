@@ -92,16 +92,17 @@ class StockPicking(models.Model):
         next_week_start = (today_date + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S")
         next_week_end = (today_date + timedelta(days=7)).strftime("%Y-%m-%d 23:59:59")
 
-        day_backorder_ids = self.env['stock.picking'].search([('backorder_id', '!=', False),
-                                                              ('picking_type_code', '=', 'incoming'),
-                                                              ('state', 'not in', ('done', 'cancel')),
-                                                              ('scheduled_date', '>=', next_day_start),
-                                                              ('scheduled_date', '<=', next_day_end)])
-        week_backorder_ids = self.env['stock.picking'].search([('backorder_id', '!=', False),
-                                                               ('picking_type_code', '=', 'incoming'),
-                                                               ('state', 'not in', ('done', 'cancel')),
-                                                               ('scheduled_date', '>=', next_week_start),
-                                                               ('scheduled_date', '<=', next_week_end)])
+        day_backorder_ids = self.env['stock.picking'].search([
+            ('picking_type_code', '=', 'incoming'),
+            ('state', 'not in', ('done', 'cancel')),
+            ('scheduled_date', '>=', next_day_start),
+            ('scheduled_date', '<=', next_day_end)])
+        week_backorder_ids = self.env['stock.picking'].search([
+            ('picking_type_code', '=', 'incoming'),
+            ('state', 'not in', ('done', 'cancel')),
+            ('scheduled_date', '>=', next_week_start),
+            ('scheduled_date', '<=', next_week_end)])
+
         template_one = self.env.ref('bista_purchase.email_template_purchase_reciept_first_reminder')
         template_second = self.env.ref('bista_purchase.email_template_purchase_reciept_second_reminder')
 
