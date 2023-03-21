@@ -52,7 +52,7 @@ class SaleOrder(models.Model):
         [('yes', 'Yes'), ('no', 'No')], string='Inside Delivery Required')
     # Project & Fulfilment Tracking.
     fulfilment_project = fields.Boolean('Fulfillment Project')
-    am_owner = fields.Many2one("res.users", string="AM Owner")
+    am_owner = fields.Many2one("res.users", string="Ops Owner")
     project_description = fields.Text(string="Project Description")
     project_status = fields.Text(string="Project Status")
     status_notes = fields.Text(string='Status Notes')
