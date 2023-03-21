@@ -81,7 +81,7 @@
                            t-as="purchase">
                             <div class="text-danger">
                                 <strong>Order Arrive By Date:</strong>
-                                <span t-field="purchase.date_approve" />
+                                <span t-field="purchase.date_approve" t-options='{"widget": "date"}'/>
                                 <br/>
                             </div>
                         </t>
@@ -103,7 +103,7 @@
                         <t t-if="o.partner_id.account_number">
                             <strong>BookPal Account # :</strong>
                             <span t-field="o.partner_id.account_number" />
-                            <br/>
+                            <br t-if="o.partner_id.account_number"/>
                         </t>
                         <div t-if="o.ref">
                             <strong>Client PO Number:</strong>
@@ -179,7 +179,7 @@
                     <span t-out="line.product_id.name"/>
                     <br/>
                     <t t-if="line.product_id.default_code">
-                        <span style="font-weight: bold;">ISBN:</span>
+                        <span style="font-weight: bold;">SKU:</span>
                         <span t-field="line.product_id.default_code" /><br/>
                     </t>
                     <t t-if="line.product_format">
