@@ -5,7 +5,7 @@
         <t t-call="bista_report_header_footer.shipment_custom_header">
             <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
             <t t-set="o" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
-            <div class="page">
+            <div class="page" style="font-size:14px;">
                 <div t-set="address">
                     <strong>Customer Detail:</strong>
                     <t t-if="o.partner_id.parent_id.name">
@@ -95,7 +95,7 @@
                 <table class="table table-sm o_main_table mt-5">
                     <!-- In case we want to repeat the header, remove "display: table-row-group" -->
                     <thead style="display: table-row-group">
-                        <tr style="border-top: 1px solid black;">
+                        <tr style="border-top: 1px solid black;border-collapse: collapse;">
                             <th style=" border-collapse: collapse;border: none;" name="th_image"
                                 class="text-left">
                             </th>
@@ -131,15 +131,18 @@
                                 class="text-center">
                                 <strong>Price</strong>
                             </th>
+                            <th style=" border-collapse: collapse;
+                   border: none;" name="th_discount" class="text-center">Discount
+                    </th>
                             <th style=" border-collapse: collapse;border: none;padding-left:15px;" name="th_subtotal"
                                 class="text-right">
-                                <strong>Amount</strong>
+                                <strong>Subtotal</strong>
                             </th>
                         </tr>
                     </thead>
                     <tbody class="sale_tbody">
                         <t t-foreach="doc.sale_multi_ship_qty_lines" t-as="line">
-                            <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.so_line_id.display_type == 'line_section' else 'font-italic o_line_note' if line.so_line_id.display_type == 'line_note' else ''">
+                            <tr t-att-class="'bg-200 font-weight-bold o_line_section' if line.so_line_id.display_type == 'line_section' else 'font-italic o_line_note' if line.so_line_id.display_type == 'line_note' else ''" style="border-top: 1px solid black !important;">
                                 <t t-if="not line.so_line_id.display_type">
                                     <td name="image" class="text-center" style="border-top: 1px solid black; border-left: none;border-right: none;">
                                         <t t-if="line.product_id.image_1920">
@@ -168,7 +171,7 @@
                                         </b>
                                         <br/>
                                         <t t-if="line.so_line_id.product_id.default_code">
-                                            <span style="font-weight: bold;">ISBN:</span>
+                                            <span style="font-weight: bold;">SKU:</span>
                                             <span t-field="line.so_line_id.product_id.default_code" /><br/>
                                         </t>
                                         <t t-if="line.so_line_id.product_format">
@@ -223,6 +226,9 @@
                                             </t>
                                         </span>
                                     </td>
+                                    <td name="td_discount" style=" border-top: 1px solid black; border-left: none;border-right: none;" class="text-center">
+                                        <span t-out="round(line.so_line_id.discount)"/>%
+                                    </td>
                                     <td name="td_subtotal"
                                         style="border-top: 1px solid black; border-left: none;border-right: none;"
                                         class="text-right">
@@ -243,7 +249,7 @@
                                         <b><span t-if="line.picking_note">Product Notes:</span></b>
                                         <span t-field="line.picking_note"/>
                                     </td>
-                                    <td colspan="5" style="border: none !important"></td>
+                                    <td colspan="6" style="border: none !important"></td>
                                 </t>
                             </tr>
                         </t>
@@ -270,7 +276,7 @@
                         </t>
                     </t>
 
-                    <div class="clearfix row" name="so_total_summary" style="page-break-inside:avoid;">
+                    <div class="clearfix row" name="so_total_summary" style="page-break-inside:avoid;" >
                     <div class="col-6"/>
                     <div name="footer_table" class="col-6 row justify-content-end" style="display:flex;padding:2px;padding-top:14px;">
                     <div width="70%" style="padding-right:40px;">
