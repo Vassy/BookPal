@@ -90,7 +90,7 @@
                                 <br/>
                             </div>
                         </t>
-                        <strong>BookPal Account # :</strong>
+                        <strong t-if="o.partner_id.account_number">BookPal Account # :</strong>
                         <span t-field="o.partner_id.account_number" />
                         <br/>
                         <t t-if="o.payment_term_id">
