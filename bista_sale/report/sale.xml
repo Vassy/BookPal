@@ -247,12 +247,12 @@
                 </td> -->
                 <td name="td_name" class="text-left">
                     <b>
-                        <span t-field="line.product_template_id.name"/>
+                        <span t-field="line.product_id.name"/>
                         <br/>
-                        <t t-if="line.product_template_id.default_code or line.product_template_id.default_code">
-                        <span style="font-weight: bold;">ISBN:</span>
-                        <span t-if="line.product_template_id.default_code" t-field="line.product_template_id.default_code"/>
-                        <span t-if="not line.product_template_id.default_code" t-field="line.product_template_id.isbn"/><br/>
+                        <t t-if="line.product_id.default_code">
+                        <span style="font-weight: bold;">SKU:</span>
+                        <span t-if="line.product_id.default_code" t-field="line.product_id.default_code"/>
+                        <br/>
                         </t>
                         <t t-if="line.product_format">
                             <span style="font-weight: bold;">Format:</span>

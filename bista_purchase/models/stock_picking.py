@@ -116,14 +116,17 @@ class StockPicking(models.Model):
     def backorder_run_deadline(self):
         current_datetime = datetime.now()
         current_date = current_datetime.date()
-        one_day_bo_ids = self.env['stock.picking'].search([('backorder_id', '!=', False),
+        one_day_bo_ids = self.env['stock.picking'].search([
                                                            ('picking_type_code', '=', 'incoming'),
                                                            ('state', 'in', ('waiting', 'confirmed', 'assigned')),
                                                            ('date_deadline', '<', current_date)])
         template_deadline = self.env.ref('bista_purchase.email_template_purchase_reciept_deadline_reminder')
         if one_day_bo_ids:
-            for temp in one_day_bo_ids:
-                template_deadline.send_mail(temp.id, force_send=True)
+            for picking in one_day_bo_ids:
+                demand_qty = picking.move_ids_without_package.mapped('product_uom_qty')
+                done_qty = picking.move_ids_without_package.mapped('quantity_done')
+                if demand_qty != done_qty:
+                    template_deadline.send_mail(picking.id, force_send=True)
 
     def compute_url(self):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')

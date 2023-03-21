@@ -54,26 +54,26 @@
             <field name="model_id" ref="model_stock_picking"/>
             <field name="email_to">{{ (object.user_id.email)}}</field>
             <field name="email_from">"{{ object.company_id.name }}" &lt;{{ (object.company_id.email or user.email) }}&gt;</field>
-            <field name="subject">Purchase Backorder Deadline Reminder {{object.partner_id.name}}</field>
+            <field name="subject">Purchase Backorder Deadline Reminder for {{object.origin}} (Vendor:{{object.partner_id.name}})</field>
             <field name="body_html" type="html">
                 <body>
                     <div style="margin: 0px; padding: 0px;">
                         <p style="margin: 0px; padding: 0px; font-size: 13px;">
                             Dear
-                            <t t-out="object.partner_id.name or ''"></t>
-                            <t t-if="object.partner_id.parent_id">
+                            <t t-out="object.user_id.name or ''"></t>
+                            <t t-if="object.user_id.parent_id">
                                 (<t t-out="object.partner_id.parent_id.name or ''"></t>)
-                            </t>
+                            </t>,
                             <br/>
+                            Here is a reminder of receipt <t t-out="object.name"/> - PO (<t t-out="object.origin"/>) of Vendor <t t-out="object.partner_id.name"/>.
                             <br/>
-                            Here is a reminder that the Backorder of the purchase order
-                            <strong t-out="object.name or ''"></strong>
-                            is expected on
+                            It was expected on
                             <t t-if="object.date_deadline">
                                 <strong t-out="format_date(object.date_deadline) or ''"></strong>.
                             </t>
-                            
                           Would you be able to confirm when it will be delivered?
+                          <br/>
+                        Thanks.
                         </p>
                     </div>
                     <br/>
@@ -263,7 +263,7 @@
                             <td>
                                 <span t-out="line.product_id.name" /><br/>
                                 <t t-if="line.product_id.default_code">
-                                    <span style="font-weight: bold;">ISBN:</span>
+                                    <span style="font-weight: bold;">SKU:</span>
                                     <span t-field="line.product_id.default_code" /><br/>
                                 </t>
                                 <t t-if="line.product_format">
