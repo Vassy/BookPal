@@ -7,18 +7,18 @@
             <field name="model_id" ref="model_stock_picking"/>
             <field name="email_to">{{ (object.user_id.email)}}</field>
             <field name="email_from">"{{ object.company_id.name }}" &lt;{{ (object.company_id.email or user.email) }}&gt;</field>
-            <field name="email_cc">{{object.partner_id.cc_email}}</field>
-            <field name="subject">Purchase Backorder First Reminder {{object.partner_id.name}}</field>
+            <field name="email_cc">purchase@bookpal.com</field>
+            <field name="subject">Reminder 1 for Pending Receipt of Materials for {{object.origin}} (Vendor:{{object.partner_id.name}})</field>
             <field name="body_html" type="html">
                 <body>
                     <p style="margin: 0px; padding: 0px; font-size: 13px;">
                         Dear
-                        <t t-out="object.partner_id.name" data-oe-t-inline="true" contenteditable="false"></t>
-                        I hope you are well.
-                        This is Your First Reminder You are requested to accept this purchase order for the below
-                        mentioned items. Schduled Date is to be made by On
-                        <t t-out="object.scheduled_date"/>
+                        <t t-out="object.user_id.name" data-oe-t-inline="true" contenteditable="false"></t>,
+                        I hope all is well with you. Here is your first reminder for receipt <t t-out="object.name"/> - PO (<t t-out="object.origin"/>) of Vendor <t t-out="object.partner_id.name"/>.
                         <br/>
+                        It is scheduled for <t t-out="object.scheduled_date.strftime('%Y-%m-%d')"/>. Do the needful as soon as possible.
+                        <br/>
+                        Thanks.
                         <div t-out="user.signature"/>
                     </p>
                 </body>
@@ -30,20 +30,18 @@
             <field name="model_id" ref="model_stock_picking"/>
             <field name="email_to">{{ (object.user_id.email)}}</field>
             <field name="email_from">"{{ object.company_id.name }}" &lt;{{ (object.company_id.email or user.email) }}&gt;</field>
-            <field name="email_cc">{{object.partner_id.cc_email}}</field>
-            <field name="subject">Purchase Backorder Second Reminder {{object.partner_id.name}}</field>
+            <field name="email_cc">purchase@bookpal.com</field>
+            <field name="subject">Reminder 2 for Pending Receipt of Materials for {{object.origin}} (Vendor:{{object.partner_id.name}})</field>
             <field name="body_html" type="html">
                 <body>
                     <p style="margin: 0px; padding: 0px; font-size: 13px;">
                         Dear
-                        <p style="margin: 0px; padding: 0px; font-size: 13px;">
-                            Dear
-                            <t t-out="object.partner_id.name" data-oe-t-inline="true" contenteditable="false"></t>
-                            I hope you are well.
-                            This is Your Second Reminder You are requested to accept this purchase order for the below
-                            mentioned items. Schduled Date is to be made by On
-                            <t t-out="object.scheduled_date"/>
-                        </p>
+                        <t t-out="object.user_id.name" data-oe-t-inline="true" contenteditable="false"></t>,
+                        I hope all is well with you. Here is your second reminder for receipt <t t-out="object.name"/> - PO (<t t-out="object.origin"/>) of Vendor <t t-out="object.partner_id.name"/>.
+                        <br/>
+                        It was scheduled for <t t-out="object.scheduled_date.strftime('%Y-%m-%d')"/>. Do the needful as soon as possible.
+                        <br/>
+                        Thanks.
                     </p>
                     <br/>
                     <div t-out="user.signature"/>
