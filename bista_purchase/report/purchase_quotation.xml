@@ -67,7 +67,7 @@
                             <t t-esc="o.name"/>
                         </strong>
                     </h4>
-                    <strong>Date:
+                    <strong t-if="o.date_approve">Date:
                         <span t-field="o.date_approve" t-options='{"widget": "date"}'/>
                     </strong>
                 </t>
