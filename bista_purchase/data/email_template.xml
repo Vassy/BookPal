@@ -263,7 +263,7 @@
                             <td>
                                 <span t-out="line.product_id.name" /><br/>
                                 <t t-if="line.product_id.default_code">
-                                    <span style="font-weight: bold;">ISBN:</span>
+                                    <span style="font-weight: bold;">SKU:</span>
                                     <span t-field="line.product_id.default_code" /><br/>
                                 </t>
                                 <t t-if="line.product_format">

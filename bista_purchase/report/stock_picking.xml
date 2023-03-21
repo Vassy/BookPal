@@ -60,7 +60,7 @@
                 <span t-field="ml.product_id.name" />
                 <br/>
                     <t t-if="ml.product_id.default_code">
-                        <span style="font-weight: bold;">ISBN:</span>
+                        <span style="font-weight: bold;">SKU:</span>
                         <span t-field="ml.product_id.default_code" /><br/>
                     </t>
                     <t t-if="ml.product_format">
@@ -249,7 +249,7 @@
                 </p>
                 <br/>
                 <t t-if="bo_line.product_id.default_code">
-                    <span style="font-weight: bold;">ISBN:</span>
+                    <span style="font-weight: bold;">SKU:</span>
                     <span t-field="bo_line.product_id.default_code" /><br/>
                 </t>
                 <t t-if="bo_line.product_format">
@@ -373,7 +373,7 @@
                 </p>
                 <br/>
                     <t t-if="move.product_id.default_code">
-                        <span style="font-weight: bold;">ISBN:</span>
+                        <span style="font-weight: bold;">SKU:</span>
                         <span t-field="move.product_id.default_code" /><br/>
                     </t>
                     <t t-if="move.product_format">
@@ -425,7 +425,7 @@
                 </p>
                 <br/>
                     <t t-if="move_line.product_id.default_code">
-                        <span style="font-weight: bold;">ISBN:</span>
+                        <span style="font-weight: bold;">SKU:</span>
                         <span t-field="move_line.product_id.default_code" /><br/>
                     </t>
                     <t t-if="move_line.product_format">
@@ -455,7 +455,7 @@
                 </p>
                 <br/>
                 <t t-if="aggregated_lines[line]['product'].default_code">
-                    <span style="font-weight: bold;">ISBN:</span>
+                    <span style="font-weight: bold;">SKU:</span>
                     <span t-field="aggregated_lines[line]['product'].default_code" /><br/>
                 </t>
                 <t t-if="aggregated_lines[line]['product'].product_format">

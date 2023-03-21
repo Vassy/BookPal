@@ -90,9 +90,11 @@
                                 <br/>
                             </div>
                         </t>
-                        <strong t-if="o.partner_id.account_number">BookPal Account # :</strong>
-                        <span t-field="o.partner_id.account_number" />
-                        <br/>
+                        <t t-if="o.partner_id.account_number">
+                            <strong t-if="o.partner_id.account_number">BookPal Account # :</strong>
+                            <span t-field="o.partner_id.account_number" />
+                            <br/>
+                        </t>
                         <t t-if="o.payment_term_id">
                             <strong>Supplier Terms :</strong>
                             <t t-esc="o.payment_term_id.name"/>
@@ -162,7 +164,7 @@
                     style="border-bottom: 1px solid black;border-top: 1px solid black;">
                     <span t-field="order_line.product_id.name"/><br/>
                     <t t-if="order_line.product_id.default_code">
-                        <span style="font-weight: bold;">ISBN:</span>
+                        <span style="font-weight: bold;">SKU:</span>
                         <span t-field="order_line.product_id.default_code" /><br/>
                     </t>
                     <t t-if="order_line.product_format">
