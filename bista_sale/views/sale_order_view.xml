@@ -13,11 +13,11 @@
            </xpath>
             <xpath expr="//field[@name='partner_invoice_id']" position="attributes">
                 <attribute name="string">Billing Address</attribute>
-                <attribute name="domain">['|', ('parent_id', '=', partner_id), ('id', '=', partner_id),('type', 'in', ('invoice', 'contact')) ]</attribute>
-                    <attribute name="context">{'default_type':'invoice', 'show_address':1, 'always_reload':1,'invoice_contact': True}</attribute>
+                <attribute name="domain">['|', ('parent_id', '=', partner_id), ('id', '=', partner_id),('type', '=', 'invoice')]</attribute>
+                <attribute name="context">{'default_type':'invoice', 'show_address':1, 'always_reload':1,'invoice_contact': True}</attribute>
            </xpath>
            <xpath expr="//field[@name='partner_shipping_id']" position="attributes">
-               <attribute name="domain">['|', '|', ('parent_id', '=', partner_id), ('id', '=', partner_id), ('is_multi_ship', '=', True), ('type', '=', 'delivery')]</attribute>
+               <attribute name="domain">['|',('parent_id', '=', partner_id), ('id', '=', partner_id), ('is_multi_ship', 'in', (True, False)), ('type', '=', 'delivery')]</attribute>
                <attribute name="context">{'default_type':'delivery', 'show_address':1, 'always_reload':1, 'shipment_contact': True}</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">

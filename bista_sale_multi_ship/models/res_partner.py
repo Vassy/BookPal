@@ -219,7 +219,7 @@ class ResPartner(models.Model):
             #         name = partner._get_name()
             #         res.append((partner.id, name))
             for partner in self:
-                street = partner.street or ""
+                street = partner.street
                 if partner.is_multi_ship:
                     if partner.external_company:
                         name = partner.name + " (" + street + ")" + "\n" + partner.external_company + "\n" + partner._display_address(without_company=False)
@@ -229,18 +229,24 @@ class ResPartner(models.Model):
                 else:
                     if partner.parent_id:
                         name = partner.parent_id.name + "," + partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
-                    else:
+                    if partner.parent_id and partner.street:
                         name = partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
+                    else:
+                        name = partner.name + "\n" + partner._display_address(without_company=False)
                     # name = partner._get_name()
                     res.append((partner.id, name))
             return res
         if self.env.context.get('invoice_contact'):
             for partner in self:
-                street = partner.street or ""
+                street = partner.street
+                if not partner.name:
+                    partner.name = ""
                 if partner.parent_id:
-                        name = partner.parent_id.name + "," + partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
-                else:
+                    name = partner.parent_id.name + "," + partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
+                if not partner.parent_id and partner.street:
                     name = partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
+                else:
+                    name = partner.name + "\n" + partner._display_address(without_company=False)
                 res.append((partner.id, name))
             return res
         else:
