@@ -11,7 +11,7 @@
                     <h3>
                         <span t-field="o.name" />
                     </h3>
-                    <t t-if="o.state !='done' and o.picking_type_code =='incoming'">
+                    <t t-if="o.state !='done' and o.picking_type_code =='incoming' and not o.is_dropship">
                         <h5 style="font-size: 20px;">Receipt Date:
                             <span t-field="o.scheduled_date" t-options='{"widget": "date"}' />
                         </h5>
@@ -202,7 +202,7 @@
                     <h3>
                         <span t-field="o.name" />
                     </h3>
-                    <t t-if="o.state !='done' and o.picking_type_code =='incoming'">
+                    <t t-if="o.state !='done' and o.picking_type_code =='incoming' and not o.is_dropship">
                         <h5 style="font-size: 20px;">Receipt Date:
                             <span t-field="o.scheduled_date" t-options='{"widget": "date"}' />
                         </h5>
