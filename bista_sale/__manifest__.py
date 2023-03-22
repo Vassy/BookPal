@@ -36,7 +36,7 @@
         "views/product_views.xml",
         "views/share_template.xml",
         "views/seller_report_views.xml",
-        "views/res_config_settings_views.xml",
+        # "views/res_config_settings_views.xml",
         # "views/crm_lead_views.xml",
         "wizard/best_seller_report_views.xml",
     ],
