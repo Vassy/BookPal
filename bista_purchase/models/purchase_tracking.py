@@ -66,7 +66,7 @@ class PurchaseTracking(models.Model):
             move_ids = line.po_line_id.move_ids.filtered(lambda m: m.state != "done")
             open_move |= move_ids
             move_ids.write({"quantity_done": line.ship_qty})
-        open_move._action_done()
+        self.order_id.picking_ids._action_done()
         self.status = "shipped"
 
     @api.onchange("checkbox")
