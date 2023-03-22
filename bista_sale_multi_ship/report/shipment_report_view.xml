@@ -244,7 +244,7 @@
                                 </t>
                             </tr>
                             <tr style="border-bottom:1px solid black !important;">
-                                <t t-if="line.picking_note">
+                                <t>
                                     <td colspan="2" style="border: none !important" class="text-left">
                                         <b><span t-if="line.picking_note">Product Notes:</span></b>
                                         <span t-field="line.picking_note"/>
