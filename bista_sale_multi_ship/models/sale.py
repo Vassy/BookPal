@@ -303,6 +303,13 @@ class SaleOrder(models.Model):
                         line._origin.id])
                 rec.so_lines = lines
 
+    @api.constrains('order_line')
+    def set_so_lines(self):
+        """Set order line in so lines for domain."""
+        for rec in self:
+            if not rec.sale_multi_ship_qty_lines:
+                rec.so_lines = rec.order_line.ids
+
     def _action_cancel(self):
         res = super(SaleOrder, self)._action_cancel()
         for so in self:
