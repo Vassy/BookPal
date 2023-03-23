@@ -231,6 +231,16 @@
                     <field name="weight_uom_name" readonly="1" />
                 </div>
             </xpath>
+            <xpath expr="//group[@name='note_group']/group[1]/field[@name='note']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[@name='other_information']" position="inside">
+                <group name="note_group" col="6" class="mt-2 mt-md-0">
+                    <group colspan="4">
+                        <field name="note" class="oe-bordered-editor" nolabel="1" placeholder="Terms and conditions..."/>
+                    </group>
+                </group>
+            </xpath>
             <xpath expr="//notebook//page[@name='optional_products']" position="attributes">
                 <attribute name="groups">bista_sale.show_optional_product</attribute>
             </xpath>
