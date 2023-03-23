@@ -107,8 +107,9 @@ class SaleOrder(models.Model):
     customer_po_link = fields.Char("Customer PO Link")
     book_use_email = fields.Char()
 
-    def write(self,vals):
-        if not self._context.get('manual_update'):
+    def write(self, vals):
+        """Skip to update salesperson automatically."""
+        if not self._context.get('manual_update') and 'user_id' in vals:
             vals.pop('user_id')
         res = super(SaleOrder, self).write(vals)
         return res
