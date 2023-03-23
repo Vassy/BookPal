@@ -14,6 +14,7 @@
             </xpath>
             <xpath expr="//field[@name='narration']" position="attributes">
                 <attribute name="placeholder">Invoice Terms and Conditions</attribute>
+                <attribute name="readonly">1</attribute>
             </xpath>
             <xpath expr="//group[hasclass('oe_invoice_lines_tab')]" position="after">
                 <group name="invoice_pick_note"  class="mt-2 mt-md-0" style="word-wrap: break-word;">
