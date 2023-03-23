@@ -113,10 +113,11 @@
             </div>
         </xpath>
         <xpath expr="//thead" position="replace">
+            <br/>
             <thead>
-                <span style="color: black; font-weight: bold; margin-bottom: 0px; margin-left: 5px; margin-top: 30px">
+                <!-- <span style="color: black; font-weight: bold; margin-bottom: 0px; margin-left: 5px; margin-top: 30px">
                     Product Details
-                </span>
+                </span> -->
                 <tr style="border-top: 1px solid black;">
                    <!--  <th name="th_default_code" class="text-center"
                         style="border-top: 1px solid black;border-bottom: 1px solid black;border-right: 1px solid black;">
@@ -201,7 +202,7 @@
                 </td>
                 <td class="text-center text-danger" name="td_bp_price"
                     style="border-bottom: 1px solid black;border-top: 1px solid black;">
-                    <span t-field="order_line.price_unit"/>
+                    <span t-field="order_line.price_unit" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                 </td>
 
                 <td class="text-center"

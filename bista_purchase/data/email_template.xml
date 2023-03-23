@@ -292,11 +292,18 @@
                         <span style="font-weight: bold;">SHIP TO:</span>
                     </div>
                     <t t-if="object.dest_address_id">
-                        <div class="row" style="margin: 0px;"><span t-field="object.dest_address_id.name" /></div>
-                        <div class="row" style="margin: 0px;" t-if="object.dest_address_id.parent_id.name">
-                            <span t-field="object.dest_address_id.parent_id.name" />
+                        <div>
+                            <span t-field="object.dest_address_id.name"/>
+                            <br/>
+                            <t t-if="not object.dest_address_id.external_company">
+                                <span t-field="object.dest_address_id.parent_id.name"/>
+                            </t>
+                            <t t-else="">
+                                <span t-field="object.dest_address_id.external_company"/>
+                            </t>
                         </div>
-                        <div t-field="object.dest_address_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": True}' />
+                        <div t-field="object.dest_address_id"
+                             t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": True}'/>
                     </t>
                     <t t-else="">
                         <div class="row" style="margin: 0px;"><span t-field="object.company_id.name"/></div>
