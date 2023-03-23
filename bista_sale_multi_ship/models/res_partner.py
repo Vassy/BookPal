@@ -204,50 +204,67 @@ class ResPartner(models.Model):
             vals['phone'] = company_phone
         return super(ResPartner, self).create(vals)
 
+    # def name_get(self):
+    #     """Updated display name."""
+    #     res = []
+    #     if self.env.context.get('shipment_contact'):
+    #         # for partner in self:
+    #         #     if partner.is_multi_ship:
+    #         #         if partner.external_company:
+    #         #             name = partner.name + "\n" + partner.external_company + "\n" + partner._display_address(without_company=False)
+    #         #         else:
+    #         #             name = partner.name + partner._display_address(without_company=False)
+    #         #         res.append((partner.id, name))
+    #         #     else:
+    #         #         name = partner._get_name()
+    #         #         res.append((partner.id, name))
+    #         for partner in self:
+    #             street = partner.street
+    #             if partner.is_multi_ship:
+    #                 if partner.external_company:
+    #                     name = partner.name + " (" + street + ")" + "\n" + partner.external_company + "\n" + partner._display_address(without_company=False)
+    #                 else:
+    #                     name = partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
+    #                 res.append((partner.id, name))
+    #             else:
+    #                 if partner.parent_id and partner.name and street:
+    #                     name = partner.parent_id.name + "," + partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
+    #                 elif not partner.parent_id and partner.name and partner.street:
+    #                     name = partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
+    #                 elif not partner.parent_id and partner.name and not partner.street:
+    #                     name = partner.name + "\n" + partner._display_address(without_company=False)
+    #                 else:
+    #                     name = partner._get_name()
+    #                     # name = partner.name + "\n" + partner._display_address(without_company=False)
+    #                 # name = partner._get_name()
+    #                 res.append((partner.id, name))
+    #         return res
+    #     if self.env.context.get('invoice_contact'):
+    #         for partner in self:
+    #             street = partner.street
+    #             if partner.parent_id and partner.name and street:
+    #                 name = partner.parent_id.name + "," + partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
+    #             elif not partner.parent_id and partner.name and partner.street:
+    #                 name = partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
+    #             elif not partner.parent_id and partner.name and not partner.street:
+    #                 name = partner.name + "\n" + partner._display_address(without_company=False)
+    #             else:
+    #                 name = partner._get_name()
+    #             res.append((partner.id, name))
+    #         return res
+    #     else:
+    #         return super(ResPartner, self).name_get()
+
     def name_get(self):
         """Updated display name."""
         res = []
         if self.env.context.get('shipment_contact'):
-            # for partner in self:
-            #     if partner.is_multi_ship:
-            #         if partner.external_company:
-            #             name = partner.name + "\n" + partner.external_company + "\n" + partner._display_address(without_company=False)
-            #         else:
-            #             name = partner.name + partner._display_address(without_company=False)
-            #         res.append((partner.id, name))
-            #     else:
-            #         name = partner._get_name()
-            #         res.append((partner.id, name))
             for partner in self:
-                street = partner.street
                 if partner.is_multi_ship:
-                    if partner.external_company:
-                        name = partner.name + " (" + street + ")" + "\n" + partner.external_company + "\n" + partner._display_address(without_company=False)
-                    else:
-                        name = partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
-                    res.append((partner.id, name))
+                    res.append((partner.id, partner.name))
                 else:
-                    if partner.parent_id:
-                        name = partner.parent_id.name + "," + partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
-                    if partner.parent_id and partner.street:
-                        name = partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
-                    else:
-                        name = partner.name + "\n" + partner._display_address(without_company=False)
-                    # name = partner._get_name()
+                    name = partner._get_name()
                     res.append((partner.id, name))
-            return res
-        if self.env.context.get('invoice_contact'):
-            for partner in self:
-                street = partner.street
-                if not partner.name:
-                    partner.name = ""
-                if partner.parent_id:
-                    name = partner.parent_id.name + "," + partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
-                if not partner.parent_id and partner.street:
-                    name = partner.name + " (" + street + ")" + "\n" + partner._display_address(without_company=False)
-                else:
-                    name = partner.name + "\n" + partner._display_address(without_company=False)
-                res.append((partner.id, name))
             return res
         else:
             return super(ResPartner, self).name_get()
@@ -265,26 +282,59 @@ class ResPartner(models.Model):
         """Get vendors from specific product."""
         return self.env["product.product"].browse(
             self._context.get("vendor_product_id")
-        ).seller_ids.mapped("name").ids
+        ).product_tmpl_id.seller_ids.mapped("name").ids
+
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        """User can serach tax based on name and description."""
+        if not args:
+            args = []
+        if self.env.context.get('shipment_contact'):
+            args = expression.AND(
+                [args, [('is_multi_ship', 'in', [True, False])]])
+        elif self.env.context.get('vendor_product_id'):
+            vendors = self.get_vendors()
+            args = ['|', ('id', 'in', vendors), ('parent_id', 'in', vendors)]
+        elif self.env.user.has_group(
+                'bista_sale_multi_ship.show_multi_ship_contact'):
+            args = expression.AND(
+                [args, [('is_multi_ship', 'in', [True, False])]])
+        else:
+            args = expression.AND([args, [('is_multi_ship', '=', False)]])
+        ids = self.with_context(name_search=True)._name_search(
+            name, args, operator, limit=limit)
+        return self.browse(ids).sudo().name_get()
 
     @api.model
     def _search(
-        self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None
+        self, args, offset=0, limit=None, order=None, count=False,
+        access_rights_uid=None
     ):
-        """Select specific contacts based on different context and user access"""
-        if not "active_test" in self._context:
+        """Set specific contacts based on different context and user access."""
+        if 'active_test' not in self._context:
             if self._context.get("shipment_contact"):
-                args += expression.OR([args, [("is_multi_ship", "=", True)]])
+                args = expression.AND(
+                    [args, [('is_multi_ship', 'in', [True, False])]])
             elif self._context.get("vendor_product_id"):
                 vendors = self.get_vendors()
                 args = expression.AND(
-                    [args, ["|", ("id", "in", vendors), ("parent_id", "in", vendors)]]
+                    [args,
+                        ["|", ("id", "in", vendors),
+                         ("parent_id", "in", vendors)]]
                 )
-            elif self.env.user.has_group("bista_sale_multi_ship.show_multi_ship_contact"):
-                args = expression.AND([[("is_multi_ship", "in", [True, False])], args])
+            elif self.env.user.has_group(
+                    "bista_sale_multi_ship.show_multi_ship_contact"):
+                args = expression.AND([[
+                    ("is_multi_ship", "in", [True, False])], args])
             else:
-                args += [("is_multi_ship", "=", False)]
-        return super()._search(args, offset, limit, order, count, access_rights_uid)
+                param = self.env.context.get('params', {})
+                if param and param.get('view_type') == 'form' and \
+                        param.get('model') == 'res.partner':
+                    args += [("is_multi_ship", "in", [True, False])]
+                else:
+                    args += [("is_multi_ship", "=", False)]
+        return super()._search(
+            args, offset, limit, order, count, access_rights_uid)
 
     @api.model
     def read_group(
@@ -296,6 +346,8 @@ class ResPartner(models.Model):
         if self._context.get("vendor_product_id"):
             vendors = self.get_vendors()
             domain = expression.AND(
-                [domain, ["|", ("id", "in", vendors), ("parent_id", "in", vendors)]]
+                [domain, ["|", ("id", "in", vendors),
+                          ("parent_id", "in", vendors)]]
             )
-        return super().read_group(domain, fields, groupby, offset, limit, orderby, lazy)
+        return super().read_group(
+            domain, fields, groupby, offset, limit, orderby, lazy)

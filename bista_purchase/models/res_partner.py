@@ -104,7 +104,8 @@ class ResPartner(models.Model):
             return super(ResPartner, self).name_get()
         res = []
         for partner in self:
-            name = partner.with_context(with_primary_customer = partner.is_primary)._get_name()
+            name = partner.with_context(
+                with_primary_customer=partner.is_primary)._get_name()
             if self.env.context.get("dropship_contact"):
                 if partner.external_company:
                     name = partner.name + "\n" + partner.external_company + "\n" + partner._display_address(without_company=False)

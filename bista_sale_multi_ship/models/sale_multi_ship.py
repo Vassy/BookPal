@@ -290,7 +290,6 @@ class SaleMultiShipQtyLines(models.Model):
     product_qty = fields.Float(string="Shipping Qty")
     personalization_1 = fields.Char('Personalization 1')
     personalization_2 = fields.Char('Personalization 2')
-
     partner_id = fields.Many2one(
         'res.partner', string="Shipping Address",
         ondelete='cascade',
