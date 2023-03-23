@@ -107,6 +107,12 @@ class SaleOrder(models.Model):
     customer_po_link = fields.Char("Customer PO Link")
     book_use_email = fields.Char()
 
+    def write(self,vals):
+        if not self._context.get('manual_update'):
+            vals.pop('user_id')
+        res = super(SaleOrder, self).write(vals)
+        return res
+
     def _get_available_acquirer(self):
         payment = self.env["payment.acquirer"].sudo()
         payment_ids = payment._get_compatible_acquirers(
@@ -181,7 +187,10 @@ class SaleOrder(models.Model):
 
     @api.onchange('partner_id')
     def onchange_partner_id(self):
+        user_id = self.user_id
         super(SaleOrder, self).onchange_partner_id()
+        if user_id:
+            self.user_id = user_id
         if self.partner_id and not self._context.get("no_change_refer"):
             self.refer_by_person = self.partner_id.referal_source.id
             self.refer_by_company = self.partner_id.referring_organization.id

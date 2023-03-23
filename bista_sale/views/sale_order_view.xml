@@ -98,7 +98,7 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//field[@name='user_id']" position="attributes">
-                <attribute name="string">Rep</attribute>
+                <attribute name="context">{'manual_update':True}</attribute>
             </xpath>
             <field name="user_id" position="after">
                 <field name="am_owner" />
@@ -320,4 +320,8 @@
         </field>
     </record>
 
+<!--    for restrict sales person changes-->
+    <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
+        <field name="context">{'search_default_my_quotation': 1, 'manual_update':1}</field>
+    </record>
 </odoo>
