@@ -138,15 +138,34 @@ class ResPartner(models.Model):
             name = partner.name + ' *' or ''
         else:
             name = partner.name or ''
-
+        if partner.name and partner.street and (self.env.context.get(
+                'shipment_contact', False) or
+                self.env.context.get('invoice_contact')):
+            name += ' ( %s )' % partner.street
         if partner.company_name or partner.parent_id:
-            if not name and partner.type in ['invoice', 'delivery', 'other', 'return', 'warehouse']:
-                name = dict(self.fields_get(['type'])['type']['selection'])[partner.type]
+            if not name and partner.type in [
+                    'invoice', 'delivery', 'other', 'return', 'warehouse']:
+                name = ''
+                if not name and partner.street and (self.env.context.get(
+                    'shipment_contact', False) or
+                        self.env.context.get('invoice_contact')):
+                    name += ' ( %s ) ' % partner.street
+                name += dict(self.fields_get(
+                    ['type'])['type']['selection'])[partner.type]
             if not partner.is_company:
                 name = self._get_contact_name(partner, name)
         if self._context.get('show_address_only'):
-            name = partner._display_address(without_company=True)
+            name = ''
+            if partner.external_company and \
+                    self.env.context.get('shipment_contact'):
+                name += '\n' + partner.external_company + '\n'
+            name += partner._display_address(without_company=True)
+            if partner.external_company:
+                name += '\n' + partner.external_company
         if self._context.get('show_address'):
+            if partner.external_company and \
+                    self.env.context.get('shipment_contact'):
+                name += '\n' + partner.external_company + '\n'
             name = name + "\n" + partner._display_address(without_company=True)
         name = name.replace('\n\n', '\n')
         name = name.replace('\n\n', '\n')
@@ -166,10 +185,9 @@ class ResPartner(models.Model):
     def get_vendor_purchased_product(self):
         """To get Purchased Products"""
         product_list = self.purchase_line_ids.filtered(
-            lambda a: a.product_id.detailed_type != 'service').mapped('product_id')
+            lambda a: a.product_id.detailed_type != 'service').mapped(
+            'product_id')
         val = [rec.id for rec in product_list]
         action = self.env.ref("purchase.product_product_action").read()[0]
         action['domain'] = [('id', 'in', val), ('active', 'in', (True, False))]
         return action
-
-
