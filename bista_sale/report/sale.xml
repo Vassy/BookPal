@@ -96,7 +96,7 @@
                         <strong>Valid Until:</strong>
                         <span t-field="doc.validity_date" t-options="{'widget': 'date'}" />
                     </div>
-                    <strong>Quoted By:</strong>
+                    <strong>Salesperson:</strong>
                     <span t-field="doc.user_id.name" />
                     <br />
                     <strong>Email:</strong>
