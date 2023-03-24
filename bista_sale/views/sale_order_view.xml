@@ -5,6 +5,11 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
+            <button name="action_cancel" position="before">
+                <button name="action_quotation_send" string="Send Invoice" type="object"
+                    context="{'sale_invoice': True}" class="btn-primary"
+                    attrs="{'invisible': ['|', ('state', 'in', ['cancel', 'done']), ('invoice_count', '&gt;=', 1)]}" />
+            </button>
             <group name="order_details" position="inside">
                 <field name="acquirer_ids" widget="many2many_tags" options="{'no_create_edit': True, 'no_quick_create': True}" />
             </group>
