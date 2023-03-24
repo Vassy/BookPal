@@ -8,8 +8,24 @@
             <button name="action_cancel" position="before">
                 <button name="action_quotation_send" string="Send Invoice" type="object"
                     context="{'sale_invoice': True}" class="btn-primary"
-                    attrs="{'invisible': ['|', ('state', 'in', ['cancel', 'done']), ('invoice_count', '&gt;=', 1)]}" />
+                    attrs="{'invisible': ['|', ('state', '!=', 'quote_confirm'), ('invoice_count', '&gt;=', 1)]}"
+                    groups="sale.group_proforma_sales" />
+                <button name="action_quotation_send" string="Send Invoice" type="object" context="{'sale_invoice': True}"
+                    attrs="{'invisible': ['|', ('state', 'not in', ['sent', 'order_booked', 'sale']), ('invoice_count', '&gt;=', 1)]}"
+                    groups="sale.group_proforma_sales" />
             </button>
+            <xpath expr="//button[@name='action_quotation_send'][2]" position="attributes">
+                <attribute name="string">Send Proforma Invoice</attribute>
+                <attribute name="attrs">{'invisible': ['|', ('state', '!=', 'quote_confirm'), ('invoice_count', '&gt;=', 1)]}</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send'][3]" position="attributes">
+                <attribute name="string">Send Proforma Invoice</attribute>
+                <attribute name="attrs">{'invisible': ['|', ('state', 'not in', ['sent', 'order_booked', 'sale']), ('invoice_count', '&gt;=', 1)]}</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send'][4]" position="attributes">
+                <attribute name="states" />
+                <attribute name="attrs">{'invisible': [('state', 'not in', ['sent', 'order_booked', 'sale'])]}</attribute>
+            </xpath>
             <group name="order_details" position="inside">
                 <field name="acquirer_ids" widget="many2many_tags" options="{'no_create_edit': True, 'no_quick_create': True}" />
                 <field name="share_link" invisible="1"/>

@@ -109,6 +109,14 @@ class SaleOrder(models.Model):
     share_link = fields.Char(string="Link", compute='_compute_share_link')
     button_name = fields.Char(compute='_compute_button_name')
 
+    def _find_mail_template(self, force_confirmation_template=False):
+        template_id = super()._find_mail_template(force_confirmation_template)
+        if not force_confirmation_template and self._context.get("sale_invoice"):
+            template_id = self.env["ir.model.data"]._xmlid_to_res_id(
+                "sale.email_template_edi_sale", raise_if_not_found=False
+            )
+        return template_id
+
     def _compute_share_link(self):
         for rec in self:
             rec.share_link = rec.get_base_url() + rec._get_share_url(redirect=True)
