@@ -160,8 +160,6 @@ class ResPartner(models.Model):
                     self.env.context.get('shipment_contact'):
                 name += '\n' + partner.external_company + '\n'
             name += partner._display_address(without_company=True)
-            if partner.external_company:
-                name += '\n' + partner.external_company
         if self._context.get('show_address'):
             if partner.external_company and \
                     self.env.context.get('shipment_contact'):
