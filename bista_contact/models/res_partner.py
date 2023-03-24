@@ -138,10 +138,7 @@ class ResPartner(models.Model):
             name = partner.name + ' *' or ''
         else:
             name = partner.name or ''
-        if partner.name and partner.street and (self.env.context.get(
-                'shipment_contact', False) or
-                self.env.context.get('invoice_contact')):
-            name += ' ( %s )' % partner.street
+
         if partner.company_name or partner.parent_id:
             if not name and partner.type in [
                     'invoice', 'delivery', 'other', 'return', 'warehouse']:
@@ -154,6 +151,13 @@ class ResPartner(models.Model):
                     ['type'])['type']['selection'])[partner.type]
             if not partner.is_company:
                 name = self._get_contact_name(partner, name)
+        # if multi ship module installed then check is mulit ship
+        if hasattr(partner, 'is_multi_ship') and partner.is_multi_ship:
+            name = partner.name
+        if partner.name and partner.street and (self.env.context.get(
+                'shipment_contact', False) or
+                self.env.context.get('invoice_contact')):
+            name += ' ( %s )' % partner.street
         if self._context.get('show_address_only'):
             name = ''
             if partner.external_company and \
