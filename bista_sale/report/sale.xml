@@ -23,7 +23,8 @@
             <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)" />
             <t t-set="report_info" class="col-6 text-right">
                 <h3>
-                    <span t-if="env.context.get('proforma', False) or is_pro_forma">Invoice</span>
+                    <span t-if="env.context.get('sale_invoice') or is_sale_invoice">Invoice</span>
+                    <span t-elif="env.context.get('proforma', False) or is_pro_forma">Proforma Invoice</span>
                     <span t-elif="doc.state == 'cancel'">Cancelled Quotation/Sale Order</span>
                     <span t-elif="doc.state in ['draft', 'sent', 'quote_approval', 'quote_confirm']">Quotation</span>
                     <span t-else="">Sale Order</span>
@@ -31,7 +32,7 @@
                 <h4><span t-field="doc.name" /></h4>
                 <div><span t-field="doc.date_order" t-options="{'widget': 'date'}" /></div>
             </t>
-            <t t-set="report_tagline" t-if="not (env.context.get('proforma', False) or is_pro_forma)">
+            <t t-set="report_tagline" t-if="not (env.context.get('proforma') or is_pro_forma or env.context.get('sale_invoice') or is_sale_invoice)">
                 <div class="o_boxed_header col-12 text-center" style="font-style: italic; font-size: 20px;">
                     <span t-if="doc.state in ('draft', 'sent', 'quote_approval', 'quote_confirm')" style="margin-bottom: 0rem !important;" t-field="doc.company_id.quote_tag_line" />
                     <span t-else="" style="margin-bottom: 0rem !important;" t-field="doc.company_id.so_tag_line" />
@@ -271,7 +272,7 @@
             <br /><br />
         </xpath>
         <xpath expr="//p[@t-field='doc.note']" position="after">
-            <div style="page-break-inside:avoid;" t-if="not (env.context.get('proforma', False) or is_pro_forma)">
+            <div style="page-break-inside: avoid;" t-if="not (env.context.get('proforma') or is_pro_forma or env.context.get('sale_invoice') or is_sale_invoice)">
                 <div class="text-center" style="margin-top:10px;">
                     <p class="mt-5" style="margin-left: 325px;width:26%; height:50pt;background-color:red;">
                         <a t-att-href="doc.sudo().compute_customer_preview_url()" class="btn btn-link" role="button" style="margin-top:15px;">
@@ -329,6 +330,15 @@
         </xpath>
     </template>
 
+    <template id="report_saleorder_invoice">
+        <t t-call="web.html_container">
+            <t t-set="is_sale_invoice" t-value="True" />
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="sale.report_saleorder_document" t-lang="doc.partner_id.lang" />
+            </t>
+        </t>
+    </template>
+
     <record id="sale.action_report_saleorder" model="ir.actions.report">
         <field name="print_report_name">
             (object.state in ('draft','sent','quote_approval','quote_confirm') and 'Quotation - %s' % (object.name) or
@@ -337,7 +347,18 @@
     </record>
 
     <record id="sale.action_report_pro_forma_invoice" model="ir.actions.report">
+        <field name="name">Proforma Invoice</field>
+        <field name="print_report_name">'Proforma - %s' % (object.name)</field>
+    </record>
+
+    <record id="action_report_sale_invoice" model="ir.actions.report">
         <field name="name">Invoice</field>
-        <field name="print_report_name">(object.name)</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">bista_sale.report_saleorder_invoice</field>
+        <field name="report_file">bista_sale.report_saleorder_invoice</field>
+        <field name="print_report_name">'Invoice - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_sale_order" />
+        <field name="binding_type">report</field>
     </record>
 </odoo>
