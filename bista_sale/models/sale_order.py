@@ -106,6 +106,18 @@ class SaleOrder(models.Model):
     )
     customer_po_link = fields.Char("Customer PO Link")
     book_use_email = fields.Char()
+    share_link = fields.Char(string="Link", compute='_compute_share_link')
+    button_name = fields.Char(compute='_compute_button_name')
+
+    def _compute_share_link(self):
+        for rec in self:
+            rec.share_link = rec.get_base_url() + rec._get_share_url(redirect=True)
+
+    @api.depends('name')
+    def _compute_button_name(self):
+        for rec in self:
+            rec.button_name = "View " + str(rec.name)
+
 
     def write(self, vals):
         """Skip to update salesperson automatically."""
