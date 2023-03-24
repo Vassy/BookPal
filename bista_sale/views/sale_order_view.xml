@@ -7,6 +7,8 @@
         <field name="arch" type="xml">
             <group name="order_details" position="inside">
                 <field name="acquirer_ids" widget="many2many_tags" options="{'no_create_edit': True, 'no_quick_create': True}" />
+                <field name="share_link" invisible="1"/>
+                <field name="button_name" invisible="1"/>
             </group>
             <xpath expr="//field[@name='partner_id']" position="attributes">
                 <attribute name="context">{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True, 'always_reload':1, 'invoice_contact': True}</attribute>
@@ -233,7 +235,7 @@
             <xpath expr="//notebook/page[@name='other_information']" position="inside">
                 <group name="note_group" col="6" class="mt-2 mt-md-0">
                     <group colspan="4">
-                        <field name="note" class="oe-bordered-editor" nolabel="1" placeholder="Terms and conditions..." readonly="1"/>
+                        <field name="note" class="oe-bordered-editor" nolabel="1" placeholder="Terms and conditions..." readonly="1" force_save="1"/>
                     </group>
                 </group>
             </xpath>
