@@ -22,21 +22,30 @@
         <record id="sale.email_template_edi_sale" model="mail.template">
             <field name="name">Sales Order: Send by email</field>
             <field name="model_id" ref="sale.model_sale_order"/>
-            <field name="subject">{{ object.company_id.name }} {{ object.state in ('draft', 'sent') and (ctx.get('proforma') and 'Proforma' or 'Quotation') or 'Order' }} (Ref {{ object.name or 'n/a' }})</field>
+            <field name="subject">{{ object.company_id.name }} {{ ctx.get('sale_invoice') and 'Invoice' or ctx.get('proforma') and 'Proforma' or object.state in ('quote_confirm', 'sent') and 'Quotation' or 'Order' }} (Ref {{ object.name or 'n/a' }})</field>
             <field name="email_from">{{ (object.user_id.email_formatted or user.email_formatted) }}</field>
             <field name="partner_to">{{ object.partner_id.id }}</field>
             <field name="body_html" type="html">
                 <div style="margin: 0px; padding: 0px;">
                     <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        <center>
+                            <img t-attf-src="/logo.png?company={{ object.company_id.id }}" style="padding: 0px; margin: 0px; height: 48px; width: 90px;" t-att-alt="object.company_id.name"/>
+                        </center>
+                        <br/>
                         <t t-set="doc_name" t-value="'quotation' if object.state in ('draft', 'sent') else 'order'"/>
                         Hello,
                         <br/><br/>
                         Your
                         <t t-if="ctx.get('proforma')">
-                            Pro forma invoice for <t t-out="doc_name or ''">quotation</t> <strong t-out="object.name or ''">S00052</strong>
+                            Proforma invoice for <t t-out="doc_name or ''">quotation</t> <strong t-out="object.name or ''">S00052</strong>
                             <t t-if="object.origin">
                                 (with reference: <t t-out="object.origin or ''"></t> )
                             </t>
+                            amounting in <strong t-out="format_amount(object.amount_total, object.pricelist_id.currency_id) or ''">$ 10.00</strong> is available.
+                        </t>
+                        <t t-elif="ctx.get('sale_invoice')">
+                            Invoice for <t t-out="doc_name or ''">quotation</t> <strong t-out="object.name or ''">S00052</strong>
+                            <t t-if="object.origin">(with reference: <t t-out="object.origin or ''"></t> )</t>
                             amounting in <strong t-out="format_amount(object.amount_total, object.pricelist_id.currency_id) or ''">$ 10.00</strong> is available.
                         </t>
                         <t t-else="">
@@ -49,6 +58,19 @@
                         <br/><br/>
                         Do not hesitate to contact us if you have any questions.
                         <br/>
+                        <br/>
+                        <table cellspacing="0" cellpadding="0" border="0" style="width: 600px; margin-top: 5px;">
+                            <tbody>
+                                <tr>
+                                    <td valign="center">
+                                        <a t-att-href="object.share_link"
+                                            style="padding: 8px 12px; font-size: 12px; color: #FFFFFF; text-decoration: none !important; font-weight: 400; background-color: #875A7B; border: 0px solid #875A7B; border-radius:3px">
+                                            <t t-esc="object.button_name"/>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </p>
                 </div>
                 <br/>
