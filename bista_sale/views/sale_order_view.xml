@@ -28,6 +28,8 @@
             </xpath>
             <group name="order_details" position="inside">
                 <field name="acquirer_ids" widget="many2many_tags" options="{'no_create_edit': True, 'no_quick_create': True}" />
+                <field name="share_link" invisible="1"/>
+                <field name="button_name" invisible="1"/>
             </group>
             <xpath expr="//field[@name='partner_id']" position="attributes">
                 <attribute name="context">{'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True, 'always_reload':1, 'invoice_contact': True}</attribute>

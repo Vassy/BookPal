@@ -17,6 +17,13 @@
                 </function>
                 <value eval =" {'noupdate': False} "/>
         </function>
+        <function name = "write" model = "ir.model.data">
+            <function name = "search" model = "ir.model.data">
+                   <value eval = "[('name', '=', 'quotation_email_template'),
+                    ('module','=','bista_sale')] "/>
+                </function>
+                <value eval =" {'noupdate': False} "/>
+        </function>
 
         <!-- Overrided tempalte just to add signature  -->
         <record id="sale.email_template_edi_sale" model="mail.template">
@@ -280,6 +287,13 @@
             <field name="partner_to">{{ object.partner_id.id }}</field>
             <field name="body_html" type="html">
                 <div style="margin: 0px; padding: 0px;">
+                    <div class="col-12">
+                        <center>
+                            <img t-attf-src="/logo.png?company={{ object.company_id.id }}" style="padding: 0px; margin: 0px; height: 48px; width: 90px;" t-att-alt="object.company_id.name"/>
+                        </center>
+                    </div>
+                    <br/>
+                    <br/>
                     <p style="margin: 0px; padding: 0px; font-size: 13px;">
                         Thank you for reaching out to BookPal. Please see your <t t-if="object.state in ['draft', 'quote_approval', 'quote_confirm', 'sent']"> quote</t>
                         <t t-if="object.state not in ['draft', 'quote_approval', 'quote_confirm', 'sent']"> order </t> attached. Feel free to call or email me anytime if you have any questions or need to modify the quantities. If pricing is an issue, please note we have a price match program. </p><br/>
@@ -297,6 +311,22 @@
 
                         If you have any questions, don’t hesitate to contact me. I look forward to working with you on your project!
                     </p>
+                    <br/>
+                    <br/>
+                    <table cellspacing="0" cellpadding="0" border="0" style="width: 600px; margin-top: 5px;">
+                        <tbody>
+                            <tr>
+                                <td valign="center">
+                                    <a
+                                            t-att-href="object.share_link"
+                                            style="padding: 8px 12px; font-size: 12px; color: #FFFFFF; text-decoration: none !important; font-weight: 400; background-color: #875A7B; border: 0px solid #875A7B; border-radius:3px">
+                                        <t t-esc="object.button_name"/>
+                                        <!-- <span>View Simple Chatter Model</span> -->
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <br/>
                     <div t-out="user.signature"/>
                 </div>
