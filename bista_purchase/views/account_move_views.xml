@@ -17,6 +17,9 @@
                 <attribute name="readonly">1</attribute>
                 <attribute name="force_save">1</attribute>
             </xpath>
+            <xpath expr="//group[hasclass('oe_invoice_lines_tab')]/group[1]" position="attributes">
+                <attribute name="string">Terms and conditions</attribute>
+            </xpath>
             <xpath expr="//group[hasclass('oe_invoice_lines_tab')]" position="after">
                 <group name="invoice_pick_note"  class="mt-2 mt-md-0" style="word-wrap: break-word;">
                     <group>
