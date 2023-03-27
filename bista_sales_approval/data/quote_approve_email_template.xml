@@ -7,11 +7,28 @@
         <field name="email_from">{{user.email_formatted or ''}}</field>
         <field name="subject">Quotation Approved {{object.name}}</field>
         <field name="body_html" type="html">
-            <p>
+            <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                <center>
+                    <img t-attf-src="/logo.png?company={{ object.company_id.id }}" style="padding: 0px; margin: 0px; height: 48px; width: 90px;" t-att-alt="object.company_id.name"/>
+                </center>
+                <br/>
                 Dear <span t-out="object.user_id.name" />,<br/><br/>
                 This is to inform you that your Quotation no. <strong t-out="object.name" /> is now approved.<br/><br/>
             </p>
             <br/>
+            <br/>
+                <table cellspacing="0" cellpadding="0" border="0" style="width: 600px; margin-top: 5px;">
+                    <tbody>
+                        <tr>
+                            <td valign="center">
+                                <a t-att-href="object.share_link"
+                                    style="padding: 8px 12px; font-size: 12px; color: #FFFFFF; text-decoration: none !important; font-weight: 400; background-color: #875A7B; border: 0px solid #875A7B; border-radius:3px">
+                                    <t t-esc="object.button_name"/>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             <div t-out="user.signature"/>
         </field>
         <field name="report_template" ref="sale.action_report_saleorder"/>
