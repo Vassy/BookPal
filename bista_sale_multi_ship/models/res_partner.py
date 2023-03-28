@@ -229,7 +229,7 @@ class ResPartner(models.Model):
                 [args, [('is_multi_ship', 'in', [True, False])]])
         elif self.env.context.get('vendor_product_id'):
             vendors = self.get_vendors()
-            args = ['|', ('id', 'in', vendors), ('parent_id', 'in', vendors)]
+            args = [('id', 'in', vendors)]
         elif self.env.user.has_group(
                 'bista_sale_multi_ship.show_multi_ship_contact'):
             args = expression.AND(
@@ -252,11 +252,7 @@ class ResPartner(models.Model):
                     [args, [('is_multi_ship', 'in', [True, False])]])
             elif self._context.get("vendor_product_id"):
                 vendors = self.get_vendors()
-                args = expression.AND(
-                    [args,
-                        ["|", ("id", "in", vendors),
-                         ("parent_id", "in", vendors)]]
-                )
+                args = expression.AND([args, [("id", "in", vendors)]])
             elif self.env.user.has_group(
                     "bista_sale_multi_ship.show_multi_ship_contact"):
                 args = expression.AND([[
@@ -280,9 +276,6 @@ class ResPartner(models.Model):
             domain = []
         if self._context.get("vendor_product_id"):
             vendors = self.get_vendors()
-            domain = expression.AND(
-                [domain, ["|", ("id", "in", vendors),
-                          ("parent_id", "in", vendors)]]
-            )
+            domain = expression.AND([domain, [("id", "in", vendors)]])
         return super().read_group(
             domain, fields, groupby, offset, limit, orderby, lazy)
