@@ -121,7 +121,7 @@
     </record>
 
     <record id="sale.action_orders" model="ir.actions.act_window">
-        <field name="context">{"order_booked": True, 'manual_update':1}</field>
+        <field name="context">{"order_booked": True, 'manual_update': True}</field>
         <field name="domain">["|", ("state", "not in", ("draft", "quote_approval", "cancel")), ("is_order", "=", True)]</field>
     </record>
 
