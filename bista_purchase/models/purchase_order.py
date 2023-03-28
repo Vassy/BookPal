@@ -461,20 +461,21 @@ class PurchaseOrderLine(models.Model):
                 name += '\n' + ref.picking_id.name
         return name
 
-    @api.onchange('product_id')
-    def onchange_product_vendor(self):
-        result = {}
-        bo_transfer = self.check_bo_transfer()
-        if self.product_id and bo_transfer:
-            message = _('"%s" Product is already in back order. you can check this backorder. %s') % (
-                self.product_id.display_name, bo_transfer)
+    # As Discussed in 17820
+    # @api.onchange('product_id')
+    # def onchange_product_vendor(self):
+    #     result = {}
+    #     bo_transfer = self.check_bo_transfer()
+    #     if self.product_id and bo_transfer:
+    #         message = _('"%s" Product is already in back order. you can check this backorder. %s') % (
+    #             self.product_id.display_name, bo_transfer)
 
-            warning_mess = {
-                'title': _('WARNING!'),
-                'message': message
-            }
-            result = {'warning': warning_mess}
-        return result
+    #         warning_mess = {
+    #             'title': _('WARNING!'),
+    #             'message': message
+    #         }
+    #         result = {'warning': warning_mess}
+    #     return result
 
     @api.constrains('product_id')
     def _check_exist_product_in_line(self):
