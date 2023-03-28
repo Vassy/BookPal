@@ -269,7 +269,6 @@
                     </div>
                 </div>
             </div>
-            <br /><br />
         </xpath>
         <xpath expr="//p[@t-field='doc.note']" position="after">
             <div style="page-break-inside: avoid;" t-if="not (env.context.get('proforma') or is_pro_forma or env.context.get('sale_invoice') or is_sale_invoice)">
@@ -323,7 +322,7 @@
             </div>
             <div t-if="doc.note" style="page-break-inside:avoid;">
                 <h5 style="margin-top:50px;border-bottom:solid 1px;">Order Terms and Conditions</h5>
-                <span t-field="doc.note" />
+                <span t-field="doc.note" t-options="{'widget': 'text'}" />
             </div>
         </xpath>
     </template>
