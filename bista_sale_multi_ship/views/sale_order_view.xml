@@ -48,7 +48,7 @@
                 </xpath>
                 <xpath expr="//page[last()]" position="after">
                     <page name="shipping_lines" string="Shipment Plan"
-                        attrs="{'invisible': ['|', ('state', 'in', ['draft', 'quote_approval', 'quote_confirm', 'sent', 'cancel']), ('split_shipment', '=', False)]}">
+                        attrs="{'invisible': ['|', ('state', 'in', ['draft', 'quote_approval', 'quote_confirm', 'sent']), ('split_shipment', '=', False)]}">
                         <!-- <div>
                             <group>
                                 <group name="third_party_billing" string="Third Party Billing"
@@ -81,12 +81,12 @@
                             <tree context="{'multi_ship': True}" decoration-danger="partner_state =='error' and state=='draft'" decoration-success="partner_state =='verified' and state=='draft'" decoration-muted="state == 'cancel' or state == 'short_close'" decoration-warning="qty_delivered and product_qty != qty_delivered" editable="top">
                                 <field name="id" invisible="1"/>
                                 <!-- '|', ('id', 'child_of', parent.partner_id), remove this domain to show only customer name in shipping because as discussed in client meeting they will create different sale order if they want to change shipping address for tax calculation -->
-                                <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id, 'order_id': parent.id, 'shipment_contact': True}" domain="['|', ('id', '=', parent.partner_id), ('parent_id', '=', parent.partner_id)]" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}" options="{'always_reload':1}" default="parent.partner_shipping_id"/>
-                                <field name="so_line_id" options="{'no_create_edit': True, 'no_quick_create': True}" optional="show" context="{'so_lines': parent.so_lines, 'multi_ship': True}" domain="[('order_id', '=', parent.id)]" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                                <field name="shipping_date" optional="show" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="partner_id" context="{'form_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_form_view', 'tree_view_ref': 'bista_sale_multi_ship.res_partner_custom_multi_shipment_tree_view', 'default_is_multi_ship': True, 'default_parent_id': parent.partner_id, 'order_id': parent.id, 'shipment_contact': True}" domain="['|', ('id', '=', parent.partner_id), ('parent_id', '=', parent.partner_id)]" required="1" attrs="{'readonly': [('state', 'not in', ['draft', 'order_booked'])]}" options="{'always_reload':1}" default="parent.partner_shipping_id"/>
+                                <field name="so_line_id" options="{'no_create_edit': True, 'no_quick_create': True}" optional="show" context="{'so_lines': parent.so_lines, 'multi_ship': True}" domain="[('order_id', '=', parent.id)]" attrs="{'readonly': [('state', 'not in', ['draft', 'order_booked'])]}"/>
+                                <field name="shipping_date" optional="show" attrs="{'readonly': [('state', 'not in', ['draft', 'order_booked'])]}"/>
                                 <field name="product_id" invisible="1"/>
                                 <field name="product_uom_qty" optional="show"/>
-                                <field name="product_qty" optional="show" default="remain_qty" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="product_qty" optional="show" default="remain_qty" attrs="{'readonly': [('state', 'not in', ['draft', 'order_booked'])]}"/>
                                 <!-- below fields are used in the widget qty_at_date_widget -->
                                 <field name="product_type" invisible="1"/>
                                 <field name="virtual_available_at_date" invisible="1"/>
@@ -104,16 +104,16 @@
                                 <field name="remain_qty" optional="hide" readonly="1" force_save="1"/>
                                 <field name="qty_delivered" sum="Total" optional="hide" readonly="1" force_save="1"/>
                                 <field name="qty_short_close" optional="hide"/>
-                                <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]" attrs="{'readonly': [('state', '!=', 'draft')]}" context="{'partner_id': partner_id}" options="{'no_open': 1, 'no_create':1}"/>
-                                <field name="supplier_id" context="{'vendor_product_id': product_id}" attrs="{'readonly': [('state', '!=', 'draft')]}" optional="show" required="1"/>
+                                <field name="route_id" optional="show" domain="[('sale_selectable', '=', True)]" attrs="{'readonly': [('state', 'not in', ['draft', 'order_booked'])]}" context="{'partner_id': partner_id}" options="{'no_open': 1, 'no_create':1}"/>
+                                <field name="supplier_id" context="{'vendor_product_id': product_id}" attrs="{'readonly': [('state', 'not in', ['draft', 'order_booked'])]}" optional="show" required="1"/>
                                 <field name="state" optional="hide" readonly="1" force_save="1"/>
-                                <field name="attention" optional="hide" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="attention" optional="hide" attrs="{'readonly': [('state', 'not in', ['draft', 'order_booked'])]}"/>
                                 <field name="confirm_date" readonly="1" optional="hide"/>
                                 <field name="tracking_ref" optional="hide"/>
                                 <field name="partner_state" invisible="1"/>
                                 <field name="order_id" invisible="1"/>
-                                <field name="delivery_method_id"/>
-                                <field name="delivery_charges" readonly="1"/>
+                                <field name="delivery_method_id" attrs="{'readonly': [('state', 'not in', ['draft', 'order_booked'])]}"/>
+                                <field name="delivery_charges" readonly="1" sum="Ttoal"/>
                                 <button name="get_shipping_charge" type="object" class="fa fa-fw o_button_icon fa-truck" title="Get Shipping Cost" />
                                 <button name="cancel_shipment"
                                     type="object"
@@ -144,7 +144,7 @@
                                 <field name="name"/>
                                 <field name="shipping_date"/>
                                 <field name="route_id"/>
-                                <field name="property_delivery_carrier_id"/>
+                                <field name="delivery_method_id"/>
                                 <field name="stock_picking_id"/>
                                 <field name="carrier_track_ref"/>
                                 <field name="product_qty" sum="Total Quantity"/>

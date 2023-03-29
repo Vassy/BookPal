@@ -180,7 +180,7 @@ class SaleMultiShip(models.Model):
                         'phone': str(row[7].strip()),
                         'email': str(row[8].strip()),
                         'attention': str(row[9].strip()),
-                        'property_delivery_carrier_id': carrier_id.id
+                        'delivery_method_id': carrier_id.id
                         if carrier_id else False,
                         'type': 'delivery',
                         'is_multi_ship': True,
@@ -297,8 +297,6 @@ class SaleMultiShipQtyLines(models.Model):
     # Fields only for display purpose from SO Line
     name = fields.Char(related='partner_id.name')
     attention = fields.Char(related='partner_id.attention')
-    property_delivery_carrier_id = fields.Many2one(
-        related='partner_id.property_delivery_carrier_id')
     stock_picking_id = fields.Many2one(
         related='partner_id.stock_picking_id')
     carrier_track_ref = fields.Char(
@@ -321,12 +319,16 @@ class SaleMultiShipQtyLines(models.Model):
         'stock.move', 'multi_ship_line_id', 'Stock Moves')
     state = fields.Selection([
         ('draft', 'Quotation'),
-        ('sent', 'Quotation Sent'),
-        ('sale', 'Sales Order'),
         ('deliver', 'Delivered'),
         ('done', 'Locked'),
         ('cancel', 'Cancelled'),
-        ('short_close', 'Short Closed')],
+        ('short_close', 'Short Closed'),
+        ("quote_approval", "Quotation In Approval"),
+        ("quote_confirm", "Approved Quotation"),
+        ("sent", ""),
+        ("order_booked", "Order Booked"),
+        ("pending_for_approval", "Order In Approval"),
+        ("sale", "Approved Order")],
         string='Shipping Status',
         readonly=True, copy=False, index=True,
         default='draft')
@@ -378,15 +380,43 @@ class SaleMultiShipQtyLines(models.Model):
     confirm_date = fields.Datetime('Confirmed Date')
     delivery_method_id = fields.Many2one(
         'delivery.carrier',
-        string='Shipping Method',
-        related='partner_id.property_delivery_carrier_id')
+        string='Shipping Method')
     delivery_charges = fields.Float(string='Shipping charges', store=True)
 
+    @api.onchange('partner_id')
+    def _onchange_partner_id(self):
+        """Set default delivery method."""
+        for line in self:
+            line.delivery_method_id = line.partner_id.\
+                property_delivery_carrier_id.id
+
     def get_shipping_charge(self):
-        '''Fetch shipping rates in shipping lines seperate details'''
+        """Fetch shipping rates in shipping lines seperate details."""
         for line in self:
             res = line.delivery_method_id.rate_shipment(self.order_id)
             line.delivery_charges = res['price']
+        shipping_product = self.env.ref(
+            'bista_sale_multi_ship.product_product_shipment_delivery')
+        shipping_line = self.env['sale.order.line'].search(
+            [('order_id', '=', self.order_id.id),
+             ('product_id', '=', shipping_product.id)])
+        if not shipping_line:
+            shipping_line = self.env['sale.order.line'].create({
+                'product_id': shipping_product.id,
+                'product_uom_qty': 1,
+                'product_uom': self.product_uom.id,
+                'order_id': self.order_id.id,
+            })
+        shipping_charge = 0
+        shipping_method = ''
+        for multi_line in self.order_id.\
+            sale_multi_ship_qty_lines.filtered(
+                lambda l: l.state not in ['done', 'sale', 'cancel']):
+            shipping_charge += multi_line.delivery_charges
+            shipping_method += multi_line.delivery_method_id.name + ' ,'
+        shipping_line.price_unit = shipping_charge
+        shipping_line.discounted_price = shipping_charge
+        shipping_line.name = shipping_method[:-1]
 
     @api.depends('move_ids.state')
     def get_tracking_ref(self):
@@ -398,7 +428,7 @@ class SaleMultiShipQtyLines(models.Model):
                 x.quantity_done).mapped(
                 'picking_id').mapped('carrier_tracking_ref')
             tracking_ref = ', '.join([str(elem)
-                                     for elem in tracking_ref if elem])
+                                      for elem in tracking_ref if elem])
             line.tracking_ref = tracking_ref
 
     @api.depends('product_id', 'route_id',
@@ -475,7 +505,8 @@ class SaleMultiShipQtyLines(models.Model):
         # If the state is already in sale the picking is created and a
         # simple forecasted quantity isn't enough
         # Then used the forecasted data of the related stock.move
-        for quat_line in self.filtered(lambda li: li.state == 'draft'):
+        for quat_line in self.filtered(lambda li: li.state in [
+                'draft', 'order_booked']):
             quat_line.scheduled_date = quat_line._get_schedule_date()
         for line in self.filtered(lambda l: l.state == 'sale'):
             if not line.display_qty_widget:
@@ -655,7 +686,8 @@ class SaleMultiShipQtyLines(models.Model):
                     lambda s: not s.company_id or s.company_id == self.so_line_id.company_id
                 )[:1]
                 if vendor:
-                    self.supplier_id = vendor.filtered(lambda x: x.name.is_primary).name.id if vendor.filtered(lambda x: x.name.is_primary) else vendor[:1].name.id
+                    self.supplier_id = vendor.filtered(lambda x: x.name.is_primary).name.id if vendor.filtered(
+                        lambda x: x.name.is_primary) else vendor[:1].name.id
 
     def _get_qty_procurement(self, previous_product_uom_qty=False):
         self.ensure_one()
@@ -712,7 +744,7 @@ class SaleMultiShipQtyLines(models.Model):
     def unlink(self):
         """Restrict to unlnk shipment if its not cancel or draft."""
         for rec in self:
-            if rec.state not in ['cancel', 'draft']:
+            if rec.state not in ['cancel', 'draft', 'order_booked']:
                 raise ValidationError("You can delete only cancel shipment.")
             if rec.move_ids.filtered(
                     lambda x: x.state == 'done'):
