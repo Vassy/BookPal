@@ -172,6 +172,10 @@ class SaleOrder(models.Model):
                 "is_order": True,
                 "date_order": fields.Datetime.now(),
             }
+            if sale.split_shipment:
+                sale.sale_multi_ship_qty_lines.write({
+                    'state': "order_booked"
+                })
             sale.write(sale_data)
             sale._create_sale_approval_log("Sale Order Booked")
 
