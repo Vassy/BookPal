@@ -29,7 +29,6 @@
             <table class="table table-sm stub_lines" t-if="page['stub_lines']">
                 <tr>
                     <td style="border-top: none;" class="text-left">Item to be Paid - Description</td>
-                    <td style="border-top: none;" class="text-right">Discount Take</td>
                     <td style="border-top: none;" class="text-right">Amount Paid</td>
                 </tr>
                 <t t-foreach="page['stub_lines']" t-as="stub_line">
@@ -38,7 +37,6 @@
                     </tr>
                     <tr t-else="">
                         <td class="text-truncate" style="max-width: 500px;"><t t-out="stub_line['number']"/></td>
-                        <td class="text-right"><t t-out="stub_line['amount_total']"/></td>
                         <td class="text-right"><t t-out="stub_line['amount_paid']"/></td>
                     </tr>
                 </t>
