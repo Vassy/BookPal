@@ -10,20 +10,20 @@ _logger = logging.getLogger("BigCommerce")
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
-    
+
     bc_shipping_provider = fields.Char(string='Shipping Provider')
     bigcommerce_shimpment_id = fields.Char(string="Bigcommerce Shipment Numebr")
 
     def export_shipment_to_bigcommerce(self):
-        if not self.sale_id.big_commerce_order_id:
-            raise ValidationError("Order Not Exported in BC you can't Export Shipment")
+        if not self.sale_id.big_commerce_order_id and not self.carrier_tracking_ref:
+            raise ValidationError("Order Not Exported in BC Or Tracking No not set you can't Export Shipment")
         self.sale_id.get_shipment_address_id()
         time.sleep(2)
         self.sale_id.get_order_product_id()
         bigcommerce_store_hash = self.sale_id.bigcommerce_store_id.bigcommerce_store_hash
         api_url = "%s%s/v2/orders/%s/shipments" % (
-        self.sale_id.bigcommerce_store_id.bigcommerce_api_url, bigcommerce_store_hash,
-        self.sale_id.big_commerce_order_id)
+            self.sale_id.bigcommerce_store_id.bigcommerce_api_url, bigcommerce_store_hash,
+            self.sale_id.big_commerce_order_id)
         bigcommerce_auth_token = self.sale_id.bigcommerce_store_id.bigcommerce_x_auth_token
         bigcommerce_auth_client = self.sale_id.bigcommerce_store_id.bigcommerce_x_auth_client
 
@@ -42,9 +42,13 @@ class StockPicking(models.Model):
             }
             _logger.info("Product Data {0}".format(line_data))
             ls.append(line_data)
-
+        tracking_ref = self.carrier_tracking_ref.split("+")
+        if len(tracking_ref) == 1:
+            tracking_ref = tracking_ref
+        else:
+            tracking_ref = tracking_ref[0]
         request_data = {
-            'tracking_number': self.carrier_tracking_ref,
+            'tracking_number': tracking_ref,
             'order_address_id': self.sale_id.bigcommerce_shipment_address_id,
             'shipping_provider': 'fedex' if self.carrier_id.name=='FEDEX' else 'ups',
             'tracking_carrier': 'fedex' if self.carrier_id.name=='FEDEX' else 'ups',
