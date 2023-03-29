@@ -126,7 +126,6 @@ class SaleOrder(models.Model):
         for rec in self:
             rec.button_name = "View " + str(rec.name)
 
-
     def write(self, vals):
         """Skip to update salesperson automatically."""
         if not self._context.get('manual_update') and 'user_id' in vals:

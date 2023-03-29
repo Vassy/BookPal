@@ -23,7 +23,7 @@ class StockRule(models.Model):
         fields = super(StockRule, self)._get_custom_move_fields()
         if self.group_id and self.group_id.sale_id.split_shipment:
             fields += ['partner_id',
-                       'multi_ship_line_id']
+                       'multi_ship_line_id', 'carrier_id']
         return fields
 
     def _get_stock_move_values(self, product_id, product_qty,
@@ -60,6 +60,9 @@ class StockRule(models.Model):
                 'multi_ship_line_id': values.get('ship_line').id,
                 'shipping_partner_id': values['ship_line'].partner_id.id,
             })
+            if values.get('ship_line').delivery_method_id:
+                res.update({
+                    'carrier_id': values.get('ship_line').delivery_method_id.id})
         elif values.get('move_dest_ids'):
             ship_line = values.get('move_dest_ids').mapped(
                 'multi_ship_line_id')
@@ -202,6 +205,7 @@ class StockMove(models.Model):
         'res.partner', string="Shipping Customer")
     multi_ship_line_id = fields.Many2one(
         'sale.multi.ship.qty.lines', 'Multi Shipments')
+    carrier_id = fields.Many2one('delivery.carrier', "Shipping Method")
 
     def _get_new_picking_values(self):
         """_get_new_picking_values.
@@ -227,6 +231,8 @@ class StockMove(models.Model):
                 not self.partner_id and
                 self.group_id.sale_id.return_label_on_delivery_so):
             res.update({'return_label_on_delivery_picking': True})
+        if self.multi_ship_line_id and self.carrier_id:
+            res.update({'carrier_id': self.carrier_id.id})
         return res
 
     def _key_assign_picking(self):
@@ -236,7 +242,7 @@ class StockMove(models.Model):
         if not self.group_id.sale_id.split_shipment:
             return res
         if self.partner_id not in res:
-            res += (self.partner_id, self.date)
+            res += (self.partner_id, self.date, self.carrier_id)
         return res
 
     def _search_picking_for_assignation_domain(self):
@@ -252,6 +258,11 @@ class StockMove(models.Model):
             en_date = fields.Datetime.to_string(self.date + timedelta(days=1))
             domain += [('scheduled_date', '>=', st_date),
                        ('scheduled_date', '<', en_date)]
+        if self.multi_ship_line_id and \
+                self.carrier_id:
+            domain += [
+                ('carrier_id', '=',
+                    self.carrier_id.id)]
         return domain
 
     def _assign_picking(self):
@@ -295,7 +306,6 @@ class StockMove(models.Model):
                     continue
                 new_picking = True
                 picking = pick_obj.create(moves._get_new_picking_values())
-
             moves.write({'picking_id': picking.id})
             moves._assign_picking_post_process(new=new_picking)
         return True
