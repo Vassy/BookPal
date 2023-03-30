@@ -42,7 +42,14 @@ class StockPicking(models.Model):
             }
             _logger.info("Product Data {0}".format(line_data))
             ls.append(line_data)
-        tracking_ref = self.carrier_tracking_ref.split("+")
+        trak_ref = self.carrier_tracking_ref
+        tracking_ref = []
+        if trak_ref.find('+') >= 0:
+            tracking_ref = trak_ref.split("+")
+        elif trak_ref.find(',') >= 0:
+            tracking_ref = trak_ref.split(",")
+        else:
+            tracking_ref = trak_ref
         if len(tracking_ref) == 1:
             tracking_ref = tracking_ref
         else:
