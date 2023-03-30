@@ -1,0 +1,15 @@
+<odoo>
+    <data>
+        <record id="mail_wizard_invite_form_bookpal" model="ir.ui.view">
+            <field name="name">mail.wizard.invite.form.bookpal</field>
+            <field name="model">mail.wizard.invite</field>
+            <field name="inherit_id" ref="mail.mail_wizard_invite_form" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='add_followers']" position="attributes">
+                    <attribute name="context">{'from_add_followers': True}</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
