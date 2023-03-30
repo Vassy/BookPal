@@ -18,7 +18,7 @@ AddState = [
     ("pending_for_approval", "Order In Approval"),
     ("sale", "Approved Order"),
 ]
-FieldsList = [
+CustomFields = [
     "acquirer_ids",
     "user_id",
     "am_owner",
@@ -225,11 +225,11 @@ class SaleOrder(models.Model):
         result = super()._fields_view_get(view_id, view_type, toolbar, submenu)
         if view_type != "form":
             return result
-        new_attrs = False
+        custom_attrs = "{'readonly': [('state', 'in', ['sale', 'done', 'cancel'])]}"
         split = "{'invisible': [('state', 'in', ['draft', 'quote_approval', 'quote_confirm', 'sent', 'cancel'])]}"
         if self.env.user.has_group("bista_sales_approval.group_approve_sale_order"):
             attrs = "{'readonly': [('state', 'in', ['sale', 'done', 'cancel'])]}"
-            new_attrs = "{'readonly': [('state', 'in', ['done', 'cancel'])]}"
+            custom_attrs = "{'readonly': [('state', 'in', ['done', 'cancel'])]}"
             split = "{'invisible': [('state', 'in', ['draft', 'quote_approval', 'quote_confirm', 'sent', 'cancel'])], 'readonly': [('state', 'in', ['sale', 'done', 'cancel'])]}"
         elif self.env.user.has_group("bista_sales_approval.group_create_sale_order"):
             attrs = "{'readonly': [('state', 'in', ['pending_for_approval', 'sale', 'done', 'cancel'])]}"
@@ -243,8 +243,8 @@ class SaleOrder(models.Model):
             if field.attrib["name"] in ["purchase_order_count"]:
                 field.attrib["readonly"] = "1"
                 continue
-            if new_attrs and field.attrib["name"] in FieldsList:
-                field.attrib["attrs"] = new_attrs
+            if field.attrib["name"] in CustomFields:
+                field.attrib["attrs"] = custom_attrs
                 continue
             if field.attrib["name"] in ["split_shipment"]:
                 field.attrib["attrs"] = split
