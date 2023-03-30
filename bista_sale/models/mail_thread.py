@@ -1,4 +1,6 @@
-from odoo import models, _
+from odoo import models, _, api
+# from lxml import html
+# import html
 
 
 
@@ -44,7 +46,7 @@ class MailThread(models.AbstractModel):
         if model_name:
             view_title = _('View %s', model_name)
         if model_name in ["Sales", "Sales Order"]:
-            view_title = _('See %s', msg_vals.get('record_name'))
+            view_title = _('See %s', local_msg_vals.get('record_name'))
         else:
             view_title = _('View')
         # fill group_data with default_values if they are not complete
@@ -71,3 +73,24 @@ class MailThread(models.AbstractModel):
             if group_data['recipients']:
                 result.append(group_data)
         return result
+
+class Followers(models.Model):
+    """ mail_followers holds the data related to the follow mechanism inside
+    Odoo. Partners can choose to follow documents (records) of any kind
+    that inherits from mail.thread. Following documents allow to receive
+    notifications for new messages. A subscription is characterized by:
+
+    :param: res_model: model of the followed objects
+    :param: res_id: ID of resource (may be 0 for every objects)
+    """
+    _inherit = 'mail.followers'
+
+    def _add_followers(self, res_model, res_ids, partner_ids, subtypes,
+                       check_existing=False, existing_policy='skip'):
+        record = self.env[res_model].browse(res_ids[0])
+        if record and record.create_uid.partner_id and not self._context.get('from_add_followers'):
+            for partner in partner_ids:
+                if partner != record.create_uid.partner_id.id:
+                    partner_ids.remove(partner)
+        res = super()._add_followers(res_model, res_ids, partner_ids, subtypes, check_existing, existing_policy)
+        return res

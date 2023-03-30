@@ -24,6 +24,7 @@
         'report/sale.xml',
         'security/ir.model.access.csv',
         'security/security_view.xml',
+        'views/mail_wizard_invite.xml',
         'views/artwork_status_view.xml',
         "views/res_partner_views.xml",
         'views/sale_order_view.xml',
