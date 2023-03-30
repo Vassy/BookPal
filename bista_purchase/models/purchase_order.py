@@ -254,11 +254,11 @@ class PurchaseOrder(models.Model):
     def compute_order_process_time(self):
         for rec in self:
             process_time = 0
-            if rec.sale_order_ids.split_shipment and rec.date_approve and rec.sale_order_ids.sale_multi_ship_qty_lines:
-                min_date = min(
-                    rec.sale_order_ids.sale_multi_ship_qty_lines.mapped("confirm_date")
-                )
-                if min_date:
+            ship_ids = rec.sale_order_ids.sale_multi_ship_qty_lines
+            if rec.sale_order_ids.split_shipment and rec.date_approve and ship_ids:
+                confirm_ids = ship_ids.filtered(lambda m: m.confirm_date)
+                if confirm_ids:
+                    min_date = min(confirm_ids.mapped("confirm_date"))
                     process_time = (rec.date_approve.date() - min_date.date()).days
             elif rec.sale_order_ids.date_order and rec.date_approve:
                 process_time = (
