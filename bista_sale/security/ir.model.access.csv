@@ -11,3 +11,7 @@ bista_sale.access_customization_type,access_customization_type,bista_sale.model_
 bista_sale.access_customization_type_approver,access_customization_type_approver,bista_sale.model_customization_type,bista_sales_approval.group_approve_sale_quote,1,1,1,1
 bista_sale.access_best_seller_report_wiz,access_best_seller_report_wiz,bista_sale.model_best_seller_report_wiz,base.group_user,1,1,1,1
 bista_sale.access_best_seller_report,access_best_seller_report,bista_sale.model_best_seller_report,base.group_user,1,1,1,1
+stock.access_product_group_res_partner_stock_manager,res.partner.inventory.manager,base.model_res_partner,stock.group_stock_manager,1,0,0,0
+purchase.access_res_partner_purchase_manager,res.partner.purchase.manager,base.model_res_partner,purchase.group_purchase_manager,1,0,0,0
+crm.access_res_partner,res.partner.crm.user,base.model_res_partner,sales_team.group_sale_salesman,1,0,0,0
+sale.access_res_partner_sale_manager,res.partner.sale.manager,base.model_res_partner,sales_team.group_sale_manager,1,0,0,0
