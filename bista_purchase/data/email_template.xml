@@ -105,28 +105,18 @@
                     <br/>
                     - If you have any remaining items, we'll send additional tracking once those ship.
                     <br/><br/><br/>
-                    <span style="font-weight: bold;">Shipped To:</span>
-                    <br/>
-                    <span t-out="object.order_id.dest_address_id.name"/>
-                    <br/>
-                    <t t-if="object.order_id.dest_address_id.parent_id.name">
-                        <span t-out="object.order_id.dest_address_id.parent_id.name"/>
+                    <div style="font-weight: bold;">Shipped To:</div>
+                    <div>
+                        <span t-field="object.order_id.dest_address_id.name" />
                         <br/>
-                    </t>
-                    <t t-if="object.order_id.dest_address_id.street">
-                        <span t-out="object.order_id.dest_address_id.street"/>
-                        <br/>
-                    </t>
-                    <t t-if="object.order_id.dest_address_id.street2">
-                        <span t-out="object.order_id.dest_address_id.street2"/>
-                        <br/>
-                    </t>
-                    <t t-if="object.order_id.dest_address_id.city">
-                        <span t-out="object.order_id.dest_address_id.city"/>,
-                    </t>
-                    <span t-out="object.order_id.dest_address_id.state_id.code"/>
-                    <span t-out="object.order_id.dest_address_id.zip"/>
-                    <span t-out="object.order_id.dest_address_id.country_id.code"/>
+                        <t t-if="object.order_id.dest_address_id.external_company">
+                            <span t-field="object.order_id.dest_address_id.external_company" />
+                        </t>
+                        <t t-else="">
+                            <span t-field="object.order_id.dest_address_id.parent_id.name" />
+                        </t>
+                    </div>
+                    <div t-field="object.order_id.dest_address_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": True}'/>
                     <br/><br/><br/>
                     <span style="font-weight: bold;">This shipment includes the following items:</span>
                     <br/><br/>
@@ -185,28 +175,18 @@
                     <br/>
                     - If you have any remaining items, we'll send additional tracking once those ship.
                     <br/><br/><br/>
-                    <span style="font-weight: bold;">Shipped To:</span>
-                    <br/>
-                    <span t-out="object.partner_id.name"/>
-                    <br/>
-                    <t t-if="object.partner_id.parent_id.name">
-                        <span t-out="object.partner_id.parent_id.name"/>
+                    <div style="font-weight: bold;">Shipped To:</div>
+                    <div>
+                        <span t-field="object.partner_id.name"/>
                         <br/>
-                    </t>
-                    <t t-if="object.partner_id.street">
-                        <span t-out="object.partner_id.street"/>
-                        <br/>
-                    </t>
-                    <t t-if="object.partner_id.street2">
-                        <span t-out="object.partner_id.street2"/>
-                        <br/>
-                    </t>
-                    <t t-if="object.partner_id.city">
-                        <span t-out="object.partner_id.city"/>,
-                    </t>
-                    <span t-out="object.partner_id.state_id.code"/>
-                    <span t-out="object.partner_id.zip"/>
-                    <span t-out="object.partner_id.country_id.code"/>
+                        <t t-if="object.partner_id.external_company">
+                            <span t-field="object.partner_id.external_company"/>
+                        </t>
+                        <t t-else="">
+                            <span t-field="object.partner_id.parent_id.name"/>
+                        </t>
+                    </div>
+                    <div t-field="object.partner_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": True}'/>
                     <br/><br/><br/>
                     <span style="font-weight: bold;">This shipment includes the following items:</span>
                     <br/><br/>
@@ -216,7 +196,11 @@
                             <th style="border-bottom: 1px solid black;">Description</th>
                             <th style="border-bottom: 1px solid black;">QTY</th>
                         </tr>
-                        <tr t-foreach="object.move_lines" t-as="move">
+                        <t t-set="moves" t-value="object.move_lines.filtered(lambda m: m.state == 'done' and m.quantity_done)" />
+                        <t t-if="object.state != 'done'">
+                            <t t-set="moves" t-value="object.move_lines" />
+                        </t>
+                        <tr t-foreach="moves" t-as="move">
                             <td style="border-bottom: 1px solid black;"><span t-out="move.product_id.default_code" /></td>
                             <td style="border-bottom: 1px solid black;"><span t-out="move.product_id.name" /></td>
                             <td style="border-bottom: 1px solid black;"><span t-out="move.product_uom_qty" /></td>
