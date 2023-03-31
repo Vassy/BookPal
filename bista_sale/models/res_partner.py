@@ -18,4 +18,5 @@ class ResPartner(models.Model):
         "payment.acquirer",
         string="Available Payments",
         domain=lambda self: self._get_available_acquirer(),
+        groups="base.group_system",
     )
