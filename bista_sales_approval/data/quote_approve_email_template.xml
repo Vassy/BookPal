@@ -9,7 +9,7 @@
         <field name="body_html" type="html">
             <p style="margin: 0px; padding: 0px; font-size: 13px;">
                 <center>
-                    <img t-attf-src="/logo.png?company={{ object.company_id.id }}" style="padding: 0px; margin: 0px; height: 50px;" t-att-alt="object.company_id.name"/>
+                    <img t-attf-src="/logo.png?company={{ object.company_id.id }}" style="padding: 0px; margin: 0px; height: 50px; width: 120px;" t-att-alt="object.company_id.name"/>
                 </center>
                 <br/>
                 Dear <span t-out="object.user_id.name" />,<br/><br/>
