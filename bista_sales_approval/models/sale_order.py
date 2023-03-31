@@ -163,7 +163,7 @@ class SaleOrder(models.Model):
             sale_data = {
                 "state": "order_booked",
                 "is_order": True,
-                "date_order": fields.Datetime.now(),
+                # "date_order": fields.Datetime.now(),
             }
             if sale.split_shipment:
                 sale.sale_multi_ship_qty_lines.write({
