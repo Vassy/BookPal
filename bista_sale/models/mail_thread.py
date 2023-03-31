@@ -88,9 +88,7 @@ class Followers(models.Model):
     def _add_followers(self, res_model, res_ids, partner_ids, subtypes,
                        check_existing=False, existing_policy='skip'):
         record = self.env[res_model].browse(res_ids[0])
-        if record and record.create_uid.partner_id and not self._context.get('from_add_followers'):
-            for partner in partner_ids:
-                if partner != record.create_uid.partner_id.id:
-                    partner_ids.remove(partner)
+        if (record and record.create_uid.partner_id and not self._context.get('from_add_followers')) or self._context.get('mail_post_autofollow') :
+            partner_ids = [partner for partner in partner_ids if partner == record.create_uid.partner_id.id]
         res = super()._add_followers(res_model, res_ids, partner_ids, subtypes, check_existing, existing_policy)
         return res
