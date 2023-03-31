@@ -205,6 +205,16 @@ class SaleOrder(models.Model):
         url = base_url + '/my/orders/' + str(self.id) + "?" + access_token
         return url
 
+    @api.onchange('user_id')
+    def onchange_user_id(self):
+        if self.user_id and self.env.context.get('manual_update'):
+            self._origin.with_context(manual_update=True).write({'user_id': self.user_id.id})
+        if self.user_id:
+            default_team = self.env.context.get('default_team_id', False) or self.team_id.id
+            self.team_id = self.env['crm.team'].with_context(
+                default_team_id=default_team
+            )._get_default_team_id(user_id=self.user_id.id, domain=None)
+
     @api.onchange('partner_id')
     def onchange_partner_id(self):
         user_id = self.user_id
