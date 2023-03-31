@@ -163,7 +163,7 @@ class SaleOrder(models.Model):
             sale_data = {
                 "state": "order_booked",
                 "is_order": True,
-                "date_order": fields.Datetime.now(),
+                # "date_order": fields.Datetime.now(),
             }
             sale.write(sale_data)
             sale._create_sale_approval_log("Sale Order Booked")
