@@ -274,6 +274,7 @@
         <field name="arch" type="xml">
             <field name="user_id" position="after">
                 <field name="am_owner" optional="show" />
+                <field name="approved_by_am" optional="show" />
             </field>
         </field>
     </record>
@@ -305,9 +306,21 @@
             </field>
             <field name="user_id" position="after">
                 <field name="am_owner" optional="show" />
+                <field name="approved_by_am" optional="show" />
             </field>
         </field>
     </record>
+
+    <record id="bookpal_so_search" model="ir.ui.view">
+            <field name="name">bookpal.so.search</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
+                    <filter string="Approved by AM to Process" domain="[('approved_by_am', '=', True)]" name="approved_by_am"/>
+                </xpath>
+            </field>
+        </record>
 
     <!-- Change string of margin in order line field -->
     <record id="sale_order_marign_extend" model="ir.ui.view">
