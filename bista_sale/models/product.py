@@ -9,6 +9,11 @@ class ProductTemplate(models.Model):
     is_never_report = fields.Boolean(string="Never Report", default=False)
     publication_date = fields.Date(string='Publication Date', tracking=True)
 
+    def write(self, vals):
+        if self._context.get('from_bc_to_odoo') and vals.get('list_price'):
+            self.seller_ids.write({'price': vals.get('list_price')})
+        return super().write(vals)
+
 
 class ProductProduct(models.Model):
     _inherit = "product.product"

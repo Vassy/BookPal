@@ -16,3 +16,10 @@ class ProductSupplierInfo(models.Model):
     #         elif rec.product_tmpl_id and rec.product_tmpl_id.list_price != rec.price:
     #             rec.price = rec.product_tmpl_id.list_price
     #     return res
+
+    @api.onchange('name')
+    def _onchange_name(self):
+        res = super()._onchange_name()
+        if self.name and self.product_tmpl_id and self.product_tmpl_id.list_price:
+            self.price = self.product_tmpl_id.list_price
+        return res
