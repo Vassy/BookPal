@@ -15,3 +15,4 @@ stock.access_product_group_res_partner_stock_manager,res.partner.inventory.manag
 purchase.access_res_partner_purchase_manager,res.partner.purchase.manager,base.model_res_partner,purchase.group_purchase_manager,1,0,0,0
 crm.access_res_partner,res.partner.crm.user,base.model_res_partner,sales_team.group_sale_salesman,1,0,0,0
 sale.access_res_partner_sale_manager,res.partner.sale.manager,base.model_res_partner,sales_team.group_sale_manager,1,0,0,0
+payment_acquirer_user,payment.acquirer.user,payment.model_payment_acquirer,base.group_user,1,0,0,0
