@@ -148,7 +148,7 @@ class SaleOrder(models.Model):
         """Action confirm."""
         msg = ""
         if self.split_shipment and not self.sale_multi_ship_qty_lines:
-            msg = _("Please add shipment plan to confirm the sale order.\n")
+            msg = _("Please add shipment plan to approve the sale order.")
         else:
             verified_shipment_lines = self.sale_multi_ship_qty_lines.filtered(
                 lambda msl: msl.partner_id.state != 'verified')

@@ -10,8 +10,8 @@
             <field name="page_height">0</field>
             <field name="page_width">0</field>
             <field name="orientation">Portrait</field>
-            <field name="header_spacing">40</field>
-            <field name="margin_top">45</field>
+            <field name="header_spacing">27</field>
+            <field name="margin_top">28</field>
             <field name="margin_bottom">20</field>
             <field name="margin_left">0</field>
             <field name="margin_right">0</field>
