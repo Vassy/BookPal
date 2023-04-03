@@ -145,7 +145,7 @@ class ResPartner(models.Model):
                 name = ''
                 if not name and partner.street and (self.env.context.get(
                     'shipment_contact', False) or
-                        self.env.context.get('invoice_contact')):
+                        self.env.context.get('invoice_contact') or self.env.context.get("dropship_contact")):
                     name += ' ( %s ) ' % partner.street
                 name += dict(self.fields_get(
                     ['type'])['type']['selection'])[partner.type]
@@ -156,17 +156,17 @@ class ResPartner(models.Model):
             name = partner.name
         if partner.name and partner.street and (self.env.context.get(
                 'shipment_contact', False) or
-                self.env.context.get('invoice_contact')):
+                self.env.context.get('invoice_contact') or self.env.context.get("dropship_contact")):
             name += ' ( %s )' % partner.street
         if self._context.get('show_address_only'):
             name = ''
-            if partner.external_company and \
-                    self.env.context.get('shipment_contact'):
+            if partner.external_company and (
+                    self.env.context.get('shipment_contact') or self.env.context.get("dropship_contact")):
                 name += '\n' + partner.external_company + '\n'
             name += partner._display_address(without_company=True)
         if self._context.get('show_address'):
-            if partner.external_company and \
-                    self.env.context.get('shipment_contact'):
+            if partner.external_company and (
+                    self.env.context.get('shipment_contact') or self.env.context.get("dropship_contact")):
                 name += '\n' + partner.external_company + '\n'
             name = name + "\n" + partner._display_address(without_company=True)
         name = name.replace('\n\n', '\n')

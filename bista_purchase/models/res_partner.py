@@ -106,12 +106,12 @@ class ResPartner(models.Model):
         for partner in self:
             name = partner.with_context(
                 with_primary_customer=partner.is_primary)._get_name()
-            if self.env.context.get("dropship_contact"):
-                if partner.external_company:
-                    name = partner.name + "\n" + partner.external_company + "\n" + partner._display_address(without_company=False)
-                else:
-                    name = partner._get_name()
-                res.append((partner.id, name))
+            # if self.env.context.get("dropship_contact"):
+            #     if partner.external_company:
+            #         name = partner.name + "\n" + partner.external_company + "\n" + partner._display_address(without_company=False)
+            #     else:
+            #         name = partner._get_name()
+            #     res.append((partner.id, name))
             if not self.env.context.get("custom_code"):
                 res.append((partner.id, name))
                 continue
