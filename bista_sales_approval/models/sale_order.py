@@ -269,7 +269,7 @@ class SaleOrder(models.Model):
                 or field.attrib["name"] not in self._fields
                 or field.attrib.get("attrs")
                 or field.attrib["name"] == "sale_multi_ship_qty_lines"
-                or field.attrib["name"] in ["customer_po_link", "book_use_email"]
+                or field.attrib["name"] in ["customer_po_link", "book_use_email", "approved_by_am"]
             ):
                 continue
             field.attrib["attrs"] = attrs
