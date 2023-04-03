@@ -163,6 +163,7 @@
                             <field name="white_glove_id" options="{'no_create': True, 'no_open': True}"/>
                             <field name="ce_notes" />
                             <field name="am_notes" />
+                            <field name="approved_by_am" />
                             <field name="ce_ops_acct_notes"/>
                         </group>
                     </group>
