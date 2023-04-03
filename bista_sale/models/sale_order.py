@@ -103,7 +103,6 @@ class SaleOrder(models.Model):
         "payment.acquirer",
         string="Available Payments",
         domain=lambda self: self._get_available_acquirer(),
-        groups="base.group_system",
     )
     customer_po_link = fields.Char("Customer PO Link")
     book_use_email = fields.Char()
