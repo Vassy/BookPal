@@ -15,6 +15,7 @@ class SaleOrder(models.Model):
     ce_notes = fields.Text(string="CE Notes")
     payment_notes = fields.Text(string="Payment Notes")
     am_notes = fields.Text(string="AM Notes")
+    approved_by_am = fields.Boolean(string="Approved by AM to Process")
     ce_ops_acct_notes = fields.Text(string="CE-Ops Acct Notes")
     billing_notes = fields.Text(
         string="Billing Notes",
