@@ -103,6 +103,13 @@ class SaleOrder(models.Model):
             result.update({"state": "order_booked", "is_order": True})
         return result
 
+    def _prepare_confirmation_values(self):
+        res = super()._prepare_confirmation_values()
+        # Order Date should not change in any state
+        if res.get('date_order'):
+            res.pop('date_order')
+        return res
+
     def trigger_quote_action(self):
         action = self.env["ir.actions.actions"]._for_xml_id(
             "sale.action_quotations_with_onboarding"
@@ -163,7 +170,7 @@ class SaleOrder(models.Model):
             sale_data = {
                 "state": "order_booked",
                 "is_order": True,
-                # "date_order": fields.Datetime.now(),
+                "date_order": fields.Datetime.now(),
             }
             sale.write(sale_data)
             sale._create_sale_approval_log("Sale Order Booked")
