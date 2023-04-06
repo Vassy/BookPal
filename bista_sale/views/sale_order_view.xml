@@ -158,6 +158,7 @@
                             <field name="product_status_notes" />
                             <field name="product_use" />
                             <field name="book_use_email" widget="url" text="Book Use Email"/>
+                            <field name="shipping_quote_docs" widget="url" text="See Quote"/>
                         </group>
                         <group>
                             <field name="white_glove_id" options="{'no_create': True, 'no_open': True}"/>

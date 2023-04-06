@@ -107,6 +107,7 @@ class SaleOrder(models.Model):
     )
     customer_po_link = fields.Char("Customer PO Link")
     book_use_email = fields.Char()
+    shipping_quote_docs = fields.Char()
     share_link = fields.Char(string="Link", compute='_compute_share_link')
     button_name = fields.Char(compute='_compute_button_name')
 
