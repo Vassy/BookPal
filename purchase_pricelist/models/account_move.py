@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, fields, models
+from odoo import api, models
 
 
 class AccountMoveLine(models.Model):
@@ -33,11 +33,8 @@ class AccountMoveLine(models.Model):
 
     @api.model
     def _get_fields_onchange_balance_model(self, quantity, discount, amount_currency, move_type, currency, taxes, price_subtotal, force_computation=False):
-         res = super()._get_fields_onchange_balance_model(quantity, discount, amount_currency, move_type, currency, taxes, price_subtotal, force_computation)
-
-         if self.move_id.move_type in ['in_invoice', 'in_refund'] or self._context.get('create_bill') or move_type in ['in_invoice', 'in_refund']:
-             if res.get('price_unit'):
-                 del res['price_unit']
-             return res
-         else:
-             return super()._get_fields_onchange_balance_model(quantity, discount, amount_currency, move_type, currency, taxes, price_subtotal, force_computation)
+        res = super()._get_fields_onchange_balance_model(quantity, discount, amount_currency, move_type, currency, taxes, price_subtotal, force_computation)
+        if self.move_id.move_type in ['in_invoice', 'in_refund'] or self._context.get('create_bill') or move_type in ['in_invoice', 'in_refund']:
+            if res.get('price_unit'):
+                del res['price_unit']
+        return res
