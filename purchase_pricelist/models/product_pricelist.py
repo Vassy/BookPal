@@ -17,11 +17,12 @@ class ProductPricelist(models.Model):
     product_pricelist_order_ids = fields.One2many(
         "product.pricelist.order", "pricelist_id", string="Items"
     )
-
-    discount_policy = fields.Selection([
-        ('with_discount', 'Discount included in the price'),
-        ('without_discount', 'Show public price & discount to the vendor')],
-        default='with_discount', required=True)
+    discount_policy = fields.Selection(
+        [
+            ("with_discount", "Discount included in the price"),
+            ("without_discount", "Show public price & discount to the vendor"),
+        ]
+    )
 
     @api.onchange("product_pricelist_order_ids")
     def onchange_product_pricelist_order_ids(self):
