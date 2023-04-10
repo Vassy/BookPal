@@ -20,7 +20,7 @@ class AccountMove(models.Model):
             down_payment = False
             for line in vals.get('invoice_line_ids', []):
                 if len(line) == 3:
-                    if line[2].get('name').startswith('Down payment'):
+                    if line[2].get('name', '').startswith('Down payment'):
                         down_payment = True
             if down_payment:
                 vals.update({"fiscal_position_id": False})
