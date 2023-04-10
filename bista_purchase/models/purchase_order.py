@@ -223,6 +223,13 @@ class PurchaseOrder(models.Model):
             'domain': (['id', 'in', po_lines.ids]),
         }
 
+    def _prepare_supplier_info(self, partner, line, price, currency):
+        # Changed vendor price from bp price to cover price
+        res = super()._prepare_supplier_info(partner, line, price, currency)
+        if line.before_disc_price_unit:
+            res.update({'price': line.before_disc_price_unit})
+        return res
+
     # @api.onchange('partner_id')
     # def onchange_partner_id_cc_email(self):
     #     self.cc_email = self.partner_id.cc_email
