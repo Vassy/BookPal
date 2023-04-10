@@ -52,7 +52,8 @@ class SaleOrderLine(models.Model):
         product_cost = 0
         seller_id = self.product_id.seller_ids.filtered(
             lambda seller: seller.name == self.supplier_id
-        )[0]
+        )
+        seller_id = seller_id and seller_id[0]
         if not seller_id or not seller_id.vendor_pricelist_id:
             return self.apply_on_order_vendor_price(seller_id)
 
