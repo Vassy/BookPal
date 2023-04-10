@@ -21,7 +21,8 @@ class ProductPricelist(models.Model):
         [
             ("with_discount", "Discount included in the price"),
             ("without_discount", "Show public price & discount to the vendor"),
-        ]
+        ],
+        default="without_discount",
     )
 
     @api.onchange("product_pricelist_order_ids")
