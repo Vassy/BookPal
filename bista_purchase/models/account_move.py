@@ -27,9 +27,9 @@ class AccountMoveLine(models.Model):
 
     def create(self, vals):
         res = super(AccountMoveLine, self).create(vals)
-        for move_line in res:
-            invoiced_status_id = self.env.ref("bista_purchase.status_line_invoiced")
-            move_line.purchase_line_id.status_id = invoiced_status_id.id
+        # for move_line in res:
+        #     invoiced_status_id = self.env.ref("bista_purchase.status_line_invoiced")
+        #     move_line.purchase_line_id.status_id = invoiced_status_id.id
         return res
 
     def _get_price_total_and_subtotal(

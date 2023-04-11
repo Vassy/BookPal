@@ -28,6 +28,7 @@
                 <field name="taxes_id" widget="many2many_tags" optional="hide" readonly="1" />
                 <field name="price_tax" optional="hide" widget="monetary"/>
                 <field name="price_total" optional="hide" widget="monetary"/>
+                <field name="invoice_status" optional="show"/>
             </tree>
         </field>
     </record>

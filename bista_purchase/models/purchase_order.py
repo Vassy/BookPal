@@ -6,6 +6,8 @@ from odoo import models, fields, _, api
 from odoo.exceptions import ValidationError
 from odoo.tools import is_html_empty
 from dateutil.relativedelta import relativedelta
+from odoo.tools.float_utils import float_compare, float_is_zero, float_round
+
 
 AddState = [
     ("draft", "Purchase Order"),
@@ -92,6 +94,29 @@ class PurchaseOrder(models.Model):
     rush = fields.Boolean(string="Rush")
     need_by_date = fields.Datetime(string="SO Need By Date", compute="_compute_need_by_date")
     date_planned = fields.Datetime(string="MAB Date")
+    invoice_status = fields.Selection(selection_add=[('partial', 'Partially Billed')])
+
+    @api.depends('state', 'order_line.qty_to_invoice', 'order_line.qty_to_invoice', 'order_line.qty_received')
+    def _get_invoiced(self):
+        precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+        for order in self:
+            if order.state not in ('purchase', 'done'):
+                order.invoice_status = 'no'
+                continue
+            if any(
+                not float_is_zero(line.qty_to_invoice, precision_digits=precision)
+                for line in order.order_line.filtered(lambda l: not l.display_type)
+            ) and not order.invoice_ids:
+                order.invoice_status = 'to invoice'
+            elif all(line.qty_invoiced == line.qty_received and line.qty_received > 0 and line.qty_invoiced > 0
+                    for line in order.order_line.filtered(
+                        lambda l: not l.display_type)) and order.invoice_ids:
+                order.invoice_status = 'invoiced'
+            elif any((line.qty_invoiced < line.qty_received
+                     for line in order.order_line.filtered(lambda l: not l.display_type))) and order.invoice_ids:
+                order.invoice_status = 'partial'
+            else:
+                order.invoice_status = 'no'
 
     def _compute_need_by_date(self):
         for purchase in self:
