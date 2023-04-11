@@ -242,6 +242,10 @@ class SaleOrderLine(models.Model):
     attachment_ids = fields.Many2many("ir.attachment", string="Attach File")
     detailed_type = fields.Selection(related='product_id.detailed_type')
 
+    def _check_line_unlink(self):
+        """Overwritten method to not delete line in order booked state."""
+        return self.filtered(lambda line: line.state in ('sale', 'order_booked', 'done') and (line.invoice_lines or not line.is_downpayment) and not line.display_type)
+
     @api.depends("product_uom_qty", "discount", "price_unit", "tax_id", "discounted_price")
     def _compute_amount(self):
         for line in self:
