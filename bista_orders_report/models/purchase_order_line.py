@@ -28,6 +28,7 @@ class PurchaseOrderLine(models.Model):
          ('partial_received', 'Partially Received')],
         'PO Line Status',
         compute="_cal_line_status", store=True)
+    invoice_status = fields.Selection(related="order_id.invoice_status")
     industry_id = fields.Many2one('res.partner.industry',
                                     related="partner_id.industry_id",
                                     store=True)
