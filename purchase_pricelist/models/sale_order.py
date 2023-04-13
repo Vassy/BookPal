@@ -9,12 +9,12 @@ class SaleOrderLine(models.Model):
     purchase_price = fields.Float(copy=False)
 
     @api.depends(
-        "route_id",
+        "move_ids",
         "supplier_id",
+        "purchase_line_ids",
         "purchase_line_ids.price_unit",
         "move_ids.created_purchase_line_id.price_unit",
         "move_ids.move_orig_ids.purchase_line_id.price_unit",
-        "virtual_available_at_date",
         "order_id.order_line.product_uom_qty",
     )
     def _compute_purchase_price(self):
@@ -25,17 +25,15 @@ class SaleOrderLine(models.Model):
             if line.state not in ["sale", "done"]:
                 line.purchase_price = line.get_vendor_price()
             else:
-                purchase_line_id = (
+                purchase_line_ids = (
                     line.purchase_line_ids
                     | line.move_ids.created_purchase_line_id
                     | line.move_ids.move_orig_ids.purchase_line_id
                 )
-                if purchase_line_id.product_qty == line.product_uom_qty:
-                    line.purchase_price = purchase_line_id.price_unit
-                else:
-                    total_qty = purchase_line_id.product_qty
-                    total_price = purchase_line_id.price_subtotal
-                    remaining_qty = line.product_uom_qty - total_qty
+                total_qty = sum(purchase_line_ids.mapped("product_qty"))
+                total_price = sum(purchase_line_ids.mapped("price_subtotal"))
+                remaining_qty = line.product_uom_qty - total_qty
+                if remaining_qty:
                     for layer_id in line.product_id.stock_valuation_layer_ids:
                         if remaining_qty <= layer_id.remaining_qty:
                             total_qty += remaining_qty
@@ -45,7 +43,7 @@ class SaleOrderLine(models.Model):
                             total_qty += layer_id.remaining_qty
                             total_price += layer_id.remaining_qty * layer_id.unit_cost
                             remaining_qty -= layer_id.remaining_qty
-                    line.purchase_price = total_price / total_qty
+                line.purchase_price = total_qty and (total_price / total_qty) or 0
 
     def get_vendor_price(self):
         self.ensure_one()
