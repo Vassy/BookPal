@@ -176,7 +176,7 @@ class SaleOrder(models.Model):
         #                      name_string)
 
         order_lines = self.order_line.filtered(
-            lambda a: a.product_id.detailed_type == 'product')
+            lambda a: a.product_id.detailed_type in ['product', 'consu'])
         for order_line in order_lines:
             product_uom_qty = sum(order_line.mapped('product_uom_qty'))
             product_qty = sum(
@@ -185,12 +185,7 @@ class SaleOrder(models.Model):
                         'draft', 'sent',
                         'order_booked']).mapped('product_qty'))
             if self.split_shipment and product_uom_qty < product_qty:
-                product_name = order_line.product_id.name
-                if order_line.product_id.product_template_attribute_value_ids:
-                    product_name = product_name + '(' + ','.join(
-                        order_line.product_id.
-                        product_template_attribute_value_ids.
-                        mapped('name')) + ')'
+                product_name = order_line.product_id.display_name
                 msg += _("For %s shipping qty %s is more than ordered "
                          "qty %s.\n" % (
                              product_name,
@@ -204,7 +199,7 @@ class SaleOrder(models.Model):
         """Based on customer set delivery in shipping line."""
         msg = ""
         order_lines = self.order_line.filtered(
-            lambda a: a.product_id.detailed_type == 'product')
+            lambda a: a.product_id.detailed_type != 'service')
         for order_line in order_lines:
             product_uom_qty = sum(order_line.mapped('product_uom_qty'))
             product_qty = sum(
@@ -213,12 +208,7 @@ class SaleOrder(models.Model):
                         'draft', 'sent', 'order_booked']).mapped(
                     'product_qty'))
             if self.split_shipment and product_uom_qty < product_qty:
-                product_name = order_line.product_id.name
-                if order_line.product_id.product_template_attribute_value_ids:
-                    product_name = product_name + '(' + ','.join(
-                        order_line.product_id.
-                        product_template_attribute_value_ids.
-                        mapped('name')) + ')'
+                product_name = order_line.product_id.display_name
                 msg += _("For %s shipping qty %s is more than ordered "
                          "qty %s.\n" % (
                              product_name,
@@ -323,8 +313,7 @@ class SaleOrder(models.Model):
     def _action_cancel(self):
         res = super(SaleOrder, self)._action_cancel()
         for so in self:
-            so.sale_multi_ship_qty_lines.filtered(
-                lambda x: x.state != 'sale').write({'state': 'cancel'})
+            so.sale_multi_ship_qty_lines.write({'state': 'cancel'})
         return res
 
     def action_draft(self):
@@ -370,16 +359,10 @@ class SaleOrder(models.Model):
                         ['draft', 'sent', 'order_booked']).mapped(
                         'product_qty'))
                 if self.split_shipment and product_uom_qty < product_qty:
-                    product_name = order_line.product_id.name
-                    if order_line.product_id.\
-                            product_template_attribute_value_ids:
-                        product_name = product_name + '(' + ','.join(
-                            order_line.product_id.
-                            product_template_attribute_value_ids.
-                            mapped('name')) + ')'
+                    product_name = order_line.product_id.display_name
                     msg += _("For %s shipping qty %s is more than ordered "
                              "qty %s.\n" % (
-                                 product_name ,
+                                 product_name,
                                  product_qty, product_uom_qty))
             if msg:
                 raise ValidationError(msg)
@@ -571,19 +554,8 @@ class SaleOrderLine(models.Model):
         res = []
         if self.env.context.get('multi_ship'):
             for sline in self:
-                name = '[' + sline.product_id.default_code + '] ' + \
-                    sline.product_id.name if sline.product_id.default_code else sline.product_id.name
-                if sline.product_id.product_template_attribute_value_ids:
-                    if sline.product_id.type == "consu":
-                        variant_name = ", ".join([variant[:variant.find('(')] for variant in sline.product_id.product_template_attribute_value_ids.mapped('name')])
-                        name = variant_name and "%s (%s) - %s" % (sline.product_id.name, variant_name, sline.product_qty) or sline.product_id.name
-                    else:
-                        name += "(" + ','.join(
-                            sline.product_id.product_template_attribute_value_ids.
-                            mapped('name')) + ")" + " - " + str(
-                            sline.product_qty)
-                else:
-                    name += " - " + str(sline.product_qty)
+                name = sline.product_id.display_name
+                name += " - " + str(sline.product_qty)
                 res.append((sline.id, name))
         else:
             res = super(SaleOrderLine, self).name_get()
