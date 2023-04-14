@@ -107,18 +107,12 @@ class ResPartner(models.Model):
 
                 if self.env.context.get('order_id'):
                     for multi_ship_qty_line in record.split_so_lines.filtered(
-                        lambda x: x.order_id == self.env.context.get(
+                        lambda x: x.order_id.id == self.env.context.get(
                             'order_id')
                     ):
                         if multi_ship_qty_line.product_qty <= 0:
                             verify_line = 'error'
                             prod_name = multi_ship_qty_line.product_id.name
-                            if multi_ship_qty_line.product_id.\
-                                    product_template_attribute_value_ids:
-                                prod_name += '(' + ','.join(
-                                    multi_ship_qty_line.product_id.
-                                    product_template_attribute_value_ids.
-                                    mapped('name')) + ')'
                             msg += _("- Product qty for %s must be more than"
                                      " 0.0.\n" %
                                      (prod_name))
