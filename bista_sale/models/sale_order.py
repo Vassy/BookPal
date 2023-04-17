@@ -185,7 +185,7 @@ class SaleOrder(models.Model):
             final_weight = sum(
                 line.product_id.weight * line.product_uom_qty
                 for line in order.order_line.filtered(
-                    lambda l: l.product_id.type in ('product')))
+                    lambda l: l.product_id and l.product_id.type in ('product')))
         order.product_weight = final_weight
 
     def _compute_weight_uom(self):

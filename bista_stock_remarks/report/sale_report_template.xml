@@ -3,37 +3,31 @@
     <template id="report_saleorder_document_note" inherit_id="bista_sale.report_saleorder_document_extended">
         <xpath expr="//div[hasclass('oe_structure')]" position="after">
             <style>
-                .table td{
+                .table th {
+                    padding: 5px;
+                }
+                .table td {
                     border: none;
-                    padding: 2px;
+                    padding: 5px;
                 }
             </style>
-            <div>
-                <h5 style="margin-top:50px;border-bottom:solid 1px;">Notes</h5>
-                <div>
-                    <span class="mb4" t-field="doc.common_pick_note"/>
-                </div>
+        </xpath>
+        <xpath expr="//div[@name='so_total_summary']/div" position="inside">
+            <div style="background-color: #dee2e6; padding: 5px 0px 5px 20px; font-weight: bold;">
+                Special Instructions / Notes:
             </div>
+            <div class="border" style="padding: 10px 0px 10px 20px;" t-field="doc.common_pick_note" />
         </xpath>
         <xpath expr="//t[@t-foreach='doc.order_line']/tr" position="after">
-            <tr style="border-bottom:1px solid black !important;">
+            <tr style="border-bottom: 1px solid #dee2e6;">
                 <t t-if="not line.display_type">
-                    <td style="border: none !important"></td>
-                    <td colspan="2" style="border: none !important" class="text-left">
+                    <td colspan="2" class="text-left">
                         <b><span t-if="line.picking_note">Product Notes:</span></b>
-                        <span t-field="line.picking_note"/>
+                        <span t-field="line.picking_note" />
                     </td>
-                    <td style="border: none !important"></td>
-                    <td style="border: none !important"></td>
-                    <td style="border: none !important"></td>
-                    <td t-if="line_taxes" style="border: none !important"></td>
-                    <td style="border: none !important"></td>
-                    <td style="border: none !important"></td>
+                    <td colspan="4" />
                 </t>
             </tr>
-        </xpath>
-        <xpath expr="//t[@t-foreach='doc.order_line']/tr" position="attributes">
-            <attribute name="style">border-top: 1px solid black !important;</attribute>
         </xpath>
     </template>
 </odoo>
