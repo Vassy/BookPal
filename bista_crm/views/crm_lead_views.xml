@@ -3,14 +3,13 @@
     <record id="inherit_crm_lead_view_form" model="ir.ui.view">
         <field name="name">inherit.crm.lead.view.form</field>
         <field name="model">crm.lead</field>
-        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="inherit_id" ref="crm.crm_lead_view_form" />
         <field name="arch" type="xml">
             <xpath expr="//button[@name='action_view_sale_order']" position="after">
-                <button class="oe_stat_button" type="object"
-                        attrs="{'invisible': ['|', ('sale_order_count', '=', 0), ('type', '=', 'lead')]}"
-                        name="action_view_sale_order" icon="fa-shopping-cart">
+                <button class="oe_stat_button" type="object" name="action_view_sale_order" icon="fa-shopping-cart"
+                    attrs="{'invisible': ['|', ('sale_order_count', '=', 0), ('type', '=', 'lead')]}">
                     <div class="o_field_widget o_stat_info">
-                        <field name="sale_order_count"/>
+                        <field name="sale_order_count" />
                         <span class="o_stat_text">Orders</span>
                     </div>
                 </button>
@@ -42,10 +41,10 @@
                 <attribute name="options">{"no_open": True, "no_create": True}</attribute>
             </xpath>
             <xpath expr="//page[@name='lead']//field[@name='referred']" position="before">
-                <field name="referring_organization" domain="[('company_type', '=', 'company')]"/>
+                <field name="referring_organization" domain="[('company_type', '=', 'company')]" />
             </xpath>
             <xpath expr="//page[@name='extra']//field[@name='referred']" position="before">
-                <field name="referring_organization" domain="[('company_type', '=', 'company')]"/>
+                <field name="referring_organization" domain="[('company_type', '=', 'company')]" />
             </xpath>
             <xpath expr="//page[@name='lead']//field[@name='referred']" position="attributes">
                 <attribute name="domain">[("type", "=", "contact"), ("id", "child_of", referring_organization), ("id", "!=", referring_organization)]</attribute>
@@ -60,17 +59,18 @@
                 <page name="deal_details" string="Deal Details">
                     <group>
                         <group>
-                            <field name="google_search_team"/>
+                            <field name="google_search_team" />
                         </group>
                         <group>
-                            <field name="estim_deal_size"/>
+                            <field name="estim_deal_size" />
                         </group>
                     </group>
                 </page>
                 <page name="billing_info" string="Billing Info">
                     <group name="billing_info" string="Billing Info">
                         <group>
-                            <field name="tax_exempt"/>
+                            <field name="bigcommerce_customer_id" />
+                            <field name="tax_exempt_category" />
                         </group>
                         <group>
                             <field name="payment_notes" />
@@ -80,65 +80,64 @@
                 <page name="shipping_info" string="Shipping Info">
                     <group>
                         <group name="shipping_info" string="Shipping Info">
-                            <field name="shipping_address"/>
-                            <field name="carrier_id" options="{'no_open': True}"/>
-                            <field name="event_date"/>
-                            <field name="need_date"/>
-                            <field name="international_shipping"/>
+                            <field name="shipping_address" />
+                            <field name="carrier_id" options="{'no_open': True}" />
+                            <field name="event_date" />
+                            <field name="need_date" />
+                            <field name="international_shipping" />
                             <field name="order_notes" />
                         </group>
                         <group name="shipping_requirements" string="Shipping Requirements">
-                            <field name="shipping_to"/>
-                            <field name="potential_pallets"/>
-                            <field name="accept_pallets"/>
-                            <field name="has_loading_dock"/>
-                            <field name="inside_delivery_req"/>
+                            <field name="shipping_to" />
+                            <field name="potential_pallets" />
+                            <field name="accept_pallets" />
+                            <field name="has_loading_dock" />
+                            <field name="inside_delivery_req" />
                             <field name="shipping_notes" />
                         </group>
                     </group>
                 </page>
                 <page name="journal_details" string="Journal Details">
                     <group>
-                        <field name="journal_customization_ids" options="{'color_field': 'color', 'no_open': True}"
-                               widget="many2many_tags"/>
-                        <field name="currency_id" invisible="1"/>
-                        <field name="customization_cost"/>
-                        <field name="link_to_art_files" widget="url"/>
-                        <field name="artwork_status_id" options="{'no_open': True}"/>
+                        <field name="journal_customization_ids" options="{'color_field': 'color', 'no_open': True}" widget="many2many_tags" />
+                        <field name="currency_id" invisible="1" />
+                        <field name="customization_cost" />
+                        <field name="link_to_art_files" widget="url" />
+                        <field name="artwork_status_id" options="{'no_open': True}" />
                     </group>
                     <group>
                         <field name="journal_notes" />
-                        <field name="journal_setup_fee"/>
-                        <field name="death_type_id" options="{'no_open': True}"/>
-                        <field name="existing_death_order"/>
+                        <field name="journal_setup_fee" />
+                        <field name="death_type_id" options="{'no_open': True}" />
+                        <field name="existing_death_order" />
                     </group>
                 </page>
                 <page name="fulfilment_project" string="Fulfillment Project">
                     <group name="fulfilment_project" string="Fulfillment Project">
                         <group>
-                            <field name="fulfilment_project"/>
-                            <field name="customization_type_ids" widget="many2many_tags"/>
-                            <field name="project_details"/>
-                            <field name="shipping_instructions"/>
+                            <field name="fulfilment_project" />
+                            <field name="customization_type_ids" widget="many2many_tags" />
+                            <field name="project_details" />
+                            <field name="shipping_instructions" />
                             <field name="special_insert_note" />
                         </group>
                         <group>
-                            <field name="fulfilment_warehouse" options="{'no_open': True}"/>
-                            <field name="order_shipping_type"/>
-                            <field name="ind_mailer_return_address"/>
-                            <field name="attachment_note"/>
+                            <field name="fulfilment_warehouse" options="{'no_open': True}" />
+                            <field name="order_shipping_type" />
+                            <field name="ind_mailer_return_address" />
+                            <field name="attachment_note" />
                         </group>
                     </group>
                 </page>
                 <page name="product_info" string="Product Info">
                     <group>
                         <group name="product_info" string="Product Info">
-                            <field name="pre_release"/>
-                            <field name="product_use"/>
+                            <field name="pre_release" />
+                            <field name="product_use" />
                             <field name="product_status_notes" />
                         </group>
                         <group name="Pricing_info" string="Pricing Info">
-                            <field name="special_pricing_type_id" options="{'no_open': True}"/>
+                            <field name="special_pricing_type_id" options="{'no_open': True}" />
                             <field name="special_pricing_notes" />
                         </group>
                     </group>
@@ -146,13 +145,13 @@
                 <page name="deal_close" string="Deal Close">
                     <group name="deal_close" string="Deal Close">
                         <group>
-                            <field name="close_won_order_time"/>
-                            <field name="deal_close_amount_override"/>
+                            <field name="close_won_order_time" />
+                            <field name="deal_close_amount_override" />
                         </group>
                         <group>
-                            <field name="split_order_number"/>
-                            <field name="create_uid" string="Created By"/>
-                            <field name="write_uid" string="Last Modified By"/>
+                            <field name="split_order_number" />
+                            <field name="create_uid" string="Created By" />
+                            <field name="write_uid" string="Last Modified By" />
                         </group>
                     </group>
                 </page>
@@ -169,7 +168,7 @@
     <record id="quick_create_opportunity_form_bista" model="ir.ui.view">
         <field name="name">crm.lead.form.quick.bista</field>
         <field name="model">crm.lead</field>
-        <field name="inherit_id" ref="crm.quick_create_opportunity_form"/>
+        <field name="inherit_id" ref="crm.quick_create_opportunity_form" />
         <field name="arch" type="xml">
             <field name="title" position="after">
                 <field name="referring_organization" invisible="1" />
@@ -185,7 +184,7 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="name"/>
+                        <field name="name" />
                     </group>
                 </sheet>
             </form>
@@ -197,7 +196,7 @@
         <field name="model">special.pricing.type</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="name"/>
+                <field name="name" />
             </tree>
         </field>
     </record>
@@ -207,6 +206,7 @@
         <field name="res_model">special.pricing.type</field>
         <field name="view_mode">tree,form</field>
     </record>
+
     <record id="fulfillment_warehouse__form_view" model="ir.ui.view">
         <field name="name">fulfillment.warehouse.form.view</field>
         <field name="model">fulfillment.warehouse</field>
@@ -214,7 +214,7 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="name"/>
+                        <field name="name" />
                     </group>
                 </sheet>
             </form>
@@ -226,7 +226,7 @@
         <field name="model">fulfillment.warehouse</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="name"/>
+                <field name="name" />
             </tree>
         </field>
     </record>
@@ -240,11 +240,11 @@
     <record id="crm_lead_view_tree_opportunity_inherited" model="ir.ui.view">
         <field name="name">crm.lead.view.tree.opportunity.inherit.iap.mine</field>
         <field name="model">crm.lead</field>
-        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor" />
         <field name="arch" type="xml">
             <xpath expr="//field[@name='expected_revenue']" position="before">
-                <field name="quotation_count"/>
-                <field name="sale_order_count"/>
+                <field name="quotation_count" />
+                <field name="sale_order_count" />
             </xpath>
         </field>
     </record>
@@ -252,24 +252,30 @@
     <record id="crm_case_kanban_view_leads_inherited" model="ir.ui.view">
         <field name="name">crm.lead.view.kanban.opportunity.inherit.iap.mine</field>
         <field name="model">crm.lead</field>
-        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads"/>
+        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads" />
         <field name="arch" type="xml">
             <xpath expr="//div[hasclass('oe_kanban_content')]/div[last()]" position="after">
                 <div>
                     Quotations :
-                    <field name="quotation_count"/>
+                    <field name="quotation_count" />
                 </div>
                 <div>
                     Sale Orders :
-                    <field name="sale_order_count"/>
+                    <field name="sale_order_count" />
                 </div>
             </xpath>
         </field>
     </record>
 
-    <menuitem id="special_pricing_type_menu" name="Special Pricing Type" action="bista_crm.special_pricing_type_action"
-              parent="bista_crm.bookpal_menu_crm" sequence="21"/>
-    <menuitem id="fulfillment_warehouse_menu" name="Fulfillment Warehouse"
-              action="bista_crm.fulfillment_warehouse_action"
-              parent="bista_crm.bookpal_menu_crm" sequence="22"/>
+    <menuitem id="special_pricing_type_menu"
+        name="Special Pricing Type"
+        action="bista_crm.special_pricing_type_action"
+        parent="bista_crm.bookpal_menu_crm"
+        sequence="21" />
+
+    <menuitem id="fulfillment_warehouse_menu"
+        name="Fulfillment Warehouse"
+        action="bista_crm.fulfillment_warehouse_action"
+        parent="bista_crm.bookpal_menu_crm"
+        sequence="22" />
 </odoo>

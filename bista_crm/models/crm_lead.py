@@ -20,7 +20,8 @@ class CrmLead(models.Model):
     special_pricing_notes = fields.Text(string="Special Pricing Notes")
 
     # Billing Fields
-    tax_exempt = fields.Selection([("yes", "Yes"), ("no", "No")], string="Tax Exempt")
+    bigcommerce_customer_id = fields.Char(related="partner_id.bigcommerce_customer_id")
+    tax_exempt_category = fields.Char(related="partner_id.tax_exempt_category")
     payment_notes = fields.Text(string="Payment Notes")
 
     # Shipping Info fields
