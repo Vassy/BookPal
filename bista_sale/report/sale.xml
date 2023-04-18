@@ -30,14 +30,14 @@
                 <span t-field="user.company_id.partner_id.phone" /> | <span t-field="user.company_id.partner_id.website" />
             </t>
             <t t-set="report_info">
-                <h3>
+                <div style="font-size: 24px; font-weight: bold">
                     <span t-if="env.context.get('sale_invoice') or is_sale_invoice">Invoice</span>
                     <span t-elif="env.context.get('proforma', False) or is_pro_forma">Proforma Invoice</span>
                     <span t-elif="doc.state == 'cancel'">Cancelled Quote/Sale Order</span>
                     <span t-elif="doc.state in ['draft', 'sent', 'quote_approval', 'quote_confirm']">Quote</span>
                     <span t-else="">Sale Order</span>
                     #<span t-field="doc.name" />
-                </h3>
+                </div>
                 <div t-if="doc.date_order">
                     Date Created: <span t-field="doc.date_order" t-options="{'widget': 'date'}" />
                 </div>
@@ -89,8 +89,7 @@
         </xpath>
         <xpath expr="//thead/tr" position="replace">
             <tr style="background-color: #dee2e6;">
-                <th name="th_image" />
-                <th name="image">Product Details</th>
+                <th colspan="2" name="td_name" style="padding-left: 20px;">Product Details</th>
                 <th name="th_quantity" class="text-right">Quantity</th>
                 <th nowrap="" name="th_uom" class="text-right">Cover Price</th>
                 <th nowrap="" name="th_priceunit" class="text-right">Your Price</th>
@@ -98,19 +97,15 @@
             </tr>
         </xpath>
         <xpath expr="//t[@t-if='not line.display_type']" position="replace">
-            <t t-if="not line.display_type">
+            <t t-if="not line.display_type and not line.is_delivery">
                 <td name="image">
                     <img t-if="line.product_id.image_1920" t-attf-src="data:image/*;base64,{{line.product_id.image_1920}}" style="height: 80px; width: 80px;" />
                     <img t-else="" src="/web/static/img/placeholder.png" style="max-height: 80px; max-width: 80px;" />
                 </td>
-                <td name="td_name" class="font-weight-bold">
-                    <div t-field="line.product_id.name" />
-                    <div t-if="line.product_id.default_code">
-                        SKU: <span t-field="line.product_id.default_code" />
-                    </div>
-                    <div t-if="line.product_format">
-                        Format: <span t-field="line.product_format" />
-                    </div>
+                <td name="td_name">
+                    <div class="font-weight-bold" t-field="line.product_id.name" />
+                    <div t-if="line.product_id.default_code" t-field="line.product_id.default_code" />
+                    <div t-if="line.product_format" t-field="line.product_format" />
                 </td>
                 <td name="td_quantity" class="text-right">
                     <span t-if="float(line.product_uom_qty).is_integer()" t-out="int(line.product_uom_qty)" />
@@ -129,47 +124,55 @@
             </t>
         </xpath>
         <xpath expr="//table[hasclass('table', 'table-sm', 'o_main_table')]" position="attributes">
-            <attribute name="style">margin-top: 20px; margin-bottom: 0px;</attribute>
+            <attribute name="style">margin-top: 20px; margin-bottom: 0px; border-bottom: 1px solid #dee2e6;</attribute>
             <attribute name="class">table o_main_table</attribute>
+        </xpath>
+        <xpath expr="//thead" position="attributes">
+            <attribute name="style"></attribute>
         </xpath>
         <!-- added total saving beside total summery table  -->
         <xpath expr="//div[@name='so_total_summary']" position="replace">
             <div class="clearfix row" name="so_total_summary" style="page-break-inside: avoid;">
                 <div class="col-6" />
-                <div class="col-4">
-                    <div class="text-right" style="font-size: 14px;">
-                        Subtotal:
-                    </div>
-                    <div class="text-right" t-if="doc.amount_tax" style="font-size: 14px;">
-                        Tax:
-                    </div>
-                    <div class="text-right" t-if="doc.carrier_id" style="font-size: 14px;">
-                        Shipping(<span t-field="doc.carrier_id" />):
-                    </div>
-                    <div class="text-right" style="font-size: 20px;">
-                        <strong>Total:</strong>
-                    </div>
-                    <div class="text-right" style="font-size: 12px; font-style: italic; color: #408b96;">
-                        Your Savings:
-                    </div>
-                </div>
-                <div class="col-2">
-                    <div class="text-right" style="font-size: 14px;">
-                        <span t-field="doc.amount_untaxed" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
-                    </div>
-                    <div class="text-right" t-if="doc.amount_tax" style="font-size: 14px;">
-                        <span t-field="doc.amount_tax" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
-                    </div>
-                    <div class="text-right" t-if="doc.carrier_id" style="font-size: 14px;">
-                        <t t-out="sum([line.price_total for line in doc.order_line if line.is_delivery])" t-if="doc.carrier_id" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'>
-                        </t>
-                    </div>
-                    <div class="text-right" style="font-size: 20px;">
-                        <strong t-field="doc.amount_total" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
-                    </div>
-                    <div class="text-right" style="font-size: 12px; font-style: italic; color: #408b96;">
-                        <span t-field="doc.saving_amount" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
-                    </div>
+                <div class="col-6">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td class="text-right">Subtotal:</td>
+                            <td class="text-right" style="padding: 0px 5px;">
+                                <span t-field="doc.amount_untaxed" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right">Tax:</td>
+                            <td class="text-right" style="padding: 0px 5px;">
+                                <span t-field="doc.amount_tax" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right">Shipping(<span t-field="doc.carrier_id" />):</td>
+                            <td class="text-right" style="padding: 0px 5px;">
+                                <span t-out="sum([line.price_total for line in doc.order_line if line.is_delivery])" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right">Discount (Appears if promo code used):</td>
+                            <td class="text-right" style="padding: 0px 5px;">
+                                <span t-out="int(0)" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right" style="font-size: 20px;"><strong>Total:</strong></td>
+                            <td class="text-right" style="font-size: 20px; padding: 0px 5px;">
+                                <strong t-field="doc.amount_total" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-right" style="font-style: italic; color: #408b96;">Your Savings:</td>
+                            <td class="text-right" style="font-style: italic; color: #408b96; padding: 0px 5px;">
+                                <span t-field="doc.saving_amount" />
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
             <div class="row" style="page-break-inside: avoid;">
@@ -182,14 +185,14 @@
                     <div t-field="doc.user_id.phone" />
                     <div t-field="doc.user_id.email" />
                 </div>
-                <div class="col-5 text-right">
-                    <a t-att-href="doc.sudo().compute_customer_preview_url()" class="btn btn-link" style="margin-top: 20px; background-color: #f26243;">
+                <div class="col-5 text-right" style="margin: auto; font-size: 18px;">
+                    <a t-att-href="doc.sudo().compute_customer_preview_url()" class="btn btn-link" style="background-color: #f26243;">
                         <strong style="color: #FFFFFF;">Proceed to Checkout</strong>
                     </a>
                 </div>
             </div>
-            <div class="row text-center" style="page-break-inside: avoid; margin-top: 1rem;" t-if="not (env.context.get('proforma') or is_pro_forma or env.context.get('sale_invoice') or is_sale_invoice)">
-                <div class="col-12 o_boxed_header" style="font-style: italic; font-size: 20px; color: #f26243; border-top: 1px solid #e9ecef; padding-top: 10px; margin: 0px 15px;">
+            <div class="row text-center" style="page-break-inside: avoid; margin-top: 2rem;" t-if="not (env.context.get('proforma') or is_pro_forma or env.context.get('sale_invoice') or is_sale_invoice)">
+                <div class="col-12 o_boxed_header" style="font-size: 18px; border-top: 1px solid #e9ecef; padding: 10px 15px 0px 15px;">
                     <span t-if="doc.state in ('draft', 'sent', 'quote_approval', 'quote_confirm')" t-field="doc.company_id.quote_tag_line" />
                     <span t-else="" t-field="doc.company_id.so_tag_line" />
                 </div>
@@ -205,67 +208,71 @@
                 </div>
             </div>
         </xpath>
-        <xpath expr="//div[@name='signature']" position="after">
+        <!-- Hidden signature from base  -->
+        <xpath expr="//div[@name='signature']" position="replace">
             <style>
             .custom_table td {
                 width: 100%;
-                padding: 30px 10px;
+                padding: 30px 20px;
+                border-top: 1px solid #e9ecef;
             }
             </style>
             <table class="custom_table" style="page-break-before: always;">
                 <tr>
-                    <td colspan="6" style="font-style: italic; text-align: center; font-weight: 300;">
+                    <td colspan="6" style="font-style: italic; text-align: center; font-weight: 300; border-top: none;">
                         <div>We believe in the power of books to ignite continuous learning and growth. Our passion is connecting the</div>
                         <div>right ideas to people and organizations to inspire them to become their best</div>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2" style="vertical-align: middle; text-align: right; border-top: 1px solid #e9ecef; padding-right: 20px;">
-                        <h5>Meet Your Account Manager</h5>
+                    <td colspan="2" style="vertical-align: middle; text-align: right;">
+                        <h5>Meet Your</h5>
+                        <h5>Account Manager</h5>
                     </td>
-                    <td colspan="1" style="border-top: 1px solid #e9ecef; width: 22%;">
+                    <td colspan="1" style="width: 22%;">
                         <div t-field="doc.user_id.image_1920" t-options="{'widget': 'image', 'class': 'o_image_64_max'}" />
                     </td>
-                    <td colspan="3" style="border-top: 1px solid #e9ecef; vertical-align: middle;">
-                        <div t-field="doc.user_id" />
+                    <td colspan="3" style="vertical-align: middle;">
+                        <div style="font-size: 16px;" t-field="doc.user_id" />
                         <div>Sales Manager</div>
                         <div t-field="doc.user_id.phone" />
                         <div t-field="doc.user_id.email" />
                     </td>
                 </tr>
                 <tr>
-                    <td style="border-top: 1px solid #e9ecef; width: 7%;" />
-                    <td style="border-top: 1px solid #e9ecef; width: 20%; vertical-align: middle; text-align: right; padding-right: 20px;">
+                    <td style="width: 7%;" />
+                    <td style="width: 20%; vertical-align: middle; text-align: right;">
                         <h5>Helpful Links</h5>
                     </td>
-                    <td style="border-top: 1px solid #e9ecef; width: 22%;">
+                    <td style="width: 22%;">
                         <div class="border text-center" style="position: relative;">
                             <img src="/bista_sale/static/src/img/Shipping Icon@2x.png" style="max-height: 35px;" class="mt-4" />
                             <p style="margin: 2rem 1rem;">Flexible Shipping Options</p>
                             <a style="color: #fff; background-color: #f26243; padding: 0px; width: 70%; position: absolute; bottom: -8%; right: 15%;" href="https://bookpal.com/shipping-logistics" class="btn">Learn More</a>
                         </div>
                     </td>
-                    <td style="border-top: 1px solid #e9ecef; width: 22%;">
+                    <td style="width: 22%;">
                         <div class="border text-center" style="position: relative;">
                             <img src="/bista_sale/static/src/img/Price Match Icon_1@2x.png" style="max-height: 35px;" class="mt-4" />
                             <p style="margin: 2rem;">Price Match Guarantee</p>
                             <a style="color: #fff; background-color: #f26243; padding: 0px; width: 70%; position: absolute; bottom: -8%; right: 15%;" href="https://bookpal.com/price-match-guarantee" class="btn">Request Now</a>
                         </div>
                     </td>
-                    <td style="border-top: 1px solid #e9ecef; width: 22%;">
+                    <td style="width: 22%;">
                         <div class="border text-center" style="position: relative;">
                             <img src="/bista_sale/static/src/img/Sales Tax Icon_1@2x.png" style="max-height: 35px;" class="mt-4" />
                             <p style="margin: 2rem;">Sales Tax Exemption</p>
                             <a style="color: #fff; background-color: #f26243; padding: 0px; width: 70%; position: absolute; bottom: -8%; right: 15%;" href="https://bookpal.com/sales-tax-exemption" class="btn">Learn More</a>
                         </div>
                     </td>
-                    <td style="border-top: 1px solid #e9ecef; width: 7%;" />
+                    <td style="width: 7%;" />
                 </tr>
                 <tr>
-                    <td colspan="2" style="vertical-align: middle; text-align: right; border-top: 1px solid #e9ecef; padding-right: 20px;">
-                        <h5>Order Terms and Conditions</h5>
+                    <td colspan="2" style="vertical-align: middle; text-align: right;">
+                        <h5>Order Terms</h5>
+                        <h5>and Conditions</h5>
                     </td>
-                    <td colspan="4" style="border-top: 1px solid #e9ecef;">
+                    <td colspan="4">
                         <span t-field="doc.note" t-options="{'widget': 'text'}" />
                     </td>
                 </tr>
@@ -275,8 +282,6 @@
         <xpath expr="//div[hasclass('page')]/h2" position="replace" />
         <!-- Hidden information block from base report  -->
         <xpath expr="//div[hasclass('page')]/div[@id='informations']" position="replace" />
-        <!-- Hidden signature from base  -->
-        <xpath expr="//div[@name='signature']" position="replace" />
         <!-- Hidden notes from base  -->
         <xpath expr="//p[@t-field='doc.note']" position="replace" />
         <!-- Hidden payment terms from base  -->
