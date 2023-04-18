@@ -7,6 +7,7 @@ from odoo.exceptions import ValidationError
 from odoo.tools import is_html_empty
 from dateutil.relativedelta import relativedelta
 from odoo.tools.float_utils import float_compare, float_is_zero, float_round
+from itertools import groupby
 
 
 AddState = [
