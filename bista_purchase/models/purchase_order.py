@@ -451,6 +451,7 @@ class PurchaseOrderLine(models.Model):
     price_unit = fields.Float("BP Price")
     next_followup_date = fields.Date("Next Followup Date", copy=False)
     note = fields.Text("Notes", copy=False)
+    po_line_status_log_ids = fields.One2many("po.status.line.log", "po_line_id")
 
     @api.depends('move_ids.state')
     def get_tracking_ref(self):
@@ -477,6 +478,21 @@ class PurchaseOrderLine(models.Model):
             'context': {'create': False, 'edit': False},
             'flags': {'mode': 'readonly'},
         }
+
+    def go_back(self):
+        context = self._context
+        return {
+            'name': 'Update PO Line Status',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'update.shipment.tracking',
+            'view_id': self.env.ref("bista_purchase.update_shipment_tracking_form_view").id,
+            'context': {'current_id': self.id, 'active_model': 'purchase.order', 'active_id': self.order_id.id},
+            'target': 'new',
+            'nodestroy': True,
+        }
+
 
     def check_bo_transfer(self):
         name = ''

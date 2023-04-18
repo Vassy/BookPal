@@ -1,0 +1,15 @@
+<odoo>
+    <record id="po_status_line_log_tree_view" model="ir.ui.view">
+        <field name="name">po.status.log.tree.view</field>
+        <field name="model">po.status.line.log</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="note" />
+                <field name="action_user_id" />
+                <field name="action_date"  />
+                <field name="status_id" invisible="1"/>
+                <field name="po_line_id" invisible="1" />
+            </tree>
+        </field>
+    </record>
+</odoo>

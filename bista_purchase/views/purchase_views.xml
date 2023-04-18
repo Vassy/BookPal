@@ -11,6 +11,9 @@
                 <field name="note" optional="show" readonly="1" />
             </field>
             <field name="line_status" position="replace" />
+            <xpath expr="//field[@name='invoice_status']" position="after">
+                <button name="open_po_line" type="object" icon="fa-history" class="btn btn-link" title="PO Line Status History" context="{'from_update_wiz': True}"/>
+            </xpath>
         </field>
     </record>
 
@@ -74,6 +77,7 @@
                 <field name="status_id" readonly="1" force_save="1"/>
                 <button name="open_po_line" type="object" icon="fa-eye" class="btn btn-link" attrs="{'invisible': [('id', '=', False)]}" />
                 <button name="action_purchase_history" type="object" icon="fa-history" title="Backorder History" attrs="{'invisible': [('id', '=', False)]}" />
+
             </xpath>
             <xpath expr="//sheet" position="before">
                 <div class="alert alert-danger mb-0" role="alert">
@@ -284,7 +288,7 @@
                 <sheet>
                     <div class="oe_title">
                         <h1>
-                            <field name="order_id"/>
+                            <field name="order_id" readonly="context.get('from_update_wiz', False)"/>
                         </h1>
                     </div>
                     <!--                    <group>-->
@@ -292,22 +296,27 @@
                     <!--                    </group>-->
                     <group>
                         <group>
-                            <field name="product_id"/>
-                            <field name="product_qty"/>
+                            <field name="product_id" readonly="context.get('from_update_wiz', False)"/>
+                            <field name="product_qty" invisible="context.get('from_update_wiz', False)" />
                             <!--                            <field name="product_uom"/>-->
-                            <field name="before_disc_price_unit"/>
-                            <field name="discount"/>
-                            <field name="price_unit"/>
-                            <field name="taxes_id" widget="many2many_tags"/>
-                            <field name="price_subtotal"/>
+                            <field name="before_disc_price_unit" invisible="context.get('from_update_wiz', False)" />
+                            <field name="discount" invisible="context.get('from_update_wiz', False)" />
+                            <field name="price_unit" invisible="context.get('from_update_wiz', False)" />
+                            <field name="taxes_id" widget="many2many_tags" invisible="context.get('from_update_wiz', False)" />
+                            <field name="price_subtotal" invisible="context.get('from_update_wiz', False)" />
                         </group>
                         <group>
-                            <field name="date_planned"/>
-                            <field name="qty_received"/>
-                            <field name="qty_invoiced"/>
-                            <field name="status_id"/>
+                            <field name="date_planned" invisible="context.get('from_update_wiz', False)" />
+                            <field name="qty_received" invisible="context.get('from_update_wiz', False)" />
+                            <field name="qty_invoiced" invisible="context.get('from_update_wiz', False)" />
+                            <field name="status_id" invisible="context.get('from_update_wiz', False)" />
                         </group>
                     </group>
+                    <notebook invisible="not context.get('from_update_wiz', False)">
+                        <page string="PO Status Line Logs">
+                            <field name="po_line_status_log_ids" nolabel="1" options="{'no_create': True, 'no_open': True}" />
+                        </page>
+                    </notebook>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids"/>
@@ -316,6 +325,7 @@
                 </div>
                 <footer>
                     <button string="Close" special="cancel" class="btn btn-primary"/>
+                    <button string="Back" name="go_back" type="object" class="btn btn-primary" invisible="not context.get('from_update_wiz', False)"/>
                 </footer>
             </form>
         </field>
