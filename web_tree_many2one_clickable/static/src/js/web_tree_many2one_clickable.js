@@ -47,7 +47,7 @@ odoo.define("web_tree_many2one_clickable.many2one_clickable", function (require)
                 if (this.field.name === "po_line_custom_id") {
                     var $a = $("<a/>", {
                         href: "#",
-                        class: "o_form_uri btn btn-sm btn-secondary fa fa-angle-double-right",
+                        class: "o_form_uri btn btn-sm fa fa-history",
                     }).on("click", function (ev) {
                         ev.preventDefault();
                         ev.stopPropagation();
