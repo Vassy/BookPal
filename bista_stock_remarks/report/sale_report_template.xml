@@ -3,31 +3,19 @@
     <template id="report_saleorder_document_note" inherit_id="bista_sale.report_saleorder_document_extended">
         <xpath expr="//div[hasclass('oe_structure')]" position="after">
             <style>
-                .table th {
-                    padding: 5px;
-                }
-                .table td {
-                    border: none;
+                .table th, .table td {
                     padding: 5px;
                 }
             </style>
         </xpath>
         <xpath expr="//div[@name='so_total_summary']/div" position="inside">
-            <div style="background-color: #dee2e6; padding: 5px 0px 5px 20px; font-weight: bold;">
+            <div style="background-color: #dee2e6; padding: 5px 20px; font-weight: bold;">
                 Special Instructions / Notes:
             </div>
-            <div class="border" style="padding: 10px 0px 10px 20px;" t-field="doc.common_pick_note" />
+            <div class="border" style="padding: 5px 20px;" t-field="doc.common_pick_note" />
         </xpath>
-        <xpath expr="//t[@t-foreach='doc.order_line']/tr" position="after">
-            <tr style="border-bottom: 1px solid #dee2e6;">
-                <t t-if="not line.display_type">
-                    <td colspan="2" class="text-left">
-                        <b><span t-if="line.picking_note">Product Notes:</span></b>
-                        <span t-field="line.picking_note" />
-                    </td>
-                    <td colspan="4" />
-                </t>
-            </tr>
+        <xpath expr="//td[@name='td_name']" position="inside">
+            <div style="color: #f26243; font-weight: bold; margin-top: 10px;" t-if="line.picking_note" t-field="line.picking_note" />
         </xpath>
     </template>
 </odoo>

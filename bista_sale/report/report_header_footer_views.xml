@@ -2,31 +2,31 @@
 <odoo>
     <template id="custom_header_footer">
         <t t-set="company" t-value="user.company_id" />
-        <div t-attf-class="header o_company_#{company.id}_layout" t-att-style="report_header_style">
+        <div t-attf-class="header o_company_#{company.id}_layout" style="font-size: 14px;">
             <div class="row mb-2">
                 <div class="col-6">
                     <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" alt="Logo" />
-                    <div t-out="company_address" />
+                    <div t-out="company_address" style="padding-top: 10px;" />
                 </div>
                 <div t-out="report_info" class="col-6 text-right" />
             </div>
         </div>
-        <div class="article" t-att-data-oe-model="doc and doc._name" t-att-data-oe-id="doc and doc.id" t-att-data-oe-lang="doc and doc.env.context.get('lang')">
+        <div class="article" t-att-data-oe-model="doc and doc._name" t-att-data-oe-id="doc and doc.id" t-att-data-oe-lang="doc and doc.env.context.get('lang')" style="font-size: 14px;">
             <div class="row" style="margin-top: 16px;">
                 <div name="customer_address" class="col-4">
-                    <t t-out="customer_address" />
+                    <div style="padding: 10px 0px 0px 0px;" t-out="customer_address" />
                 </div>
                 <div name="billing_address" class="col-4" style="padding-left: 0px;">
-                    <div style="border: 2px solid #dee2e6; padding-left: 15px; height: 100%;" t-out="billing_address" />
+                    <div style="border: 2px solid #dee2e6; padding: 10px 0px 10px 15px; height: 100%;" t-out="billing_address" />
                 </div>
                 <div name="shipping_address" class="col-4" style="padding-left: 0px;">
-                    <div style="border: 2px solid #dee2e6; padding-left: 15px; height: 100%;" t-out="shipping_address" />
+                    <div style="border: 2px solid #dee2e6; padding: 10px 0px 10px 15px; height: 100%;" t-out="shipping_address" />
                 </div>
             </div>
             <t t-out="0" />
         </div>
-        <div t-attf-class="footer o_company_#{company.id}_layout">
-            <div t-if="report_type == 'pdf'" class="text-right" style="padding-bottom:30px;">
+        <div t-attf-class="footer o_company_#{company.id}_layout" style="font-size: 14px;">
+            <div t-if="report_type == 'pdf'" class="text-right" style="padding-bottom: 30px;">
                 Page <span class="page" /> of <span class="topage" />
             </div>
         </div>
