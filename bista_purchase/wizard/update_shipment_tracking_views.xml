@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+
     <record id="update_shipment_tracking_form_view" model="ir.ui.view">
         <field name="name">Update Shipment Tracking</field>
         <field name="model">update.shipment.tracking</field>
@@ -24,7 +25,7 @@
                 <field name="tracking_lines">
                     <tree editable="bottom" create="0">
                         <field name="checkbox" nolabel="1" />
-                        <field name="po_line_id" readonly="1" force_save="1" />
+                        <field name="po_line_custom_id" readonly="1" widget="many2one" force_save="1"/>
                         <field name="product_qty" string="Ordered Quantity" />
                         <field name="status_id" />
                     </tree>
