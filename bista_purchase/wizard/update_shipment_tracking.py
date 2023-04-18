@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import fields, models, api
-
+from datetime import datetime
 
 class UpdateShipmentTracking(models.TransientModel):
     _name = "update.shipment.tracking"
@@ -28,24 +28,31 @@ class UpdateShipmentTracking(models.TransientModel):
     def default_get(self, fields_list):
         defaults = super().default_get(fields_list)
         context = self._context
-        po_id = self.env[context.get("active_model")].browse(context.get("active_id"))
-        if po_id:
-            po_line_vals = []
-            for line in po_id.order_line:
-                po_line_vals.append((0, 0, {"po_line_id": line.id}))
-            defaults.update({"tracking_lines": po_line_vals, "order_id": po_id.id})
+        if context.get("active_model") == 'purchase.order':
+            po_id = self.env[context.get("active_model")].browse(context.get("active_id"))
+            if po_id:
+                po_line_vals = []
+                for line in po_id.order_line:
+                    po_line_vals.append((0, 0, {"po_line_custom_id": line.id}))
+                defaults.update({"tracking_lines": po_line_vals, "order_id": po_id.id})
         return defaults
 
     def update(self):
         self.ensure_one()
         po_lines = self.tracking_lines.filtered(lambda x: x.checkbox)
+        log_data_list = []
+        log_data = (0, 0, {'action_user_id': self.env.user.id,
+                           'note': self.note,
+                           'action_date': datetime.now(),
+                           })
+        log_data_list.append(log_data)
+        po_lines.po_line_custom_id.po_line_status_log_ids = log_data_list
         line_data = {
             "status_id": self.status_id.id,
             "next_followup_date": self.next_followup_date,
             "note": self.note,
         }
-        po_lines.po_line_id.write(line_data)
-
+        po_lines.po_line_custom_id.write(line_data)
 
 class UpdateShipmentTrackingLine(models.TransientModel):
     _name = "update.shipment.tracking.line"
@@ -53,6 +60,6 @@ class UpdateShipmentTrackingLine(models.TransientModel):
 
     checkbox = fields.Boolean(string="Checkbox")
     update_shipping_id = fields.Many2one("update.shipment.tracking", "Update Shipping")
-    po_line_id = fields.Many2one("purchase.order.line", "PO Line")
-    status_id = fields.Many2one(related="po_line_id.status_id")
-    product_qty = fields.Float(related="po_line_id.product_qty")
+    po_line_custom_id = fields.Many2one("purchase.order.line", "PO Line")
+    status_id = fields.Many2one(related="po_line_custom_id.status_id")
+    product_qty = fields.Float(related="po_line_custom_id.product_qty")

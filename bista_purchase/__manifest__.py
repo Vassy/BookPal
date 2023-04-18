@@ -8,7 +8,7 @@
     'website': "http://www.bistasolutions.com",
     'category': "Purchase",
     'version': '15.0.1.2.1',
-    'depends': ['purchase_pricelist', 'bista_contact', 'bista_sale', 'bista_stock_remarks', 'bista_orders_report'],
+    'depends': ['purchase_pricelist', 'bista_contact', 'bista_sale', 'bista_stock_remarks', 'bista_orders_report', 'web_tree_many2one_clickable'],
     'data': [
         'security/ir.model.access.csv',
 
@@ -26,11 +26,11 @@
         'data/master_data_all_file.xml',
         'data/purchase_approval_data.xml',
 
+        'views/po_status_line_log_views.xml',
+        'views/purchase_views.xml',
         'wizard/update_shipment_tracking_views.xml',
         'wizard/order_reject_view.xml',
-
         'views/res_partner_views.xml',
-        'views/purchase_views.xml',
         'views/stock_picking_views.xml',
         'views/account_move_views.xml',
         'views/res_partner_views.xml',
