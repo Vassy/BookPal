@@ -56,9 +56,16 @@ class MailComposeMessage(models.TransientModel):
                 .sudo()
                 .get_param("mail_compose_message.bcc_recipient_ids")
             )
+            if self._context.get('from_purchase_trackig', False):
+                bcc_partner = self.env["res.partner"].search([
+                    ('name', '=', 'support@bookpal.com'),
+                    ('email', '=', 'support@bookpal.com')], limit=1)
+                vals = str([bcc_partner.id])
+            if self._context.get('active_model') == 'sale.order':
+                vals = str(False)
             res.update(
                 {
-                    "bcc_recipient_ids": literal_eval(vals),
+                    "bcc_recipient_ids": literal_eval(vals)
                 }
             )
         return res

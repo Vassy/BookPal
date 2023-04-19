@@ -82,7 +82,7 @@
                 <field name="pro_number" optional="show" />
                 <field name="status" optional="show" />
                 <field name="dest_address_id" invisible="1" />
-                <button name="send_email" string="Send Email" type="object" class="btn-primary" attrs="{'invisible': ['|', ('dest_address_id', '=', False), ('status', 'in', ['received', 'on_hold'])]}" />
+                <button name="send_email" string="Send Email" type="object" class="btn-primary" attrs="{'invisible': ['|', ('dest_address_id', '=', False), ('status', 'in', ['received', 'on_hold'])]}"/>
             </tree>
         </field>
     </record>
