@@ -135,6 +135,7 @@ class PurchaseTracking(models.Model):
                 "default_partner_ids": self.order_id.dest_address_id.ids,
                 "custom_layout": "mail.mail_notification_paynow",
                 "force_email": True,
+                "from_purchase_trackig": True,
             }
         )
         return {
