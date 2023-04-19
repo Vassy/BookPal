@@ -1,58 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <data>
-        <record id="bigcommerce_order_form_view_shipped_qty" model="ir.ui.view">
-            <field name="name">bigcommerce.order.form.view.shipped.qty</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_order_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
-                    <button name="action_redirect_to_payment_transaction" type="object"
-                            class="oe_stat_button" icon="fa-money" string="Payment Transaction">
-                    </button>
-                </xpath>
-                <xpath expr="//button[@name='get_shipped_qty']" position="attributes">
-                    <attribute name="attrs">{'invisible': [('bigcommerce_store_id', '=', False)]}</attribute>
-                </xpath>
-                <xpath expr="//page[@name='order_lines']//tree//field[@name='tax_id']" position="attributes">
-                    <attribute name="attrs">
-                        {'column_invisible': ['|', ('parent.fiscal_position_id', '=', False), ('parent.is_avatax', '=', True)]}
-                    </attribute>
-                </xpath>
-                <xpath expr="//page[@name='order_lines']//tree//field[@name='big_commerce_tax']" position="attributes">
-                    <attribute name="attrs">
-                        {'column_invisible': ['|',('parent.bigcommerce_store_id', '=', False), ('parent.fiscal_position_id', '!=', False), ]}
-                    </attribute>
-                    <attribute name="optional">hide</attribute>
-                </xpath>
-                <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
-                    <field name="product_format" optional="show" />
-                </xpath>
-                <xpath expr="//field[@name='sale_multi_ship_qty_lines']/tree//field[@name='so_line_id']" position="after">
-                    <field name="product_format" optional="show" />
-                </xpath>
-            </field>
-        </record>
+    <record id="bigcommerce_order_form_view_custom" model="ir.ui.view">
+        <field name="name">bigcommerce.order.form.custom.view</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="bigcommerce_odoo_integration.bigcommerce_order_form_view" />
+        <field name="arch" type="xml">
+            <button name="update_order_from_bc_to_odoo" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('big_commerce_order_id', '=', False), ('state', '!=', 'order_booked')]}</attribute>
+            </button>
+            <button name="update_order_from_odoo_to_bc" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('big_commerce_order_id', '=', False), ('state', '!=', 'order_booked')]}</attribute>
+            </button>
+        </field>
+    </record>
 
-        <record id="bigcommerce_order_search_view_bc_id_filter" model="ir.ui.view">
-            <field name="name">bigcommerce.order.search.view.bc.id.filter</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='name']" position="after">
-                    <field name="big_commerce_order_id"/>
-                    <field name="bc_id"/>
-                    <field name="bigcommerce_shipment_order_status"/>
-                </xpath>
-                <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
-                    <filter string="Odoo Order" name="normal_order" domain="[('big_commerce_order_id', '=', False)]"/>
-                    <filter string="Big commerce Order" name="big_commere_order" domain="[('big_commerce_order_id', '!=', False)]"/>
-                </xpath>
-                <xpath expr="//filter[@name='order_month']" position="after">
-                    <filter string="Bigcommerce Payment Status" name="big_commere_order"  domain="[]" context="{'group_by': 'payment_status'}"/>
-                </xpath>
+    <record id="bigcommerce_order_form_view_shipped_qty" model="ir.ui.view">
+        <field name="name">bigcommerce.order.form.view.shipped.qty</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button name="action_redirect_to_payment_transaction" type="object" class="oe_stat_button" icon="fa-money" string="Payment Transaction" />
+            </xpath>
+            <xpath expr="//button[@name='get_shipped_qty']" position="attributes">
+                <attribute name="attrs">{'invisible': [('bigcommerce_store_id', '=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']//tree//field[@name='tax_id']" position="attributes">
+                <attribute name="attrs">{'column_invisible': ['|', ('parent.fiscal_position_id', '=', False), ('parent.is_avatax', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']//tree//field[@name='big_commerce_tax']" position="attributes">
+                <attribute name="attrs">{'column_invisible': ['|',('parent.bigcommerce_store_id', '=', False), ('parent.fiscal_position_id', '!=', False), ]}</attribute>
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='name']" position="after">
+                <field name="product_format" optional="show" />
+            </xpath>
+            <xpath expr="//field[@name='sale_multi_ship_qty_lines']/tree//field[@name='so_line_id']" position="after">
+                <field name="product_format" optional="show" />
+            </xpath>
+        </field>
+    </record>
 
-            </field>
-        </record>
-    </data>
+    <record id="bigcommerce_order_search_view_bc_id_filter" model="ir.ui.view">
+        <field name="name">bigcommerce.order.search.view.bc.id.filter</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="big_commerce_order_id" />
+                <field name="bc_id" />
+                <field name="bigcommerce_shipment_order_status" />
+            </xpath>
+            <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
+                <filter string="Odoo Order" name="normal_order" domain="[('big_commerce_order_id', '=', False)]" />
+                <filter string="Big commerce Order" name="big_commere_order" domain="[('big_commerce_order_id', '!=', False)]" />
+            </xpath>
+            <xpath expr="//filter[@name='order_month']" position="after">
+                <filter string="Bigcommerce Payment Status" name="big_commere_order" domain="[]" context="{'group_by': 'payment_status'}" />
+            </xpath>
+        </field>
+    </record>
 </odoo>
