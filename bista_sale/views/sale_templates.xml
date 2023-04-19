@@ -24,7 +24,7 @@
         </xpath>
         <xpath expr="//table[@id='sales_order_table']/tbody/t/tr/t/td[@id='product_name']" position="before">
             <td class="text-left">
-                <span t-esc="line.product_template_id.default_code"/> 
+                <span t-esc="line.product_id.default_code"/> 
             </td>
         </xpath>
         <xpath expr="//table[@id='sales_order_table']/tbody/t/tr" position="after">
