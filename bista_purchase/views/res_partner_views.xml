@@ -55,7 +55,7 @@
                     <field name="customer_service_hours" string="Hours (CS)"/>
                 </group>
                 <group>
-                    <field name="create_uid" string="Rep"/>
+                    <field name="create_uid" string="Created By"/>
                     <!-- <field name="write_uid" string="Last Modified By"/> -->
                     <field name="reviewed_date" string="Reviewed Date"/>
                     <!-- <field name="active" string="Status"/> -->
