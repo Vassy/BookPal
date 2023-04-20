@@ -26,7 +26,7 @@
             <t t-out="0" />
         </div>
         <div t-attf-class="footer o_company_#{company.id}_layout" style="font-size: 14px;">
-            <div t-if="report_type == 'pdf'" class="text-right" style="padding-bottom: 30px;">
+            <div t-if="report_type == 'pdf'" class="text-right">
                 Page <span class="page" /> of <span class="topage" />
             </div>
         </div>
