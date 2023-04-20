@@ -59,26 +59,26 @@ class SaleOrderReportWiz(models.TransientModel):
         domain = [('display_type', '=', False),
                       ('product_id.detailed_type', 'in',
                        ['consu', 'product']),
-                      ('order_id.state', 'not in', ['draft', 'cancel'])]
+                      ('order_id.state', 'in', ['purchase', 'done'])]
         if self.from_date and self.to_date:
             from_date = str(self.from_date) + ' ' + str(
                 datetime.timedelta(hours=0, minutes=0, seconds=0))
             to_date = str(self.to_date) + ' ' + str(
                 datetime.timedelta(hours=23, minutes=59, seconds=59))
             domain.append(
-                ('date_order', '>=', from_date))
+                ('date_approve', '>=', from_date))
             domain.append(
-                ('date_order', '<=', to_date))
+                ('date_approve', '<=', to_date))
         if self.from_date and not self.to_date:
             from_date = str(self.from_date) + ' ' + str(
                 datetime.timedelta(hours=0, minutes=0, seconds=0))
             domain.append(
-                ('date_order', '>=', from_date))
+                ('date_approve', '>=', from_date))
         if not self.from_date and self.to_date:
             to_date = str(self.to_date) + ' ' + str(
                 datetime.timedelta(hours=23, minutes=59, seconds=59))
             domain.append(
-                ('date_order', '<=', to_date))
+                ('date_approve', '<=', to_date))
         if self.product_ids:
             domain.append(
                 ('product_id', 'in', self.product_ids.ids))

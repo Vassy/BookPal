@@ -37,8 +37,10 @@ class SaleOrderLine(models.Model):
     pending_value = fields.Float(string="Pending Value",
                                  compute='_calculate_remain_order_status_qty',
                                  compute_sudo=True)
-    order_expected_date = fields.Datetime(related="order_id.expected_date",
-                                          store=True)
+    # order_expected_date = fields.Datetime(related="order_id.commitment_date",
+    #                                       store=True)
+    commitment_date = fields.Datetime(related="order_id.commitment_date",
+                                      store=True)
     product_onhand_qty = fields.Float("On Hand Qty",
                                       compute="current_product_onhand_qty")
     refund_qty = fields.Float("Refund Qty",

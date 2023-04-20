@@ -8,15 +8,16 @@ class PurchaseOrderLine(models.Model):
     _description = "Purchase Order Line Description"
 
     origin = fields.Char(related="order_id.origin")
+    date_approve = fields.Datetime(related="order_id.date_approve")
     uom_id = fields.Many2one(related="product_id.uom_id", string="UOM")
     qty_remain_receive = fields.Float(
         "Remaining Qty", compute="compute_remain_qty")
     qty_remain_receive_value = fields.Float(
         "Remaining Value", compute="compute_remain_qty")
     qty_shortclose = fields.Float(
-        'Short Close Qty', compute="compute_remain_qty")
+        'Return/Short Close Qty', compute="compute_remain_qty")
     short_close_price = fields.Float(
-        compute="compute_remain_qty", string="Short Close Value")
+        compute="compute_remain_qty", string="Return/Short Close Value")
     qty_received_uom = fields.Float(compute="compute_remain_qty")
     qty_received_value = fields.Float(
         compute="compute_remain_qty",
