@@ -74,6 +74,7 @@
                     <span t-field="doc.partner_invoice_id.parent_id.name" />
                 </div>
                 <div t-field="doc.partner_invoice_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": True}' />
+                <div>Phone: <span t-field="doc.partner_invoice_id.phone" /></div>
             </t>
             <t t-set="shipping_address">
                 <strong>Shipping Address:</strong>
@@ -85,11 +86,23 @@
                     <span t-field="doc.partner_shipping_id.parent_id.name" />
                 </div>
                 <div t-field="doc.partner_shipping_id" t-options='{"widget": "contact", "fields": ["address"], "no_marker": True}' />
+                <div>Phone: <span t-field="doc.partner_shipping_id.phone" /></div>
             </t>
+        </xpath>
+        <xpath expr="//div[hasclass('oe_structure')]" position="after">
+            <style>
+                .table th {padding: 5px;}
+                .table td {padding: 10px;}
+                .custom_table td {
+                    width: 100%;
+                    padding: 30px 20px;
+                    border-top: 1px solid #e9ecef;
+                }
+            </style>
         </xpath>
         <xpath expr="//thead/tr" position="replace">
             <tr style="background-color: #dee2e6;">
-                <th colspan="2" name="td_name" style="padding-left: 20px;">Product Details</th>
+                <th colspan="2" name="th_name" style="padding-left: 20px;">Product Details</th>
                 <th name="th_quantity" class="text-right">Quantity</th>
                 <th nowrap="" name="th_uom" class="text-right">Cover Price</th>
                 <th nowrap="" name="th_priceunit" class="text-right">Your Price</th>
@@ -138,24 +151,22 @@
                     <table style="width: 100%;">
                         <tr>
                             <td class="text-right">Subtotal:</td>
-                            <td class="text-right" style="padding: 0px 5px;">
-                                <span t-field="doc.amount_untaxed" />
-                            </td>
+                            <td class="text-right" style="padding: 0px 5px;"><span t-field="doc.amount_untaxed" /></td>
                         </tr>
                         <tr>
                             <td class="text-right">Tax:</td>
-                            <td class="text-right" style="padding: 0px 5px;">
-                                <span t-field="doc.amount_tax" />
-                            </td>
+                            <td class="text-right" style="padding: 0px 5px;"><span t-field="doc.amount_tax" /></td>
                         </tr>
                         <tr>
-                            <td class="text-right">Shipping(<span t-field="doc.carrier_id" />):</td>
+                            <td class="text-right">
+                                Shipping<span t-if="doc.carrier_id" t-out=" (doc.carrier_id.name)" />:
+                            </td>
                             <td class="text-right" style="padding: 0px 5px;">
                                 <span t-out="sum([line.price_total for line in doc.order_line if line.is_delivery])" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
                             </td>
                         </tr>
                         <tr>
-                            <td class="text-right">Discount (Appears if promo code used):</td>
+                            <td class="text-right">Discount:</td>
                             <td class="text-right" style="padding: 0px 5px;">
                                 <span t-out="int(0)" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
                             </td>
@@ -185,7 +196,7 @@
                     <div t-field="doc.user_id.phone" />
                     <div t-field="doc.user_id.email" />
                 </div>
-                <div class="col-5 text-right" style="margin: auto; font-size: 18px;">
+                <div class="col-5 text-right" style="font-size: 18px; padding-top: 20px;">
                     <a t-att-href="doc.sudo().compute_customer_preview_url()" class="btn btn-link" style="background-color: #f26243;">
                         <strong style="color: #FFFFFF;">Proceed to Checkout</strong>
                     </a>
@@ -210,14 +221,7 @@
         </xpath>
         <!-- Hidden signature from base  -->
         <xpath expr="//div[@name='signature']" position="replace">
-            <style>
-            .custom_table td {
-                width: 100%;
-                padding: 30px 20px;
-                border-top: 1px solid #e9ecef;
-            }
-            </style>
-            <table class="custom_table" style="page-break-before: always;">
+            <table class="custom_table" style="page-break-before: always; font-family: lora;">
                 <tr>
                     <td colspan="6" style="font-style: italic; text-align: center; font-weight: 300; border-top: none;">
                         <div>We believe in the power of books to ignite continuous learning and growth. Our passion is connecting the</div>
