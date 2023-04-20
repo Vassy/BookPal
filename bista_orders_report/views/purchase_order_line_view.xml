@@ -8,8 +8,8 @@
             <tree string="Purchase Order Line" editable="top">
                 <field name="partner_id" string="Vendor" options="{'no_open': 1}" />
                 <field name="order_id" optional="show" readonly="1" />
-                <field name="date_order"/>
-                <field name="date_planned" string="Expected Receipt Date" optional="show" readonly="1" />
+                <field name="date_approve" widget="date" string="Approved Date"/>
+                <field name="date_planned" widget="date" string="Expected Receipt Date" optional="show" readonly="1" />
                 <field name="industry_id" options="{'no_open': 1}" />
                 <field name="product_id" readonly="1" options="{'no_open': 1}" />
                 <field name="price_unit" string="Unit Price" optional="show" widget="monetary"/>
@@ -39,7 +39,7 @@
         <field name="model">purchase.order.line</field>
         <field name="arch" type="xml">
             <search string="Purchase Order Line">
-                <field name="date_order"/>
+                <field name="date_approve"/>
                 <field name="order_id"/>
                 <field name="partner_id" string="Vendor"/>
                 <field name="product_id"/>
@@ -48,7 +48,7 @@
                 <filter string="Received" name="receive_filter" domain="[('line_status', '=', 'received')]"/>
                 <filter string="Partially Received" name="partial_receive_filter" domain="[('line_status', '=', 'partial_received')]"/>
                 <filter string="Short Closed" name="short_close_filter" domain="[('line_status', '=', 'short_close')]"/>
-                <filter string="Order Date" name="order_date_filter" date="date_order"/>
+                <filter string="Approved Date" name="order_date_filter" date="date_approve"/>
                 <group expand="0" string="Group By">
                     <filter string="Products" name="groupby_products"
                             context="{'group_by':'product_id'}"

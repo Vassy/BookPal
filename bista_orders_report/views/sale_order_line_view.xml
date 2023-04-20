@@ -40,8 +40,9 @@
                     <field name="order_partner_id"/>                   
                 </xpath>
                 <xpath expr="//field[@name='order_id']" position="after">
-                    <field name="so_date"/>                   
-                    <field name="order_expected_date" optional="hide" string="Expected Delivery"/>                   
+                    <field name="so_date" widget="date"/>
+                    <!-- <field name="order_expected_date" optional="hide" widget="date" string="Expected Delivery"/> -->
+                    <field name="commitment_date" optional="hide" widget="date" string="Expected Delivery"/>
                     <field name="order_po_ref" string="Customer/PO Ref"/>                   
                     <field name="partner_country"/>
                     <field name="industry_id"/>                 
