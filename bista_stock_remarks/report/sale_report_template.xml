@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_saleorder_document_note" inherit_id="bista_sale.report_saleorder_document_extended">
-        <xpath expr="//div[hasclass('oe_structure')]" position="after">
-            <style>
-                .table th, .table td {
-                    padding: 5px;
-                }
-            </style>
-        </xpath>
         <xpath expr="//div[@name='so_total_summary']/div" position="inside">
             <div style="background-color: #dee2e6; padding: 5px 20px; font-weight: bold;">
                 Special Instructions / Notes:
