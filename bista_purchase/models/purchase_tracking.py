@@ -123,6 +123,11 @@ class PurchaseTracking(models.Model):
             compose_form_id = self.env.ref("mail.email_compose_message_wizard_form").id
         except ValueError:
             compose_form_id = False
+        partner_ids = (
+            self.order_id.sale_order_ids
+            and self.order_id.sale_order_ids[0].partner_id
+            or self.order_id.dest_address_id
+        )
         ctx.update(
             {
                 "default_model": "purchase.tracking",
@@ -132,7 +137,7 @@ class PurchaseTracking(models.Model):
                 "default_use_template": bool(template_id.id),
                 "default_template_id": template_id.id,
                 "default_composition_mode": "comment",
-                "default_partner_ids": self.order_id.dest_address_id.ids,
+                "default_partner_ids": partner_ids.ids,
                 "custom_layout": "mail.mail_notification_paynow",
                 "force_email": True,
                 "from_purchase_trackig": True,

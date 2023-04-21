@@ -406,7 +406,7 @@ class PurchaseOrder(models.Model):
                 or field.attrib["name"] not in self._fields
                 or field.attrib.get("attrs")
                 or self._fields.get(field.attrib["name"]).readonly
-                or field.attrib["name"] == "po_conf"
+                or field.attrib["name"] in ["po_conf", "purchase_tracking_ids"]
             ):
                 continue
             field.attrib["attrs"] = attrs

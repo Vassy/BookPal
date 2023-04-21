@@ -5,7 +5,7 @@ from datetime import datetime
 from dateutil.parser import parse
 from requests import request
 
-from odoo import fields, models
+from odoo import fields, models, api
 from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger("BigCommerce")
@@ -13,6 +13,33 @@ _logger = logging.getLogger("BigCommerce")
 
 class SaleOrderVts(models.Model):
     _inherit = "sale.order"
+
+    # Set False value on sale's fiscal position if it's Big Commerce Order
+    def update_fiscal_position(self):
+        self.filtered(lambda s: s.big_commerce_order_id).write(
+            {"fiscal_position_id": False}
+        )
+
+    @api.model
+    def create(self, vals):
+        sale_id = super().create(vals)
+        sale_id.update_fiscal_position()
+        return sale_id
+
+    def write(self, vals):
+        super().write(vals)
+        if vals.get("fiscal_position_id") or self.mapped("fiscal_position_id"):
+            self.update_fiscal_position()
+
+    # Set False value on invoice's fiscal position if it's Big Commerce Order
+    def _create_invoices(self, grouped=False, final=False, date=None):
+        moves = super(grouped, final, date)
+        for move in moves:
+            if move.line_ids.mapped("sale_line_ids.order_id").filtered(
+                lambda s: s.big_commerce_order_id
+            ):
+                move.write({"fiscal_position_id": False})
+        return moves
 
     def action_confirm(self):
         for sale in self:
@@ -57,7 +84,6 @@ class SaleOrderVts(models.Model):
     def create_sales_order_from_bigcommerce(self, vals):
         """Create sales order form big commerce."""
         sale_order = self.env['sale.order']
-        fpos = False
         order_vals = {
             'company_id': vals.get('company_id'),
             'partner_id': vals.get('partner_id'),
@@ -74,7 +100,7 @@ class SaleOrderVts(models.Model):
             'company_id')).onchange_partner_shipping_id()
         order_vals = sale_order._convert_to_write(
             {name: new_record[name] for name in new_record._cache})
-        fpos = order_vals.get('fiscal_position_id', fpos)
+        fpos = order_vals.get('fiscal_position_id', False)
         if not fpos:
             fpos = self.env['account.fiscal.position'].with_context(
                 with_company=vals.get(
