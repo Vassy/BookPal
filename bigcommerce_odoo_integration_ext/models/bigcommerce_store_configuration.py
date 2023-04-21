@@ -45,12 +45,12 @@ class BigCommerceStoreConfiguration(models.Model):
         product_obj = self.env['product.template']
         if bigcommerce_store_obj:
             _logger.info("===== Auto Import Bigcommerce Products =====")
-            from_date = bigcommerce_store_obj.last_import_products_date
+            bc_from_date = bigcommerce_store_obj.last_import_products_date
+            from_date = bc_from_date + timedelta(days=-1)
             if not from_date:
                 from_date = date.today() - timedelta(days=1)
-            to_date = date.today()
-            product_obj.with_context(from_date=from_date, to_date=to_date).import_product_from_bigcommerce(
+            product_obj.with_context(from_date=from_date).import_product_from_bigcommerce(
                 bigcommerce_store_obj.warehouse_id, bigcommerce_store_obj)
-            bigcommerce_store_obj.last_import_products_date = to_date
+            bigcommerce_store_obj.last_import_products_date = datetime.today()
         else:
             raise UserError(_("No record found of Bigcommerce store."))
