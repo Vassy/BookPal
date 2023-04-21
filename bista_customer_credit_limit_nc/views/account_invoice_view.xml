@@ -3,6 +3,7 @@
     <record id="invoice_form_form_inherit_for_sale_order" model="ir.ui.view">
         <field name="name">account.move.form.inherit.for.sale.order</field>
         <field name="model">account.move</field>
+        <field name="priority">1</field>
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
             <field name="move_type" position="after">
