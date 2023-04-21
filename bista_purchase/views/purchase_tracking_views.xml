@@ -7,12 +7,16 @@
             <form string="Purchase Tracking Form">
                 <sheet>
                     <div class="oe_title">
-                        <h1><field name="name" readonly="1" /></h1>
-                        <h1><field name="order_id" readonly="1" /></h1>
+                        <h1>
+                            <field name="name" readonly="1" />
+                        </h1>
+                        <h1>
+                            <field name="order_id" readonly="1" />
+                        </h1>
                     </div>
                     <group>
                         <group>
-                            <field name="id" invisible="1"/>
+                            <field name="id" invisible="1" />
                             <field name="is_read_only" invisible="1" />
                             <field name="partner_id" />
                             <field name="picking_type_id" />
@@ -21,11 +25,11 @@
                             <field name="shipment_date" required="1" attrs="{'readonly': [('is_read_only', '=', True)]}" />
                         </group>
                         <group>
-                            <field name="date_order" string="Order Date" widget="date"/>
-                            <field name="date_approve" widget="date"/>
+                            <field name="date_order" string="Order Date" widget="date" />
+                            <field name="date_approve" widget="date" />
                             <field name="pro_number" required="0" string="PRO No." attrs="{'readonly': [('is_read_only', '=', True)]}" />
                             <field name="status" required="1" attrs="{'readonly': [('is_read_only', '=', True)]}" />
-                            <field name="is_automated" readonly="1"/>
+                            <field name="is_automated" readonly="1" />
                             <field name="dest_address_id" invisible="1" />
                         </group>
                     </group>
@@ -68,22 +72,6 @@
                     <button string="Discard" class="btn-secondary" special="cancel" />
                 </footer>
             </form>
-        </field>
-    </record>
-
-    <record id="purchase_tracking_tree_view" model="ir.ui.view">
-        <field name="name">purchase.tracking.tree</field>
-        <field name="model">purchase.tracking</field>
-        <field name="arch" type="xml">
-            <tree string="Purchase Tracking Tree" create="0">
-                <field name="name" />
-                <field name="shipment_date" required="1" optional="show" />
-                <field name="carrier_id" optional="show" />
-                <field name="pro_number" optional="show" />
-                <field name="status" optional="show" />
-                <field name="dest_address_id" invisible="1" />
-                <button name="send_email" string="Send Email" type="object" class="btn-primary" attrs="{'invisible': ['|', ('dest_address_id', '=', False), ('status', 'in', ['received', 'on_hold'])]}"/>
-            </tree>
         </field>
     </record>
 </odoo>
