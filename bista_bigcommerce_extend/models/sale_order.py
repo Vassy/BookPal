@@ -39,6 +39,7 @@ class SaleOrderVts(models.Model):
                 lambda s: s.big_commerce_order_id
             ):
                 move.write({"fiscal_position_id": False})
+        moves.button_update_avatax()
         return moves
 
     def action_confirm(self):
