@@ -33,7 +33,7 @@ class SaleOrderVts(models.Model):
 
     # Set False value on invoice's fiscal position if it's Big Commerce Order
     def _create_invoices(self, grouped=False, final=False, date=None):
-        moves = super(grouped, final, date)
+        moves = super()._create_invoices(grouped=grouped, final=final, date=date)
         for move in moves:
             if move.line_ids.mapped("sale_line_ids.order_id").filtered(
                 lambda s: s.big_commerce_order_id
