@@ -1,20 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="paperformat_quotation_sale_report" model="report.paperformat">
-        <field name="name">Sale/Quotation Report</field>
-        <field name="default" eval="False" />
-        <field name="disable_shrinking" eval="True" />
-        <field name="format">A4</field>
-        <field name="orientation">Portrait</field>
-        <field name="header_spacing">35</field>
-        <field name="margin_top">40</field>
-        <field name="margin_bottom">15</field>
-        <field name="margin_left">7</field>
-        <field name="margin_right">7</field>
-        <field name="header_line">False</field>
-        <field name="dpi">115</field>
-    </record>
-
     <template id="report_saleorder_document_extended" inherit_id="sale.report_saleorder_document">
         <xpath expr="//t[@t-call='web.external_layout']" position="attributes">
             <attribute name="t-call">bista_sale.custom_header_footer</attribute>
@@ -125,7 +110,7 @@
                     <span t-else="" t-field="line.product_uom_qty" />
                 </td>
                 <td name="td_uom" class="text-right">
-                    <span style="text-decoration: line-through;" t-field="line.price_unit" t-options='{"widget": "monetary"}' />
+                    <span t-att-style="'text-decoration: line-through;' if line.discount else ''" t-field="line.price_unit" t-options='{"widget": "monetary"}' />
                 </td>
                 <td name="td_priceunit" class="text-right">
                     <span t-field="line.discounted_price" t-options='{"widget": "monetary"}' />
@@ -148,27 +133,22 @@
             <div class="clearfix row" name="so_total_summary" style="page-break-inside: avoid;">
                 <div class="col-6" />
                 <div class="col-6">
+                    <t t-set="shipping_charge" t-value="sum([line.price_total for line in doc.order_line if line.is_delivery])" />
                     <table style="width: 100%;">
                         <tr>
                             <td class="text-right">Subtotal:</td>
-                            <td class="text-right" style="padding: 0px 5px;"><span t-field="doc.amount_untaxed" /></td>
+                            <td class="text-right" style="padding: 0px 5px;">
+                                <span t-out="doc.amount_untaxed - shipping_charge" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
+                            </td>
                         </tr>
-                        <tr>
+                        <tr t-if="doc.amount_tax">
                             <td class="text-right">Tax:</td>
                             <td class="text-right" style="padding: 0px 5px;"><span t-field="doc.amount_tax" /></td>
                         </tr>
-                        <tr>
-                            <td class="text-right">
-                                Shipping<span t-if="doc.carrier_id" t-out=" (doc.carrier_id.name)" />:
-                            </td>
+                        <tr t-if="doc.carrier_id">
+                            <td class="text-right">Shipping (<span t-field="doc.carrier_id" />):</td>
                             <td class="text-right" style="padding: 0px 5px;">
-                                <span t-out="sum([line.price_total for line in doc.order_line if line.is_delivery])" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-right">Discount:</td>
-                            <td class="text-right" style="padding: 0px 5px;">
-                                <span t-out="int(0)" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
+                                <span t-out="shipping_charge" t-options='{"widget": "monetary", "display_currency": doc.currency_id}' />
                             </td>
                         </tr>
                         <tr>
@@ -307,13 +287,13 @@
         <field name="print_report_name">
             (object.state in ('draft','sent','quote_approval','quote_confirm') and 'Quotation - %s' % (object.name) or
             'Order - %s' % (object.name))</field>
-        <field name="paperformat_id" ref="bista_sale.paperformat_quotation_sale_report" />
+        <field name="paperformat_id" ref="base.paperformat_us" />
     </record>
 
     <record id="sale.action_report_pro_forma_invoice" model="ir.actions.report">
         <field name="name">Proforma Invoice</field>
         <field name="print_report_name">'Proforma - %s' % (object.name)</field>
-        <field name="paperformat_id" ref="bista_sale.paperformat_quotation_sale_report" />
+        <field name="paperformat_id" ref="base.paperformat_us" />
     </record>
 
     <record id="action_report_sale_invoice" model="ir.actions.report">
@@ -325,6 +305,6 @@
         <field name="print_report_name">'Invoice - %s' % (object.name)</field>
         <field name="binding_model_id" ref="model_sale_order" />
         <field name="binding_type">report</field>
-        <field name="paperformat_id" ref="bista_sale.paperformat_quotation_sale_report" />
+        <field name="paperformat_id" ref="base.paperformat_us" />
     </record>
 </odoo>
