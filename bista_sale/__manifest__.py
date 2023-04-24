@@ -14,7 +14,7 @@
                 # used total_due field of this module as related field in SO
                 ],
     'assets': {
-        'web.assets_backend': [
+        'web.report_assets_common': [
             'bista_sale/static/src/css/custome_field.css',
         ]
     },

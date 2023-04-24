@@ -5,8 +5,11 @@
     height:25px
 
 }
-
 .bp_text_field_char{
     height:15px
 
+}
+@font-face {
+    font-family: "lora";
+    src: url("/bista_sale/static/src/fonts/Lora-Regular.ttf") format("truetype");
 }
