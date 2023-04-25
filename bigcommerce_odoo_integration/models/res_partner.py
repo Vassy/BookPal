@@ -335,63 +335,106 @@ class ResPartner(models.Model):
                             _("{0} Customer Already There in Bigcommerce With Domain:{1}".format(b[0].name, email)))
 
                 # preparing dict for sending data to bigcommerce
-                partner = c_partner.parent_id if c_partner.parent_id else c_partner
-                parent_address_data = {
-                    "first_name": partner.name,
+                # Improved code to maintain parent and child
+                partner = c_partner
+                partner_address_data = {
+                    "first_name": c_partner.name,
                     "last_name": " ",
-                    "address1": partner.street or '',
-                    "city": partner.city or '',
-                    "state_or_province": "{}".format(partner.state_id and partner.state_id.name or " "),
-                    "postal_code": "{}".format(partner.zip),
-                    "country_code": "{}".format(partner.country_id and partner.country_id.code or " "),
-                    "phone": partner.mobile or partner.phone or "",
+                    "address1": c_partner.street or '',
+                    "city": c_partner.city or '',
+                    "state_or_province": "{}".format(c_partner.state_id.name if c_partner.state_id else " "),
+                    "postal_code": "{}".format(c_partner.zip),
+                    "country_code": "{}".format(c_partner.country_id.code if c_partner.country_id else " "),
+                    "phone": c_partner.mobile or c_partner.phone or "",
                     "address_type": "residential",
                 }
-                address.append(parent_address_data)
-                for child_id in partner.child_ids:
+                address.append(partner_address_data)
+                company_name = c_partner.parent_id.name if c_partner.parent_id.company_type == 'company' else ''
+                for child_id in c_partner.child_ids:
                     if not child_id.name:
                         raise ValidationError("Please Enter the Child Customer Name Before Export to Bigcommerce")
-                    address.append({
+                    child_address_data = {
                         "first_name": child_id.name,
                         "last_name": " ",
                         "address1": child_id.street or '',
                         "city": child_id.city or '',
-                        "state_or_province": "{}".format(child_id.state_id and child_id.state_id.name or " "),
+                        "state_or_province": "{}".format(child_id.state_id.name if child_id.state_id else " "),
                         "postal_code": "{}".format(child_id.zip),
-                        "country_code": "{}".format(child_id.country_id and child_id.country_id.code or " "),
+                        "country_code": "{}".format(child_id.country_id.code if child_id.country_id else " "),
                         "phone": child_id.mobile or child_id.phone or "",
                         "address_type": "residential"
-                    })
+                    }
+                    address.append(child_address_data)
                 res_partner_data = [
                     {
-                        "email": partner.email or '',
-                        "first_name": partner.name,
+                        "email": c_partner.email or '',
+                        "first_name": c_partner.name,
                         "last_name": " ",
-                        "company": c_partner.parent_id.name if c_partner.parent_id and c_partner.parent_id.company_type == 'company' else '',
-                        "phone": "{}".format(c_partner.phone if c_partner.phone else ''),
-                        "tax_exempt_category": partner.tax_exempt_category,
-                        "customer_group_id": int(
-                            c_partner.bigcommerce_customer_group_id and c_partner.bigcommerce_customer_group_id.customer_group_id) or None,
-                        # "addresses": [
-                        #     {
-                        #         "first_name": self.name,
-                        #         "last_name": " ",
-                        #         "address1": self.street or '',
-                        #         "city": self.city or '',
-                        #         "state_or_province": "{}".format(self.state_id and self.state_id.name or " "),
-                        #         "postal_code": "{}".format(self.zip),
-                        #         "country_code": "{}".format(self.country_id and self.country_id.code or " "),
-                        #         "phone": self.mobile or self.phone,
-                        #         "address_type": "residential",
-                        #     }
-                        # ],
+                        "company": company_name,
+                        "phone": "{}".format(c_partner.phone or ''),
+                        "tax_exempt_category": c_partner.tax_exempt_category,
+                        "customer_group_id": int(c_partner.bigcommerce_customer_group_id.customer_group_id) if c_partner.bigcommerce_customer_group_id else None,
                         "addresses": address,
-                        # "authentication": {
-                        #     "force_password_reset": False,
-                        #     "new_password": "santoro_123"
-                        # }
                     }
                 ]
+
+                # partner = c_partner.parent_id if c_partner.parent_id else c_partner
+                # parent_address_data = {
+                #     "first_name": partner.name,
+                #     "last_name": " ",
+                #     "address1": partner.street or '',
+                #     "city": partner.city or '',
+                #     "state_or_province": "{}".format(partner.state_id and partner.state_id.name or " "),
+                #     "postal_code": "{}".format(partner.zip),
+                #     "country_code": "{}".format(partner.country_id and partner.country_id.code or " "),
+                #     "phone": partner.mobile or partner.phone or "",
+                #     "address_type": "residential",
+                # }
+                # address.append(parent_address_data)
+                # for child_id in partner.child_ids:
+                #     if not child_id.name:
+                #         raise ValidationError("Please Enter the Child Customer Name Before Export to Bigcommerce")
+                #     address.append({
+                #         "first_name": child_id.name,
+                #         "last_name": " ",
+                #         "address1": child_id.street or '',
+                #         "city": child_id.city or '',
+                #         "state_or_province": "{}".format(child_id.state_id and child_id.state_id.name or " "),
+                #         "postal_code": "{}".format(child_id.zip),
+                #         "country_code": "{}".format(child_id.country_id and child_id.country_id.code or " "),
+                #         "phone": child_id.mobile or child_id.phone or "",
+                #         "address_type": "residential"
+                #     })
+                # res_partner_data = [
+                #     {
+                #         "email": partner.email or '',
+                #         "first_name": partner.name,
+                #         "last_name": " ",
+                #         "company": c_partner.parent_id.name if c_partner.parent_id and c_partner.parent_id.company_type == 'company' else '',
+                #         "phone": "{}".format(c_partner.phone if c_partner.phone else ''),
+                #         "tax_exempt_category": partner.tax_exempt_category,
+                #         "customer_group_id": int(
+                #             c_partner.bigcommerce_customer_group_id and c_partner.bigcommerce_customer_group_id.customer_group_id) or None,
+                #         # "addresses": [
+                #         #     {
+                #         #         "first_name": self.name,
+                #         #         "last_name": " ",
+                #         #         "address1": self.street or '',
+                #         #         "city": self.city or '',
+                #         #         "state_or_province": "{}".format(self.state_id and self.state_id.name or " "),
+                #         #         "postal_code": "{}".format(self.zip),
+                #         #         "country_code": "{}".format(self.country_id and self.country_id.code or " "),
+                #         #         "phone": self.mobile or self.phone,
+                #         #         "address_type": "residential",
+                #         #     }
+                #         # ],
+                #         "addresses": address,
+                #         # "authentication": {
+                #         #     "force_password_reset": False,
+                #         #     "new_password": "santoro_123"
+                #         # }
+                #     }
+                # ]
 
                 api_url = bc_store_id.bigcommerce_api_url
                 store_id = bc_store_id.bigcommerce_store_hash
