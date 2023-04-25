@@ -102,11 +102,11 @@ class SaleOrderLine(models.Model):
                 # for shortclose qty
                 pickings = line.order_id.picking_ids.filtered(
                     lambda
-                        x: x.picking_type_id.sequence_code == 'OUT' and not
+                        x: x.picking_type_id.sequence_code in ('OUT', 'DS') and not
                     x.backorder_id)
                 backorder_pickings = line.order_id.picking_ids.filtered(
                     lambda
-                        x: x.picking_type_id.sequence_code == 'OUT' and
+                        x: x.picking_type_id.sequence_code in ('OUT', 'DS') and
                            x.backorder_id)
                 pickings |= backorder_pickings
 
@@ -119,12 +119,11 @@ class SaleOrderLine(models.Model):
                 line.qty_shortclose = shortclose_qty
                 line.delivery_value = line.qty_delivered * line.discounted_price
                 line.short_close_value = line.qty_shortclose * line.discounted_price
-                if (abs(line.refund_qty) + line.qty_delivered +
-                    line.qty_shortclose) == line.product_uom_qty or abs(
-                    line.refund_qty) > 0:
+                if (abs(line.remaining_qty) + line.qty_delivered +
+                        line.qty_shortclose == line.product_uom_qty) or (abs(line.refund_qty) > 0):
                     line.qty_shortclose += abs(line.refund_qty)
                     line.short_close_value = line.qty_shortclose * \
-                                             line.discounted_price
+                        line.discounted_price
             else:
                 line.qty_shortclose = 0.0
                 line.delivery_value = line.short_close_value = 0.0
@@ -136,6 +135,9 @@ class SaleOrderLine(models.Model):
             returnqty = self.get_return_quantity()
             rec.remaining_qty = (rec.product_uom_qty - rec.qty_delivered) - rec.qty_shortclose
             rec.pending_value = rec.remaining_qty * rec.discounted_price or 0.0
+            if returnqty:
+                rec.qty_shortclose += rec.remaining_qty
+                rec.remaining_qty = 0.0
             # if rec.qty_delivered + rec.remaining_qty >= rec.product_uom_qty:
             #     rec.order_status = 'pending'
             # if returnqty == abs(rec.refund_qty):
@@ -150,4 +152,3 @@ class SaleOrderLine(models.Model):
             # if rec.qty_delivered == rec.qty_invoiced and (rec.remaining_qty and rec.qty_shortclose):
             #     rec.qty_shortclose += rec.remaining_qty
             #     rec.remaining_qty = 0.0
-
