@@ -207,28 +207,30 @@
     <template id="checkout_bookpal" inherit_id="payment.checkout">
         <t t-foreach="tokens" position="replace" />
         <div class="card" position="before">
-            <h4>Saved payment methods</h4>
-            <div class="card">
+            <h4 t-if="tokens">Saved payment methods</h4>
+            <div class="card" t-if="tokens">
                 <!-- === Tokens === -->
-                <div t-foreach="tokens" t-as="token" name="o_payment_option_card" class="card-body o_payment_option_card">
-                    <label>
-                        <!-- === Radio button === -->
-                        <input name="o_payment_radio"
-                            type="radio"
-                            t-att-checked="token.id == default_payment_option_id"
-                            t-att-data-payment-option-id="token.id"
-                            t-att-data-provider="token.provider"
-                            data-payment-option-type="token" />
-                        <!-- === Token name === -->
-                        <span class="payment_option_name" t-esc="token.name" />
-                        <!-- === "V" check mark === -->
-                        <t t-call="payment.verified_token_checkmark" />
-                    </label>
-                </div>
-                <!-- === Token inline form === -->
-                <div t-attf-id="o_payment_token_inline_form_{{token.id}}"
-                    name="o_payment_inline_form"
-                    class="card-footer d-none" />
+                <t t-foreach="tokens" t-as="token">
+                    <div name="o_payment_option_card" class="card-body o_payment_option_card">
+                        <label>
+                            <!-- === Radio button === -->
+                            <input name="o_payment_radio"
+                                type="radio"
+                                t-att-checked="token.id == default_payment_option_id"
+                                t-att-data-payment-option-id="token.id"
+                                t-att-data-provider="token.provider"
+                                data-payment-option-type="token" />
+                            <!-- === Token name === -->
+                            <span class="payment_option_name" t-esc="token.name" />
+                            <!-- === "V" check mark === -->
+                            <t t-call="payment.verified_token_checkmark" />
+                        </label>
+                    </div>
+                    <!-- === Token inline form === -->
+                    <div t-attf-id="o_payment_token_inline_form_{{token.id}}"
+                        name="o_payment_inline_form"
+                        class="card-footer d-none" />
+                </t>
             </div>
             <h4 class="mt24">Other payment methods</h4>
         </div>
