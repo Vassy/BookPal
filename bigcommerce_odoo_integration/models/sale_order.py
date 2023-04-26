@@ -40,7 +40,6 @@ class SaleOrderVts(models.Model):
                        "X-Auth-Client": "{}".format(bigcommerce_client_seceret),
                        "X-Auth-Token": "{}".format(bigcommerce_x_auth_token),
                        "Content-Type": "application/json"}
-
             url = "%s%s/v3/orders/%s/transactions" % (
                 self.bigcommerce_store_id.bigcommerce_api_url, bigcommerce_store_hash, self.big_commerce_order_id)
             try:
@@ -56,7 +55,6 @@ class SaleOrderVts(models.Model):
                                     'gateway_transaction_id') != 'null' or response_data.get('gateway') == 'custom':
                             self.payment_method = response_data.get(
                                 'payment_method_id')
-                            self.payment_status = 'paid'
                             currency_id = self.env['res.currency'].search(
                                 [('name', '=', response_data.get('currency'))])
                             payment_obj = self.env['account.payment']
@@ -95,6 +93,7 @@ class SaleOrderVts(models.Model):
                             payment = payment_obj.create(payment_vals)
                             # self.account_payment_ids |= payment
                             payment.action_post()
+                            self.payment_status = 'paid'
             except Exception as e:
                 _logger.info("Getting an Error : {}".format(e))
 
