@@ -10,6 +10,11 @@ class PurchaseTracking(models.Model):
     _description = "Purchase Tracking"
     _order = "name"
 
+    def _get_default_carrier(self):
+        return self.env['delivery.carrier'].search(
+            [('name', '=', 'UPS Ground'),
+             ('delivery_type', '=', 'ups')]).id
+
     order_id = fields.Many2one("purchase.order", string="Order")
     name = fields.Char(
         string="Number", required=True, copy=False, default=lambda self: _("New")
@@ -19,7 +24,7 @@ class PurchaseTracking(models.Model):
     date_order = fields.Datetime(related="order_id.date_order")
     picking_type_id = fields.Many2one(related="order_id.picking_type_id")
     dest_address_id = fields.Many2one(related="order_id.dest_address_id")
-    carrier_id = fields.Many2one("delivery.carrier", "Carrier")
+    carrier_id = fields.Many2one("delivery.carrier", "Carrier", default=lambda self: self._get_default_carrier())
     delivery_type = fields.Selection(related="carrier_id.delivery_type")
     shipment_date = fields.Date(string="Shipment Date", tracking=True)
     pro_number = fields.Char("PRO No.", tracking=True)
