@@ -290,15 +290,10 @@ class SaleOrderVts(models.Model):
             _logger.info(">>>>> Getting an Error {}".format(error))
 
     def update_order_payment_status(self):
-        domain = [
-            ('big_commerce_order_id', '!=',
-             False), ('payment_status', '=', 'not_paid'),
-        ]
-        if self.invoice_ids:
-            domain += [
-                ('invoice_ids.payment_state', 'not in', ['paid', 'in_payment'])
-            ]
-        order_ids = self.env['sale.order'].search(domain, order='id desc')
+        order_ids = self.env['sale.order'].search(
+            [('big_commerce_order_id', '!=', False), ('payment_status', '=', 'not_paid'),
+             '|', ('invoice_ids', '=', False), ('invoice_ids.payment_state', 'not in', ['paid', 'in_payment']),
+             ], order='id desc')
         for order in order_ids:
             try:
                 _logger.info("ORDER : {}".format(order.name))
@@ -746,60 +741,63 @@ class SaleOrderVts(models.Model):
         shipping_address_api_respons = \
             self.bigcommerce_shipping_address_api_method(
                 order, bigcommerce_store_id)
-        shipping_partner_state = shipping_address_api_respons.get(
-            'state') or ''  # change the state
-        shipping_partner_country = shipping_address_api_respons.get(
-            'country') or ''  # chnage the country
-        state_id = self.env['res.country.state'].search([('name', '=', shipping_partner_state)],
+        if shipping_address_api_respons:
+            shipping_partner_state = shipping_address_api_respons.get(
+                'state') or ''  # change the state
+            shipping_partner_country = shipping_address_api_respons.get(
+                'country') or ''  # chnage the country
+            state_id = self.env['res.country.state'].search([('name', '=', shipping_partner_state)],
+                                                            limit=1)
+            country_id = self.env['res.country'].search([('name', '=', shipping_partner_country)],
                                                         limit=1)
-        country_id = self.env['res.country'].search([('name', '=', shipping_partner_country)],
-                                                    limit=1)
-        # add address field here
-        shipping_partner_first_name = shipping_address_api_respons.get(
-            'first_name')
-        shipping_partner_last_name = shipping_address_api_respons.get(
-            'last_name')
-        shipping_partner_company = shipping_address_api_respons.get('company')
-        shipping_partner_name = "%s %s" % (
-            shipping_partner_first_name, shipping_partner_last_name)
-        shipping_partner_street_1 = shipping_address_api_respons.get(
-            'street_1')
-        shipping_partner_street_2 = shipping_address_api_respons.get(
-            'street_2')
-        shipping_partner_city = shipping_address_api_respons.get('city')
-        shipping_partner_zip = shipping_address_api_respons.get('zip')
-        shipping_partner_email = shipping_address_api_respons.get('email')
-        shipping_partner_phone = shipping_address_api_respons.get('phone')
-        # search partner according country zipcode , email , name, street1
-        partner_shipping_id = self.env['res.partner'].sudo().search(
-            [('street', '=', shipping_partner_street_1), ('zip', '=', shipping_partner_zip),
-             ('email', '=', shipping_partner_email), ('country_id', '=', country_id.id)], limit=1)
-        res_partner_vals = {
-            'name': shipping_partner_name,
-            'bc_companyname': shipping_partner_company,
-            'phone': shipping_partner_phone,
-            'email': shipping_partner_email,
-            'street': shipping_partner_street_1,
-            'street2': shipping_partner_street_2,
-            'city': shipping_partner_city,
-            'zip': shipping_partner_zip,
-            'state_id': state_id.id,
-            'type': 'delivery',
-            'parent_id': partner_id.id,
-            'country_id': country_id.id,
-            'bigcommerce_store_id': bigcommerce_store_id.id,
-            'is_available_in_bigcommerce': True,
-        }
-        if partner_shipping_id and self.partner_shipping_id.id != partner_shipping_id.id:
-            self.partner_shipping_id = partner_shipping_id.id
-        if not partner_shipping_id:
-            _logger.info(">>> creating new partner ")
-            partner_shipping_id = self.env['res.partner'].sudo().create(
-                res_partner_vals)
-            _logger.info(">>> successfully create shipping partner {}".format(
-                shipping_partner_first_name))
-            self._cr.commit()
-        return partner_shipping_id
+            # add address field here
+            shipping_partner_first_name = shipping_address_api_respons.get(
+                'first_name')
+            shipping_partner_last_name = shipping_address_api_respons.get(
+                'last_name')
+            shipping_partner_company = shipping_address_api_respons.get('company')
+            shipping_partner_name = "%s %s" % (
+                shipping_partner_first_name, shipping_partner_last_name)
+            shipping_partner_street_1 = shipping_address_api_respons.get(
+                'street_1')
+            shipping_partner_street_2 = shipping_address_api_respons.get(
+                'street_2')
+            shipping_partner_city = shipping_address_api_respons.get('city')
+            shipping_partner_zip = shipping_address_api_respons.get('zip')
+            shipping_partner_email = shipping_address_api_respons.get('email')
+            shipping_partner_phone = shipping_address_api_respons.get('phone')
+            # search partner according country zipcode , email , name, street1
+            partner_shipping_id = self.env['res.partner'].sudo().search(
+                [('street', '=', shipping_partner_street_1), ('zip', '=', shipping_partner_zip),
+                 ('email', '=', shipping_partner_email), ('country_id', '=', country_id.id)], limit=1)
+            res_partner_vals = {
+                'name': shipping_partner_name,
+                'bc_companyname': shipping_partner_company,
+                'phone': shipping_partner_phone,
+                'email': shipping_partner_email,
+                'street': shipping_partner_street_1,
+                'street2': shipping_partner_street_2,
+                'city': shipping_partner_city,
+                'zip': shipping_partner_zip,
+                'state_id': state_id.id,
+                'type': 'delivery',
+                'parent_id': partner_id.id,
+                'country_id': country_id.id,
+                'bigcommerce_store_id': bigcommerce_store_id.id,
+                'is_available_in_bigcommerce': True,
+            }
+            if partner_shipping_id and self.partner_shipping_id.id != partner_shipping_id.id:
+                self.partner_shipping_id = partner_shipping_id.id
+            if not partner_shipping_id:
+                _logger.info(">>> creating new partner ")
+                partner_shipping_id = self.env['res.partner'].sudo().create(
+                    res_partner_vals)
+                _logger.info(">>> successfully create shipping partner {}".format(
+                    shipping_partner_first_name))
+                self._cr.commit()
+            return partner_shipping_id
+        else:
+            return False
 
     def update_order_from_bc_to_odoo(self):
         """Update or import single order."""
@@ -831,10 +829,12 @@ class SaleOrderVts(models.Model):
                     bigcommerce_shipping_address_api_method(
                         order,
                         bigcommerce_store_id)
-                shipping_method = shipping_address_api_respons.get(
-                    'shipping_method')
-                base_shipping_cost = shipping_address_api_respons.get(
-                    'base_cost')
+                base_shipping_cost = 0.0
+                if shipping_address_api_respons:
+                    shipping_method = shipping_address_api_respons.get(
+                        'shipping_method')
+                    base_shipping_cost = shipping_address_api_respons.get(
+                        'base_cost')
                 date_time_str = str(parse(order.get('date_created')))[:19]
                 customerId = order.get('customer_id')
                 customerEmail = order.get(
@@ -909,7 +909,8 @@ class SaleOrderVts(models.Model):
                     'partner_id': self.partner_id.id,
                     'partner_invoice_id': partner_billing_id.id if
                     partner_billing_id else self.partner_id.id,
-                    'partner_shipping_id': partner_shipping_id.id,
+                    'partner_shipping_id': partner_shipping_id.id if
+                    partner_shipping_id else self.partner_id.id,
                     'date_order': date_time_str or today_date,
                     'bc_order_date': date_time_str or today_date,
                     'company_id': self.company_id and self.company_id.id or
@@ -1500,18 +1501,20 @@ class SaleOrderVts(models.Model):
         if self.partner_id.email:
             billing_add.update({"email": "{}".format(
                 self.partner_id and self.partner_id.email or "")})
-        shipping_add = {
-            "id": "{}".format(shipping_address_api_response.get('id')),
-            "first_name": "{}".format(self.partner_shipping_id.name or ""),
-            "street_1": "{}".format(self.partner_shipping_id.street or ""),
-            "street_2": "{}".format(self.partner_shipping_id.street2 or ""),
-            "city": "{}".format(self.partner_shipping_id.city or ""),
-            "state": "{}".format(
-                self.partner_shipping_id.state_id and self.partner_shipping_id.state_id.name or ""),
-            "zip": "{}".format(self.partner_shipping_id.zip),
-            "country": "{}".format(
-                self.partner_shipping_id.country_id and self.partner_shipping_id.country_id.name),
-        }
+        shipping_add = {}
+        if shipping_address_api_response:
+            shipping_add = {
+                "id": "{}".format(shipping_address_api_response.get('id')),
+                "first_name": "{}".format(self.partner_shipping_id.name or ""),
+                "street_1": "{}".format(self.partner_shipping_id.street or ""),
+                "street_2": "{}".format(self.partner_shipping_id.street2 or ""),
+                "city": "{}".format(self.partner_shipping_id.city or ""),
+                "state": "{}".format(
+                    self.partner_shipping_id.state_id and self.partner_shipping_id.state_id.name or ""),
+                "zip": "{}".format(self.partner_shipping_id.zip),
+                "country": "{}".format(
+                    self.partner_shipping_id.country_id and self.partner_shipping_id.country_id.name),
+            }
         if self.partner_shipping_id.email:
             shipping_add.update(
                 {"email": "{}".format(self.partner_shipping_id.email)})

@@ -216,6 +216,7 @@ class SaleOrderVts(models.Model):
         except Exception as error:
             _logger.info(">>>>> Getting an Error {}".format(error))
 
+
     def create_product_order_line(
             self, order, bigcommerce_store_id, order_id,
             operation_id, warehouse_id, req_data):
@@ -451,11 +452,11 @@ class SaleOrderVts(models.Model):
                                 order,
                                 bigcommerce_store_id,
                                 partner_obj)
-
-                        _logger.info(
-                            ">>> successfully create shipping"
-                            " partner {}".format(
-                                partner_shipping_id.name))
+                        if partner_shipping_id:
+                            _logger.info(
+                                ">>> successfully create shipping"
+                                " partner {}".format(
+                                    partner_shipping_id.name))
                         self._cr.commit()
                         pricelist_id = self.env['product.pricelist'].\
                             search([('currency_id.name',
@@ -471,9 +472,11 @@ class SaleOrderVts(models.Model):
                                 order.get('currency_code'),
                                 pricelist_id))
                         vals = {}
-                        base_shipping_cost = \
-                            shipping_address_api_respons.get(
-                                'base_cost', 0.0)
+                        base_shipping_cost = 0.0
+                        if shipping_address_api_respons:
+                            base_shipping_cost = \
+                                shipping_address_api_respons.get(
+                                    'base_cost', 0.0)
                         currency_id = self.env['res.currency'].search(
                             [('name', '=',
                               order.get('currency_code'))], limit=1)
@@ -483,7 +486,7 @@ class SaleOrderVts(models.Model):
                             'partner_invoice_id': partner_billing_id.id if
                             partner_billing_id else partner_obj.id,
                             'partner_shipping_id':
-                            partner_shipping_id.id,
+                            partner_shipping_id.id if partner_shipping_id else partner_obj.id,
                             # chnage value shipping_id
                             'date_order': date_time_str or today_date,
                             'bc_order_date': date_time_str or
