@@ -290,9 +290,15 @@ class SaleOrderVts(models.Model):
             _logger.info(">>>>> Getting an Error {}".format(error))
 
     def update_order_payment_status(self):
-        order_ids = self.env['sale.order'].search(
-            [('big_commerce_order_id', '!=', False), ('payment_status', '=', 'not_paid'),
-             ('invoice_ids.payment_state', 'not in', ['paid', 'in_payment'])], order='id desc')
+        domain = [
+            ('big_commerce_order_id', '!=',
+             False), ('payment_status', '=', 'not_paid'),
+        ]
+        if self.invoice_ids:
+            domain += [
+                ('invoice_ids.payment_state', 'not in', ['paid', 'in_payment'])
+            ]
+        order_ids = self.env['sale.order'].search(domain, order='id desc')
         for order in order_ids:
             try:
                 _logger.info("ORDER : {}".format(order.name))
