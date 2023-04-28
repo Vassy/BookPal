@@ -346,6 +346,9 @@ class DocumentsDocument(models.Model):
         }
 
         tracking = self.env['purchase.tracking'].create(purchase_tracking_vals)
+
+        purchase_order.has_tracking_made_by_automation = True
+
         attached_document = document.attachment_id.copy({
             'res_id': tracking.order_id.id,
             'res_model': 'purchase.order',

@@ -24,6 +24,7 @@
         'views/res_partner_view.xml',
         'views/azure_log_view.xml',
         'views/purchase_tracking_details_view.xml',
+        'views/purchase_search.xml',
     ],
     "auto_install": False,
     "application": True,
