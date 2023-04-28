@@ -202,6 +202,9 @@
         </xpath>
         <xpath expr="//div[hasclass('o_portal_sale_sidebar')]//li[@t-if='sale_order.amount_undiscounted - sale_order.amount_untaxed &gt; 0.01']//t[@t-if='sale_order.amount_untaxed == sale_order.amount_total']" position="replace"/>
         <xpath expr="//div[hasclass('o_portal_sale_sidebar')]//li[@t-if='sale_order.amount_undiscounted - sale_order.amount_untaxed &gt; 0.01']//t[@t-else='']" position="replace"/>
+        <xpath expr="//div[hasclass('modal-dialog')][2]//b[@data-id='total_amount']" position="before">
+            <b>US</b>
+        </xpath>
     </template>
 
     <template id="checkout_bookpal" inherit_id="payment.checkout">
