@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_average_process_tree" model="ir.ui.view">
+        <field name="name">Average.process.tree</field>
+        <field name="model">purchase.order</field>
+        <field name="arch" type="xml">
+            <tree create="0">
+                <field name="name" />
+                <field name="partner_id" readonly="1" />
+                <field name="user_id" widget="many2one_avatar_user" />
+                <field name="date_order" readonly="1" widget="date" />
+                <field name="origin" />
+                <field name="date_planned" widget="date" />
+                <field name="date_approve" widget="date" />
+                <field name="sale_order_date" widget="date" />
+                <field name="order_process_time" />
+                <field name="amount_total" />
+                <field name="state" widget="badge" decoration-success="state in ('purchase', 'done')" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_average_process_pivot" model="ir.ui.view">
+        <field name="name">Average.process.pivot</field>
+        <field name="model">purchase.order</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="name" type="row" />
+                <field name="process_time" string="Order Processing Time" type="measure" />
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_average_process_search" model="ir.ui.view">
+        <field name="name">report.purchase.order.search</field>
+        <field name="model">purchase.order</field>
+        <field name="arch" type="xml">
+            <search string="Purchase Orders">
+                <field name="partner_id" />
+                <group expand="1" string="Group By">
+                    <filter string="Vendor" name="group_partner_id" context="{'group_by':'partner_id'}" />
+                    <separator />
+                    <filter string="Order Date" name="order_month" context="{'group_by': 'date_order:month'}" />
+                    <filter string="Confirmation Date" name="group_date_approve_month" context="{'group_by': 'date_approve:month'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_average_process_report" model="ir.actions.act_window">
+        <field name="name">Average Processing Time</field>
+        <field name="res_model">purchase.order</field>
+        <field name="view_mode">tree</field>
+        <field name="search_view_id" ref="view_average_process_search" />
+        <field name="domain">[("state", "in", ("purchase", "done"))]</field>
+    </record>
+
+    <record id="action_average_process_report_tree" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_average_process_tree"/>
+        <field name="act_window_id" ref="action_average_process_report"/>
+    </record>
+
+    <record id="action_average_process_report_pivot" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">pivot</field>
+        <field name="view_id" ref="view_average_process_pivot"/>
+        <field name="act_window_id" ref="action_average_process_report"/>
+    </record>
+
+    <menuitem id="average_process_report" name="Average Processing Time" parent="purchase.purchase_report_main" sequence="99" groups="purchase.group_purchase_manager" action="action_average_process_report" />
+</odoo>

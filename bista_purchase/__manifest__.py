@@ -17,6 +17,7 @@
         'report/purchase_quotation.xml',
         'report/account_move.xml',
         'report/stock_picking.xml',
+        "report/purchase_report.xml",
 
         'data/email_schdule_activity.xml',
         'data/email_template.xml',

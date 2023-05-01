@@ -104,18 +104,11 @@
                             <field name="clock_override_reason" />
                         </group>
                     </group>
-                    <group class="o_row">
+                    <group>
                         <group>
                             <field name="lead_time" no_label="1"/>
-                        </group>
-                        <span class="oe_read_only">Days</span>
-                    </group>
-                    <br/>
-                    <group class="o_row">
-                        <group>
                             <field name="order_process_time" no_label="1"/>
                         </group>
-                        <span class="oe_read_only">Days</span>
                     </group>
                 </page>
                 <page name="review_order_notes_and_requirements" string="Review Order Notes and Requirements">

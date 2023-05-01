@@ -22,7 +22,7 @@
                     <!-- Register Payment (only invoices / receipts) -->
                     <button name="action_invoice_open" type="object" string="Validate" class="oe_highlight"
                         attrs="{'invisible':['|',('state','!=','draft'),('inv_confirm_check', '=', True)]}"
-                        confirm="Are you sure want you want to Validate the Invoice ?"
+                        confirm="Are you sure you want to Validate the Invoice?"
                         groups="account.group_account_invoice" help="Validate invoice to Post this invoice" />
                     <button name="action_credit_review" type="object" string="Validate" class="oe_highlight"
                         confirm="Invoice has been placed for review by accounting. Invoice will be validated when reviewed!"
