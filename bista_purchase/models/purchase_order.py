@@ -88,7 +88,7 @@ class PurchaseOrder(models.Model):
         'purchase.tracking', 'order_id', string="Purchase Tracking")
     lead_time = fields.Integer(compute="compute_lead_time", string="Lead Time")
     order_process_time = fields.Integer(
-        compute="compute_order_process_time", string="Order Processing Time")
+        compute="_compute_order_process_time", string="Order Processing Time", store=True)
     purchase_approval_log_ids = fields.One2many("purchase.approval.log", "order_id")
     state = fields.Selection(selection_add=AddState)
     is_email_sent = fields.Boolean(string="Email Sent", default=False)
@@ -96,6 +96,7 @@ class PurchaseOrder(models.Model):
     need_by_date = fields.Datetime(string="SO Need By Date", compute="_compute_need_by_date")
     date_planned = fields.Datetime(string="MAB Date")
     invoice_status = fields.Selection(selection_add=[('partial', 'Partially Billed')])
+    sale_order_date = fields.Datetime("Sales Order Date", compute="_compute_sale_order_date", store=True)
 
     @api.depends('state', 'order_line.qty_to_invoice', 'order_line.qty_to_invoice', 'order_line.qty_received')
     def _get_invoiced(self):
@@ -356,20 +357,20 @@ class PurchaseOrder(models.Model):
             if rec.date_approve and max_date:
                 rec.lead_time = (max_date[0].date() - rec.date_approve.date()).days
 
-    def compute_order_process_time(self):
-        for rec in self:
-            process_time = 0
-            ship_ids = rec.sale_order_ids.sale_multi_ship_qty_lines
-            if rec.sale_order_ids.split_shipment and rec.date_approve and ship_ids:
-                confirm_ids = ship_ids.filtered(lambda m: m.confirm_date)
-                if confirm_ids:
-                    min_date = min(confirm_ids.mapped("confirm_date"))
-                    process_time = (rec.date_approve.date() - min_date.date()).days
-            elif rec.sale_order_ids.date_order and rec.date_approve:
-                process_time = (
-                    rec.date_approve.date() - rec.sale_order_ids.date_order.date()
+    @api.depends("sale_order_ids", "sale_order_ids.date_order")
+    def _compute_sale_order_date(self):
+        for po in self:
+            po.sale_order_date = po.sale_order_ids and po.sale_order_ids[0].date_order
+
+    @api.depends("sale_order_date", "date_approve")
+    def _compute_order_process_time(self):
+        for po in self:
+            if po.sale_order_date and po.date_approve:
+                po.order_process_time = (
+                    po.date_approve.date() - po.sale_order_date.date()
                 ).days
-            rec.order_process_time = process_time
+            else:
+                po.order_process_time = 0
 
     def action_send_for_approval(self):
         for rec in self:
