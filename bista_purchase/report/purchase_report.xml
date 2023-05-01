@@ -2,41 +2,42 @@
 <odoo>
     <record id="view_average_process_tree" model="ir.ui.view">
         <field name="name">Average.process.tree</field>
-        <field name="model">purchase.report</field>
+        <field name="model">purchase.order</field>
         <field name="arch" type="xml">
-            <tree>
-                <field name="order_id" />
-                <field name="partner_id" />
-                <field name="date_order" widget="date" />
+            <tree create="0">
+                <field name="name" />
+                <field name="partner_id" readonly="1" />
+                <field name="user_id" widget="many2one_avatar_user" />
+                <field name="date_order" readonly="1" widget="date" />
+                <field name="origin" />
                 <field name="date_planned" widget="date" />
                 <field name="date_approve" widget="date" />
                 <field name="sale_order_date" widget="date" />
                 <field name="order_process_time" />
+                <field name="amount_total" />
+                <field name="state" widget="badge" decoration-success="state in ('purchase', 'done')" />
             </tree>
         </field>
     </record>
 
     <record id="view_average_process_pivot" model="ir.ui.view">
         <field name="name">Average.process.pivot</field>
-        <field name="model">purchase.report</field>
+        <field name="model">purchase.order</field>
         <field name="arch" type="xml">
             <pivot>
-                <field name="partner_id" type="row" />
-                <field name="order_id" type="row" />
-                <field name="order_process_time" type="measure" />
+                <field name="name" type="row" />
+                <field name="process_time" string="Order Processing Time" type="measure" />
             </pivot>
         </field>
     </record>
 
     <record id="view_average_process_search" model="ir.ui.view">
         <field name="name">report.purchase.order.search</field>
-        <field name="model">purchase.report</field>
+        <field name="model">purchase.order</field>
         <field name="arch" type="xml">
             <search string="Purchase Orders">
-                <field name="order_id" />
                 <field name="partner_id" />
                 <group expand="1" string="Group By">
-                    <filter string="Order" name="group_order_id" context="{'group_by': 'order_id'}" />
                     <filter string="Vendor" name="group_partner_id" context="{'group_by':'partner_id'}" />
                     <separator />
                     <filter string="Order Date" name="order_month" context="{'group_by': 'date_order:month'}" />
@@ -48,11 +49,10 @@
 
     <record id="action_average_process_report" model="ir.actions.act_window">
         <field name="name">Average Processing Time</field>
-        <field name="res_model">purchase.report</field>
-        <field name="view_mode">tree,pivot</field>
+        <field name="res_model">purchase.order</field>
+        <field name="view_mode">tree</field>
         <field name="search_view_id" ref="view_average_process_search" />
         <field name="domain">[("state", "in", ("purchase", "done"))]</field>
-        <field name="context">{'search_default_group_order_id': 1}</field>
     </record>
 
     <record id="action_average_process_report_tree" model="ir.actions.act_window.view">
