@@ -9,5 +9,4 @@ from . import stock_move
 from . import account_move
 from . import purchase_order
 from . import purchase_approval_log
-from . import purchase_report
 # from . import fetchmail_server
