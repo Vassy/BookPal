@@ -935,6 +935,8 @@ class SaleOrderVts(models.Model):
                     'bigcommerce_shipment_order_status': order.get('status'),
                     'currency_id': self.currency_id.id
                 })
+                if order_vals.get('order_line'):
+                    order_vals.pop('order_line')
                 try:
                     self.write(order_vals)
                 except Exception as e:
