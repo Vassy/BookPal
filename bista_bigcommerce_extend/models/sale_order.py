@@ -637,7 +637,8 @@ class SaleOrderVts(models.Model):
             sale_order_line = self.env['sale.order.line'].search(
                 [('order_id', '=', order_id.id),
                  ('product_id', '=', product_id.id),
-                 ('product_uom_qty', '=', float(vals.get('order_qty')))])
+                 # ('product_uom_qty', '=', float(vals.get('order_qty')))
+                 ])
             order_line_vals = self.create_sale_order_line_from_bigcommerce(
                 vals)
             if not sale_order_line:
