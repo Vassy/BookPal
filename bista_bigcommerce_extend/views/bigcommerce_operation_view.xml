@@ -12,5 +12,15 @@
                 </xpath>
             </field>
         </record>
+        <record id="bigcommerce_operation_import_form_view_extend" model="ir.ui.view">
+            <field name="name">BigCommerce Import Operation Extend</field>
+            <field name="model">bigcommerce.import.operation</field>
+            <field name="inherit_id" ref="bigcommerce_odoo_integration.bigcommerce_operation_import_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='run_cron_manually']" position="attributes">
+                    <attribute name="string">Manually Run Cron</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

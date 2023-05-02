@@ -300,7 +300,7 @@
                                         </div>
                                         <div class="text-muted">
                                             <b>
-                                                <field name="bigcommerce_order_status_ids" widget="many2many_tags" required="1"/>
+                                                <field name="bigcommerce_order_status_ids" widget="many2many_tags" required="1" options="{'no_create': True}"/>
                                             </b>
                                         </div>
                                     </div>
