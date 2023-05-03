@@ -21,7 +21,8 @@ class SaleOrderReportWiz(models.TransientModel):
         """Generate sale order status report."""
         domain = [
             ('display_type', '=', False),
-            ('product_id.detailed_type', 'in', ['consu', 'product'])]
+            ('product_id.detailed_type', 'in', ['consu', 'product']),
+            ('order_id.state', '!=', 'cancel')]
         if self.from_date and self.to_date:
             from_date = str(self.from_date) + ' ' + str(
                 datetime.timedelta(hours=0, minutes=0, seconds=0))
