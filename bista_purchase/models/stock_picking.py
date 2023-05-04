@@ -35,6 +35,7 @@ class StockPicking(models.Model):
             compose_form_id = self.env.ref("mail.email_compose_message_wizard_form").id
         except ValueError:
             compose_form_id = False
+        partner_ids = self.shipping_partner_id or self.partner_id
         ctx.update(
             {
                 "default_model": "stock.picking",
@@ -44,7 +45,7 @@ class StockPicking(models.Model):
                 "default_use_template": bool(template_id.id),
                 "default_template_id": template_id.id,
                 "default_composition_mode": "comment",
-                "default_partner_ids": self.partner_id.ids,
+                "default_partner_ids": partner_ids.ids,
                 "custom_layout": "mail.mail_notification_paynow",
                 "force_email": True,
             }
