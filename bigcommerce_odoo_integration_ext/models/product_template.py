@@ -577,7 +577,7 @@ class ProductTemplateExtend(models.Model):
             pricerule_response_data = bigcommerce_store_id. \
                 send_get_request_from_odoo_to_bigcommerce(
                 bulk_pricing_rule_api_operation)
-            if pricerule_response_data.status_code in [200, 201]:
+            if pricerule_response_data and pricerule_response_data.status_code in [200, 201]:
                 pricerule_response_data = pricerule_response_data.json()
                 if len(pricerule_response_data.get('data')) > 1:
                     _logger.info("Price Rule Response Data : {0}".format(
@@ -634,7 +634,7 @@ class ProductTemplateExtend(models.Model):
                     send_get_request_from_odoo_to_bigcommerce(
                     bulk_pricing_rule_api_operation)
             pricelist_item_obj = self.env['product.pricelist.item']
-            if pricerule_response_data.status_code in \
+            if pricerule_response_data and pricerule_response_data.status_code in \
                     [200, 201]:
                 pricerule_response_data = \
                     pricerule_response_data.json()
