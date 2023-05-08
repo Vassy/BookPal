@@ -23,6 +23,7 @@
         'data/email_template_data.xml',
         "report/report_header_footer_views.xml",
         'report/sale.xml',
+        'report/so_delivery_report.xml',
         'security/ir.model.access.csv',
         'security/security_view.xml',
         'views/mail_wizard_invite.xml',
