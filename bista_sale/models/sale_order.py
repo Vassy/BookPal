@@ -110,6 +110,15 @@ class SaleOrder(models.Model):
     shipping_quote_docs = fields.Char()
     share_link = fields.Char(string="Link", compute='_compute_share_link')
     button_name = fields.Char(compute='_compute_button_name')
+    is_ontime = fields.Selection([('yes', 'Yes'), ('no', 'Delayed')],
+                                 compute="_compute_order_process_time",
+                                 string="On time", store=True, compute_sudo=True)
+    order_delivery_time = fields.Char(
+        compute="_compute_order_process_time", string="Order Delivery Time", store=True
+    )
+    last_delivery_date = fields.Date(compute="_compute_last_del_date",
+                                     store=True, compute_sudo=True)
+    delivery_time = fields.Integer(compute="_compute_order_process_time", store=True)
 
     def _find_mail_template(self, force_confirmation_template=False):
         template_id = super()._find_mail_template(force_confirmation_template)
@@ -118,6 +127,40 @@ class SaleOrder(models.Model):
                 "sale.email_template_edi_sale", raise_if_not_found=False
             )
         return template_id
+
+    @api.depends("picking_ids", "picking_ids.date_done")
+    def _compute_last_del_date(self):
+        for rec in self:
+            last_delivery_date_new = False
+            last_delivery_date_list = []
+            for picking in rec.picking_ids:
+                last_delivery_date = picking.date_done
+                if last_delivery_date:
+                    last_delivery_date_list.append(last_delivery_date.date().strftime('%Y-%m-%d'))
+            if len(last_delivery_date_list) >= 1:
+                last_delivery_date_new = max(last_delivery_date_list)
+            rec.last_delivery_date = last_delivery_date_new
+
+
+    @api.depends("commitment_date", "last_delivery_date")
+    def _compute_order_process_time(self):
+        for rec in self:
+            rec.order_delivery_time = "0 days"
+            if rec.last_delivery_date and rec.commitment_date:
+                if rec.last_delivery_date < rec.commitment_date.date():
+                    rec.order_delivery_time = "-" + str(
+                        (rec.commitment_date.date() - rec.last_delivery_date).days
+                    ) + " Days"
+                    rec.is_ontime = 'yes'
+                    rec.delivery_time = (
+                        rec.last_delivery_date - rec.commitment_date.date()).days
+                if rec.last_delivery_date > rec.commitment_date.date():
+                    rec.order_delivery_time = str(
+                        (rec.last_delivery_date - rec.commitment_date.date()).days
+                    ) + " Days"
+                    rec.is_ontime = 'no'
+                    rec.delivery_time = (
+                        rec.last_delivery_date - rec.commitment_date.date()).days
 
     def _compute_share_link(self):
         for rec in self:
