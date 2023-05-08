@@ -127,7 +127,7 @@ class PurchaseOrder(models.Model):
     def _compute_need_by_date(self):
         for purchase in self:
             if purchase.sale_order_ids:
-                purchase.need_by_date = purchase.sale_order_ids.commitment_date
+                purchase.need_by_date = purchase.sale_order_ids[0].commitment_date
             else:
                 purchase.need_by_date = False
 

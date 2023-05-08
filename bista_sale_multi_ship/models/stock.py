@@ -7,11 +7,10 @@
 ##############################################################################
 
 from datetime import timedelta
-# from collections import defaultdict
+from dateutil.relativedelta import relativedelta
 from itertools import groupby
 
 from odoo import _, api, fields, models
-# from odoo.addons.stock.models.stock_rule import ProcurementException
 from odoo.exceptions import ValidationError
 from odoo.tools import float_compare
 
@@ -108,44 +107,32 @@ class StockRule(models.Model):
         return res
 
     def _make_po_get_domain(self, company_id, values, partner):
-    #     """Override method to update partner as per sale or shipment."""
-        if values.get('ship_line'):
-            if values.get('ship_line').supplier_id:
-                partner = values.get('ship_line').supplier_id
-        elif not values.get('ship_line') and values.get('sale_line_id'):
-            sale_line_id = self.env['sale.order.line'].browse(
-                values.get('sale_line_id'))
+        """Override method to update partner as per sale or shipment."""
+        if values.get("ship_line"):
+            if values.get("ship_line").supplier_id:
+                partner = values.get("ship_line").supplier_id
+        elif not values.get("ship_line") and values.get("sale_line_id"):
+            sale_line_id = self.env["sale.order.line"].browse(
+                values.get("sale_line_id")
+            )
             if sale_line_id.supplier_id:
                 partner = sale_line_id.supplier_id
-        dom = super(StockRule, self)._make_po_get_domain(
-            company_id, values, partner)
-        if values.get('ship_line'):
-            dom += (('dest_address_id', '=',
-                     values.get('ship_line').partner_id.id),)
-        if values.get('ship_line') and \
-           values.get('ship_line').route_id.name == 'Dropship':
+        dom = super()._make_po_get_domain(company_id, values, partner)
+        if values.get("ship_line"):
+            dom += (("dest_address_id", "=", values.get("ship_line").partner_id.id),)
+        if (
+            values.get("ship_line")
+            and values.get("ship_line").route_id.name == "Dropship"
+        ):
             shipping_date = fields.Datetime.to_string(
-                values.get('ship_line').shipping_date)
-            dom += (('date_order', '=', shipping_date),)
-        dom += (("date_order", "=", values.get("date_planned")),)
+                values.get("ship_line").shipping_date
+            )
+            dom += (("date_order", "=", shipping_date),)
+        purchase_date = values.get("date_planned") - relativedelta(
+            days=values.get("supplier").delay
+        )
+        dom += (("date_order", "=", purchase_date),)
         return dom
-
-    # def _make_po_get_domain(self, company_id, values, partner):
-    #     """Override method to update partner as per sale or shipment."""
-    #     if values.get('supplier_id'):
-    #         partner = values.get('supplier_id')
-    #     dom = super(StockRule, self)._make_po_get_domain(
-    #         company_id, values, partner)
-    #     if values.get('ship_line'):
-    #         dom += (('dest_address_id', '=',
-    #                  values.get('ship_line').partner_id.id),)
-    #     if values.get('ship_line') and \
-    #        values.get('ship_line').route_id.name == 'Dropship':
-    #         shipping_date = fields.Datetime.to_string(
-    #             values.get('ship_line').shipping_date)
-    #         dom += (('date_order', '=', shipping_date),)
-    #     dom += (("date_order", "=", values.get("date_planned")),)
-    #     return dom
 
 
 class StockPicking(models.Model):
@@ -379,25 +366,6 @@ class StockBackorderConfirmation(models.TransientModel):
         for ship_line in ship_lines:
             ship_line.cancel_shipment()
         return res
-
-
-# class StockLocationRoute(models.Model):
-#     _inherit = "stock.location.route"
-
-#     @api.model
-#     def name_search(self, name='', args=None, operator='ilike', limit=100):
-#         """Overide name_search for sale order line domain."""
-#         if not args:
-#             args = []
-#         if self.env.context.get('partner_id'):
-#             shipment_contact = self.env['res.partner'].sudo().browse(
-#                 self.env.context.get('partner_id'))
-#             warehouse_partner = self.env['stock.warehouse'].sudo().search(
-#                 []).mapped('partner_id')
-#             if shipment_contact.id in warehouse_partner.ids:
-#                 args += [('name', '!=', 'Dropship')]
-#         return super(StockLocationRoute, self).name_search(
-#             name, args, operator, limit)
 
 
 class PurchaseOrder(models.Model):
