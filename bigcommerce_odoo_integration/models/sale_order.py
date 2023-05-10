@@ -32,7 +32,7 @@ class SaleOrderVts(models.Model):
     state = fields.Selection(selection_add=[('order_booked', 'Order Booked')])
 
     def get_order_transaction(self, through_order_cron=False):
-        if (through_order_cron and self.payment_status == 'paid') or self.payment_status == 'not_paid':
+        if (through_order_cron and self.payment_status == 'paid') or self.payment_status == 'not_paid' or (self.payment_status == 'paid' and not self.account_payment_ids):
             bigcommerce_store_hash = self.bigcommerce_store_id.bigcommerce_store_hash
             bigcommerce_client_seceret = self.bigcommerce_store_id.bigcommerce_x_auth_client
             bigcommerce_x_auth_token = self.bigcommerce_store_id.bigcommerce_x_auth_token
@@ -291,8 +291,9 @@ class SaleOrderVts(models.Model):
 
     def update_order_payment_status(self):
         order_ids = self.env['sale.order'].search(
-            [('big_commerce_order_id', '!=', False), ('payment_status', '=', 'not_paid'),
-             '|', ('invoice_ids', '=', False), ('invoice_ids.payment_state', 'not in', ['paid', 'in_payment']),
+            [('big_commerce_order_id', '!=', False),
+             '|', '|', ('invoice_ids', '=', False), ('invoice_ids.payment_state', 'not in', ['paid', 'in_payment']),
+             ('payment_status', 'in', ['paid', 'not_paid']), ('account_payment_ids', '=', False),
              ], order='id desc')
         for order in order_ids:
             try:
