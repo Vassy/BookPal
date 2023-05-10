@@ -275,6 +275,11 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
+    def default_get(self, fields):
+        defaults = super().default_get(fields)
+        defaults["route_id"] = self.env.ref("stock_dropshipping.route_drop_shipping").id
+        return defaults
+
     tracking_ref = fields.Char("Tracking Refrence", compute="get_tracking_ref")
     saving_amount = fields.Float(
         "Saving Amount", compute="_compute_amount", store=True)
