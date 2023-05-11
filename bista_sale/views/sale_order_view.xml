@@ -90,7 +90,7 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//field[@name='payment_term_id']" position="before">
-                <field name="commitment_date" string="Need By Date" />
+                <field name="commitment_date" string="Need By Date" required="1"/>
                 <field name="event_date"/>
             </xpath>
             <xpath expr="//field[@name='payment_term_id']" position="after">
