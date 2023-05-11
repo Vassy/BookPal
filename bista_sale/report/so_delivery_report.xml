@@ -38,6 +38,7 @@
         <field name="arch" type="xml">
             <search string="Sale Orders">
                 <field name="partner_id" />
+                <field name="name" />
                 <field name="is_ontime" />
                 <group expand="1" string="Group By">
                     <filter string="Customer" name="group_partner_id" context="{'group_by':'partner_id'}" />
