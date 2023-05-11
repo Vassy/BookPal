@@ -133,7 +133,11 @@ class SaleOrder(models.Model):
         for rec in self:
             last_delivery_date_new = False
             last_delivery_date_list = []
-            for picking in rec.picking_ids:
+            return_pickings = rec.picking_ids.filtered(
+                lambda x: x.origin and "Return of" in x.origin
+            )
+            picking_ids = rec.picking_ids - return_pickings
+            for picking in picking_ids:
                 last_delivery_date = picking.date_done
                 if last_delivery_date:
                     last_delivery_date_list.append(last_delivery_date.date().strftime('%Y-%m-%d'))
