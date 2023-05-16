@@ -1,72 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <record id="view_seller_report" model="ir.ui.view">
-            <field name="name">seller.report.list</field>
-            <field name="model">best.seller.report</field>
-            <field name="arch" type="xml">
-                <tree>
-                    <field name="order_number"/>
-                    <field name="order_date"/>
-                    <field name="product_id"/>
-                    <field name="sku"/>
-                    <field name="partner_id"/>
-                    <field name="customer_email"/>
-                    <field name="industry_id"/>
-                    <field name="quantity"/>
-                    <field name="publication_date"/>
-                    <field name="shipping_zip_code"/>
-                    <!-- <field name="order_account"/>
-                    <field name="customer_segment"/> -->
-                    <field name="order_company"/>
-                    <field name="order_status"/>
-                    <field name="report_type"/>
-                    <field name="fulfilment_project"/>
-               </tree>
-            </field>
-        </record>
+    <record id="view_seller_report" model="ir.ui.view">
+        <field name="name">seller.report.list</field>
+        <field name="model">best.seller.report</field>
+        <field name="arch" type="xml">
+            <tree create="0" delete="0" editable="top">
+                <field name="order_id" readonly="1" />
+                <field name="order_date" readonly="1" />
+                <field name="sku" readonly="1" />
+                <field name="product_id" readonly="1" />
+                <field name="partner_id" readonly="1" />
+                <field name="customer_email" optional="show" readonly="1" />
+                <field name="industry_id" optional="show" readonly="1" />
+                <field name="quantity" readonly="1" />
+                <field name="publication_date" readonly="1" />
+                <field name="shipping_zip_code" readonly="1" />
+                <field name="order_company" readonly="1" optional="hide" />
+                <field name="order_status" readonly="1" />
+                <field name="report_type" readonly="1" />
+                <field name="fulfilment_project" readonly="1" />
+                <field name="report_date" readonly="1" optional="hide" />
+                <field name="reported" readonly="1" optional="hide" />
+            </tree>
+        </field>
+    </record>
 
-        <record model="ir.ui.view" id="view_seller_report_pivot">
-            <field name="name">seller.report.pivot</field>
-            <field name="model">best.seller.report</field>
-            <field name="arch" type="xml">
-                <pivot string="Seller Report">
-                    <field name="order_number"/>
-                    <field name="order_date"/>
-                    <field name="product_id"/>
-                    <field name="sku"/>
-                    <field name="customer_email"/>
-                    <field name="quantity"/>
-                    <field name="order_company"/>
-                    <field name="order_status"/>
-                </pivot>
-            </field>
-        </record>
+    <record model="ir.ui.view" id="view_seller_report_pivot">
+        <field name="name">seller.report.pivot</field>
+        <field name="model">best.seller.report</field>
+        <field name="arch" type="xml">
+            <pivot string="Seller Report">
+                <field name="order_id" />
+                <field name="order_date" />
+                <field name="product_id" />
+                <field name="sku" />
+                <field name="customer_email" />
+                <field name="quantity" />
+                <field name="order_company" />
+                <field name="order_status" />
+            </pivot>
+        </field>
+    </record>
 
-        <record id="view_best_seller_report_filter" model="ir.ui.view">
-            <field name="name">best.seller.report.filter</field>
-            <field name="model">best.seller.report</field>
-            <field name="priority" eval="15"/>
-            <field name="arch" type="xml">
-                <search string="Search Best Seller Report">
-                    <field name="order_number" string="Order" filter_domain="[('order_number', 'ilike', self)]"/>
-                    <field name="product_id" string="Product" filter_domain="[('product_id', 'ilike', self)]"/>
-                    <field name="order_status" string="Order Status"/>
-                    <group expand="0" string="Group By">
-                        <filter string="Order" name="order_number" domain="[]" context="{'group_by': 'order_number'}"/>
-                        <filter string="Product" name="product_id" domain="[]" context="{'group_by': 'product_id'}"/>
-                        <filter string="Order Status" name="order_status" domain="[]" context="{'group_by': 'order_status'}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
-
-        <record id="action_view_seller_report" model="ir.actions.act_window">
-            <field name="name">Best Seller Report</field>
-            <field name="res_model">best.seller.report</field>
-            <field name="view_mode">tree,pivot</field>
-            <field name="search_view_id" ref="view_best_seller_report_filter"/>
-            <field name="target">new</field>
-        </record>
-    </data>
+    <record id="view_best_seller_report_filter" model="ir.ui.view">
+        <field name="name">best.seller.report.filter</field>
+        <field name="model">best.seller.report</field>
+        <field name="priority" eval="15" />
+        <field name="arch" type="xml">
+            <search string="Search Best Seller Report">
+                <field name="order_id" string="Order" filter_domain="[('order_id', 'ilike', self)]" />
+                <field name="product_id" string="Product" filter_domain="[('product_id', 'ilike', self)]" />
+                <field name="order_status" string="Order Status" />
+                <filter string="Is Reported" name="is_reported" domain="[('reported', '=', True)]" />
+                <filter string="Not Reported" name="not_reported" domain="[('reported', '=', False)]" />
+                <group expand="0" string="Group By">
+                    <filter string="Order" name="order_id" domain="[]" context="{'group_by': 'order_id'}" />
+                    <filter string="Product" name="product_id" domain="[]" context="{'group_by': 'product_id'}" />
+                    <filter string="Order Status" name="order_status" domain="[]" context="{'group_by': 'order_status'}" />
+                </group>
+            </search>
+        </field>
+    </record>
 </odoo>

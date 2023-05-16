@@ -77,6 +77,8 @@ CustomFields = [
     "is_report",
     "report_type",
     "report_notes",
+    "report_date",
+    "reported",
 ]
 
 
@@ -106,8 +108,8 @@ class SaleOrder(models.Model):
     def _prepare_confirmation_values(self):
         res = super()._prepare_confirmation_values()
         # Order Date should not change in any state
-        if res.get('date_order'):
-            res.pop('date_order')
+        if res.get("date_order"):
+            res.pop("date_order")
         return res
 
     def trigger_quote_action(self):
@@ -173,9 +175,7 @@ class SaleOrder(models.Model):
                 "date_order": fields.Datetime.now(),
             }
             if sale.split_shipment:
-                sale.sale_multi_ship_qty_lines.write({
-                    'state': "order_booked"
-                })
+                sale.sale_multi_ship_qty_lines.write({"state": "order_booked"})
             sale.write(sale_data)
             sale._create_sale_approval_log("Sale Order Booked")
 

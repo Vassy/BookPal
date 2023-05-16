@@ -6,7 +6,7 @@
  * Copyright 2019 Alexandre Díaz <alexandre.diaz@tecnativa.com>
  * License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). */
 
-odoo.define("web_tree_many2one_clickable.many2one_clickable", function (require) {
+odoo.define("web_tree_many2one_clickable.many2one_clickable", function(require) {
     "use strict";
 
     var ListRenderer = require("web.ListRenderer");
@@ -29,11 +29,11 @@ odoo.define("web_tree_many2one_clickable.many2one_clickable", function (require)
     // });
 
     ListFieldMany2One.include({
-        _renderReadonly: function () {
+        _renderReadonly: function() {
             this._super.apply(this, arguments);
             var self = this;
 
-            if (!this.noOpen && this.value) {
+            if (!this.noOpen && this.value && this.field.name === "po_line_custom_id") {
                 // Replace '<a>' element
                 this.$el.removeClass("o_form_uri");
                 this.$el = $("<span/>", {
@@ -44,27 +44,27 @@ odoo.define("web_tree_many2one_clickable.many2one_clickable", function (require)
                 // var context = self.attrs.context
                 // context.from_update_wiz = "True";
                 // Append button
-                if (this.field.name === "po_line_custom_id") {
-                    var $a = $("<a/>", {
-                        href: "#",
-                        class: "o_form_uri btn btn-sm fa fa-history",
-                    }).on("click", function (ev) {
-                        ev.preventDefault();
-                        ev.stopPropagation();
+                var $a = $("<a/>", {
+                    href: "#",
+                    class: "o_form_uri btn btn-sm fa fa-history",
+                }).on("click", function(ev) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
 
-                        self.do_action({
-                            type: "ir.actions.act_window",
-                            res_model: self.field.relation,
-                            res_id: self.value.res_id,
-                            views: [[false, "form"]],
-                            target: "new",
-                            context: self.record.getContext({
-                                additionalContext: {'from_update_wiz': "True"},
-                            }),
-                        });
+                    self.do_action({
+                        type: "ir.actions.act_window",
+                        res_model: self.field.relation,
+                        res_id: self.value.res_id,
+                        views: [
+                            [false, "form"]
+                        ],
+                        target: "new",
+                        context: self.record.getContext({
+                            additionalContext: { "from_update_wiz": "True" },
+                        }),
                     });
-                    this.$el.append($a);
-                }
+                });
+                this.$el.append($a);
             }
         },
     });

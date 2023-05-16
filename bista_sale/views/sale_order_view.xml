@@ -241,11 +241,16 @@
                 </page>
                 <page name='best_seller_report' string='Best Seller Report'>
                     <group>
-                        <field name="is_report"/>
-                        <field name="reason"
-                               attrs="{'invisible': [('is_report', '=', True)], 'required': [('is_report', '=', False)]}"/>
-                        <field name="report_type"/>
-                        <field name="report_notes"/>
+                        <group>
+                            <field name="is_report"/>
+                            <field name="reason" attrs="{'invisible': [('is_report', '=', True)], 'required': [('is_report', '=', False)]}"/>
+                            <field name="report_type"/>
+                            <field name="report_notes"/>
+                        </group>
+                        <group>
+                            <field name="report_date" force_save="1" />
+                            <field name="reported" />
+                        </group>
                     </group>
                 </page>
             </xpath>
