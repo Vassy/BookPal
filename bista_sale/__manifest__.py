@@ -40,6 +40,7 @@
         "views/seller_report_views.xml",
         "views/res_config_settings_views.xml",
         "wizard/best_seller_report_views.xml",
+        "wizard/update_seller_report_views.xml",
     ],
     'installable': True,
     'auto_install': False

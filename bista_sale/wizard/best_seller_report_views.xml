@@ -1,41 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-
-        <record id="view_best_seller_report" model="ir.ui.view">
-            <field name="name">best.seller.report.wiz.form</field>
-            <field name="model">best.seller.report.wiz</field>
-            <field name="arch" type="xml">
-                <form>
-                    <sheet>
+    <record id="view_best_seller_report" model="ir.ui.view">
+        <field name="name">best.seller.report.wiz.form</field>
+        <field name="model">best.seller.report.wiz</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
                         <group>
-                            <group>
-                                    <field name="start_date"/>
-                                    <field name="end_date"/>
-                                    <field name="report_type"/>
-                            </group>
+                            <field name="date_type" />
+                            <field name="start_date" />
+                            <field name="end_date" />
+                            <field name="report_type" />
                         </group>
-                    </sheet>
-                    <footer>
-                        <button string="Generate" name="open_best_seller_report" type="object" class="btn-primary" data-hotkey="q"/>
-                        <button string="Cancel" class="btn-secondary" special="cancel"/>
-                    </footer>
-               </form>
-            </field>
-        </record>
+                        <group>
+                            <field name="industry_ids" widget="many2many_tags" />
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Generate" name="open_best_seller_report" type="object" class="btn-primary" data-hotkey="q" />
+                    <button string="Cancel" class="btn-secondary" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
 
-        <record id="action_view_best_seller_report" model="ir.actions.act_window">
-            <field name="name">Best Seller Report</field>
-            <field name="res_model">best.seller.report.wiz</field>
-            <field name="view_mode">form</field>
-            <field name="view_id" ref="view_best_seller_report"/>
-            <field name="target">new</field>
-        </record>
+    <record id="action_view_best_seller_report" model="ir.actions.act_window">
+        <field name="name">Best Seller Report</field>
+        <field name="res_model">best.seller.report.wiz</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_best_seller_report" />
+        <field name="target">new</field>
+    </record>
 
-        <menuitem id="menu_best_seller_report"
-            name="Best Seller Report"
-            action="action_view_best_seller_report"
-            parent="sale.menu_sale_report"
-            sequence="1"/>
-    </data>
+    <menuitem id="menu_best_seller_report"
+        name="Best Seller Report"
+        action="action_view_best_seller_report"
+        parent="sale.menu_sale_report"
+        sequence="1" />
 </odoo>
