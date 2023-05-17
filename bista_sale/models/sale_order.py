@@ -200,14 +200,7 @@ class SaleOrder(models.Model):
             })
         return res
 
-    def compute_customer_preview_url(self):
-        base_url = self.env['ir.config_parameter'].sudo(
-        ).get_param('web.base.url')
-        access_token = self._portal_ensure_token()
-        url = base_url + '/my/orders/' + str(self.id) + "?" + access_token
-        return url
-
-    @api.onchange('user_id')
+    @api.onchange("user_id")
     def onchange_user_id(self):
         if self.user_id and self.env.context.get('manual_update'):
             self._origin.with_context(manual_update=True).write({'user_id': self.user_id.id})
