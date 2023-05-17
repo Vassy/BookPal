@@ -177,8 +177,8 @@
                     <div t-field="doc.user_id.email" />
                 </div>
                 <div class="col-5 text-right" style="font-size: 18px; padding-top: 20px;">
-                    <a t-att-href="doc.sudo().compute_customer_preview_url()" class="btn btn-link" style="background-color: #f26243;">
-                        <strong style="color: #FFFFFF;">Proceed to Checkout</strong>
+                    <a t-att-href="doc.get_portal_url()" class="btn btn-link" style="background-color: #f26243;">
+                        <strong style="color: #FFFFFF; white-space: nowrap;">Sign &amp; Pay</strong>
                     </a>
                 </div>
             </div>
