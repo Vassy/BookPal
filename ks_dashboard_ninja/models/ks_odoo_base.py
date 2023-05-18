@@ -13,12 +13,15 @@ class Base(models.AbstractModel):
             if items:
                 online_partner = self.env['res.users'].search([]).filtered(lambda x: x.im_status == 'online').mapped(
                     "partner_id").ids
-                updates = [[
-                    (self._cr.dbname, 'res.partner', partner_id),
-                    {'type': 'ks_dashboard_ninja.notification', 'changes': items.ids},
-                    {'id': self.id}
-                ] for partner_id in online_partner]
-                self.env['bus.bus']._sendmany(updates)
+                """Added a loop to solve traceback when trying to Create multiple
+                records, Which models are used in the Ninja Dashboard configuration"""
+                for rec in recs:
+                    updates = [[
+                        (self._cr.dbname, 'res.partner', partner_id),
+                        {'type': 'ks_dashboard_ninja.notification', 'changes': items.ids},
+                        {'id': rec.id}
+                    ] for partner_id in online_partner]
+                    self.env['bus.bus']._sendmany(updates)
         return recs
 
     def write(self, vals):
@@ -29,10 +32,13 @@ class Base(models.AbstractModel):
             if items:
                 online_partner = self.env['res.users'].search([]).filtered(lambda x: x.im_status == 'online').mapped(
                     "partner_id").ids
-                updates = [[
-                    (self._cr.dbname, 'res.partner', partner_id),
-                    {'type': 'ks_dashboard_ninja.notification', 'changes': items.ids},
-                    {'id': self.id}
-                ] for partner_id in online_partner]
-                self.env['bus.bus']._sendmany(updates)
+                """Added a loop to solve traceback when trying to Update multiple
+                records, Which models are used in the Ninja Dashboard configuration"""
+                for rec in self:
+                    updates = [[
+                        (self._cr.dbname, 'res.partner', partner_id),
+                        {'type': 'ks_dashboard_ninja.notification', 'changes': items.ids},
+                        {'id': rec.id}
+                    ] for partner_id in online_partner]
+                    self.env['bus.bus']._sendmany(updates)
         return recs
