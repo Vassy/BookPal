@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, fields, models, tools
+from odoo import fields, models, tools
 
 
 class SellerReport(models.Model):
@@ -46,9 +46,9 @@ class SellerReport(models.Model):
     )
     report_date = fields.Date(string="Report Date")
     reported = fields.Boolean(string="Reported")
+    product_tmpl_id = fields.Many2one(related="product_id.product_tmpl_id")
 
     def init(self):
-        """Fetch the data from sale order line based on report type and start and end date"""
         tools.drop_view_if_exists(self.env.cr, self._table)
         date_type = self._context.get("date_type", False)
         start_date = self._context.get("start_date", False)
@@ -97,8 +97,9 @@ class SellerReport(models.Model):
         if report_type:
             where_str += " AND sale_order.report_type = '%s'" % (report_type)
         if industry_ids:
-            where_str += " AND res_partner.industry_id NOT IN (%s)" % ",".join(
-                str(industry) for industry in industry_ids
+            where_str += (
+                " AND (res_partner.industry_id NOT IN (%s) OR res_partner.industry_id IS NULL)"
+                % ",".join(str(industry) for industry in industry_ids)
             )
         self.env.cr.execute(
             """CREATE or REPLACE VIEW %s as (%s %s %s)"""

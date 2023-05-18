@@ -8,7 +8,7 @@
                 <field name="order_id" readonly="1" />
                 <field name="order_date" readonly="1" />
                 <field name="sku" readonly="1" />
-                <field name="product_id" readonly="1" />
+                <field name="product_tmpl_id" readonly="1" />
                 <field name="partner_id" readonly="1" />
                 <field name="customer_email" optional="show" readonly="1" />
                 <field name="industry_id" optional="show" readonly="1" />
@@ -32,7 +32,7 @@
             <pivot string="Seller Report">
                 <field name="order_id" />
                 <field name="order_date" />
-                <field name="product_id" />
+                <field name="product_tmpl_id" />
                 <field name="sku" />
                 <field name="customer_email" />
                 <field name="quantity" />

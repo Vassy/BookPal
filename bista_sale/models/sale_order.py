@@ -144,7 +144,7 @@ class SaleOrder(models.Model):
     )
     reported = fields.Boolean(string="Reported")
 
-    @api.depends("date_order", "order_line")
+    @api.depends("date_order", "order_line", "order_line.product_id.publication_date")
     def _compute_report_date(self):
         for sale in self:
             max_date = (
