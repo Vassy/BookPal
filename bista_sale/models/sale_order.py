@@ -209,7 +209,7 @@ class SaleOrder(models.Model):
                     rec.delivery_time = (
                         rec.last_delivery_date - rec.commitment_date.date()
                     ).days
-                if rec.last_delivery_date > rec.commitment_date.date():
+                elif rec.last_delivery_date > rec.commitment_date.date():
                     rec.order_delivery_time = (
                         str((rec.last_delivery_date - rec.commitment_date.date()).days)
                         + " Days"
@@ -218,6 +218,9 @@ class SaleOrder(models.Model):
                     rec.delivery_time = (
                         rec.last_delivery_date - rec.commitment_date.date()
                     ).days
+                else:
+                    rec.order_delivery_time = "0 Days"
+                    rec.ontime_status = "yes"
 
     def _compute_share_link(self):
         for rec in self:

@@ -121,10 +121,10 @@
             </xpath>
             <field name="user_id" position="after">
                 <field name="am_owner" />
-                <field name="order_delivery_time"/>
+                <field name="last_delivery_date" readonly="1" force_save="1" />
+                <field name="order_delivery_time" readonly="1" force_save="1" />
                 <field name="delivery_time" invisible="1"/>
-                <field name="last_delivery_date"/>
-                <field name="ontime_status"/>
+                <field name="ontime_status" readonly="1" force_save="1" />
             </field>
             <xpath expr="//notebook/page[@name='other_information']" position="after">
                 <page string="Source Details" name="order_details">
