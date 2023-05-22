@@ -32,9 +32,12 @@ class BestSellerReport(models.TransientModel):
             active_ids.mapped("product_id").write(
                 {"is_never_report": self.never_report}
             )
-        sale_data = {"fulfilment_project": self.fulfilment_project}
+        sale_data = {}
+        if self.fulfilment_project:
+            sale_data.update({"fulfilment_project": self.fulfilment_project})
         if self.report_type:
             sale_data.update({"report_type": self.report_type})
         if self.reported:
             sale_data.update({"reported": self.reported})
-        active_ids.mapped("order_id").write(sale_data)
+        if sale_data:
+            active_ids.mapped("order_id").write(sale_data)
