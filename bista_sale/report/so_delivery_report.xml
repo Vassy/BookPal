@@ -44,6 +44,8 @@
                     <filter string="Customer" name="group_partner_id" context="{'group_by':'partner_id'}" />
                     <separator />
                     <filter string="Order Date" name="order_month" context="{'group_by': 'date_order:month'}" />
+                    <separator />
+                    <filter string="Order Status" name="order_status" context="{'group_by': 'state'}" />
                 </group>
             </search>
         </field>
