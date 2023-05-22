@@ -125,10 +125,10 @@ class SaleOrder(models.Model):
     shipping_quote_docs = fields.Char()
     share_link = fields.Char(string="Link", compute="_compute_share_link")
     button_name = fields.Char(compute="_compute_button_name")
-    is_ontime = fields.Selection(
-        [("yes", "Yes"), ("no", "Delayed")],
+    ontime_status = fields.Selection(
+        [("yes", "Yes"), ("no", "Delayed"), ("pending", "Pending")],
         compute="_compute_order_process_time",
-        string="On time",
+        string="On Time Status",
         store=True,
         compute_sudo=True,
     )
@@ -143,6 +143,14 @@ class SaleOrder(models.Model):
         string="Report Date", compute="_compute_report_date", store=True
     )
     reported = fields.Boolean(string="Reported")
+    commitment_date = fields.Datetime(
+        string="Need By Date", compute="_compute_commitment_date", store=True
+    )
+
+    @api.depends("date_order")
+    def _compute_commitment_date(self):
+        for sale in self:
+            sale.commitment_date = sale.date_order + relativedelta(days=7)
 
     @api.depends("date_order", "order_line", "order_line.product_id.publication_date")
     def _compute_report_date(self):
@@ -191,12 +199,13 @@ class SaleOrder(models.Model):
     @api.depends("commitment_date", "last_delivery_date")
     def _compute_order_process_time(self):
         for rec in self:
-            rec.order_delivery_time = "0 days"
+            if rec.commitment_date and not rec.last_delivery_date:
+                rec.ontime_status = "pending"
             if rec.last_delivery_date and rec.commitment_date:
                 if rec.last_delivery_date < rec.commitment_date.date():
                     days = (rec.commitment_date.date() - rec.last_delivery_date).days
                     rec.order_delivery_time = "-" + str(days) + " Days"
-                    rec.is_ontime = "yes"
+                    rec.ontime_status = "yes"
                     rec.delivery_time = (
                         rec.last_delivery_date - rec.commitment_date.date()
                     ).days
@@ -205,7 +214,7 @@ class SaleOrder(models.Model):
                         str((rec.last_delivery_date - rec.commitment_date.date()).days)
                         + " Days"
                     )
-                    rec.is_ontime = "no"
+                    rec.ontime_status = "no"
                     rec.delivery_time = (
                         rec.last_delivery_date - rec.commitment_date.date()
                     ).days
