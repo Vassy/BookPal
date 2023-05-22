@@ -90,7 +90,7 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//field[@name='payment_term_id']" position="before">
-                <field name="commitment_date" string="Need By Date" required="1"/>
+                <field name="commitment_date" required="1" force_save="1" />
                 <field name="event_date"/>
             </xpath>
             <xpath expr="//field[@name='payment_term_id']" position="after">
@@ -124,7 +124,7 @@
                 <field name="order_delivery_time"/>
                 <field name="delivery_time" invisible="1"/>
                 <field name="last_delivery_date"/>
-                <field name="is_ontime"/>
+                <field name="ontime_status"/>
             </field>
             <xpath expr="//notebook/page[@name='other_information']" position="after">
                 <page string="Source Details" name="order_details">
