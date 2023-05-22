@@ -9,14 +9,14 @@
                 <field name="partner_id" readonly="1" />
                 <field name="date_order" readonly="1" widget="date" />
                 <field name="client_order_ref" />
-                <field name="commitment_date" widget="date" string="Need By Date"/>
+                <field name="commitment_date" widget="date" />
                 <field name="last_delivery_date" />
                 <field name="order_delivery_time" />
-                <field name="is_ontime" />
+                <field name="ontime_status" />
                 <field name="user_id" widget="many2one_avatar_user" />
-                <field name="state" widget="badge" decoration-success="state in ('purchase', 'done')" />
-                 <field name="invoice_status" />
-                 <field name="am_owner" />
+                <field name="state" widget="badge" decoration-success="state in ('purchase', 'done')" string="Order Status" />
+                <field name="invoice_status" />
+                <field name="am_owner" />
             </tree>
         </field>
     </record>
@@ -39,7 +39,7 @@
             <search string="Sale Orders">
                 <field name="partner_id" />
                 <field name="name" />
-                <field name="is_ontime" />
+                <field name="ontime_status" />
                 <group expand="1" string="Group By">
                     <filter string="Customer" name="group_partner_id" context="{'group_by':'partner_id'}" />
                     <separator />
@@ -54,7 +54,7 @@
         <field name="res_model">sale.order</field>
         <field name="view_mode">tree</field>
         <field name="search_view_id" ref="view_ontime_delivery_search" />
-        <field name="domain">[("state", "!=", "cancel")]</field>
+        <field name="domain">[("state", "in", ("order_booked", "sale"))]</field>
     </record>
 
     <record id="action_ontime_delivery_report_tree" model="ir.actions.act_window.view">
