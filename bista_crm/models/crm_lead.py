@@ -2,6 +2,9 @@
 
 from odoo import api, fields, models
 
+QuoteState = ["draft", "quote_approval", "quote_confirm", "sent"]
+CancelQuoteState = ["draft", "quote_approval", "quote_confirm", "sent", "cancel"]
+
 
 class CrmLead(models.Model):
     _inherit = "crm.lead"
@@ -157,6 +160,43 @@ class CrmLead(models.Model):
         result = super()._prepare_customer_values(partner_name, is_company, parent_id)
         result.update(partner_data)
         return result
+
+    def _compute_sale_data(self):
+        for lead in self:
+            lead.quotation_count = len(
+                lead.order_ids.filtered(lambda s: s.state in QuoteState)
+            )
+            sale_orders = lead.order_ids.filtered(
+                lambda s: s.state not in CancelQuoteState
+            )
+            lead.sale_order_count = len(sale_orders)
+
+            total = 0.0
+            for order in sale_orders:
+                total += order.currency_id._convert(
+                    order.amount_untaxed,
+                    lead.company_currency or self.env.company.currency_id,
+                    order.company_id,
+                    order.date_order or fields.Date.today(),
+                )
+            lead.sale_amount_total = total
+
+    def action_view_sale_quotation(self):
+        action = super().action_view_sale_quotation()
+        action["domain"] = [
+            ("opportunity_id", "=", self.id),
+            ("state", "in", QuoteState),
+        ]
+        action["context"].pop("search_default_draft")
+        return action
+
+    def action_view_sale_order(self):
+        action = super().action_view_sale_order()
+        action["domain"] = [
+            ("opportunity_id", "=", self.id),
+            ("state", "not in", CancelQuoteState),
+        ]
+        return action
 
 
 class SpecialPricingType(models.Model):

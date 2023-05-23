@@ -7,7 +7,7 @@
     "summary": "Manage CRM",
     "website": "http://www.bistasolutions.com",
     "license": "AGPL-3",
-    "depends": ["sale_crm", "bista_sale", "utm", "bigcommerce_odoo_integration"],
+    "depends": ["sale_crm", "bigcommerce_odoo_integration", "bista_sales_approval"],
     "data": [
         "security/ir.model.access.csv",
         "data/shipping_price_type_data.xml",
